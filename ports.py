@@ -11,6 +11,7 @@ Order port numbers, ex:
     drivetrain_motor_rr = 2
 """
 
+
 class CAN(Immutable):
     drivetrain_motor_turning_br = 1
     drivetrain_motor_driving_br = 2
@@ -21,11 +22,14 @@ class CAN(Immutable):
     drivetrain_motor_turning_fr = 7
     drivetrain_motor_driving_fr = 8
 
+
 class PWM(Immutable):
     pass
 
+
 class DIO:
     pass
+
 
 class PDP:
     pass

@@ -4,7 +4,9 @@ from wpiutil import SendableBuilder
 
 
 class Subsystem(commands2.Subsystem):
-    def createAlert(self, text: str, alert_type: wpilib.Alert.AlertType) -> wpilib.Alert:
+    def createAlert(
+        self, text: str, alert_type: wpilib.Alert.AlertType
+    ) -> wpilib.Alert:
         return wpilib.Alert(self.getName() + "/Alerts", text, alert_type)
 
     def initSendable(self, builder: SendableBuilder) -> None:

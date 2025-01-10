@@ -14,11 +14,16 @@ class Switch:
 
     def __init__(self, switch_type: "Switch.Type", port: Optional[int] = None):
         if not isinstance(switch_type, Switch.Type):
-            raise TypeError(f"switch_type is not instance of Switch.Type : {switch_type}")
+            raise TypeError(
+                f"switch_type is not instance of Switch.Type : {switch_type}"
+            )
 
         self._type = switch_type
 
-        if switch_type == Switch.Type.NormallyClosed or switch_type == Switch.Type.NormallyOpen:
+        if (
+            switch_type == Switch.Type.NormallyClosed
+            or switch_type == Switch.Type.NormallyOpen
+        ):
             self._input = DigitalInput(port)
 
         if RobotBase.isSimulation:

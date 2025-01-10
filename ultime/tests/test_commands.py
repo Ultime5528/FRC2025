@@ -20,9 +20,9 @@ def get_commands() -> List[Type[Command]]:
     for mod in results.values():
         for _, cls in inspect.getmembers(mod, inspect.isclass):
             if (
-                    issubclass(cls, Command)
-                    and not cls.__module__.startswith("commands2")
-                    and cls not in cmds
+                issubclass(cls, Command)
+                and not cls.__module__.startswith("commands2")
+                and cls not in cmds
             ):
                 cmds.append(cls)
     return cmds
@@ -38,7 +38,7 @@ def test_arguments():
             if name == "self":
                 continue
             assert (
-                    arg.annotation is not arg.empty
+                arg.annotation is not arg.empty
             ), f"Argument {name} of {obj.__name__} has no type annotation"
 
 
@@ -54,38 +54,40 @@ def test_requirements():
                 if isinstance(c.func, ast.Attribute):
                     if c.func.attr == "addRequirements":
                         assert (
-                                addReqs is None
+                            addReqs is None
                         ), f"{obj.__name__} calls addRequirements() multiple times"
                         addReqs = c
                 elif isinstance(c.func, ast.Name):
                     if c.func.id == "addRequirements":
                         assert (
-                                addReqs is None
+                            addReqs is None
                         ), f"{obj.__name__} calls addRequirements() multiple times"
                         addReqs = c
         super_classes = obj.__bases__
         for super_class in super_classes:
             for c in ast.walk(
-                    ast.parse(dedent(inspect.getsource(super_class.__init__)))
+                ast.parse(dedent(inspect.getsource(super_class.__init__)))
             ):
                 if isinstance(c, ast.Call):
                     if isinstance(c.func, ast.Attribute):
                         if c.func.attr == "addRequirements":
                             assert (
-                                    addReqs is None
+                                addReqs is None
                             ), f"{obj.__name__} calls addRequirements() multiple times"
                             addReqs = c
                     elif isinstance(c.func, ast.Name):
                         if c.func.id == "addRequirements":
                             assert (
-                                    addReqs is None
+                                addReqs is None
                             ), f"{obj.__name__} calls addRequirements() multiple times"
                             addReqs = c
 
         subsystem_args = {}
         for name, arg in get_arguments(obj).items():
-            if name not in ignore_reqs and isinstance(arg.annotation, type) and issubclass(
-                    arg.annotation, Subsystem
+            if (
+                name not in ignore_reqs
+                and isinstance(arg.annotation, type)
+                and issubclass(arg.annotation, Subsystem)
             ):  # if is a class and is subsystem
                 subsystem_args[name] = arg
 
@@ -99,7 +101,7 @@ def test_requirements():
 
             for sub_arg in subsystem_args.keys():
                 assert (
-                        sub_arg in actual_required_subsystems
+                    sub_arg in actual_required_subsystems
                 ), f"{obj.__name__} does not require {sub_arg} (consider using ignore_requirements)"
         else:
             assert (
@@ -108,7 +110,7 @@ def test_requirements():
 
 
 def test_command_scheduler_enabled(
-        control: "pyfrc.test_support.controller.TestController", robot: Robot
+    control: "pyfrc.test_support.controller.TestController", robot: Robot
 ):
     with control.run_robot():
         control.step_timing(seconds=1.0, autonomous=False, enabled=True)
@@ -125,7 +127,9 @@ def test_command_scheduler_enabled(
         """
 
         with patch.object(
-                robot.hardware.drivetrain, "periodic", wraps=robot.hardware.drivetrain.periodic
+            robot.hardware.drivetrain,
+            "periodic",
+            wraps=robot.hardware.drivetrain.periodic,
         ) as mock:
             assert mock.call_count == 0
             control.step_timing(seconds=1.0, autonomous=False, enabled=True)
