@@ -24,7 +24,7 @@
   conda update conda
   conda update python
 ```
-* Run the following command to create an environment named "frc2024":
+* Run the following command to create an environment named "frc2025":
 ```commandline
   conda create -n frc2025 python=3.13.1
 ```
