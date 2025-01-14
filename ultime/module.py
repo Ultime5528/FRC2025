@@ -92,7 +92,7 @@ class ModuleList(Module):
             if len(methods) > 0:
 
                 @wraps(getattr(self, name))
-                def call(_):
+                def call():
                     for method in methods:
                         method()
 

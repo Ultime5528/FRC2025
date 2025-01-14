@@ -8,9 +8,7 @@ class ControlModule(Module):
 
     def robotInit(self) -> None:
         #Default subsystem commands
-        #self.hardware.drivetrain.setDefaultCommand()
 
         #Setup Buttons
 
         pass
-    

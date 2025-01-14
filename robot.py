@@ -19,7 +19,7 @@ class Robot(commands2.TimedCommandRobot):
         self.control = ControlModule(self.hardware)
 
         self.modules = ModuleList(
-            self.hardware,
+            self.hardware, self.control
         )
 
         self.modules.robotInit()
