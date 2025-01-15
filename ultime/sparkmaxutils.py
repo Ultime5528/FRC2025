@@ -4,7 +4,7 @@ import wpilib
 from rev import SparkMax, REVLibError, SparkMaxConfig
 from wpilib import RobotBase
 
-IdleMode = Literal["brake", "coast"]
+#IdleMode = Literal["kbrake", "kcoast"]
 
 __all__ = ["configureLeader", "configureFollower", "waitForCAN"]
 
@@ -15,68 +15,43 @@ def waitForCAN(time_second: float):
 def configureLeader(
         motor: SparkMax,
         config: SparkMaxConfig,
-        mode: IdleMode,
+        mode: SparkMax.IdleMode,
         inverted: bool = False,
         stallLimit: Optional[int] = None,
         freeLimit: Optional[int] = None,
 ):
-    _handleCanError(motor.ResetMode, "ResetMode", motor)
-    motor.setInverted(inverted)
-    _configureMotor(motor, mode, stallLimit, freeLimit)
+    config.inverted(inverted)
+    config.smartCurrentLimit(stallLimit, freeLimit)
+    config.setIdleMode(mode)
+
+    _configureMotor(motor, config)
 
 def configureFollower(
     follower: SparkMax,
     leader: SparkMax,
-    mode: IdleMode,
+    config: SparkMaxConfig,
+    mode: SparkMax.IdleMode,
     inverted: bool = False,
     stallLimit: Optional[int] = None,
     freeLimit: Optional[int] = None,
 ):
-    _handleCanError(
-        follower.ResetMode, "ResetMode", follower
-    )
-    _handleCanError(follower.isFollower(), "follow", follower)
-    _handleCanError(
-        follower.setControlFramePeriodMs(SparkMax.PeriodicFrame.kStatus0),
-        "set status0 rate",
-        follower,
-    )
-    _handleCanError(
-        follower.setControlFramePeriodMs(SparkMax.PeriodicFrame.kStatus1),
-        "set status1 rate",
-        follower,
-    )
-    _handleCanError(
-        follower.setControlFramePeriodMs(SparkMax.PeriodicFrame.kStatus2),
-        "set status2 rate",
-        follower,
-    )
-    _configureMotor(follower, mode, stallLimit, freeLimit)
+    config.inverted(inverted)
+    config.smartCurrentLimit(stallLimit, freeLimit)
+    config.setIdleMode(mode)
+    config.follow(leader.getDeviceId(), inverted)
+
+    _configureMotor(follower, config)
 
 def _configureMotor(
     motor: SparkMax,
-    mode: IdleMode,
-    stallLimit: Optional[int],
-    freeLimit: Optional[int],
+    config: SparkMaxConfig,
 ):
-    _handleCanError(motor.IdleMode, "setIdleMode", motor)
-    _handleCanError(motor.PersistMode, 'setPersistMode', motor)
+    _handleCanError(motor.configure(config, motor.ResetMode(1), motor.PersistMode(1)), "configure motor", motor)
     _handleCanError(motor.clearFaults(), "clearFaults", motor)
-
-    #if stallLimit is not None and freeLimit is not None:
-     #   _handleCanError(
-      #      motor.CurrentLimit(stallLimit, freeLimit),#can't find current Limit
-       #     "setSmartCurrentLimit",
-        #    motor,
-#        )
- #   elif (stallLimit is None) != (freeLimit is None):
-  #      raise ValueError(
-   #         f"stallLimit ({stallLimit}) and freeLimit ({freeLimit}) should both have a value."
-    #    )
 
     waitForCAN(1.0)
 
-def _idleModeToEnum(mode: IdleMode):
+def _idleModeToEnum(mode: SparkMax.IdleMode):
     if mode == "brake":
         return SparkMax.IdleMode.kBrake
     elif mode == "coast":

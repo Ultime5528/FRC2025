@@ -218,15 +218,15 @@ class Drivetrain(Subsystem):
         self.swerve_module_bl.simulationUpdate(self.period_seconds)
         self.swerve_module_br.simulationUpdate(self.period_seconds)
 
-        # self.swerve_estimator.update(
-        #     self.getPose().rotation(),
-        #     (
-        #         self.swerve_module_fl.getPosition(),
-        #         self.swerve_module_fr.getPosition(),
-        #         self.swerve_module_bl.getPosition(),
-        #         self.swerve_module_br.getPosition(),
-        #     ),
-        # )
+        self.swerve_estimator.update(
+            self.getPose().rotation(),
+            (
+                self.swerve_module_fl.getPosition(),
+                self.swerve_module_fr.getPosition(),
+                self.swerve_module_bl.getPosition(),
+                self.swerve_module_br.getPosition(),
+            ),
+        )
 
         module_states = (
             self.swerve_module_fl.getState(),
