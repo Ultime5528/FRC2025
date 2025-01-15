@@ -7,9 +7,4 @@ class ControlModule(Module):
         super().__init__()
         self.hardware = hardware
 
-    def robotInit(self) -> None:
-        # Default subsystem commands
-
-        # Setup Buttons
-
-        pass
+        # self.hardware.controller.button(1).onTrue(Command())
