@@ -19,7 +19,8 @@ class Robot(commands2.TimedCommandRobot):
         self.propertysavechecker = PropertySaveCheckerModule()
 
         self.modules = ModuleList(
-            self.hardware, self.propertysavechecker,
+            self.hardware,
+            self.propertysavechecker,
         )
 
         self.modules.robotInit()
