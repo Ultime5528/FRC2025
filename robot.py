@@ -4,6 +4,7 @@ import wpilib
 from wpilib import RobotBase
 
 from modules.hardware import HardwareModule
+from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.module import ModuleList
 
 
@@ -15,9 +16,10 @@ class Robot(commands2.TimedCommandRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
+        self.propertysavechecker = PropertySaveCheckerModule()
 
         self.modules = ModuleList(
-            self.hardware,
+            self.hardware, self.propertysavechecker,
         )
 
         self.modules.robotInit()
