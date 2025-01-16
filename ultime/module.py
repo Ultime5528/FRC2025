@@ -8,9 +8,6 @@ class Module(Sendable):
     def __init__(self):
         super().__init__()
 
-    def robotInit(self) -> None:
-        pass
-
     def robotPeriodic(self) -> None:
         pass
 
@@ -63,9 +60,14 @@ class Module(Sendable):
 class ModuleList(Module):
     def __init__(self, *modules: Module):
         super().__init__()
-
         self.modules = modules
+        self._setup()
 
+    def addModules(self, *modules):
+        self.modules = self.modules + modules
+        self._setup()
+
+    def _setup(self):
         for module in self.modules:
             if not isinstance(module, Module):
                 raise TypeError(
@@ -97,8 +99,3 @@ class ModuleList(Module):
                         method()
 
                 setattr(self, name, call)
-
-
-if __name__ == "__main__":
-    modules = ModuleList()
-    print()
