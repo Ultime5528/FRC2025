@@ -3,6 +3,7 @@ import commands2
 import wpilib
 from wpilib import RobotBase
 
+from modules.autonomous import AutonomousModule
 from modules.hardware import HardwareModule
 from ultime.module import ModuleList
 
@@ -15,9 +16,11 @@ class Robot(commands2.TimedCommandRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
+        self.autonomousModule = AutonomousModule()
 
         self.modules = ModuleList(
             self.hardware,
+            self.autonomousModule,
         )
 
         self.modules.robotInit()
