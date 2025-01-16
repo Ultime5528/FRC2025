@@ -220,12 +220,12 @@ class Drivetrain(Subsystem):
 
         self.swerve_estimator.update(
             self.getPose().rotation(),
-            (
+            [
                 self.swerve_module_fl.getPosition(),
                 self.swerve_module_fr.getPosition(),
                 self.swerve_module_bl.getPosition(),
                 self.swerve_module_br.getPosition(),
-            ),
+            ],
         )
 
         module_states = (

@@ -1,8 +1,9 @@
 from rev import SparkMax
+from rev import SparkMaxSim
 from wpilib.simulation import SimDeviceSim
 
 
-class SparkMaxSim:
+class USparkMaxSim:
     def __init__(self, spark_max: SparkMax):
         self.sim_device = SimDeviceSim(f"SPARK MAX [{spark_max.getDeviceId()}]")
         self._voltage = self.sim_device.getDouble("Analog Voltage")

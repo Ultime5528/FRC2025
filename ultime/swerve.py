@@ -1,6 +1,7 @@
 import math
 
 from rev import SparkMax, SparkBaseConfig, SparkBase, ClosedLoopConfig, SparkLowLevel
+from rev import SparkMaxSim
 from wpilib import RobotBase, RobotController
 from wpilib.simulation import FlywheelSim
 from wpimath.geometry import Rotation2d
@@ -9,7 +10,7 @@ from wpimath.system.plant import DCMotor, LinearSystemId
 
 from subsystems import drivetrain
 from ultime.autoproperty import autoproperty
-from ultime.sparkmaxsim import SparkMaxSim
+from ultime.usparkmaxsim import USparkMaxSim
 from ultime.sparkmaxutils import waitForCAN
 
 # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
@@ -138,8 +139,8 @@ class SwerveModule:
 
         if RobotBase.isSimulation():
             # Simulation things
-            self.sim_drive_encoder = SparkMaxSim(self._drive_motor)
-            self.sim_turn_encoder = SparkMaxSim(self._turning_motor)
+            self.sim_drive_encoder = USparkMaxSim(self._drive_motor)
+            self.sim_turn_encoder = USparkMaxSim(self._turning_motor)
 
             self.sim_turn_encoder_distance: float = 0.0
             self.sim_drive_encoder_distance: float = 0.0
@@ -148,18 +149,21 @@ class SwerveModule:
             # Magical values for sim pulled from :
             # https://github.com/4201VitruvianBots/2021SwerveSim/blob/main/Swerve2021/src/main/java/frc/robot/subsystems/SwerveModule.java
             turn_motor_gear_ratio = 12.8  # //12 to 1
-            self.sim_turn_motor = SparkMaxSim(self._turning_motor)
-            self.sim_drive_motor = SparkMaxSim(self._drive_motor)
-            #self.sim_turn_motor = FlywheelSim(
-            #    LinearSystemId.identifyVelocitySystemMeters(0.16, 0.0348),
-            #    DCMotor.NEO550(1),
-            #    [turn_motor_gear_ratio],
-            #)
-            #self.sim_drive_motor = FlywheelSim(
-            #    LinearSystemId.identifyVelocitySystemMeters(3, 1.24),
-            #    DCMotor.NEO550(1),
-            #    [drive_motor_gear_ratio],
-            #)
+
+            # self.sim_turn_motor = FlywheelSim(
+            #     LinearSystemId.identifyVelocitySystemMeters(0.16, 0.0348),
+            #     DCMotor.NEO550(1),
+            #     [turn_motor_gear_ratio],
+            #
+            self.maxGearbox = DCMotor.NEO(self._turning_motor.getDeviceId())
+            self.sim_turn_motor = SparkMaxSim(self._turning_motor, self.maxGearbox)
+            # self.sim_drive_motor = FlywheelSim(
+            #     LinearSystemId.identifyVelocitySystemMeters(3, 1.24),
+            #     DCMotor.NEO550(1),
+            #     [drive_motor_gear_ratio],
+            # )
+            self.maxGearbox2 = DCMotor.NEO(self._drive_motor.getDeviceId())
+            self.sim_drive_motor = SparkMaxSim(self._drive_motor, self.maxGearbox2)
 
     def getVelocity(self) -> float:
         return self._drive_encoder.getVelocity()
@@ -224,22 +228,12 @@ class SwerveModule:
     def simulationUpdate(self, period: float):
         module_max_angular_acceleration = 2 * math.pi  # radians per second squared
 
-        # self.sim_turn_motor.setInputVoltage(
+        # self.sim_turn_motor.setBusVoltage(
         #     self.sim_turn_encoder.getVelocity()
         #     / module_max_angular_acceleration
         #     * RobotController.getBatteryVoltage()
         # )
-        self.sim_turn_motor.setVoltage(
-            self.sim_turn_encoder.getVelocity()
-            / module_max_angular_acceleration
-            * RobotController.getBatteryVoltage()
-        )
-
-        self.sim_drive_motor.setVoltage(self.sim_drive_encoder.getVelocity()
-            / self.max_speed
-            * RobotController.getBatteryVoltage())
-
-        # self.sim_drive_motor.setInputVoltage(
+        # self.sim_drive_motor.setBusVoltage(
         #     self.sim_drive_encoder.getVelocity()
         #     / self.max_speed
         #     * RobotController.getBatteryVoltage()
@@ -260,6 +254,3 @@ class SwerveModule:
         )
         self.sim_drive_encoder.setPosition(self.sim_drive_encoder_distance)
         self.sim_drive_encoder.setVelocity(self.sim_drive_motor.getVelocity())
-        
-        # self.sim_drive_motor.update(period)
-        # self.sim_turn_motor.update(period)
