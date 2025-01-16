@@ -6,10 +6,11 @@
 |--------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | commands/\_\_init\_\_.py         |        0 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py          |        0 |        0 |        0 |        0 |    100% |           |
+| modules/control.py               |        6 |        0 |        0 |        0 |    100% |           |
 | modules/hardware.py              |        8 |        0 |        0 |        0 |    100% |           |
 | ports.py                         |       17 |       17 |        0 |        0 |      0% |      1-35 |
 | properties.py                    |       93 |       93 |       16 |        0 |      0% |     1-179 |
-| robot.py                         |       45 |        3 |        4 |        2 |     90% |25->exit, 31->exit, 62, 65, 68 |
+| robot.py                         |       47 |        3 |        4 |        2 |     90% |25->exit, 31->exit, 62, 65, 68 |
 | subsystems/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py         |        9 |        1 |        0 |        0 |     89% |        14 |
 | tests/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
@@ -34,7 +35,7 @@
 | ultime/tests/test\_switch.py     |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py            |       17 |        4 |        6 |        2 |     74% |15, 21-22, 24 |
 | ultime/trapezoidalmotion.py      |      104 |      104 |       42 |        0 |      0% |     1-203 |
-|                        **TOTAL** |  **912** |  **608** |  **242** |   **16** | **32%** |           |
+|                        **TOTAL** |  **920** |  **608** |  **242** |   **16** | **33%** |           |
 
 
 ## Setup coverage badge
