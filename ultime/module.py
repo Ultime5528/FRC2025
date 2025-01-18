@@ -62,7 +62,9 @@ def createWrappedFunction(wrapped_func: callable, methods: list[callable]) -> ca
     def call():
         for method in methods:
             method()
+
     return call
+
 
 class ModuleList(Module):
     def __init__(self, *modules: Module):

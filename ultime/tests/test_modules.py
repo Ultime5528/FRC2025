@@ -13,6 +13,7 @@ class ModuleA(Module):
     def autonomousInit(self) -> None:
         self.called_autonomous_init += 1
 
+
 class ModuleB(Module):
     def __init__(self):
         super().__init__()
