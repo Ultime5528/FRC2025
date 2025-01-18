@@ -1,5 +1,5 @@
-from ultime.module import Module
 from modules.hardware import HardwareModule
+from ultime.module import Module
 
 
 class ControlModule(Module):
