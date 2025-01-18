@@ -3,6 +3,7 @@ from ntcore import NetworkTableInstance
 from wpilib import DriverStation, Timer, RobotBase
 
 from properties import loop_delay, entry_name_check_time, entry_name_check_mirror
+from robot import Robot
 from ultime.module import Module
 from ultime.autoproperty import mode, PropertyMode
 
@@ -15,13 +16,22 @@ class PropertySaveCheckerModule(Module):
         self.entry_check_mirror = inst.getEntry(entry_name_check_mirror)
         self.timer_check = Timer()
 
+        self._enabled = False
+
+        if RobotBase.isSimulation():
+            print("Disabling PropertySaveCheckerModule : Robot is in simulation")
+        elif mode == PropertyMode.Local:
+            print("Disabling PropertySaveCheckerModule : PropertyMode is Local")
+        else:
+            print(f"Enabling PropertySaveCheckerModule : {mode}")
+            self._enabled = True
+
+
     def robotPeriodic(self) -> None:
-        # TODO change condition check in constructor to log condition
-        # i.e. disabling property save check, simulation currently
-        # or PropertyMode is Local
-        if not RobotBase.isSimulation() and mode != PropertyMode.Local:
+        if self._enabled:
             # TODO add wpilib.Alert in module (add Modules to Diagnostics ?)
             if DriverStation.isFMSAttached():
+                self.timer_check.start()
                 if self.timer_check.advanceIfElapsed(10.0):
                     wpilib.reportWarning(
                         f"FMS is connected, but PropertyMode is not Local: {mode}"

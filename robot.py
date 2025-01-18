@@ -5,7 +5,6 @@ from modules.control import ControlModule
 from modules.hardware import HardwareModule
 from ultime.modulerobot import ModuleRobot
 from modules.propertysavechecker import PropertySaveCheckerModule
-from ultime.module import ModuleList
 
 
 class Robot(ModuleRobot):
