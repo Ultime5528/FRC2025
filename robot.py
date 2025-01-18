@@ -3,6 +3,7 @@ import commands2
 import wpilib
 from wpilib import RobotBase
 
+from modules.control import ControlModule
 from modules.hardware import HardwareModule
 from ultime.module import ModuleList
 from ultime.modulerobot import ModuleRobot
@@ -16,5 +17,7 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-
-        self.modules.addModules(self.hardware)
+        self.control = ControlModule(self.hardware)
+        
+        self.modules.addModules(self.hardware, self.control)
+  
