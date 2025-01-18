@@ -3,7 +3,6 @@ from ntcore import NetworkTableInstance
 from wpilib import DriverStation, Timer, RobotBase
 
 from properties import loop_delay, entry_name_check_time, entry_name_check_mirror
-from robot import Robot
 from ultime.module import Module
 from ultime.autoproperty import mode, PropertyMode
 
@@ -20,7 +19,7 @@ class PropertySaveCheckerModule(Module):
 
         if RobotBase.isSimulation():
             print("Disabling PropertySaveCheckerModule : Robot is in simulation")
-        elif mode == PropertyMode.Local:
+        if mode == PropertyMode.Local:
             print("Disabling PropertySaveCheckerModule : PropertyMode is Local")
         else:
             print(f"Enabling PropertySaveCheckerModule : {mode}")
