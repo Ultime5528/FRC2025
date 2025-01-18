@@ -19,7 +19,7 @@ class PropertySaveCheckerModule(Module):
 
         if RobotBase.isSimulation():
             print("Disabling PropertySaveCheckerModule : Robot is in simulation")
-        if mode == PropertyMode.Local:
+        elif mode == PropertyMode.Local:
             print("Disabling PropertySaveCheckerModule : PropertyMode is Local")
         else:
             print(f"Enabling PropertySaveCheckerModule : {mode}")
