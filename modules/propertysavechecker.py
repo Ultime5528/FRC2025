@@ -15,7 +15,6 @@ class PropertySaveCheckerModule(Module):
         self.entry_check_mirror = inst.getEntry(entry_name_check_mirror)
         self.timer_check = Timer()
 
-
     def robotPeriodic(self) -> None:
         # TODO change condition check in constructor to log condition
         # i.e. disabling property save check, simulation currently
