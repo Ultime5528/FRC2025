@@ -1,0 +1,44 @@
+from ultime.module import Module, ModuleList
+
+
+class ModuleA(Module):
+    def __init__(self):
+        super().__init__()
+        self.called_robot_periodic = 0
+        self.called_autonomous_init = 0
+
+    def robotPeriodic(self) -> None:
+        self.called_robot_periodic += 1
+
+    def autonomousInit(self) -> None:
+        self.called_autonomous_init += 1
+
+class ModuleB(Module):
+    def __init__(self):
+        super().__init__()
+        self.called_robot_periodic = 0
+        self.called_autonomous_exit = 0
+
+    def robotPeriodic(self) -> None:
+        self.called_robot_periodic += 1
+
+    def autonomousExit(self) -> None:
+        self.called_autonomous_exit += 1
+
+
+def test_module_list():
+    module_a = ModuleA()
+    module_b = ModuleB()
+
+    modules = ModuleList(module_a)
+    modules.addModules(module_b)
+
+    modules.robotPeriodic()
+    modules.autonomousInit()
+    modules.autonomousExit()
+    modules.robotPeriodic()
+
+    assert module_a.called_robot_periodic == 2
+    assert module_a.called_autonomous_init == 1
+    assert module_b.called_robot_periodic == 2
+    assert module_b.called_autonomous_exit == 1
