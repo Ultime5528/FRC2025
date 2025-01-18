@@ -1,8 +1,7 @@
 import commands2
-import wpilib
 from wpilib import RobotBase
 
-from ultime.module import ModuleList
+from ultime.module import ModuleList, Module
 
 
 class ModuleRobot(commands2.TimedCommandRobot):
@@ -12,6 +11,9 @@ class ModuleRobot(commands2.TimedCommandRobot):
 
         if RobotBase.isSimulation():
             self.modules.simulationInit()
+
+    def addModules(self, *modules: Module):
+        self.modules.addModules(*modules)
 
     def robotPeriodic(self):
         self.modules.robotPeriodic()

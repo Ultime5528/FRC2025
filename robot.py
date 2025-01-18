@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-import commands2
 import wpilib
-from wpilib import RobotBase
 
 from modules.control import ControlModule
 from modules.hardware import HardwareModule
-from ultime.module import ModuleList
 from ultime.modulerobot import ModuleRobot
 
 
@@ -19,4 +16,4 @@ class Robot(ModuleRobot):
         self.hardware = HardwareModule()
         self.control = ControlModule(self.hardware)
 
-        self.modules.addModules(self.hardware, self.control)
+        self.addModules(self.hardware, self.control)
