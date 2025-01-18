@@ -18,6 +18,5 @@ class Robot(ModuleRobot):
 
         self.hardware = HardwareModule()
         self.control = ControlModule(self.hardware)
-        
+
         self.modules.addModules(self.hardware, self.control)
-  
