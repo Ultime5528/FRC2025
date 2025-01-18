@@ -3,8 +3,8 @@ import wpilib
 
 from modules.control import ControlModule
 from modules.hardware import HardwareModule
-from ultime.modulerobot import ModuleRobot
 from modules.propertysavechecker import PropertySaveCheckerModule
+from ultime.modulerobot import ModuleRobot
 
 
 class Robot(ModuleRobot):

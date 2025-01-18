@@ -3,8 +3,8 @@ from ntcore import NetworkTableInstance
 from wpilib import DriverStation, Timer, RobotBase
 
 from properties import loop_delay, entry_name_check_time, entry_name_check_mirror
-from ultime.module import Module
 from ultime.autoproperty import mode, PropertyMode
+from ultime.module import Module
 
 
 class PropertySaveCheckerModule(Module):
@@ -24,7 +24,6 @@ class PropertySaveCheckerModule(Module):
         else:
             print(f"Enabling PropertySaveCheckerModule : {mode}")
             self._enabled = True
-
 
     def robotPeriodic(self) -> None:
         if self._enabled:
