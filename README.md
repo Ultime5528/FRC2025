@@ -8,6 +8,7 @@
 * Deployment : `python -m robotpy deploy`
 * Run tests : `python -m robotpy test -- --exitfirst`
 * Run tests with coverage : `python -m robotpy coverage test -- --exitfirst`
+* Create coverage HTML report : `coverage html`
 * Sync dependencies : `python -m robotpy sync`
 * Format code with black `python -m black .`
 * Save autoproperties : `python properties.py saveonce`
