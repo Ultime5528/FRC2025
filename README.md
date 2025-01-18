@@ -25,18 +25,19 @@
 | ultime/gyro.py                   |      122 |      122 |       10 |        0 |      0% |     1-181 |
 | ultime/immutable.py              |        6 |        6 |        0 |        0 |      0% |       1-8 |
 | ultime/linearinterpolator.py     |       25 |       25 |        6 |        0 |      0% |      1-36 |
-| ultime/module.py                 |       66 |        6 |       18 |        1 |     89% |48, 51, 54, 73, 98-99 |
+| ultime/module.py                 |       70 |        4 |       18 |        1 |     94% |48, 51, 54, 82 |
 | ultime/modulerobot.py            |       41 |        3 |        4 |        2 |     89% |12->exit, 21->exit, 52, 55, 58 |
 | ultime/subsystem.py              |       23 |       17 |        4 |        0 |     22% | 10, 13-34 |
 | ultime/switch.py                 |       66 |        8 |       42 |        7 |     86% |29->exit, 41, 53, 57, 67, 71, 81, 84, 87 |
-| ultime/tests/\_\_init\_\_.py     |        5 |        0 |        0 |        0 |    100% |           |
+| ultime/tests/\_\_init\_\_.py     |        6 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_commands.py   |       75 |       46 |       54 |        3 |     25% |21-27, 32, 37-40, 47-107 |
+| ultime/tests/test\_modules.py    |       32 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_properties.py |        3 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_subsystems.py |       17 |        0 |        8 |        0 |    100% |           |
 | ultime/tests/test\_switch.py     |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py            |       17 |        4 |        6 |        2 |     74% |15, 21-22, 24 |
 | ultime/trapezoidalmotion.py      |      104 |      104 |       42 |        0 |      0% |     1-203 |
-|                        **TOTAL** |  **926** |  **606** |  **240** |   **15** | **33%** |           |
+|                        **TOTAL** |  **963** |  **604** |  **240** |   **15** | **36%** |           |
 
 
 ## Setup coverage badge
