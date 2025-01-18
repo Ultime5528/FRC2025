@@ -17,14 +17,13 @@ class Robot(commands2.TimedCommandRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-
-        self.propertysavechecker = PropertySaveCheckerModule()
         self.control = ControlModule(self.hardware)
+        self.property_save_checker = PropertySaveCheckerModule()
 
         self.modules = ModuleList(
             self.hardware,
-            self.propertysavechecker,
             self.control,
+            self.property_save_checker,
         )
 
         self.modules.robotInit()
