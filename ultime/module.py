@@ -57,6 +57,15 @@ class Module(Sendable):
         pass
 
 
+def createWrappedFunction(wrapped_func: callable, methods: list[callable]) -> callable:
+    @wraps(wrapped_func)
+    def call():
+        for method in methods:
+            method()
+
+    return call
+
+
 class ModuleList(Module):
     def __init__(self, *modules: Module):
         super().__init__()
@@ -92,10 +101,6 @@ class ModuleList(Module):
                     methods.append(module_method)
 
             if len(methods) > 0:
-
-                @wraps(getattr(self, name))
-                def call():
-                    for method in methods:
-                        method()
-
-                setattr(self, name, call)
+                original_func = getattr(self, name)
+                new_func = createWrappedFunction(original_func, methods)
+                setattr(self, name, new_func)
