@@ -78,13 +78,13 @@ class Alert:
         if self._text == text:
             return
 
-        old_text = self._text
         self._text = text
 
         if self._active:
             timestamp = self._published_alert.timestamp
             self._active_alerts.remove(self._published_alert)
-            bisect.insort(self._active_alerts, PublishedAlert(timestamp, text))
+            self._published_alert = PublishedAlert(timestamp, text)
+            bisect.insort(self._active_alerts, self._published_alert)
 
     def getText(self) -> str:
         return self._text
