@@ -3,6 +3,10 @@ import pkgutil
 from types import ModuleType
 from typing import Dict
 
+import pytest
+from pyfrc.test_support.controller import TestController
+from wpilib.simulation import DriverStationSim, stepTiming
+
 
 def import_submodules(package, recursive=True) -> Dict[str, ModuleType]:
     """Import all submodules of a module, recursively, including subpackages
@@ -23,3 +27,40 @@ def import_submodules(package, recursive=True) -> Dict[str, ModuleType]:
         if recursive and is_pkg:
             results.update(import_submodules(full_name))
     return results
+
+
+class RobotTestController:
+    def __init__(self, control: TestController):
+        self._control = control
+
+    def disableRobot(self):
+        DriverStationSim.setDsAttached(True)
+        DriverStationSim.setAutonomous(False)
+        DriverStationSim.setEnabled(False)
+
+    def startTeleop(self):
+        DriverStationSim.setDsAttached(True)
+        DriverStationSim.setAutonomous(False)
+        DriverStationSim.setEnabled(True)
+
+    def startAutonomous(self):
+        DriverStationSim.setDsAttached(True)
+        DriverStationSim.setAutonomous(True)
+        DriverStationSim.setEnabled(True)
+
+    def wait(self, seconds: float):
+        assert seconds > 0
+
+        time = 0.0
+        delta = 0.02
+
+        while time < seconds:
+            DriverStationSim.notifyNewData()
+            stepTiming(delta)
+            time += delta
+
+
+@pytest.fixture(scope="function")
+def robot_controller(control: TestController):
+    with control.run_robot():
+        yield RobotTestController(control)
