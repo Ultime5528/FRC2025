@@ -1,13 +1,11 @@
 import commands2
-import wpilib
+from ultime.alert import AlertType, Alert
 from wpiutil import SendableBuilder
 
 
 class Subsystem(commands2.Subsystem):
-    def createAlert(
-        self, text: str, alert_type: wpilib.Alert.AlertType
-    ) -> wpilib.Alert:
-        return wpilib.Alert(self.getName() + "/Alerts", text, alert_type)
+    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
+        return Alert(text, alert_type, self.getName() + "/Alerts")
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
