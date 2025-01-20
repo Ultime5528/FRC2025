@@ -1,12 +1,15 @@
 from ntcore import NetworkTableInstance
 
 from ultime.alert import AlertType, Alert
-
 from ultime.tests import RobotTestController
 
 
 def test_alert(robot_controller: RobotTestController):
-    topic = NetworkTableInstance.getDefault().getStringArrayTopic("/SmartDashboard/Alerts/errors").subscribe(["default"])
+    topic = (
+        NetworkTableInstance.getDefault()
+        .getStringArrayTopic("/SmartDashboard/Alerts/errors")
+        .subscribe(["default"])
+    )
     alert = Alert("Test", AlertType.Error)
 
     robot_controller.wait(0.1)

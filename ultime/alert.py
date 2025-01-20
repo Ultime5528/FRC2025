@@ -43,9 +43,15 @@ class AlertGroup(Sendable):
             pass
 
         builder.setSmartDashboardType("Alerts")
-        builder.addStringArrayProperty("errors", lambda: self.getStrings(AlertType.Error), noop)
-        builder.addStringArrayProperty("warnings", lambda: self.getStrings(AlertType.Warning), noop)
-        builder.addStringArrayProperty("infos", lambda: self.getStrings(AlertType.Info), noop)
+        builder.addStringArrayProperty(
+            "errors", lambda: self.getStrings(AlertType.Error), noop
+        )
+        builder.addStringArrayProperty(
+            "warnings", lambda: self.getStrings(AlertType.Warning), noop
+        )
+        builder.addStringArrayProperty(
+            "infos", lambda: self.getStrings(AlertType.Info), noop
+        )
 
 
 class Alert:
@@ -56,7 +62,8 @@ class Alert:
         self._alert_type = alert_type
         self._active = False
         self._published_alert = None
-        self._group = self._get_or_create_group(group)  # Important to keep ref to group to prevent it from being gc
+        # Important to keep ref to group to prevent it from being gc
+        self._group = self._get_or_create_group(group)
         self._active_alerts = self._group.getActiveAlertStorage(alert_type)
 
     def set(self, active: bool) -> None:
@@ -64,7 +71,9 @@ class Alert:
             return
 
         if active:
-            self._published_alert = PublishedAlert(RobotController.getTime(), self._text)
+            self._published_alert = PublishedAlert(
+                RobotController.getTime(), self._text
+            )
             bisect.insort(self._active_alerts, self._published_alert)
         else:
             self._active_alerts.remove(self._published_alert)
