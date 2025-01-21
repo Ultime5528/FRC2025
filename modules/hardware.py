@@ -11,4 +11,4 @@ class HardwareModule(Module):
         self.drivetrain = Drivetrain()
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.subsystems: list[Subsystem] = [self.drivetrain, self.controller]
+        self.subsystems: list[Subsystem] = [self.drivetrain]

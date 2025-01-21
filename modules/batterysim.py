@@ -1,7 +1,8 @@
+from wpilib.simulation import BatterySim
+from wpilib.simulation import RoboRioSim
+
 from modules.hardware import HardwareModule
 from ultime.module import Module
-from wpilib.simulation import RoboRioSim
-from wpilib.simulation import BatterySim
 
 
 class BatterySimModule(Module):
@@ -10,4 +11,5 @@ class BatterySimModule(Module):
         self.subsystems = hardware.subsystems
 
     def simulationPeriodic(self) -> None:
-        RoboRioSim.setVInVoltage(BatterySim.calculate())
+        amps = [subsystem.getCurrentDrawAmps() for subsystem in self.subsystems]
+        RoboRioSim.setVInVoltage(BatterySim.calculate(amps))

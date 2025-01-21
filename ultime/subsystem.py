@@ -12,8 +12,10 @@ class Subsystem(commands2.Subsystem):
         return wpilib.Alert(self.getName() + "/Alerts", text, alert_type)
 
     @abstractmethod
-    def getCurrentDrawAmps(self):
-        raise NotImplementedError(f"Subsystem {self.getName()} does not implement getCurrentDrawAmps")
+    def getCurrentDrawAmps(self) -> float:
+        raise NotImplementedError(
+            f"Subsystem {self.getName()} does not implement getCurrentDrawAmps"
+        )
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
