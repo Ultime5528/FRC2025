@@ -8,7 +8,6 @@ from ast_selector import AstSelector
 from asttokens import ASTTokens
 from ntcore import NetworkTableInstance
 
-from robot import Robot
 from ultime.autoproperty import registry
 
 loop_delay = 30.0
@@ -35,6 +34,8 @@ def clear():
     It is dangerous to run this in Robot.robotInit(): if another branch's code is ru2n on the robot where
     new autoproperties do not exist yet, they will be deleted and set values will be lost.
     """
+    from robot import Robot
+
     print("Connecting to robot...")
 
     inst = getNTInst()
