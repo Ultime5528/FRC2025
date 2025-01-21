@@ -15,6 +15,7 @@
 | subsystems/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py         |        9 |        1 |        0 |        0 |     89% |        14 |
 | tests/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
+| tests/conftest.py                |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py            |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py        |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/\_\_init\_\_.py           |        0 |        0 |        0 |        0 |    100% |           |
@@ -31,14 +32,14 @@
 | ultime/subsystem.py              |       23 |       17 |        4 |        0 |     22% | 10, 13-34 |
 | ultime/switch.py                 |       66 |        8 |       42 |        7 |     86% |29->exit, 41, 53, 57, 67, 71, 81, 84, 87 |
 | ultime/tests/\_\_init\_\_.py     |        6 |        0 |        0 |        0 |    100% |           |
-| ultime/tests/test\_commands.py   |       75 |       46 |       54 |        3 |     25% |21-27, 32, 37-40, 47-107 |
+| ultime/tests/test\_commands.py   |       74 |       46 |       54 |        3 |     24% |20-26, 31, 36-39, 46-106 |
 | ultime/tests/test\_modules.py    |       32 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_properties.py |        3 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_subsystems.py |       17 |        0 |        8 |        0 |    100% |           |
 | ultime/tests/test\_switch.py     |       33 |        0 |        0 |        0 |    100% |           |
-| ultime/tests/utils.py            |       17 |        4 |        6 |        2 |     74% |15, 21-22, 24 |
+| ultime/tests/utils.py            |       47 |       10 |        8 |        2 |     78% |19, 25-26, 28, 37-39, 47-49 |
 | ultime/trapezoidalmotion.py      |      104 |      104 |       42 |        0 |      0% |     1-203 |
-|                        **TOTAL** | **1000** |  **604** |  **256** |   **18** | **37%** |           |
+|                        **TOTAL** | **1030** |  **610** |  **258** |   **18** | **38%** |           |
 
 
 ## Setup coverage badge
