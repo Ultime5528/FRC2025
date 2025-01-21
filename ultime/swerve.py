@@ -1,9 +1,10 @@
 import math
 
+from pyfrc.physics.units import units
 from rev import SparkMax, SparkBaseConfig, SparkBase, ClosedLoopConfig, SparkLowLevel
 from rev import SparkMaxSim
 from wpilib import RobotBase, RobotController
-from wpilib.simulation import FlywheelSim
+from wpilib.simulation import FlywheelSim, RoboRioSim
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.system.plant import DCMotor, LinearSystemId
@@ -32,6 +33,10 @@ turning_encoder_velocity_conversion_factor = math.pi * 2 / 60  # radians per sec
 
 turning_encoder_position_PID_min_input = 0
 turning_encoder_position_PID_max_input = turning_encoder_position_conversion_factor
+
+
+def radians_per_second_to_rpm(rps: float):
+    return rps * 60 / 2 / math.pi
 
 
 class SwerveModule:
@@ -80,16 +85,14 @@ class SwerveModule:
         )
 
         (
-            drive_config.closedLoop.pidf(
+            drive_config.closedLoop.pid(
                 self.driving_PID_P,
                 self.driving_PID_I,
                 self.driving_PID_D,
-                self.driving_PID_feedforward,
             )
+            .velocityFF(self.driving_PID_feedforward)
             .positionWrappingEnabled(True)
-            .positionWrappingInputRange(
-                self.driving_PID_output_min, self.driving_PID_output_max
-            )
+            .outputRange(-1.0, 1.0)
         )
 
         (turn_config.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(25))
@@ -112,8 +115,9 @@ class SwerveModule:
             .setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
             .positionWrappingEnabled(True)
             .positionWrappingInputRange(
-                self.turning_PID_output_min, self.turning_PID_output_max
+                0, turning_encoder_position_conversion_factor
             )
+            .outputRange(-1.0, 1.0)
         )
 
         self._drive_motor.configure(
@@ -139,31 +143,27 @@ class SwerveModule:
 
         if RobotBase.isSimulation():
             # Simulation things
-            self.sim_drive_encoder = USparkMaxSim(self._drive_motor)
-            self.sim_turn_encoder = USparkMaxSim(self._turning_motor)
-
-            self.sim_turn_encoder_distance: float = 0.0
-            self.sim_drive_encoder_distance: float = 0.0
+            self.sim_encoder_distance_turn: float = 0.0
+            self.sim_encoder_distance_drive: float = 0.0
 
             # Flywheels allow simulation of a more physically realistic rendering of swerve module properties
             # Magical values for sim pulled from :
             # https://github.com/4201VitruvianBots/2021SwerveSim/blob/main/Swerve2021/src/main/java/frc/robot/subsystems/SwerveModule.java
             turn_motor_gear_ratio = 12.8  # //12 to 1
 
-            # self.sim_turn_motor = FlywheelSim(
-            #     LinearSystemId.identifyVelocitySystemMeters(0.16, 0.0348),
-            #     DCMotor.NEO550(1),
-            #     [turn_motor_gear_ratio],
-            #
-            self.maxGearbox = DCMotor.NEO(self._turning_motor.getDeviceId())
-            self.sim_turn_motor = SparkMaxSim(self._turning_motor, self.maxGearbox)
-            # self.sim_drive_motor = FlywheelSim(
-            #     LinearSystemId.identifyVelocitySystemMeters(3, 1.24),
-            #     DCMotor.NEO550(1),
-            #     [drive_motor_gear_ratio],
-            # )
-            self.maxGearbox2 = DCMotor.NEO(self._drive_motor.getDeviceId())
-            self.sim_drive_motor = SparkMaxSim(self._drive_motor, self.maxGearbox2)
+            self.sim_wheel_turn = FlywheelSim(
+                LinearSystemId.identifyVelocitySystemMeters(0.1, 0.02),
+                DCMotor.NEO550(1),
+                [0.0],
+            )
+            self.sim_motor_turn = SparkMaxSim(self._turning_motor, DCMotor.NEO550(1))
+
+            self.sim_wheel_drive = FlywheelSim(
+                LinearSystemId.identifyVelocitySystemMeters(2, 1.0),
+                DCMotor.NEO(1),
+                [0.0],
+            )
+            self.sim_motor_drive = SparkMaxSim(self._drive_motor, DCMotor.NEO(1))
 
     def getVelocity(self) -> float:
         return self._drive_encoder.getVelocity()
@@ -180,7 +180,7 @@ class SwerveModule:
             Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
         )
 
-    def getModuleEncoderPosition(self) -> float:
+    def  getModuleEncoderPosition(self) -> float:
         return self._drive_encoder.getPosition()
 
     def getPosition(self) -> SwerveModulePosition:
@@ -226,31 +226,36 @@ class SwerveModule:
         self._turning_motor.setVoltage(0.0)
 
     def simulationUpdate(self, period: float):
-        module_max_angular_acceleration = 2 * math.pi  # radians per second squared
+        # module_max_angular_acceleration = 2 * math.pi  # radians per second squared
 
-        # self.sim_turn_motor.setBusVoltage(
-        #     self.sim_turn_encoder.getVelocity()
-        #     / module_max_angular_acceleration
-        #     * RobotController.getBatteryVoltage()
-        # )
-        # self.sim_drive_motor.setBusVoltage(
-        #     self.sim_drive_encoder.getVelocity()
-        #     / self.max_speed
-        #     * RobotController.getBatteryVoltage()
-        # )
+        # Drive
 
-        # self.sim_drive_motor.update(period)
-        # self.sim_turn_motor.update(period)
-
-        self.sim_turn_encoder_distance += (
-            self.sim_turn_motor.getVelocity() * period
+        self.sim_wheel_drive.setInputVoltage(
+            self.sim_motor_drive.getAppliedOutput()
+            * RoboRioSim.getVInVoltage()
         )
 
-        self.sim_turn_encoder.setPosition(self.sim_turn_encoder_distance)
-        self.sim_turn_encoder.setVelocity(self.sim_turn_motor.getVelocity())
+        self.sim_wheel_drive.update(period)
 
-        self.sim_drive_encoder_distance += (
-            self.sim_drive_motor.getVelocity() * period
+        self.sim_motor_drive.iterate(
+            radians_per_second_to_rpm(self.sim_wheel_drive.getAngularVelocity()),
+            RoboRioSim.getVInVoltage(),
+            period,
         )
-        self.sim_drive_encoder.setPosition(self.sim_drive_encoder_distance)
-        self.sim_drive_encoder.setVelocity(self.sim_drive_motor.getVelocity())
+
+        # Turn
+
+        self.sim_wheel_turn.setInputVoltage(
+            self.sim_motor_turn.getAppliedOutput()
+            * RoboRioSim.getVInVoltage()
+        )
+
+        self.sim_wheel_turn.update(period)
+
+        self.sim_motor_turn.iterate(
+            radians_per_second_to_rpm(self.sim_wheel_turn.getAngularVelocity()),
+            RoboRioSim.getVInVoltage(),
+            period,
+        )
+
+

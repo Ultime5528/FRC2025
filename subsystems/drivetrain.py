@@ -202,13 +202,13 @@ class Drivetrain(Subsystem):
         wpilib.SmartDashboard.putNumberArray(
             "SwerveStates",
             [
-                self.swerve_module_fl.getState().angle.radians(),
+                self.swerve_module_fl.getState().angle.degrees(),
                 self.swerve_module_fl.getState().speed,
-                self.swerve_module_fr.getState().angle.radians(),
+                self.swerve_module_fr.getState().angle.degrees(),
                 self.swerve_module_fr.getState().speed,
-                self.swerve_module_bl.getState().angle.radians(),
+                self.swerve_module_bl.getState().angle.degrees(),
                 self.swerve_module_bl.getState().speed,
-                self.swerve_module_br.getState().angle.radians(),
+                self.swerve_module_br.getState().angle.degrees(),
                 self.swerve_module_br.getState().speed,
             ],
         )
@@ -218,28 +218,17 @@ class Drivetrain(Subsystem):
         self.swerve_module_bl.simulationUpdate(self.period_seconds)
         self.swerve_module_br.simulationUpdate(self.period_seconds)
 
-        self.swerve_estimator.update(
-            self.getPose().rotation(),
-            [
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ],
-        )
-
         module_states = (
             self.swerve_module_fl.getState(),
             self.swerve_module_fr.getState(),
             self.swerve_module_bl.getState(),
             self.swerve_module_br.getState(),
         )
+
         chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(module_states)
         chassis_rotation_speed = chassis_speed.omega
         self.sim_yaw += chassis_rotation_speed * self.period_seconds
         self._gyro.setSimAngle(math.degrees(self.sim_yaw))
-
-        self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
 
     def resetToPose(self, pose: Pose2d):
         self.swerve_estimator.resetPosition(
