@@ -4,11 +4,10 @@ from textwrap import dedent
 from typing import List, Type
 from unittest.mock import patch
 
-import pyfrc.test_support.controller
 from commands2 import Command, Subsystem, CommandScheduler
 
 from robot import Robot
-from ultime.tests.utils import import_submodules
+from ultime.tests.utils import import_submodules, RobotTestController
 
 
 def get_commands() -> List[Type[Command]]:
@@ -109,28 +108,27 @@ def test_requirements():
             ), f"{obj.__name__} does not require {list(subsystem_args.values())} (consider using ignore_requirements)"
 
 
-def test_command_scheduler_enabled(
-    control: "pyfrc.test_support.controller.TestController", robot: Robot
-):
-    with control.run_robot():
-        control.step_timing(seconds=1.0, autonomous=False, enabled=True)
-        assert (
-            not CommandScheduler.getInstance()._disabled
-        ), "CommandScheduler should not be disabled"
+def test_command_scheduler_enabled(robot_controller: RobotTestController, robot: Robot):
+    robot_controller.startTeleop()
+    robot_controller.wait(1.0)
 
-        """
-        La méthode 'run' du CommandScheduler est passé directement par référence 
-        au TimedRobot, donc on ne peut pas la mocker.
+    assert (
+        not CommandScheduler.getInstance()._disabled
+    ), "CommandScheduler should not be disabled"
 
-        On mock plutôt la fonction periodic d'un subsystem, qui doit uniquement
-        être appelé par le scheduler.
-        """
+    """
+    La méthode 'run' du CommandScheduler est passé directement par référence 
+    au TimedRobot, donc on ne peut pas la mocker.
 
-        with patch.object(
-            robot.hardware.drivetrain,
-            "periodic",
-            wraps=robot.hardware.drivetrain.periodic,
-        ) as mock:
-            assert mock.call_count == 0
-            control.step_timing(seconds=1.0, autonomous=False, enabled=True)
-            assert mock.call_count >= 50
+    On mock plutôt la fonction periodic d'un subsystem, qui doit uniquement
+    être appelé par le scheduler.
+    """
+
+    with patch.object(
+        robot.hardware.drivetrain,
+        "periodic",
+        wraps=robot.hardware.drivetrain.periodic,
+    ) as mock:
+        assert mock.call_count == 0
+        robot_controller.wait(1.0)
+        assert mock.call_count >= 50
