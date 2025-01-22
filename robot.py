@@ -2,8 +2,10 @@
 import wpilib
 
 from modules.control import ControlModule
+from modules.dashboard import DashboardModule
 from modules.hardware import HardwareModule
 from modules.propertysavechecker import PropertySaveCheckerModule
+from ultime.module import Module
 from ultime.modulerobot import ModuleRobot
 
 
@@ -17,6 +19,7 @@ class Robot(ModuleRobot):
         self.hardware = HardwareModule()
         self.control = ControlModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
+        self.dashboard = DashboardModule(self.hardware)
 
         self.addModules(
             self.hardware,
