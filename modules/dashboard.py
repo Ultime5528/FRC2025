@@ -5,15 +5,16 @@ from modules.hardware import HardwareModule
 from ultime.module import Module
 from ultime.subsystem import Subsystem
 
-"""
-Organiser par sous-système
-"""
-
 
 class DashboardModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
-        putSubsystemOnDashboard(hardware.drivetrain)
+
+        for subsystem in hardware.subsystems:
+            putSubsystemOnDashboard(subsystem)
+
+        # Classer par subsystem
+        # putCommandOnDashboard("Drivetrain", Command(...))
 
 
 def putCommandOnDashboard(
