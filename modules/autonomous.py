@@ -1,4 +1,3 @@
-from sys import modules
 from typing import Optional
 
 import commands2
