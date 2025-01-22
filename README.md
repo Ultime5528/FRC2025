@@ -6,12 +6,13 @@
 |--------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | commands/\_\_init\_\_.py         |        0 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py          |        0 |        0 |        0 |        0 |    100% |           |
+| modules/autonomous.py            |       18 |        2 |        4 |        2 |     82% |    30, 34 |
 | modules/control.py               |        6 |        0 |        0 |        0 |    100% |           |
 | modules/hardware.py              |        8 |        0 |        0 |        0 |    100% |           |
 | modules/propertysavechecker.py   |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | ports.py                         |       17 |       17 |        0 |        0 |      0% |      1-35 |
 | properties.py                    |       93 |       75 |       16 |        1 |     17% |19-27, 37-59, 63-79, 83-96, 100-142, 146-180 |
-| robot.py                         |       14 |        0 |        0 |        0 |    100% |           |
+| robot.py                         |       16 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py         |        9 |        1 |        0 |        0 |     89% |        14 |
 | tests/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
@@ -27,7 +28,7 @@
 | ultime/gyro.py                   |      122 |      122 |       10 |        0 |      0% |     1-181 |
 | ultime/immutable.py              |        6 |        6 |        0 |        0 |      0% |       1-8 |
 | ultime/linearinterpolator.py     |       25 |       25 |        6 |        0 |      0% |      1-36 |
-| ultime/module.py                 |       70 |        5 |       18 |        1 |     93% |12, 48, 51, 54, 82 |
+| ultime/module.py                 |       70 |        7 |       18 |        1 |     91% |12, 30, 36, 48, 51, 54, 82 |
 | ultime/modulerobot.py            |       41 |        3 |        4 |        2 |     89% |12->exit, 21->exit, 52, 55, 58 |
 | ultime/subsystem.py              |       23 |       17 |        4 |        0 |     22% | 10, 13-34 |
 | ultime/switch.py                 |       66 |        8 |       42 |        7 |     86% |29->exit, 41, 53, 57, 67, 71, 81, 84, 87 |
@@ -39,7 +40,7 @@
 | ultime/tests/test\_switch.py     |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py            |       47 |       10 |        8 |        2 |     78% |19, 25-26, 28, 37-39, 47-49 |
 | ultime/trapezoidalmotion.py      |      104 |      104 |       42 |        0 |      0% |     1-203 |
-|                        **TOTAL** | **1030** |  **610** |  **258** |   **18** | **38%** |           |
+|                        **TOTAL** | **1050** |  **614** |  **262** |   **20** | **39%** |           |
 
 
 ## Setup coverage badge
