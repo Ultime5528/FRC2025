@@ -1,7 +1,7 @@
 from ntcore import NetworkTableInstance
 
 from ultime.alert import AlertType, Alert
-from ultime.tests import RobotTestController
+from ultime.tests.utils import RobotTestController
 
 
 def test_alert(robot_controller: RobotTestController):
