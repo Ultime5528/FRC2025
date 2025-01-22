@@ -16,13 +16,13 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-        self.autonomousModule = AutonomousModule()
+        self.autonomous = AutonomousModule()
         self.control = ControlModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
 
         self.addModules(
             self.hardware,
+            self.autonomous,
             self.control,
             self.property_save_checker,
-            self.autonomousModule,
         )
