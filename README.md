@@ -22,6 +22,7 @@
 | tests/test\_drivetrain.py        |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/\_\_init\_\_.py           |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py       |       77 |       77 |        2 |        0 |      0% |     1-122 |
+| ultime/alert.py                  |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
 | ultime/autoproperty.py           |       58 |       35 |       20 |        0 |     29% |33-35, 39, 50-102 |
 | ultime/axistrigger.py            |        8 |        8 |        2 |        0 |      0% |      1-16 |
 | ultime/command.py                |        7 |        7 |        0 |        0 |      0% |      1-11 |
@@ -31,9 +32,10 @@
 | ultime/linearinterpolator.py     |       25 |       25 |        6 |        0 |      0% |      1-36 |
 | ultime/module.py                 |       70 |        8 |       18 |        1 |     90% |12, 18, 30, 36, 48, 51, 54, 82 |
 | ultime/modulerobot.py            |       41 |        3 |        4 |        2 |     89% |12->exit, 21->exit, 52, 55, 58 |
-| ultime/subsystem.py              |       27 |       18 |        4 |        0 |     29% |12, 16, 21-42 |
+| ultime/subsystem.py              |       27 |       18 |        4 |        0 |     29% |11, 15, 20-41 |
 | ultime/switch.py                 |       66 |        8 |       42 |        7 |     86% |29->exit, 41, 53, 57, 67, 71, 81, 84, 87 |
-| ultime/tests/\_\_init\_\_.py     |        6 |        0 |        0 |        0 |    100% |           |
+| ultime/tests/\_\_init\_\_.py     |        7 |        0 |        0 |        0 |    100% |           |
+| ultime/tests/test\_alert.py      |       41 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_commands.py   |       74 |       46 |       54 |        3 |     24% |20-26, 31, 36-39, 46-106 |
 | ultime/tests/test\_modules.py    |       32 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_properties.py |        3 |        0 |        0 |        0 |    100% |           |
@@ -41,7 +43,7 @@
 | ultime/tests/test\_switch.py     |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py            |       47 |       10 |        8 |        2 |     78% |19, 25-26, 28, 37-39, 47-49 |
 | ultime/trapezoidalmotion.py      |      104 |      104 |       42 |        0 |      0% |     1-203 |
-|                        **TOTAL** | **1071** |  **616** |  **262** |   **20** | **40%** |           |
+|                        **TOTAL** | **1187** |  **622** |  **274** |   **23** | **44%** |           |
 
 
 ## Setup coverage badge
