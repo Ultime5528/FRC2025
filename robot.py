@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import wpilib
 
-from modules.batterysim import BatterySimModule
 from modules.autonomous import AutonomousModule
+from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
 from modules.hardware import HardwareModule
 from modules.propertysavechecker import PropertySaveCheckerModule
