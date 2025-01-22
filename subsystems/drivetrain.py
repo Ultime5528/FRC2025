@@ -7,6 +7,9 @@ class Drivetrain(Subsystem):
     def __init__(self):
         super().__init__()
 
+    def getCurrentDrawAmps(self):
+        return 0.0
+
     def periodic(self) -> None:
         pass
 
