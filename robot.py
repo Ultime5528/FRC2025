@@ -30,4 +30,5 @@ class Robot(ModuleRobot):
             self.control,
             self.property_save_checker,
             self.battery_sim,
+            self.dashboard,
         )
