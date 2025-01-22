@@ -1,13 +1,20 @@
+from abc import abstractmethod
+
 import commands2
-import wpilib
 from wpiutil import SendableBuilder
+
+from ultime.alert import AlertType, Alert
 
 
 class Subsystem(commands2.Subsystem):
-    def createAlert(
-        self, text: str, alert_type: wpilib.Alert.AlertType
-    ) -> wpilib.Alert:
-        return wpilib.Alert(self.getName() + "/Alerts", text, alert_type)
+    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
+        return Alert(text, alert_type, self.getName() + "/Alerts")
+
+    @abstractmethod
+    def getCurrentDrawAmps(self) -> float:
+        raise NotImplementedError(
+            f"Subsystem {self.getName()} does not implement getCurrentDrawAmps"
+        )
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
