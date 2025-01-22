@@ -1,6 +1,7 @@
 import commands2
-from ultime.alert import AlertType, Alert
 from wpiutil import SendableBuilder
+
+from ultime.alert import AlertType, Alert
 
 
 class Subsystem(commands2.Subsystem):

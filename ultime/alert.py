@@ -1,6 +1,6 @@
 import bisect
-from weakref import WeakSet
 from enum import Enum, auto
+from weakref import WeakSet
 
 from wpilib import SmartDashboard, RobotController
 from wpiutil import Sendable, SendableBuilder
@@ -17,8 +17,7 @@ class PublishedAlert:
         self.timestamp = timestamp
         self.text = text
 
-    # TODO Do we really want alerts to be sorted from the most recent to the oldest ?
-    # Sorts item in reverse
+    # Sorts from the most recent to the oldest
     def __lt__(self, other):
         return self.timestamp >= other.timestamp
 

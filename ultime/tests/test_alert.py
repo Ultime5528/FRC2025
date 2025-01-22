@@ -42,5 +42,36 @@ def test_alert(robot_controller: RobotTestController):
     assert topic.get() == ["Test3"]
 
 
+def test_alert_sort(robot_controller: RobotTestController):
+    """
+    Alerts should be sorted from the most recent to the oldest shown.
+    """
+
+    topic = (
+        NetworkTableInstance.getDefault()
+        .getStringArrayTopic("/SmartDashboard/AlertGroup/warnings")
+        .subscribe(["default"])
+    )
+
+    robot_controller.wait(0.1)
+    recent = Alert("Recent", AlertType.Warning, "AlertGroup")
+    oldest = Alert("Oldest", AlertType.Warning, "AlertGroup")
+
+    robot_controller.wait(0.1)
+    assert topic.get() == []
+
+    oldest.set(True)
+    robot_controller.wait(0.1)
+    assert topic.get() == ["Oldest"]
+
+    recent.set(True)
+    robot_controller.wait(0.1)
+    assert topic.get() == ["Recent", "Oldest"]
+
+    oldest.setText("Oldest modified")
+    robot_controller.wait(0.1)
+    assert topic.get() == ["Recent", "Oldest modified"]
+
+
 def test_alert_weakrefset_empty():
     assert len(Alert._groups) == 0
