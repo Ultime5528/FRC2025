@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import wpilib
 
+from modules.autonomous import AutonomousModule
 from modules.control import ControlModule
 from modules.hardware import HardwareModule
 from modules.propertysavechecker import PropertySaveCheckerModule
@@ -15,11 +16,13 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
+        self.autonomous = AutonomousModule()
         self.control = ControlModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
 
         self.addModules(
             self.hardware,
+            self.autonomous,
             self.control,
             self.property_save_checker,
         )
