@@ -24,6 +24,7 @@ requires = [
      "robotpy-rev==2025.0.0",
      "numpy",
      "photonlibpy==2025.0.0b8",
+     "robotpy-urcl==2025.0.0",
 
      "black==24.1.1; platform_machine != 'roborio'",
      "coverage==7.4.1; platform_machine != 'roborio'",
