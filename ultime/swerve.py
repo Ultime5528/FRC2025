@@ -1,16 +1,12 @@
 import math
-from pdb import Restart
-
-from pyfrc.physics.units import units
-from rev import SparkMax, SparkBaseConfig, SparkBase, ClosedLoopConfig, SparkLowLevel
+from rev import SparkMax, SparkBase
 from rev import SparkMaxSim
-from wpilib import RobotBase, RobotController
+from wpilib import RobotBase
 from wpilib.simulation import FlywheelSim, RoboRioSim
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.system.plant import DCMotor, LinearSystemId
 
-from ultime.autoproperty import autoproperty
 from ultime.swerveconfig import Configs
 
 def radians_per_second_to_rpm(rps: float):
@@ -42,9 +38,6 @@ class SwerveModule:
         self._driving_encoder.setPosition(0)
 
         if RobotBase.isSimulation():
-            # Simulation things
-            self.sim_encoder_distance_turn: float = 0.0
-            self.sim_encoder_distance_drive: float = 0.0
 
             # Flywheels allow simulation of a more physically realistic rendering of swerve module properties
             # Magical values for sim pulled from :
@@ -52,16 +45,16 @@ class SwerveModule:
             turn_motor_gear_ratio = 12.8  # //12 to 1
 
             self.sim_wheel_turn = FlywheelSim(
-                LinearSystemId.identifyVelocitySystemMeters(0.16, 0.111),
-                DCMotor.NEO(1),
+                LinearSystemId.identifyVelocitySystemMeters(0.16, 0.0348),
+                DCMotor.NEO550(1),
                 [0.0],
             )
             self.sim_motor_turn = SparkMaxSim(self._turning_motor, DCMotor.NEO550(1))
 
             self.sim_wheel_drive = FlywheelSim(
-                LinearSystemId.identifyVelocitySystemMeters(2, 1.24),
+                LinearSystemId.identifyVelocitySystemMeters(3, 1.24),
                 DCMotor.NEO(1),
-                [0.0],
+                [0.075],
             )
             self.sim_motor_drive = SparkMaxSim(self._driving_motor, DCMotor.NEO(1))
 
@@ -132,7 +125,7 @@ class SwerveModule:
             self.sim_motor_drive.getAppliedOutput()
             * RoboRioSim.getVInVoltage()
         )
-        
+
         self.sim_wheel_drive.update(period)
 
         self.sim_motor_drive.iterate(
@@ -155,5 +148,3 @@ class SwerveModule:
             RoboRioSim.getVInVoltage(),
             period,
         )
-
-
