@@ -6,7 +6,6 @@ from modules.hardware import HardwareModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.modulerobot import ModuleRobot
 
-
 class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def robotInit(self):
@@ -21,5 +20,5 @@ class Robot(ModuleRobot):
         self.addModules(
             self.hardware,
             self.control,
-            self.property_save_checker,
+            self.property_save_checker
         )
