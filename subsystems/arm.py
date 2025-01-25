@@ -22,4 +22,4 @@ class Arm(Subsystem):
         self.arm_motor.stopMotor()
 
     def getCurrentDrawAmps(self) -> float:
-        pass
+        return 0.0
