@@ -2,6 +2,7 @@ import math
 
 from ultime.immutable import Immutable
 
+
 class Constants:
     class DriveConstants:
         max_speed_per_second = 4.6
@@ -13,16 +14,22 @@ class Constants:
 
         wheel_radius = 0.0725  # meters
         drive_encoder_position_conversion_factor = (
-                math.pi * wheel_radius / drive_motor_gear_ratio
+            math.pi * wheel_radius / drive_motor_gear_ratio
         )  # meters
         drive_encoder_velocity_conversion_factor = (
-                drive_encoder_position_conversion_factor / 60
+            drive_encoder_position_conversion_factor / 60
         )  # meters per second
-        drive_motor_free_rps = 5676 / 60  # Neo motor max free RPM into rotations per second
+        drive_motor_free_rps = (
+            5676 / 60
+        )  # Neo motor max free RPM into rotations per second
         drive_wheel_free_rps = drive_motor_free_rps * (2 * math.pi)
 
         turning_encoder_position_conversion_factor = math.pi * 2  # radians
-        turning_encoder_velocity_conversion_factor = math.pi * 2 / 60  # radians per second
+        turning_encoder_velocity_conversion_factor = (
+            math.pi * 2 / 60
+        )  # radians per second
 
         turning_encoder_position_PID_min_input = 0
-        turning_encoder_position_PID_max_input = turning_encoder_position_conversion_factor
+        turning_encoder_position_PID_max_input = (
+            turning_encoder_position_conversion_factor
+        )
