@@ -4,6 +4,7 @@ from rev import SparkMax, SparkMaxConfig, SparkBaseConfig, SparkBase, SparkMaxSi
 from wpilib import RobotBase, RobotController
 from wpilib.simulation import FlywheelSim, ElevatorSim, RoboRioSim
 from wpimath._controls._controls.plant import LinearSystemId, DCMotor
+from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
@@ -15,16 +16,17 @@ class Elevator(Subsystem):
     class State(Enum):
         Invalid = auto()
         Moving = auto()
+        Loading = auto
         Level1 = auto()
         Level2 = auto()
         Level3 = auto()
         Level4 = auto()
 
-    speed_up = autoproperty(1.0)
-    speed_down = autoproperty(-1.0)
-    speed_maintain = autoproperty(-0.25)
+    speed_up = autoproperty(0.5)
+    speed_down = autoproperty(-0.3)
+    speed_maintain = autoproperty(0.1)
     height_min = autoproperty(0.0)
-    height_max = autoproperty(10.0)
+    height_max = autoproperty(100.0)
 
     def __init__(self):
         super().__init__()
@@ -57,7 +59,7 @@ class Elevator(Subsystem):
 
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
-            self._offset = self.height_min - self._encoder.getDistance()
+            self._offset = self.height_min - self._encoder.getPosition()
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
 
@@ -121,3 +123,28 @@ class Elevator(Subsystem):
 
     def hasReset(self):
         return self._has_reset
+
+    def getCurrentDrawAmps(self) -> float:
+        return self._motor.getOutputCurrent()
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def setOffset(value: float):
+            self._offset = value
+
+        def noop(x):
+            pass
+
+        def setHasReset(value: bool):
+            self._has_reset = value
+
+        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addFloatProperty("motor_input", self._motor.get, noop)
+        builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
+        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
+        builder.addFloatProperty("height", self.getHeight, noop)
+        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
+        builder.addBooleanProperty("switch_up", self._switch.isPressed, noop)
+        builder.addBooleanProperty("isUp", self.isUp, noop)
+        builder.addBooleanProperty("isDown", self.isDown, noop)
