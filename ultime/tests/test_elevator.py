@@ -159,13 +159,11 @@ def test_resetCommand(control, robot: Robot):
 
 
 def common_test_requirements(
-    control: "pyfrc.test_support.controller.TestController",
     robot: Robot,
     MovePivotMethod,
 ):
-    with control.run_robot():
-        cmd = MovePivotMethod(robot.hardware.elevator)
-        assert cmd.hasRequirement(robot.hardware.elevator)
+    cmd = MovePivotMethod(robot.hardware.elevator)
+    assert cmd.hasRequirement(robot.hardware.elevator)
 
 
 def test_requirements_toLevel1(control, robot: Robot):
