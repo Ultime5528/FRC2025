@@ -12,13 +12,18 @@ from ultime.subsystem import Subsystem
 class DashboardModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-
-        components: List[Sendable] = hardware.subsystems + list(module_list.modules)
-        for component in components:
-            wpilib.SmartDashboard.putData(component.getName(), component)
+        self._hardware = hardware
+        self._module_list = module_list
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
+
+    def robotInit(self) -> None:
+        components: List[Sendable] = (
+            self._hardware.subsystems + self._module_list.modules
+        )
+        for component in components:
+            wpilib.SmartDashboard.putData(component.getName(), component)
 
 
 def putCommandOnDashboard(

@@ -1,12 +1,24 @@
 import inspect
 from functools import wraps
-
+from ultime.alert import Alert, AlertType
 from wpiutil import Sendable
 
 
 class Module(Sendable):
     def __init__(self):
         super().__init__()
+
+    def createAlert(self, message: str, alert_type: AlertType) -> Alert:
+        return Alert(message, alert_type, self.getName() + "/Alerts")
+
+    def getName(self) -> str:
+        return self.__class__.__name__
+
+    def initSendable(self, builder):
+        pass
+
+    def robotInit(self) -> None:
+        pass
 
     def robotPeriodic(self) -> None:
         pass
@@ -69,11 +81,11 @@ def createWrappedFunction(wrapped_func: callable, methods: list[callable]) -> ca
 class ModuleList(Module):
     def __init__(self, *modules: Module):
         super().__init__()
-        self.modules = modules
+        self.modules = list(modules)
         self._setup()
 
     def addModules(self, *modules):
-        self.modules = self.modules + modules
+        self.modules = self.modules + list(modules)
         self._setup()
 
     def _setup(self):

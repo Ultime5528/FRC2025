@@ -1,35 +1,55 @@
-import wpilib
-from ntcore import NetworkTableType
-from ntcore.util import ntproperty
+from typing import List
+
+import commands2
+from commands2 import CommandScheduler
 from wpilib import RobotController
 
 from modules.hardware import HardwareModule
-from ultime.module import Module
+from ultime.module import Module, ModuleList
 
 
 class DiagnosticsModule(Module):
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self._hardware = hardware
-        self._subsystems = self._hardware.subsystems
+        self.components_tests: List[commands2.Command] = [
 
-        self._nt_subsystem_list = ntproperty("/Diagnostics/SubsystemList", [subsystem.getName() for subsystem in self._subsystems])
-        self._battery_voltage = []
-        # self._nt_battery_voltage = ntproperty("/Diagnostics/BatteryVoltage", self._battery_voltage, type=NetworkTableType.kFloatArray)
+        ]
+
+        self._hardware = hardware
+        self._module_list = module_list
+        self._battery_voltage: List[float] = []
+        self._is_test = False
 
     def robotPeriodic(self) -> None:
-        pass
-        # self._battery_voltage.append(RobotController.getBatteryVoltage())
+        self._battery_voltage.append(RobotController.getBatteryVoltage())
         self._battery_voltage = self._battery_voltage[-100:]
 
-    def testPeriodic(self) -> None:
-        pass# self._nt_battery_voltage.fset(None, self._battery_voltage)
+    def testInit(self) -> None:
+        CommandScheduler.getInstance().enable()
+        self._is_test = True
+        for component_test in self.components_tests:
+            print(component_test)
+            component_test.schedule()
 
     def testExit(self) -> None:
-        pass# self._nt_battery_voltage.fset(None, [])
+        CommandScheduler.getInstance().disable()
+        self._is_test = False
 
     def initSendable(self, builder):
         def noop(_):
             pass
 
-        builder.addFloatArrayProperty("BatteryVoltage", lambda: self._battery_voltage, noop)
+        def getComponentsNames() -> List[str]:
+            return [
+                subsystem.getName()
+                for subsystem in self._hardware.subsystems + self._module_list.modules
+            ]
+
+        def getBatteryVoltage() -> List[float]:
+            if self._is_test:
+                return self._battery_voltage
+            else:
+                return []
+
+        builder.addStringArrayProperty("Components", getComponentsNames, noop)
+        builder.addFloatArrayProperty("BatteryVoltage", getBatteryVoltage, noop)

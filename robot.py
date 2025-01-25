@@ -21,21 +21,19 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-        self.diagnostics = DiagnosticsModule(self.hardware)
+        self.dashboard = DashboardModule(self.hardware, self.modules)
         self.autonomous = AutonomousModule()
         self.control = ControlModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
-        self.dashboard = DashboardModule(self.hardware, self.modules)
+        self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.battery_sim = BatterySimModule(self.hardware)
 
         self.addModules(
             self.hardware,
-            self.diagnostics,
-            self.autonomous,
             self.dashboard,
+            self.autonomous,
+            self.diagnostics,
             self.control,
             self.property_save_checker,
             self.battery_sim,
         )
-
-
