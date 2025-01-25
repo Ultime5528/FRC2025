@@ -1,7 +1,6 @@
 from wpilib import VictorSP
 
 import ports
-from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 
 

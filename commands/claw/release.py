@@ -18,19 +18,27 @@ class Drop(Command):
 
     @classmethod
     def atLevel1(cls, claw: Claw):
-        return cls(claw, lambda: cls.speed_level_1_left, lambda: cls.speed_level_1_right)
+        return cls(
+            claw, lambda: cls.speed_level_1_left, lambda: cls.speed_level_1_right
+        )
 
     @classmethod
     def atLevel2(cls, claw: Claw):
-        return cls(claw, lambda: cls.speed_level_2_left, lambda: cls.speed_level_2_right)
+        return cls(
+            claw, lambda: cls.speed_level_2_left, lambda: cls.speed_level_2_right
+        )
 
     @classmethod
     def atLevel3(cls, claw: Claw):
-        return cls(claw, lambda: cls.speed_level_3_left, lambda: cls.speed_level_3_right)
+        return cls(
+            claw, lambda: cls.speed_level_3_left, lambda: cls.speed_level_3_right
+        )
 
     @classmethod
     def atLevel4(cls, claw: Claw):
-        return cls(claw, lambda: cls.speed_level_4_left, lambda: cls.speed_level_4_right)
+        return cls(
+            claw, lambda: cls.speed_level_4_left, lambda: cls.speed_level_4_right
+        )
 
     def __init__(
         self,
