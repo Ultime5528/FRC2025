@@ -4,8 +4,8 @@ import wpilib
 from modules.autonomous import AutonomousModule
 from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
-from modules.diagnostics import DiagnosticsModule
 from modules.dashboard import DashboardModule
+from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.modulerobot import ModuleRobot

@@ -28,10 +28,9 @@ class DiagnosticsModule(Module):
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().enable()
-        self._is_test = True
         for component_test in self.components_tests:
-            print(component_test)
             component_test.schedule()
+        self._is_test = True
 
     def testExit(self) -> None:
         CommandScheduler.getInstance().disable()

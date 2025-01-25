@@ -1,12 +1,8 @@
-from typing import List
-
 import commands2
 import wpilib
-from wpiutil import Sendable
 
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
-from ultime.subsystem import Subsystem
 
 
 class DashboardModule(Module):
@@ -19,9 +15,8 @@ class DashboardModule(Module):
         # putCommandOnDashboard("Drivetrain", Command(...))
 
     def robotInit(self) -> None:
-        components: List[Sendable] = (
-            self._hardware.subsystems + self._module_list.modules
-        )
+        components = self._hardware.subsystems + self._module_list.modules
+
         for component in components:
             wpilib.SmartDashboard.putData(component.getName(), component)
 

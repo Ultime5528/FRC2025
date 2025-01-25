@@ -1,7 +1,9 @@
 import inspect
 from functools import wraps
-from ultime.alert import Alert, AlertType
+
 from wpiutil import Sendable
+
+from ultime.alert import Alert, AlertType
 
 
 class Module(Sendable):
