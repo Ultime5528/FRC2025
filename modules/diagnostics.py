@@ -11,9 +11,7 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = [
-
-        ]
+        self.components_tests: List[commands2.Command] = []
 
         self._hardware = hardware
         self._module_list = module_list
