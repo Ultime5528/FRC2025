@@ -5,9 +5,10 @@
 ## Execution
 
 * Simulation : `python -m robotpy sim`
-* Deployment : `python -m robotpy deploy`
+* Deployment : `python -m robotpy deploy --skip-tests`
 * Run tests : `python -m robotpy test -- --exitfirst`
 * Run tests with coverage : `python -m robotpy coverage test -- --exitfirst`
+* Create coverage HTML report : `coverage html`
 * Sync dependencies : `python -m robotpy sync`
 * Format code with black `python -m black .`
 * Save autoproperties : `python properties.py saveonce`
@@ -24,7 +25,7 @@
   conda update conda
   conda update python
 ```
-* Run the following command to create an environment named "frc2024":
+* Run the following command to create an environment named "frc2025":
 ```commandline
   conda create -n frc2025 python=3.13.1
 ```

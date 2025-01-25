@@ -8,9 +8,6 @@ class Module(Sendable):
     def __init__(self):
         super().__init__()
 
-    def robotInit(self) -> None:
-        pass
-
     def robotPeriodic(self) -> None:
         pass
 
@@ -60,12 +57,26 @@ class Module(Sendable):
         pass
 
 
+def createWrappedFunction(wrapped_func: callable, methods: list[callable]) -> callable:
+    @wraps(wrapped_func)
+    def call():
+        for method in methods:
+            method()
+
+    return call
+
+
 class ModuleList(Module):
     def __init__(self, *modules: Module):
         super().__init__()
-
         self.modules = modules
+        self._setup()
 
+    def addModules(self, *modules):
+        self.modules = self.modules + modules
+        self._setup()
+
+    def _setup(self):
         for module in self.modules:
             if not isinstance(module, Module):
                 raise TypeError(
@@ -90,15 +101,6 @@ class ModuleList(Module):
                     methods.append(module_method)
 
             if len(methods) > 0:
-
-                @wraps(getattr(self, name))
-                def call(_):
-                    for method in methods:
-                        method()
-
-                setattr(self, name, call)
-
-
-if __name__ == "__main__":
-    modules = ModuleList()
-    print()
+                original_func = getattr(self, name)
+                new_func = createWrappedFunction(original_func, methods)
+                setattr(self, name, new_func)
