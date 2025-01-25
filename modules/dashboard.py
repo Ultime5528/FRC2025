@@ -1,17 +1,21 @@
+from typing import List
+
 import commands2
 import wpilib
+from wpiutil import Sendable
 
 from modules.hardware import HardwareModule
-from ultime.module import Module
+from ultime.module import Module, ModuleList
 from ultime.subsystem import Subsystem
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
 
-        for subsystem in hardware.subsystems:
-            putSubsystemOnDashboard(subsystem)
+        components: List[Sendable] = hardware.subsystems + list(module_list.modules)
+        for component in components:
+            wpilib.SmartDashboard.putData(component.getName(), component)
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
@@ -38,10 +42,3 @@ def putCommandOnDashboard(
     wpilib.SmartDashboard.putData(sub_table + name, cmd)
 
     return cmd
-
-
-def putSubsystemOnDashboard(subsystem: Subsystem, name: str = None):
-    if name is None:
-        name = subsystem.getName()
-
-    wpilib.SmartDashboard.putData(name, subsystem)
