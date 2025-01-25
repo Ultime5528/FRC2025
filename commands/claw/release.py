@@ -1,48 +1,61 @@
-from idlelib.undo import Command
-
 import wpilib
+from commands2 import Command
 
 from subsystems.claw import Claw
-from ultime.autoproperty import autoproperty
+from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 
 
-class ReleaseCoral(Command):
+class Drop(Command):
 
-    speed_at_level_1 = autoproperty(0.5)
-    speed_at_level_2 = autoproperty(0.5)
-    speed_at_level_3 = autoproperty(0.5)
-    speed_at_level_4 = autoproperty(0.5)
-
-    @classmethod
-    def dropAtLevel1(cls, claw: Claw):
-        return cls(claw, )
-
-    @classmethod
-    def dropAtLevel2(cls, claw: Claw):
-        return cls(claw, 1)
+    speed_level_1_left = autoproperty(0.5)
+    speed_level_1_right = autoproperty(0.0)
+    speed_level_2_left = autoproperty(0.5)
+    speed_level_2_right = autoproperty(0.5)
+    speed_level_3_left = autoproperty(0.5)
+    speed_level_3_right = autoproperty(0.5)
+    speed_level_4_left = autoproperty(0.5)
+    speed_level_4_right = autoproperty(0.5)
+    delay = autoproperty(1.0)
 
     @classmethod
-    def dropAtLevel3(cls, claw: Claw):
-        return cls(claw, 1)
+    def atLevel1(cls, claw: Claw):
+        return cls(claw, Drop.speed_level_1_left, Drop.speed_level_1_right)
 
     @classmethod
-    def dropAtLevel4(cls, claw: Claw):
-        return cls(claw, 1)
+    def atLevel2(cls, claw: Claw):
+        return cls(claw, Drop.speed_level_2_left, Drop.speed_level_2_right)
+
+    @classmethod
+    def atLevel3(cls, claw: Claw):
+        return cls(claw, Drop.speed_level_3_left, Drop.speed_level_3_right)
+
+    @classmethod
+    def atLevel4(cls, claw: Claw):
+        return cls(claw, Drop.speed_level_4_left, Drop.speed_level_4_right)
 
     def __init__(
-            self,
-            claw: Claw,
-            speed: float,
+        self,
+        claw: Claw,
+        speed_left: FloatProperty,
+        speed_right: FloatProperty,
     ):
         super().__init__()
         self.claw = claw
-        self.timer = wpilib.Timer
+        self.get_speed_left = asCallable(speed_left)
+        self.get_speed_right = asCallable(speed_right)
+        self.timer = wpilib.Timer()
 
-    def execute(self):
-        pass
+    def initialize(self):
+        speed_left = self.get_speed_left()
+        self.claw.setLeft(speed_left)
+        speed_right = self.get_speed_right()
+        self.claw.setRight(speed_right)
+
+        self.timer.reset()
+        self.timer.start()
 
     def isFinished(self) -> bool:
-        pass
+        return self.timer.hasElapsed(self.delay)
 
     def end(self):
         self.claw.stop()
