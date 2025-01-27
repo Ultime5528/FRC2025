@@ -12,8 +12,10 @@ class RetractArm(Command):
         super().__init__()
         self.arm = arm
         self.timer = wpilib.Timer()
-        self.timer.restart()
         self.addRequirements(arm)
+
+    def initialize(self):
+        self.timer.restart()
 
     def execute(self):
         self.arm.moveUp()

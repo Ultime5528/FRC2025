@@ -1,5 +1,8 @@
+from _pytest.python_api import approx
+
 from commands.arm.retractarm import RetractArm
 from robot import Robot
+from ultime.tests import RobotTestController
 
 
 def testPorts(robot: Robot):
@@ -11,10 +14,19 @@ def testSettings(robot: Robot):
 
     assert not arm.arm_motor.getInverted()
 
-def testRetractArm(control, robot: Robot):
+def testRetractArm(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
 
-    with control.run_robot:
-        control.step_timing(seconds=0.1, autonomous=False, enabled=True)
-        cmd = RetractArm(arm)
-        assert arm.arm_motor.get() == 0.3
+    robot_controller.startTeleop()
+
+    cmd = RetractArm(arm)
+    cmd.schedule()
+
+    robot_controller.wait(0.1)
+
+    assert arm.arm_motor.get() == approx(arm.speed)
+    assert cmd.isScheduled()
+
+    robot_controller.wait(5)
+
+    assert arm.arm_motor.get() == 0
