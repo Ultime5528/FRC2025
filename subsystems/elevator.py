@@ -16,7 +16,7 @@ class Elevator(Subsystem):
     class State(Enum):
         Invalid = auto()
         Moving = auto()
-        Loading = auto
+        Loading = auto()
         Level1 = auto()
         Level2 = auto()
         Level3 = auto()
@@ -26,7 +26,9 @@ class Elevator(Subsystem):
     speed_down = autoproperty(-0.3)
     speed_maintain = autoproperty(0.1)
     height_min = autoproperty(0.0)
-    height_max = autoproperty(100.0)
+    height_max = autoproperty(2.0)
+
+    position_conversion_factor = autoproperty(0.002)
 
     def __init__(self):
         super().__init__()
@@ -34,7 +36,7 @@ class Elevator(Subsystem):
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(30)
         self._config.inverted(False)
-        self._config.encoder.positionConversionFactor(1)
+        self._config.encoder.positionConversionFactor(self.position_conversion_factor)
 
         self._switch = Switch(Switch.Type.NormallyClosed, ports.DIO.elevator_switch)
         self._motor = SparkMax(ports.CAN.elevator_motor, SparkMax.MotorType.kBrushless)
@@ -53,7 +55,7 @@ class Elevator(Subsystem):
 
         if RobotBase.isSimulation():
             self._elevator_sim = ElevatorSim(
-                DCMotor.NEO(1), 10.0, 4.0, 0.05, -100, 100, True, 0, [0.01, 0.0]
+                DCMotor.NEO(1), 10.0, 4.0, 0.05, -1.0, 2.0, True, 0, [0.01, 0.0]
             )
             self.sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
 
@@ -69,12 +71,12 @@ class Elevator(Subsystem):
         ), "Both switches are on at the same time which doesn't make any sense"
 
         self._elevator_sim.setInputVoltage(
-            self.sim_motor.getAppliedOutput() * RobotController.getBatteryVoltage()
+            self.sim_motor.getAppliedOutput() * RoboRioSim.getVInVoltage()
         )
         self._elevator_sim.update(0.02)
 
         self.sim_motor.iterate(
-            500 * self._elevator_sim.getVelocity(),
+            1000 * self._elevator_sim.getVelocity(),
             RoboRioSim.getVInVoltage(),
             0.02,
         )

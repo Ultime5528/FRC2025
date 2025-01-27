@@ -11,7 +11,7 @@ class MoveElevator(Command):
     def toLevel1(cls, elevator: Elevator):
         cmd = cls(
             elevator,
-            lambda: move_elevator_properties.position_level2,
+            lambda: move_elevator_properties.position_level1,
             Elevator.State.Level1,
         )
         cmd.setName(cmd.getName() + ".toLevel1")
@@ -101,15 +101,15 @@ class MoveElevator(Command):
 
 class _ClassProperties:
     # Pivot Properties #
-    position_level1 = autoproperty(10.0, subtable=MoveElevator.__name__)
-    position_level2 = autoproperty(30.0, subtable=MoveElevator.__name__)
-    position_level3 = autoproperty(50.0, subtable=MoveElevator.__name__)
-    position_level4 = autoproperty(70.0, subtable=MoveElevator.__name__)
-    position_loading = autoproperty(20.0, subtable=MoveElevator.__name__)
+    position_level1 = autoproperty(0.5, subtable=MoveElevator.__name__)
+    position_level2 = autoproperty(1.0, subtable=MoveElevator.__name__)
+    position_level3 = autoproperty(1.5, subtable=MoveElevator.__name__)
+    position_level4 = autoproperty(1.9, subtable=MoveElevator.__name__)
+    position_loading = autoproperty(1.3, subtable=MoveElevator.__name__)
 
     speed_min = autoproperty(0.5, subtable=MoveElevator.__name__)
     speed_max = autoproperty(0.8, subtable=MoveElevator.__name__)
-    accel = autoproperty(1.0, subtable=MoveElevator.__name__)
+    accel = autoproperty(0.01, subtable=MoveElevator.__name__)
 
 
 move_elevator_properties = _ClassProperties()

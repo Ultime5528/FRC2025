@@ -11,8 +11,9 @@ from ultime.modulerobot import ModuleRobot
 
 
 class Robot(ModuleRobot):
-    # robotInit fonctionne mieux avec les tests que __init__
-    def robotInit(self):
+    def __init__(self):
+        super().__init__()
+
         wpilib.LiveWindow.enableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
@@ -30,5 +31,5 @@ class Robot(ModuleRobot):
             self.control,
             self.dashboard,
             self.property_save_checker,
-            self.battery_sim,
+            # self.battery_sim,
         )
