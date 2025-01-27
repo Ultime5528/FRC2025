@@ -5,6 +5,7 @@ from modules.autonomous import AutonomousModule
 from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
 from modules.hardware import HardwareModule
+from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.modulerobot import ModuleRobot
 
@@ -21,6 +22,7 @@ class Robot(ModuleRobot):
         self.control = ControlModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
         self.battery_sim = BatterySimModule(self.hardware)
+        self.logging = LoggingModule()
 
         self.addModules(
             self.hardware,
@@ -28,4 +30,5 @@ class Robot(ModuleRobot):
             self.control,
             self.property_save_checker,
             self.battery_sim,
+            self.logging,
         )
