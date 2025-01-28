@@ -5,7 +5,7 @@ from ultime.autoproperty import autoproperty
 
 
 class ExtendArm(Command):
-    duration = autoproperty(3)
+    delay = autoproperty(3.0)
 
     def __init__(self, arm: Arm):
         super().__init__()
@@ -18,7 +18,7 @@ class ExtendArm(Command):
         self.arm.moveDown()
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.duration
+        return self.timer.get() >= self.delay
 
     def end(self, interrupted: bool):
         self.arm.stop()

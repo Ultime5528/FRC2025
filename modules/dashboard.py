@@ -1,6 +1,8 @@
 import commands2
 import wpilib
 
+from commands.arm.extendarm import ExtendArm
+from commands.arm.retractarm import RetractArm
 from modules.hardware import HardwareModule
 from ultime.module import Module
 from ultime.subsystem import Subsystem
@@ -14,7 +16,8 @@ class DashboardModule(Module):
             putSubsystemOnDashboard(subsystem)
 
         # Classer par subsystem
-        # putCommandOnDashboard("Drivetrain", Command(...))
+        putCommandOnDashboard("Arm", RetractArm(hardware.arm))
+        putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
 
 
 def putCommandOnDashboard(

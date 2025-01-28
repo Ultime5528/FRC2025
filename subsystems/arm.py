@@ -10,16 +10,16 @@ class Arm(Subsystem):
 
     def __init__(self):
         super().__init__()
-        self.arm_motor = wpilib.VictorSP(PWM.arm_motor)
+        self._motor = wpilib.VictorSP(PWM.arm_motor)
 
     def moveUp(self):
-        self.arm_motor.set(self.speed)
+        self._motor.set(self.speed)
 
     def moveDown(self):
-        self.arm_motor.set(self.speed * -1)
+        self._motor.set(self.speed * -1)
 
     def stop(self):
-        self.arm_motor.stopMotor()
+        self._motor.stopMotor()
 
     def getCurrentDrawAmps(self) -> float:
         return 0.0
