@@ -4,22 +4,26 @@ import wpilib
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from modules.hardware import HardwareModule
-from ultime.module import Module
-from ultime.subsystem import Subsystem
+from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-
-        for subsystem in hardware.subsystems:
-            putSubsystemOnDashboard(subsystem)
+        self._hardware = hardware
+        self._module_list = module_list
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
+
+    def robotInit(self) -> None:
+        components = self._hardware.subsystems + self._module_list.modules
+
+        for component in components:
+            wpilib.SmartDashboard.putData(component.getName(), component)
 
 
 def putCommandOnDashboard(
@@ -43,10 +47,3 @@ def putCommandOnDashboard(
     wpilib.SmartDashboard.putData(sub_table + name, cmd)
 
     return cmd
-
-
-def putSubsystemOnDashboard(subsystem: Subsystem, name: str = None):
-    if name is None:
-        name = subsystem.getName()
-
-    wpilib.SmartDashboard.putData(name, subsystem)
