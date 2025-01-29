@@ -1,9 +1,8 @@
 from enum import Enum, auto
 
 from rev import SparkMax, SparkMaxConfig, SparkBaseConfig, SparkBase, SparkMaxSim
-from wpilib import RobotBase, RobotController
-from wpilib.simulation import FlywheelSim, ElevatorSim, RoboRioSim
-from wpimath._controls._controls.plant import LinearSystemId, DCMotor
+from wpilib import RobotBase
+from wpimath._controls._controls.plant import DCMotor
 from wpiutil import SendableBuilder
 
 import ports
@@ -17,6 +16,7 @@ class Elevator(Subsystem):
         Invalid = auto()
         Moving = auto()
         Loading = auto()
+        Reset = auto()
         Level1 = auto()
         Level2 = auto()
         Level3 = auto()
@@ -27,6 +27,7 @@ class Elevator(Subsystem):
     speed_maintain = autoproperty(0.1)
     height_min = autoproperty(0.0)
     height_max = autoproperty(2.0)
+    height_maintain = autoproperty(0.1)
 
     position_conversion_factor = autoproperty(0.002)
 
@@ -54,10 +55,9 @@ class Elevator(Subsystem):
         self.state = Elevator.State.Invalid
 
         if RobotBase.isSimulation():
-            self._elevator_sim = ElevatorSim(
-                DCMotor.NEO(1), 10.0, 4.0, 0.05, -1.0, 2.0, True, 0, [0.01, 0.0]
-            )
-            self.sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
+            self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
+            self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
+            self._sim_height = 0.1
 
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
@@ -66,25 +66,25 @@ class Elevator(Subsystem):
         self._prev_is_down = self._switch.isPressed()
 
     def simulationPeriodic(self) -> None:
-        assert not (
-            self.isUp() and self.isDown()
-        ), "Both switches are on at the same time which doesn't make any sense"
+        # On applique la gravité si l'élévateur est plus haut que 0
+        if self._sim_height > 0.0:
+            gravity = self.speed_maintain
+        else:
+            gravity = 0.0
 
-        self._elevator_sim.setInputVoltage(
-            self.sim_motor.getAppliedOutput() * RoboRioSim.getVInVoltage()
-        )
-        self._elevator_sim.update(0.02)
+        distance = (self._motor.get() - gravity) * 0.011
 
-        self.sim_motor.iterate(
-            1000 * self._elevator_sim.getVelocity(),
-            RoboRioSim.getVInVoltage(),
-            0.02,
-        )
+        self._sim_height += distance
+        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
 
-        if self.getHeight() < self.height_min:
+        if self._sim_height <= self.height_min:
             self._switch.setSimPressed()
         else:
             self._switch.setSimUnpressed()
+
+        assert not (
+            self.isUp() and self.isDown()
+        ), "Both switches are on at the same time which doesn't make any sense"
 
     def moveUp(self):
         self.setSpeed(self.speed_up)
@@ -129,6 +129,9 @@ class Elevator(Subsystem):
     def getCurrentDrawAmps(self) -> float:
         return self._motor.getOutputCurrent()
 
+    def shouldMaintain(self):
+        return self.getHeight() >= self.height_maintain and self.hasReset()
+
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
 
@@ -150,3 +153,4 @@ class Elevator(Subsystem):
         builder.addBooleanProperty("switch_up", self._switch.isPressed, noop)
         builder.addBooleanProperty("isUp", self.isUp, noop)
         builder.addBooleanProperty("isDown", self.isDown, noop)
+        builder.addBooleanProperty("shouldMaintain", self.shouldMaintain, noop)

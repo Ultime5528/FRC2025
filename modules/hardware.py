@@ -1,10 +1,10 @@
 import commands2
 
+from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.module import Module
 from ultime.subsystem import Subsystem
-from commands.elevator.maintainelevator import MaintainElevator
 
 
 class HardwareModule(Module):

@@ -1,11 +1,11 @@
 import commands2
 import wpilib
 
+from commands.elevator.moveelevator import MoveElevator
+from commands.elevator.resetelevator import ResetElevator
 from modules.hardware import HardwareModule
 from ultime.module import Module
 from ultime.subsystem import Subsystem
-from commands.elevator.resetelevator import ResetElevatorDown
-from commands.elevator.moveelevator import MoveElevator
 
 
 class DashboardModule(Module):
@@ -17,7 +17,7 @@ class DashboardModule(Module):
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
-        putCommandOnDashboard("Elevator", ResetElevatorDown(hardware.elevator))
+        putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
 

@@ -5,19 +5,18 @@ from ultime.command import Command
 class MaintainElevator(Command):
     def __init__(self, elevator: Elevator):
         super().__init__()
-        self.pivot = elevator
+        self.elevator = elevator
         self.addRequirements(elevator)
+        self.should_maintain = False
+
+    def initialize(self):
+        self.should_maintain = self.elevator.shouldMaintain()
 
     def execute(self):
-        if (
-            self.pivot.state == Elevator.State.Level1
-            or self.pivot.state == Elevator.State.Level2
-            or self.pivot.state == Elevator.State.Level3
-            or self.pivot.state == Elevator.State.Level4
-        ):
-            self.pivot.maintain()
+        if self.should_maintain:
+            self.elevator.maintain()
         else:
-            self.pivot.stop()
+            self.elevator.stop()
 
     def end(self, interrupted: bool):
-        self.pivot.stop()
+        self.elevator.stop()

@@ -2,7 +2,7 @@ from subsystems.elevator import Elevator
 from ultime.command import Command
 
 
-class ResetElevatorDown(Command):
+class ResetElevator(Command):
     def __init__(self, elevator: Elevator):
         super().__init__()
         self.elevator = elevator
@@ -11,6 +11,7 @@ class ResetElevatorDown(Command):
 
     def initialize(self):
         self.switch_down_was_pressed = False
+        self.elevator.state = self.elevator.State.Moving
 
     def execute(self):
         if self.elevator.isDown():  # If the down switch is pressed move up.
@@ -23,4 +24,5 @@ class ResetElevatorDown(Command):
         return not self.elevator.isDown() and self.switch_down_was_pressed
 
     def end(self, interrupted: bool):
+        self.elevator.state = self.elevator.State.Reset
         self.elevator.stop()

@@ -89,7 +89,7 @@ class MoveElevator(Command):
 
     def end(self, interrupted: bool) -> None:
         if not self.elevator.hasReset():
-            wpilib.reportError("Pivot has not reset: cannot MovePivot")
+            wpilib.reportError("Elevator has not reset: cannot MoveElevator")
 
         self.elevator.stop()
 
@@ -100,7 +100,7 @@ class MoveElevator(Command):
 
 
 class _ClassProperties:
-    # Pivot Properties #
+    # Elevator Properties #
     position_level1 = autoproperty(0.5, subtable=MoveElevator.__name__)
     position_level2 = autoproperty(1.0, subtable=MoveElevator.__name__)
     position_level3 = autoproperty(1.5, subtable=MoveElevator.__name__)

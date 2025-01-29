@@ -37,16 +37,19 @@ class RobotTestController:
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(False)
         DriverStationSim.setEnabled(False)
+        DriverStationSim.notifyNewData()
 
     def startTeleop(self):
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(False)
         DriverStationSim.setEnabled(True)
+        DriverStationSim.notifyNewData()
 
     def startAutonomous(self):
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(True)
         DriverStationSim.setEnabled(True)
+        DriverStationSim.notifyNewData()
 
     def wait(self, seconds: float):
         assert seconds > 0

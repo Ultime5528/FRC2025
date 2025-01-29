@@ -1,12 +1,11 @@
 from _pytest.python_api import approx
 from rev import SparkBase, SparkBaseConfig
-from wpilib.simulation import stepTiming
 
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
+from commands.elevator.resetelevator import ResetElevator
 from robot import Robot
 from ultime.switch import Switch
-from commands.elevator.resetelevator import ResetElevatorDown
 from ultime.tests import RobotTestController
 
 
@@ -20,7 +19,7 @@ def test_ports(robot: Robot):
 def test_settings(robot: Robot):
     elevator = robot.hardware.elevator
 
-    if (elevator._motor.getInverted()):
+    if elevator._motor.getInverted():
         pass
     assert not elevator._motor.getInverted()
     assert elevator._switch.getType() == Switch.Type.NormallyClosed
@@ -31,37 +30,50 @@ def test_settings(robot: Robot):
         elevator._motor.configAccessor.getIdleMode() == SparkBaseConfig.IdleMode.kBrake
     )
     assert elevator._motor.configAccessor.getSmartCurrentLimit() == 30
-    assert elevator._motor.configAccessor.encoder.getPositionConversionFactor() == approx(0.002)
+    assert (
+        elevator._motor.configAccessor.encoder.getPositionConversionFactor()
+        == approx(0.002)
+    )
 
 
 def test_maintain(robot_controller: RobotTestController, robot: Robot):
+    elevator = robot.hardware.elevator
+
     robot_controller.startTeleop()
-    robot_controller.wait(0.5)
-    assert robot.hardware.elevator._motor.get() == 0.0
 
-    robot.hardware.elevator.state = robot.hardware.elevator.State.Level1
-    robot_controller.wait(0.5)
+    ResetElevator(elevator).schedule()
+    robot_controller.wait(10)
+    assert elevator.hasReset()
 
-    assert (
-        robot.hardware.elevator._motor.get()
-        >= robot.hardware.elevator.speed_maintain
-    )
+    cmd = MoveElevator.toLevel1(elevator)
+    cmd.schedule()
 
-    robot.hardware.elevator.state = robot.hardware.elevator.State.Moving
-    robot_controller.wait(0.5)
-    assert robot.hardware.elevator._motor.get() == 0
+    robot_controller.wait(10)
+
+    assert not cmd.isScheduled()
+    assert elevator._motor.get() >= elevator.speed_maintain
+
+    cmd = ResetElevator(elevator)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
+    assert not cmd.isScheduled()
+    assert elevator._motor.get() == 0
 
 
 def common_test_moveElevator_from_switch_down(
-    robotController: RobotTestController, robot: Robot, MoveElevatorCommand, wantedHeight
+    robotController: RobotTestController,
+    robot: Robot,
+    MoveElevatorCommand,
+    wantedHeight,
 ):
     robotController.startTeleop()
     # Set hasReset to true
     robot.hardware.elevator._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
-    robot.hardware.elevator.sim_motor.setPosition(-0.05)
-    if (robot.hardware.elevator.sim_motor.getPosition() < -0.05):
-        pass
+    robot.hardware.elevator._sim_motor.setPosition(-0.05)
+    robot.hardware.elevator._sim_height = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
     assert robot.hardware.elevator.isDown()
@@ -72,29 +84,14 @@ def common_test_moveElevator_from_switch_down(
     robotController.wait(0.5)
     counter = 0
     assert robot.hardware.elevator._motor.get() > 0.0
-    while robot.hardware.elevator._switch.isPressed() and counter < 1000:
-        if (robot.hardware.elevator.getHeight() < -0.05):
-            pass
 
-        robotController.wait(0.01)
-        counter += 1
+    robotController.wait(10)
 
-    if (counter >= 1000):
-        pass
-
-    assert counter < 1000, "not isPressed takes too long to happen"
     assert not robot.hardware.elevator._switch.isPressed()
 
-    while robot.hardware.elevator._motor.get() > 0.0 and counter < 1000:
+    robotController.wait(20)
 
-        stepTiming(0.01)
-        counter += 1
-
-    if (not counter < 1000):
-        pass
-
-    assert counter < 1000, "the motor takes too long to stop"
-    assert robot.hardware.elevator._motor.get() == approx(0.0)
+    assert robot.hardware.elevator._motor.get() == approx(0.1)
     assert robot.hardware.elevator.getHeight() == approx(wantedHeight, rel=0.1)
 
 
@@ -143,44 +140,38 @@ def test_moveElevator_toLoading(robot_controller: RobotTestController, robot: Ro
     )
 
 
-def test_resetCommand(control, robot: Robot):
-    with control.run_robot():
-        robot.hardware.elevator.sim_motor.setPosition(30.0)
+def test_resetCommand(robot_controller: RobotTestController, robot: Robot):
+    robot_controller.startTeleop()
 
-        # Enable robot and schedule command
-        control.step_timing(seconds=0.1, autonomous=False, enabled=True)
-        cmd = ResetElevatorDown(robot.hardware.elevator)
-        cmd.schedule()
+    # Enable robot and schedule command
+    cmd = ResetElevator(robot.hardware.elevator)
+    cmd.schedule()
+    robot_controller.wait(0.05)
 
-        control.step_timing(seconds=0.1, autonomous=False, enabled=True)
+    counter = 0
+    while not robot.hardware.elevator._switch.isPressed() and counter < 1000:
+        assert robot.hardware.elevator._motor.get() < 0.0
+        robot_controller.wait(0.01)
+        counter += 1
 
-        counter = 0
-        while not robot.hardware.elevator._switch.isPressed() and counter < 1000:
-            assert robot.hardware.elevator._motor.get() < 0.0
-            stepTiming(0.01)
-            counter += 1
+    assert counter < 1000, "isPressed takes too long to happen"
+    assert robot.hardware.elevator._switch.isPressed()
 
-        if (counter >= 1000):
-            pass
+    counter = 0
+    while robot.hardware.elevator._switch.isPressed() and counter < 1000:
+        assert robot.hardware.elevator._motor.get() > 0.0
+        robot_controller.wait(0.01)
+        counter += 1
 
-        assert counter < 1000, "isPressed takes too long to happen"
-        assert robot.hardware.elevator._switch.isPressed()
+    assert counter < 1000, "not isPressed takes too long to happen"
+    assert not robot.hardware.elevator._switch.isPressed()
 
-        counter = 0
-        while robot.hardware.elevator._switch.isPressed() and counter < 1000:
-            assert robot.hardware.elevator._motor.get() > 0.0
-            stepTiming(0.01)
-            counter += 1
+    robot_controller.wait(1.0)
 
-        if (counter >= 1000):
-            pass
+    assert robot.hardware.elevator._motor.get() == approx(0.0)
+    assert robot.hardware.elevator.getHeight() == approx(0.0, abs=0.02)
 
-        assert counter < 1000, "not isPressed takes too long to happen"
-        assert not robot.hardware.elevator._switch.isPressed()
-        assert robot.hardware.elevator._motor.get() == approx(0.0)
-        assert robot.hardware.elevator.getHeight() == approx(0.0, abs=1.0)
-
-        assert not cmd.isScheduled()
+    assert not cmd.isScheduled()
 
 
 def common_test_requirements(
