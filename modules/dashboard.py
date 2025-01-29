@@ -1,6 +1,7 @@
 import commands2
 import wpilib
 
+from commands.claw.drop import Drop
 from modules.hardware import HardwareModule
 from ultime.module import Module
 from ultime.subsystem import Subsystem
@@ -15,6 +16,11 @@ class DashboardModule(Module):
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
+
+        putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
 
 
 def putCommandOnDashboard(
