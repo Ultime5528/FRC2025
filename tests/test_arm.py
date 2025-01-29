@@ -1,22 +1,21 @@
-import pytest
 from _pytest.python_api import approx
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from subsystems.arm import Arm
 from robot import Robot
 from ultime.tests import RobotTestController
 
 
-def testPorts(robot: Robot):
+def test_ports(robot: Robot):
     assert robot.hardware.arm._motor.getChannel() == 0
 
-def testSettings(robot: Robot):
+
+def test_settings(robot: Robot):
     arm = robot.hardware.arm
     assert not arm._motor.getInverted()
 
 
-def testRetractArm(robot_controller: RobotTestController, robot: Robot):
+def test_RetractArm(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
 
     robot_controller.startTeleop()
@@ -34,7 +33,7 @@ def testRetractArm(robot_controller: RobotTestController, robot: Robot):
     assert arm._motor.get() == approx(0.0)
 
 
-def testExtendArm(robot_controller: RobotTestController, robot: Robot):
+def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
     robot_controller.startTeleop()
 

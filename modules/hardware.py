@@ -1,9 +1,9 @@
 import commands2
 
+from subsystems.arm import Arm
 from subsystems.drivetrain import Drivetrain
 from ultime.module import Module
 from ultime.subsystem import Subsystem
-from subsystems.arm import Arm
 
 
 class HardwareModule(Module):
