@@ -1,3 +1,5 @@
+from _weakref import proxy
+
 import commands2
 import wpilib
 
@@ -17,8 +19,12 @@ class DashboardModule(Module):
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
 
-        for component in components:
-            wpilib.SmartDashboard.putData(component.getName(), component)
+        for subsystem in self._hardware.subsystems:
+            wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
+
+        for module in self._module_list.modules:
+            if module.redefines_init_sendable:
+                wpilib.SmartDashboard.putData(module.getName(), module)
 
 
 def putCommandOnDashboard(

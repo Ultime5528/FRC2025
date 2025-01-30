@@ -9,6 +9,7 @@ from ultime.alert import Alert, AlertType
 class Module(Sendable):
     def __init__(self):
         super().__init__()
+        self.redefines_init_sendable = False
 
     def createAlert(self, message: str, alert_type: AlertType) -> Alert:
         return Alert(message, alert_type, self.getName() + "/Alerts")
@@ -118,3 +119,6 @@ class ModuleList(Module):
                 original_func = getattr(self, name)
                 new_func = createWrappedFunction(original_func, methods)
                 setattr(self, name, new_func)
+
+                if name == "initSendable":
+                    self.redefines_init_sendable = True
