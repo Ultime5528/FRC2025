@@ -1,4 +1,5 @@
-from idlelib.undo import Command
+from _pytest.python_api import approx
+from commands2 import Command
 
 from commands.claw.drop import Drop, drop_properties
 from robot import Robot
@@ -16,64 +17,114 @@ def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
     sampling_time = drop_properties.delay * 0.5
     cmd = Drop.atLevel1(robot.hardware.claw)
 
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(0.0)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0)
     assert not cmd.isScheduled()
 
     cmd.schedule()
 
     robot_controller.wait(drop_properties.delay - sampling_time)
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     two_motor_started = motor_left_started and motor_right_started
     no_motor_started = not motor_left_started and not motor_right_started
     assert not two_motor_started
     assert not no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(
+        drop_properties.speed_level_1_left, rel=0.1
+    )
+    assert robot.hardware.claw._motor_right.get() == approx(
+        drop_properties.speed_level_1_right, rel=0.1
+    )
     assert cmd.isScheduled()
 
     robot_controller.wait(sampling_time + 0.02)
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
 
 
 def testDropLevels234(robot_controller: RobotTestController, robot: Robot):
-    _testDropLevelCommon(robot_controller, robot, Drop.atLevel2(robot.hardware.claw))
-    _testDropLevelCommon(robot_controller, robot, Drop.atLevel3(robot.hardware.claw))
-    _testDropLevelCommon(robot_controller, robot, Drop.atLevel4(robot.hardware.claw))
+    _testDropLevelCommon(
+        robot_controller,
+        robot,
+        Drop.atLevel2(robot.hardware.claw),
+        drop_properties.speed_level_2_left,
+        drop_properties.speed_level_2_right,
+    )
+    _testDropLevelCommon(
+        robot_controller,
+        robot,
+        Drop.atLevel3(robot.hardware.claw),
+        drop_properties.speed_level_3_left,
+        drop_properties.speed_level_3_right,
+    )
+    _testDropLevelCommon(
+        robot_controller,
+        robot,
+        Drop.atLevel4(robot.hardware.claw),
+        drop_properties.speed_level_4_left,
+        drop_properties.speed_level_4_right,
+    )
 
 
 def _testDropLevelCommon(
-    robot_controller: RobotTestController, robot: Robot, cmd: Command
+    robot_controller: RobotTestController,
+    robot: Robot,
+    cmd: Command,
+    speed_left: float,
+    speed_right: float,
 ):
     robot_controller.startTeleop()
 
     sampling_time = drop_properties.delay * 0.5
 
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
 
     cmd.schedule()
 
     robot_controller.wait(drop_properties.delay - sampling_time)
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     two_motor_started = motor_left_started and motor_right_started
     no_motor_started = not motor_left_started and not motor_right_started
     assert two_motor_started
     assert not no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(speed_left, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(speed_right, rel=0.1)
     assert cmd.isScheduled()
 
     robot_controller.wait(sampling_time + 0.02)
-    motor_left_started = robot.hardware.claw.isLeftRunning()
-    motor_right_started = robot.hardware.claw.isRightRunning()
+    motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
