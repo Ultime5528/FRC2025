@@ -20,7 +20,7 @@ class Robot(ModuleRobot):
         self.hardware = HardwareModule()
         self.autonomous = AutonomousModule()
         self.control = ControlModule(self.hardware)
-        # self.dashboard = DashboardModule(self.hardware)
+        self.dashboard = DashboardModule(self.hardware)
         self.property_save_checker = PropertySaveCheckerModule()
         self.battery_sim = BatterySimModule(self.hardware)
 
@@ -28,7 +28,7 @@ class Robot(ModuleRobot):
             self.hardware,
             self.autonomous,
             self.control,
-            # self.dashboard,
+            self.dashboard,
             self.property_save_checker,
             self.battery_sim,
         )
