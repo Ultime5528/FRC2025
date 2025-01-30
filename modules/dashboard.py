@@ -29,6 +29,11 @@ class DashboardModule(Module):
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:
+                """
+                If a module keeps a reference to a subsystem or the HardwareModule,
+                it should be wrapped in a weakref.proxy(). For example,
+                self.hardware = proxy(hardware)
+                """
                 wpilib.SmartDashboard.putData(module.getName(), module)
 
 
