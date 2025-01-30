@@ -9,14 +9,11 @@ class ModuleRobot(commands2.TimedCommandRobot):
         super().__init__()
         self.modules = ModuleList()
 
-    def addModules(self, *modules: Module):
-        self.modules.addModules(*modules)
-
-    def robotInit(self):
-        self.modules.robotInit()
-
         if RobotBase.isSimulation():
             self.modules.simulationInit()
+
+    def addModules(self, *modules: Module):
+        self.modules.addModules(*modules)
 
     def robotPeriodic(self):
         self.modules.robotPeriodic()
