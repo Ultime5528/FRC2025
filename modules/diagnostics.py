@@ -15,8 +15,8 @@ class DiagnosticsModule(Module):
         super().__init__()
         self.components_tests: List[commands2.Command] = []
 
-        self._hardware = proxy(hardware)
-        self._module_list = proxy(module_list)
+        self._hardware = hardware
+        self._module_list = module_list
         self._battery_voltage: List[float] = []
         self._is_test = False
 
