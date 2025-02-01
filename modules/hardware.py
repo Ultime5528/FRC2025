@@ -11,8 +11,10 @@ class HardwareModule(Module):
     def __init__(self):
         super().__init__()
         self.drivetrain = Drivetrain()
+
         self.elevator = Elevator()
+        self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
+
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
         self.subsystems: list[Subsystem] = [self.drivetrain, self.elevator]

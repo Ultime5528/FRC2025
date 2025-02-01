@@ -16,23 +16,9 @@ class DashboardModule(Module):
         self._module_list = module_list
 
         # Classer par subsystem
-        # putCommandOnDashboard("Drivetrain", Command(...))
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
-
-
-        for subsystem in self._hardware.subsystems:
-            wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
-
-        for module in self._module_list.modules:
-            if module.redefines_init_sendable:
-                """
-                If a module keeps a reference to a subsystem or the HardwareModule,
-                it should be wrapped in a weakref.proxy(). For example,
-                self.hardware = proxy(hardware)
-                """
-                wpilib.SmartDashboard.putData(module.getName(), module)
 
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
