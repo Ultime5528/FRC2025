@@ -20,9 +20,10 @@ class LoggingModule(Module):
 
         print("Logging with CAN ID aliases:", can_id_aliases)
 
-        if os.environ.get("CI", False):
-            print("Testing in CI: Disabling Logging")
+        if os.environ.get("GITHUB_ACTIONS"):
+            print("Testing in CI: Logging is disabled")
         else:
+            print("Not in CI: Logging is enabled")
             URCL.start(can_id_aliases)
             DataLogManager.start()
             DriverStation.startDataLog(DataLogManager.getLog())
