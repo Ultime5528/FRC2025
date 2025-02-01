@@ -1,3 +1,5 @@
+import os
+
 from urcl import URCL
 from wpilib import DataLogManager, DriverStation
 
@@ -18,6 +20,9 @@ class LoggingModule(Module):
 
         print("Logging with CAN ID aliases:", can_id_aliases)
 
-        URCL.start(can_id_aliases)
-        DataLogManager.start()
-        DriverStation.startDataLog(DataLogManager.getLog())
+        if os.environ.get("CI", False):
+            print("Testing in CI: Disabling Logging")
+        else:
+            URCL.start(can_id_aliases)
+            DataLogManager.start()
+            DriverStation.startDataLog(DataLogManager.getLog())

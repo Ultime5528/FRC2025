@@ -68,11 +68,3 @@ class RobotTestController:
 def robot_controller(control: TestController):
     with control.run_robot():
         yield RobotTestController(control)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def stop_datalog(request):
-    def stop():
-        DataLogManager.stop()
-
-    request.addfinalizer(stop)
