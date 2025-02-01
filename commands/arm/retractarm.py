@@ -25,8 +25,10 @@ class RetractArm(Command):
     def end(self, interrupted: bool):
         self.arm.stop()
 
+
 class _ClassProperties:
     # Arm Properties #
     delay = autoproperty(1.0)
+
 
 arm_properties = _ClassProperties()

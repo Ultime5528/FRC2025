@@ -24,4 +24,3 @@ class Arm(Subsystem):
 
     def getCurrentDrawAmps(self) -> float:
         return 0.0
-

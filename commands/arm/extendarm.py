@@ -7,7 +7,7 @@ from ultime.autoproperty import autoproperty
 
 class ExtendArm(Command):
 
-    def __init__(self,arm: Arm):
+    def __init__(self, arm: Arm):
         super().__init__()
         self.arm = arm
         self.timer = wpilib.Timer()
@@ -25,8 +25,10 @@ class ExtendArm(Command):
     def end(self, interrupted: bool):
         self.arm.stop()
 
+
 class _ClassProperties:
     # Arm Properties #
     delay = autoproperty(1.0)
+
 
 arm_properties = _ClassProperties()
