@@ -19,12 +19,10 @@ def test_ports(robot: Robot):
 def test_settings(robot: Robot):
     elevator = robot.hardware.elevator
 
-    if elevator._motor.getInverted():
-        pass
-    assert not elevator._motor.getInverted()
     assert elevator._switch.getType() == Switch.Type.NormallyClosed
-    assert elevator._motor.getMotorType() == SparkBase.MotorType.kBrushless
 
+    assert not elevator._motor.getInverted()
+    assert elevator._motor.getMotorType() == SparkBase.MotorType.kBrushless
     assert not elevator._motor.configAccessor.getInverted()
     assert (
         elevator._motor.configAccessor.getIdleMode() == SparkBaseConfig.IdleMode.kBrake
@@ -51,7 +49,7 @@ def test_maintain(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(10)
 
     assert not cmd.isScheduled()
-    assert elevator._motor.get() >= elevator.speed_maintain
+    assert elevator._motor.get() == approx(elevator.speed_maintain)
 
     cmd = ResetElevator(elevator)
     cmd.schedule()
@@ -59,7 +57,7 @@ def test_maintain(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(10)
 
     assert not cmd.isScheduled()
-    assert elevator._motor.get() == 0
+    assert elevator._motor.get() == 0.0
 
 
 def common_test_moveElevator_from_switch_down(

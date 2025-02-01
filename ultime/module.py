@@ -117,6 +117,3 @@ class ModuleList(Module):
                 original_func = getattr(self, name)
                 new_func = createWrappedFunction(original_func, methods)
                 setattr(self, name, new_func)
-
-                if name == "initSendable":
-                    self.redefines_init_sendable = True

@@ -4,7 +4,6 @@ from ultime.command import Command
 
 
 class ManualMoveElevator(Command):
-
     @classmethod
     def up(cls, elevator: Elevator):
         cmd = cls(elevator, lambda: manual_move_properties.speed)
@@ -34,7 +33,6 @@ class ManualMoveElevator(Command):
 
 
 class _ClassProperties:
-    # Elevator Properties #
     speed = autoproperty(0.25, subtable=ManualMoveElevator.__name__)
 
 

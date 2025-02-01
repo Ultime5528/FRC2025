@@ -150,7 +150,7 @@ class Elevator(Subsystem):
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("height", self.getHeight, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("switch_up", self._switch.isPressed, noop)
+        builder.addBooleanProperty("switch_down", self._switch.isPressed, noop)
         builder.addBooleanProperty("isUp", self.isUp, noop)
         builder.addBooleanProperty("isDown", self.isDown, noop)
         builder.addBooleanProperty("shouldMaintain", self.shouldMaintain, noop)
