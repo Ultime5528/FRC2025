@@ -106,19 +106,14 @@ class ModuleList(Module):
 
         for name, methods in self._methods.items():
             for module in self.modules:
-                module_method = getattr(module, name)
-                declaring_classes = []
-                for cls in inspect.getmro(module_method.__self__.__class__):
-                    if module_method.__name__ in cls.__dict__:
-                        declaring_classes.append(cls)
-
-                if len(declaring_classes) > 1:
+                if name in module.__class__.__dict__:
+                    module_method = getattr(module, name)
                     methods.append(module_method)
+
+                    if name == "initSendable":
+                        module.redefines_init_sendable = True
 
             if len(methods) > 0:
                 original_func = getattr(self, name)
                 new_func = createWrappedFunction(original_func, methods)
                 setattr(self, name, new_func)
-
-                if name == "initSendable":
-                    self.redefines_init_sendable = True

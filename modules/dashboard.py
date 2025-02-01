@@ -1,5 +1,3 @@
-from _weakref import proxy
-
 import commands2
 import wpilib
 
@@ -29,6 +27,7 @@ class DashboardModule(Module):
                 it should be wrapped in a weakref.proxy(). For example,
                 self.hardware = proxy(hardware)
                 """
+                print("Putting on dashboard:", module.getName())
                 wpilib.SmartDashboard.putData(module.getName(), module)
 
 
