@@ -1,6 +1,12 @@
+from _weakref import proxy
+
 import commands2
 import wpilib
 
+from commands.elevator.maintainelevator import MaintainElevator
+from commands.elevator.manualmoveelevator import ManualMoveElevator
+from commands.elevator.moveelevator import MoveElevator
+from commands.elevator.resetelevator import ResetElevator
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -12,7 +18,15 @@ class DashboardModule(Module):
         self._module_list = module_list
 
         # Classer par subsystem
-        # putCommandOnDashboard("Drivetrain", Command(...))
+        putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
+        putCommandOnDashboard("Elevator", MaintainElevator(hardware.elevator))
+        putCommandOnDashboard("Elevator", ManualMoveElevator.down(hardware.elevator))
+        putCommandOnDashboard("Elevator", ManualMoveElevator.up(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel1(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
