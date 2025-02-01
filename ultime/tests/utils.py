@@ -5,7 +5,6 @@ from typing import Dict
 
 import pytest
 from pyfrc.test_support.controller import TestController
-from wpilib import DataLogManager
 from wpilib.simulation import DriverStationSim, stepTiming
 
 

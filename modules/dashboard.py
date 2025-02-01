@@ -1,5 +1,3 @@
-from _weakref import proxy
-
 import commands2
 import wpilib
 
