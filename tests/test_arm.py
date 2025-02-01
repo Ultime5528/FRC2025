@@ -48,4 +48,4 @@ def testExtendArm(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(cmd.delay + 0.1)
 
-    assert arm._motor.get() == 0.0
+    assert arm._motor.get() == approx(0.0)
