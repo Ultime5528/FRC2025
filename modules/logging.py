@@ -1,4 +1,3 @@
-import urcl
 from urcl import URCL
 from wpilib import DataLogManager, DriverStation
 
