@@ -5,6 +5,7 @@ from typing import Dict
 
 import pytest
 from pyfrc.test_support.controller import TestController
+from wpilib import DataLogManager
 from wpilib.simulation import DriverStationSim, stepTiming
 
 
@@ -64,3 +65,11 @@ class RobotTestController:
 def robot_controller(control: TestController):
     with control.run_robot():
         yield RobotTestController(control)
+
+
+@pytest.fixture(scope="function")
+def stop_datalog(request):
+    def stop():
+        DataLogManager.stop()
+
+    request.addfinalizer(stop)
