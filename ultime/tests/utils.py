@@ -67,7 +67,7 @@ def robot_controller(control: TestController):
         yield RobotTestController(control)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session", autouse=True)
 def stop_datalog(request):
     def stop():
         DataLogManager.stop()
