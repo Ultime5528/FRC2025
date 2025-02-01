@@ -6,16 +6,14 @@ import wpilib
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from modules.hardware import HardwareModule
-from ultime.module import Module
-from ultime.subsystem import Subsystem
+from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-
-        for subsystem in hardware.subsystems:
-            putSubsystemOnDashboard(subsystem)
+        self._hardware = hardware
+        self._module_list = module_list
 
         # Classer par subsystem
         # putCommandOnDashboard("Drivetrain", Command(...))
@@ -34,6 +32,22 @@ class DashboardModule(Module):
                 it should be wrapped in a weakref.proxy(). For example,
                 self.hardware = proxy(hardware)
                 """
+                wpilib.SmartDashboard.putData(module.getName(), module)
+
+    def robotInit(self) -> None:
+        components = self._hardware.subsystems + self._module_list.modules
+
+        for subsystem in self._hardware.subsystems:
+            wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
+
+        for module in self._module_list.modules:
+            if module.redefines_init_sendable:
+                """
+                If a module keeps a reference to a subsystem or the HardwareModule,
+                it should be wrapped in a weakref.proxy(). For example,
+                self.hardware = proxy(hardware)
+                """
+                print("Putting on dashboard:", module.getName())
                 wpilib.SmartDashboard.putData(module.getName(), module)
 
 
@@ -58,10 +72,3 @@ def putCommandOnDashboard(
     wpilib.SmartDashboard.putData(sub_table + name, cmd)
 
     return cmd
-
-
-def putSubsystemOnDashboard(subsystem: Subsystem, name: str = None):
-    if name is None:
-        name = subsystem.getName()
-
-    wpilib.SmartDashboard.putData(name, subsystem)
