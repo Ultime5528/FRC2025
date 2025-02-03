@@ -25,7 +25,8 @@ class CAN(Immutable):
 
 
 class PWM(Immutable):
-    pass
+    claw_motor_right = 0
+    claw_motor_left = 1
 
 
 class DIO:
