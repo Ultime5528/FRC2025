@@ -15,26 +15,35 @@ class Intake(Subsystem):
 
         self.pivot_motor = VictorSP(ports.PWM.intake_motor_pivot)
         self.pivot_encoder = Encoder(ports.DIO.intake_encoder)
-
-        self.grab_motor = VictorSP(ports.PWM.intake_motor_grab)
-
-        self.switch = Switch(
+        self.pivot_switch = Switch(
             switch_type=Switch.Type.NormallyOpen,
-            port=ports.DIO.intake_switch,
+            port=ports.DIO.intake_switch_pivot
         )
 
+        self.grab_motor = VictorSP(ports.PWM.intake_motor_grab)
+        self.grab_switch = Switch(
+            Switch.Type.NormallyOpen,
+            ports.DIO.intake_switch_grab
+        )
+
+
+
     def retractPivot(self):
-        if not self.switch.isPressed():
+        if not self.pivot_switch.isPressed():
             self.pivot_motor.set(self.pivot_speed)
 
     def extendPivot(self):
         self.pivot_motor.set(-1 * self.pivot_speed)
+
+    def stopPivot(self):
+        self.pivot_motor.stopMotor()
 
     def grab(self):
         self.grab_motor.set(self.grab_speed)
 
     def drop(self):
         self.grab_motor.set(-1 * self.grab_speed)
+
 
     def getCurrentDrawAmps(self) -> float:
         pass
