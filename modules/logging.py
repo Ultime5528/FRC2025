@@ -24,6 +24,7 @@ class LoggingModule(Module):
         else:
             print("Not in CI: URCL is enabled")
             import urcl
+
             urcl.URCL.start(can_id_aliases)
 
         DataLogManager.start()
