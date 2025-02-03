@@ -1,6 +1,7 @@
 import commands2
 
 from commands.elevator.maintainelevator import MaintainElevator
+from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.module import Module
@@ -15,6 +16,8 @@ class HardwareModule(Module):
         self.elevator = Elevator()
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
 
+        self.claw = Claw()
+
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.subsystems: list[Subsystem] = [self.drivetrain, self.elevator]
+        self.subsystems: list[Subsystem] = [self.drivetrain, self.elevator, self.claw]
