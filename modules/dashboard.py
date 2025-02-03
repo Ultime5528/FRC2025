@@ -1,13 +1,11 @@
-from _weakref import proxy
-
 import commands2
 import wpilib
 
+from commands.claw.drop import Drop
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
-from commands.claw.drop import Drop
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 

@@ -6,7 +6,6 @@ from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 
 
 class Drop(Command):
-
     @classmethod
     def atLevel1(cls, claw: Claw):
         cmd = cls(
@@ -63,12 +62,12 @@ class Drop(Command):
         self.timer = wpilib.Timer()
 
     def initialize(self):
-        self.timer.reset()
-        self.timer.start()
+        self.timer.restart()
 
     def execute(self):
         speed_left = self.get_speed_left()
         self.claw.setLeft(speed_left)
+
         speed_right = self.get_speed_right()
         self.claw.setRight(speed_right)
 
