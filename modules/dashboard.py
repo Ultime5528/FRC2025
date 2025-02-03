@@ -1,13 +1,11 @@
-from _weakref import proxy
-
 import commands2
 import wpilib
 
+from commands.claw.drop import Drop
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
-from commands.claw.drop import Drop
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -29,6 +27,11 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
+        putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
+
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
         putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
@@ -48,7 +51,6 @@ class DashboardModule(Module):
                 """
                 print("Putting on dashboard:", module.getName())
                 wpilib.SmartDashboard.putData(module.getName(), module)
-
 
 
 def putCommandOnDashboard(
