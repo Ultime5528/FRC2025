@@ -35,7 +35,7 @@ class Robot(ModuleRobot):
             self.autonomous,
             self.dashboard,
             self.diagnostics,
-            # self.logging,
+            self.logging,
             self.property_save_checker,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
