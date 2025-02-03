@@ -1,3 +1,5 @@
+from enum import Enum, auto
+
 import wpilib
 
 from ports import PWM
@@ -6,6 +8,16 @@ from ultime.subsystem import Subsystem
 
 
 class Arm(Subsystem):
+    class State(Enum):
+        Unknown = auto()
+        Moving = auto()
+        Extended = auto()
+        Retracted = auto()
+
+    class StateMovement(Enum):
+        Disabled = auto()
+        Enabled = auto()
+        Unknown = auto()
 
     speed = autoproperty(0.3)
 
