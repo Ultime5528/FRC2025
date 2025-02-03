@@ -25,11 +25,14 @@ class CAN(Immutable):
 
 
 class PWM(Immutable):
-    pass
+    intake_motor_pivot = 0
+    intake_motor_grab = 1
 
 
 class DIO:
     elevator_switch = 0
+    intake_encoder = 1
+    intake_switch = 2
 
 
 class PDP:
