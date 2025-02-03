@@ -5,6 +5,7 @@
 | Name                                    |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |---------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | commands/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
+| commands/claw/drop.py                   |       53 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/\_\_init\_\_.py    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py   |       16 |        0 |        2 |        0 |    100% |           |
@@ -15,18 +16,20 @@
 | modules/autonomous.py                   |       18 |        2 |        4 |        2 |     82% |    30, 34 |
 | modules/batterysim.py                   |       11 |        2 |        0 |        0 |     82% |     14-15 |
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
-| modules/dashboard.py                    |       43 |        2 |       12 |        3 |     91% |52, 56->59, 64 |
+| modules/dashboard.py                    |       47 |        2 |       12 |        3 |     92% |56, 60->63, 68 |
 | modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
-| modules/hardware.py                     |       14 |        0 |        0 |        0 |    100% |           |
+| modules/hardware.py                     |       16 |        0 |        0 |        0 |    100% |           |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
-| ports.py                                |       18 |        0 |        0 |        0 |    100% |           |
+| ports.py                                |       19 |        0 |        0 |        0 |    100% |           |
 | properties.py                           |       93 |       75 |       16 |        1 |     17% |19-27, 37-59, 63-79, 83-96, 100-142, 146-180 |
 | robot.py                                |       23 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
+| subsystems/claw.py                      |       15 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py                |       13 |        1 |        0 |        0 |     92% |        13 |
 | subsystems/elevator.py                  |      110 |        6 |       12 |        2 |     93% |57->exit, 101, 118, 130, 139, 142, 145 |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/conftest.py                       |        1 |        0 |        0 |        0 |    100% |           |
+| tests/test\_claw.py                     |       71 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                 |      118 |        0 |        4 |        0 |    100% |           |
@@ -53,7 +56,7 @@
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       33 |       42 |       11 |     59% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 161, 168, 176, 188, 194, 199-200, 203 |
-|                               **TOTAL** | **1660** |  **495** |  **312** |   **44** | **68%** |           |
+|                               **TOTAL** | **1806** |  **495** |  **312** |   **44** | **70%** |           |
 
 
 ## Setup coverage badge
