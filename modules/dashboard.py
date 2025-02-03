@@ -33,6 +33,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
+
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
 
