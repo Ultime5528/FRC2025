@@ -1,6 +1,7 @@
 import commands2
 import wpilib
 
+from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
@@ -32,12 +33,10 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
 
+        putCommandOnDashboard("Auto Drop", AutoDrop(hardware.claw, hardware.elevator))
+
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules
-        putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
-        putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
-        putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
-        putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
 
         for subsystem in self._hardware.subsystems:
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)

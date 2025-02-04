@@ -60,6 +60,7 @@ class Drop(Command):
         self.get_speed_left = asCallable(speed_left)
         self.get_speed_right = asCallable(speed_right)
         self.timer = wpilib.Timer()
+        self.addRequirements(claw)
 
     def initialize(self):
         self.timer.restart()
