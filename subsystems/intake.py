@@ -9,6 +9,8 @@ from ultime.switch import Switch
 class Intake(Subsystem):
     pivot_speed = autoproperty(0.5)
     grab_speed = autoproperty(0.3)
+    pivot_encoder_threshold = autoproperty(50)
+    grab_delay = autoproperty(3)
 
     def __init__(self):
         super().__init__()
@@ -39,6 +41,9 @@ class Intake(Subsystem):
 
     def drop(self):
         self.grab_motor.set(-1 * self.grab_speed)
+
+    def stopGrab(self):
+        self.grab_motor.stopMotor()
 
     def getCurrentDrawAmps(self) -> float:
         pass
