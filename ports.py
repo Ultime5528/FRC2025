@@ -23,6 +23,7 @@ class CAN(Immutable):
     drivetrain_motor_driving_fr = 8
     elevator_motor = 9
 
+
 class PWM(Immutable):
     printer_motor = 1
 
@@ -33,6 +34,7 @@ class DIO:
     printer_switch_left = 2
     printer_encoder_a = 3
     printer_encoder_b = 4
+    printer_photocell = 5
 
 
 class PDP:

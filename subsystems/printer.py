@@ -1,11 +1,8 @@
 from enum import Enum, auto
-from turtledemo.clock import display_date_time
 
 import wpilib
-from rev import SparkMax, SparkMaxConfig, SparkBaseConfig, SparkBase, SparkMaxSim
 from wpilib import RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
-from wpimath._controls._controls.plant import DCMotor
 from wpiutil import SendableBuilder
 
 import ports
@@ -18,29 +15,40 @@ class Printer(Subsystem):
     class State(Enum):
         Invalid = auto()
         Moving = auto()
+        Left = auto()
+        MiddleLeft = auto()
+        Middle = auto()
+        MiddleRight = auto()
+        Right = auto()
         Loading = auto()
         Reset = auto()
 
-    speed = autoproperty(0.5)
-    left = autoproperty(20.0)
-    right = autoproperty(0.0)
+    speed = autoproperty(0.3)
+    left = autoproperty(0.41)
+    right = autoproperty(-0.01)
 
     position_conversion_factor = autoproperty(0.002)
 
     def __init__(self):
         super().__init__()
-        self._switch_right = Switch(Switch.Type.NormallyClosed, ports.DIO.printer_switch_right)
-        self._switch_left = Switch(Switch.Type.NormallyClosed, ports.DIO.printer_switch_left)
+        self._switch_right = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.printer_switch_right
+        )
+        self._switch_left = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.printer_switch_left
+        )
 
         self._motor = wpilib.VictorSP(ports.PWM.printer_motor)
         self._encoder = wpilib.Encoder(
-            ports.DIO.printer_encoder_a, ports.DIO.printer_encoder_b, reverseDirection=True
+            ports.DIO.printer_encoder_a,
+            ports.DIO.printer_encoder_b,
+            reverseDirection=True,
         )
-        self._encoder.setDistancePerPulse(0.03)
+        self._encoder.setDistancePerPulse(self.position_conversion_factor)
         self.addChild("motor", self._motor)
         self.addChild("encoder", self._encoder)
 
-        #self.photocell_captor = wpilib.
+        self.photocell = Switch(Switch.Type.NormallyOpen, ports.DIO.printer_photocell)
 
         self._offset = 0.0
         self._has_reset = False
@@ -51,7 +59,7 @@ class Printer(Subsystem):
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
             self._sim_encoder = EncoderSim(self._encoder)
-            self._sim_place = 5.0
+            self._sim_place = 0.01
 
     def periodic(self) -> None:
         if self._prev_is_right and not self._switch_right.isPressed():
@@ -66,10 +74,12 @@ class Printer(Subsystem):
         self._prev_is_right = self._switch_right.isPressed()
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.2
+        distance = self._motor.get() * 0.02
 
         self._sim_place += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
+
+        # print(f"sim_place={self._sim_place:.2f}  distance={distance:.2f}")
 
         if self._sim_place <= self.right:
             self._switch_right.setSimPressed()
@@ -82,7 +92,7 @@ class Printer(Subsystem):
             self._switch_left.setSimUnpressed()
 
         assert not (
-                self.isRight() and self.isLeft()
+            self.isRight() and self.isLeft()
         ), "Both switches are on at the same time which doesn't make any sense"
 
     def moveLeft(self):
@@ -95,9 +105,9 @@ class Printer(Subsystem):
         assert -1.0 <= speed <= 1.0
 
         if self.isLeft():
-            self._motor.set(speed if speed <= 0 else 0)
+            self._motor.set(speed if speed <= 0.0 else 0.0)
         elif self.isRight():
-            self._motor.set(speed if speed >= 0 else 0)
+            self._motor.set(speed if speed >= 0.0 else 0.0)
         else:
             self._motor.set(speed)
 
@@ -106,6 +116,9 @@ class Printer(Subsystem):
 
     def isRight(self) -> bool:
         return self._switch_right.isPressed()
+
+    def seesReef(self):
+        return self.photocell.isPressed()
 
     def stop(self):
         self._motor.stopMotor()

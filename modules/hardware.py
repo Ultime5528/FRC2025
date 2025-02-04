@@ -19,4 +19,8 @@ class HardwareModule(Module):
         self.controller = commands2.button.CommandXboxController(0)
         self.printer = Printer()
 
-        self.subsystems: list[Subsystem] = [self.drivetrain, self.printer]
+        self.subsystems: list[Subsystem] = [
+            self.drivetrain,
+            self.printer,
+            self.elevator,
+        ]

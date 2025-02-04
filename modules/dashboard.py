@@ -1,5 +1,3 @@
-from _weakref import proxy
-
 import commands2
 import wpilib
 
@@ -7,10 +5,12 @@ from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
+from commands.printer.manualmoveprinter import ManualMovePrinter
+from commands.printer.moveprinter import MovePrinter
+from commands.printer.resetLeft import ResetPrinterLeft
+from commands.printer.resetright import ResetPrinterRight
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
-from commands.printer.resetright import ResetPrinterRight
-from commands.printer.resetLeft import ResetPrinterLeft
 
 
 class DashboardModule(Module):
@@ -19,7 +19,9 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
-        # Classer par subsystem
+        """
+        Elevator
+        """
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MaintainElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", ManualMoveElevator.down(hardware.elevator))
@@ -29,21 +31,20 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
-        # putCommandOnDashboard("Drivetrain", Command(...))
+
+        """
+        Printer
+        """
         putCommandOnDashboard("Printer", ResetPrinterRight(hardware.printer))
         putCommandOnDashboard("Printer", ResetPrinterLeft(hardware.printer))
-
-        for subsystem in self._hardware.subsystems:
-            wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
-
-        for module in self._module_list.modules:
-            if module.redefines_init_sendable:
-                """
-                If a module keeps a reference to a subsystem or the HardwareModule,
-                it should be wrapped in a weakref.proxy(). For example,
-                self.hardware = proxy(hardware)
-                """
-                wpilib.SmartDashboard.putData(module.getName(), module)
+        putCommandOnDashboard("Printer", ManualMovePrinter.left(hardware.printer))
+        putCommandOnDashboard("Printer", ManualMovePrinter.right(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toLeft(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddle(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toRight(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toLoading(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.rightUntilReef(hardware.printer))
 
     def robotInit(self) -> None:
         components = self._hardware.subsystems + self._module_list.modules

@@ -1,6 +1,7 @@
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 
+from commands.printer.moveprinter import MovePrinter, move_printer_properties
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
 from ultime.switch import Switch
@@ -22,18 +23,18 @@ def test_settings(robot: Robot):
     assert printer._switch_left.getType() == Switch.Type.NormallyClosed
     assert printer._switch_right.getType() == Switch.Type.NormallyClosed
 
+
 def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
 
     printer = robot.hardware.printer
-    printer._sim_encoder.setDistance(0.5)
 
     # Enable robot and schedule command
     robot_controller.wait(0.5)
     cmd = ResetPrinterRight(printer)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.01)
 
     counter = 0
     while not printer._switch_right.isPressed() and counter < 1000:
@@ -52,7 +53,185 @@ def test_reset_right(robot_controller: RobotTestController, robot: Robot):
 
     assert counter < 1000, "not isPressed takes too long to happen"
     assert not printer._switch_right.isPressed()
+
+    robot_controller.wait(1.0)
+
     assert printer._motor.get() == approx(0.0)
     assert printer.getPose() == approx(0.0, abs=1.0)
 
     assert not cmd.isScheduled()
+
+
+def common_test_movePrinter_from_switch_right(
+    robotController: RobotTestController,
+    robot: Robot,
+    MovePrinterCommand,
+    wantedHeight,
+):
+    robotController.startTeleop()
+    # Set hasReset to true
+    robot.hardware.printer._has_reset = True
+    # Set encoder to the minimum value so switch_down is pressed
+    robot.hardware.printer.setPose(-0.05)
+    robot.hardware.printer._sim_place = -0.05
+    # Enable robot and schedule command
+    robotController.wait(0.5)
+    assert robot.hardware.printer.isRight()
+
+    cmd = MovePrinterCommand(robot.hardware.printer)
+    cmd.schedule()
+
+    robotController.wait(0.5)
+
+    assert robot.hardware.printer._motor.get() > 0.0
+
+    robotController.wait(10)
+
+    assert not robot.hardware.printer._switch_right.isPressed()
+
+    robotController.wait(20)
+
+    assert robot.hardware.printer._motor.get() == approx(0.0)
+    assert robot.hardware.printer.getPose() == approx(wantedHeight, abs=0.05)
+
+
+def test_movePrinter_toLeft(robot_controller: RobotTestController, robot: Robot):
+    common_test_movePrinter_from_switch_right(
+        robot_controller,
+        robot,
+        MovePrinter.toLeft,
+        move_printer_properties.position_left,
+    )
+
+
+def test_moveElevator_toMiddle(robot_controller: RobotTestController, robot: Robot):
+    common_test_movePrinter_from_switch_right(
+        robot_controller,
+        robot,
+        MovePrinter.toMiddle,
+        move_printer_properties.position_middle,
+    )
+
+
+def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Robot):
+    robot_controller.startTeleop()
+    # Set hasReset to true
+    robot.hardware.printer._has_reset = True
+    # Set printer in the middle
+    cmd = MovePrinter.toMiddle(robot.hardware.printer)
+    cmd.schedule()
+    # Enable robot and schedule command
+    robot_controller.wait(10)
+
+    assert robot.hardware.printer.state == robot.hardware.printer.State.Middle
+
+    cmd = MovePrinter.toLoading(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(0.5)
+
+    assert robot.hardware.printer._motor.get() < 0.0
+
+    robot_controller.wait(10)
+
+    assert not robot.hardware.printer._switch_right.isPressed()
+
+    robot_controller.wait(20)
+
+    assert robot.hardware.printer._motor.get() == approx(0.0)
+    assert robot.hardware.printer.getPose() == approx(0.05, rel=0.005)
+
+
+def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot):
+    robot_controller.startTeleop()
+    # Set hasReset to true
+    robot.hardware.printer._has_reset = True
+    # Set printer in the middle
+    cmd = MovePrinter.toMiddle(robot.hardware.printer)
+    cmd.schedule()
+    # Enable robot and schedule command
+    robot_controller.wait(10)
+
+    assert robot.hardware.printer.state == robot.hardware.printer.State.Middle
+
+    cmd = MovePrinter.toRight(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(0.5)
+
+    assert robot.hardware.printer._motor.get() < 0.0
+
+    robot_controller.wait(10)
+
+    assert not robot.hardware.printer._switch_right.isPressed()
+
+    robot_controller.wait(20)
+
+    assert robot.hardware.printer._motor.get() == approx(0.0)
+    assert robot.hardware.printer.getPose() == approx(0.0, abs=0.005)
+
+
+def test_move_printer_leftUntilReef(
+    robot_controller: RobotTestController, robot: Robot
+):
+    robot_controller.startTeleop()
+
+    robot.hardware.printer._has_reset = True
+
+    cmd = MovePrinter.toLeft(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
+    assert robot.hardware.printer.state == robot.hardware.printer.State.Left
+
+    cmd = MovePrinter.leftUntilReef(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(0.5)
+
+    count = 0
+    while robot.hardware.printer._motor.get() < 0 and count < 1000:
+        robot_controller.wait(0.01)
+        count += 1
+
+    robot_controller.wait(0.01)
+
+    robot.hardware.printer.photocell.setSimPressed()
+
+    robot_controller.wait(1)
+
+    assert robot.hardware.printer._motor.get() == approx(0.0)
+
+
+def test_move_printer_rightUntilReef(
+    robot_controller: RobotTestController, robot: Robot
+):
+    robot_controller.startTeleop()
+
+    robot.hardware.printer._has_reset = True
+
+    cmd = MovePrinter.toRight(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
+    assert robot.hardware.printer.state == robot.hardware.printer.State.Right
+
+    cmd = MovePrinter.rightUntilReef(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(0.5)
+
+    count = 0
+    while robot.hardware.printer._motor.get() > 0 and count < 1000:
+        robot_controller.wait(0.01)
+        count += 1
+
+    robot_controller.wait(0.01)
+
+    robot.hardware.printer.photocell.setSimPressed()
+
+    robot_controller.wait(1)
+
+    assert robot.hardware.printer._motor.get() == approx(0.0)
