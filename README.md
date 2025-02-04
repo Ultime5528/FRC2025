@@ -19,10 +19,11 @@
 | modules/dashboard.py                    |       47 |        2 |       12 |        3 |     92% |56, 60->63, 68 |
 | modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
 | modules/hardware.py                     |       16 |        0 |        0 |        0 |    100% |           |
+| modules/logging.py                      |       20 |        3 |        6 |        1 |     85% |     25-28 |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | ports.py                                |       19 |        0 |        0 |        0 |    100% |           |
 | properties.py                           |       93 |       75 |       16 |        1 |     17% |19-27, 37-59, 63-79, 83-96, 100-142, 146-180 |
-| robot.py                                |       23 |        0 |        0 |        0 |    100% |           |
+| robot.py                                |       25 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
 | subsystems/claw.py                      |       15 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py                |       13 |        1 |        0 |        0 |     92% |        13 |
@@ -56,7 +57,7 @@
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       33 |       42 |       11 |     59% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 161, 168, 176, 188, 194, 199-200, 203 |
-|                               **TOTAL** | **1806** |  **495** |  **312** |   **44** | **70%** |           |
+|                               **TOTAL** | **1828** |  **498** |  **318** |   **45** | **70%** |           |
 
 
 ## Setup coverage badge
