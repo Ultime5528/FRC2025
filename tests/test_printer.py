@@ -11,7 +11,7 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     printer = robot.hardware.printer
 
-    assert printer._motor.getChannel() == 1
+    assert printer._motor.getChannel() == 3
     assert printer._switch_left.getChannel() == 2
     assert printer._switch_right.getChannel() == 1
 
