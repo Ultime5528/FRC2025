@@ -28,17 +28,16 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
-        putCommandOnDashboard("Arm", RetractArm(hardware.arm))
-        putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
 
         putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
 
-    def robotInit(self) -> None:
-        components = self._hardware.subsystems + self._module_list.modules
+        putCommandOnDashboard("Arm", RetractArm(hardware.arm))
+        putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
 
+    def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 

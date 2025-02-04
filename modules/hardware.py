@@ -1,5 +1,8 @@
 import commands2
 
+from commands.elevator.maintainelevator import MaintainElevator
+from subsystems.arm import Arm
+from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.module import Module
@@ -20,4 +23,9 @@ class HardwareModule(Module):
 
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.subsystems: list[Subsystem] = [self.drivetrain, self.elevator, self.claw]
+        self.subsystems: list[Subsystem] = [
+            self.drivetrain,
+            self.elevator,
+            self.claw,
+            self.arm,
+        ]
