@@ -30,5 +30,5 @@ class HardwareModule(Module):
             self.elevator,
             self.claw,
             self.arm,
-            self.printer
+            self.printer,
         ]
