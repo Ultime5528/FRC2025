@@ -18,7 +18,7 @@ class ExtendArm(Command):
         self.timer.restart()
 
     def execute(self):
-        self.arm.moveDown()
+        self.arm.extend()
 
     def isFinished(self) -> bool:
         return self.timer.get() >= self.delay

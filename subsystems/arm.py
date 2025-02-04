@@ -12,10 +12,10 @@ class Arm(Subsystem):
         super().__init__()
         self._motor = wpilib.VictorSP(PWM.arm_motor)
 
-    def moveUp(self):
+    def retract(self):
         self._motor.set(self.speed)
 
-    def moveDown(self):
+    def extend(self):
         self._motor.set(self.speed * -1)
 
     def stop(self):

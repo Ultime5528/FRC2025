@@ -18,7 +18,7 @@ class RetractArm(Command):
         self.timer.restart()
 
     def execute(self):
-        self.arm.moveUp()
+        self.arm.retract()
 
     def isFinished(self) -> bool:
         return self.timer.get() >= self.delay
