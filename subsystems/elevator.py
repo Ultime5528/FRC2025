@@ -13,7 +13,7 @@ from ultime.switch import Switch
 
 class Elevator(Subsystem):
     class State(Enum):
-        Invalid = auto()
+        Unknown = auto()
         Moving = auto()
         Loading = auto()
         Reset = auto()
@@ -22,7 +22,7 @@ class Elevator(Subsystem):
         Level3 = auto()
         Level4 = auto()
 
-    class StateMovement(Enum):
+    class MovementState(Enum):
         Disabled = auto()
         Enabled = auto()
         Unknown = auto()
@@ -33,6 +33,7 @@ class Elevator(Subsystem):
     height_min = autoproperty(0.0)
     height_max = autoproperty(2.0)
     height_maintain = autoproperty(0.1)
+    height_lower_zone = autoproperty(0.4)
 
     position_conversion_factor = autoproperty(0.002)
 
@@ -57,7 +58,8 @@ class Elevator(Subsystem):
         self._offset = 0.0
         self._has_reset = False
         self._prev_is_down = False
-        self.state = Elevator.State.Invalid
+        self.state = Elevator.State.Unknown
+        self.movement_state = Elevator.MovementState.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
@@ -124,6 +126,9 @@ class Elevator(Subsystem):
 
     def getHeight(self):
         return self._encoder.getPosition() + self._offset
+
+    def isInLowerZone(self) -> bool:
+        return self.getHeight() <= self.height_lower_zone
 
     def getMotorInput(self):
         return self._motor.get()

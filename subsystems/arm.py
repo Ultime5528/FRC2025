@@ -14,7 +14,7 @@ class Arm(Subsystem):
         Extended = auto()
         Retracted = auto()
 
-    class StateMovement(Enum):
+    class MovementState(Enum):
         Disabled = auto()
         Enabled = auto()
         Unknown = auto()
@@ -24,6 +24,8 @@ class Arm(Subsystem):
     def __init__(self):
         super().__init__()
         self._motor = wpilib.VictorSP(PWM.arm_motor)
+        self.state = Arm.State.Unknown
+        self.movement_state = Arm.MovementState.Unknown
 
     def extend(self):
         self._motor.set(self.speed)

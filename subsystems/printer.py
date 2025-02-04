@@ -1,11 +1,9 @@
 from enum import Enum, auto
-from turtledemo.clock import display_date_time
 
 import wpilib
-from rev import SparkMax, SparkMaxConfig, SparkBaseConfig, SparkBase, SparkMaxSim
+from _pytest.python_api import approx
 from wpilib import RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
-from wpimath._controls._controls.plant import DCMotor
 from wpiutil import SendableBuilder
 
 import ports
@@ -21,37 +19,46 @@ class Printer(Subsystem):
         Loading = auto()
         Reset = auto()
 
-    class StateMovement(Enum):
+    class MovementState(Enum):
         Disabled = auto()
         Enabled = auto()
         Unknown = auto()
 
     speed = autoproperty(0.5)
-    left = autoproperty(20.0)
+    left = autoproperty(0.4)
     right = autoproperty(0.0)
+    left_zone = autoproperty(0.3)
+    right_zone = autoproperty(0.1)
 
     position_conversion_factor = autoproperty(0.002)
 
     def __init__(self):
         super().__init__()
-        self._switch_right = Switch(Switch.Type.NormallyClosed, ports.DIO.printer_switch_right)
-        self._switch_left = Switch(Switch.Type.NormallyClosed, ports.DIO.printer_switch_left)
+        self._switch_right = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.printer_switch_right
+        )
+        self._switch_left = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.printer_switch_left
+        )
 
         self._motor = wpilib.VictorSP(ports.PWM.printer_motor)
         self._encoder = wpilib.Encoder(
-            ports.DIO.printer_encoder_a, ports.DIO.printer_encoder_b, reverseDirection=True
+            ports.DIO.printer_encoder_a,
+            ports.DIO.printer_encoder_b,
+            reverseDirection=True,
         )
         self._encoder.setDistancePerPulse(0.03)
         self.addChild("motor", self._motor)
         self.addChild("encoder", self._encoder)
 
-        #self.photocell_captor = wpilib.
+        # self.photocell_captor = wpilib.
 
         self._offset = 0.0
         self._has_reset = False
         self._prev_is_right = False
         self._prev_is_left = False
-        self.state = Printer.State.Invalid
+        self.state = Printer.State.Unknown
+        self.movement_state = Printer.MovementState.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
@@ -87,7 +94,7 @@ class Printer(Subsystem):
             self._switch_left.setSimUnpressed()
 
         assert not (
-                self.isRight() and self.isLeft()
+            self.isRight() and self.isLeft()
         ), "Both switches are on at the same time which doesn't make any sense"
 
     def moveLeft(self):
@@ -99,18 +106,24 @@ class Printer(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.isLeft():
-            self._motor.set(speed if speed <= 0 else 0)
+        if self.movement_state == Printer.MovementState.Disabled:
+            speed = 0.0
+        elif self.isLeft():
+            speed = speed if speed <= 0.0 else 0.0
         elif self.isRight():
-            self._motor.set(speed if speed >= 0 else 0)
-        else:
-            self._motor.set(speed)
+            speed = speed if speed >= 0.0 else 0.0
+
+        self._motor.set(speed)
 
     def isLeft(self) -> bool:
         return self._switch_left.isPressed()
 
     def isRight(self) -> bool:
         return self._switch_right.isPressed()
+
+    def isInMiddleZone(self) -> bool:
+        pose = self.getPose()
+        return pose >= self.right_zone and pose <= self.left_zone
 
     def stop(self):
         self._motor.stopMotor()

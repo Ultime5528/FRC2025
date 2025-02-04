@@ -22,6 +22,7 @@ def test_settings(robot: Robot):
     assert printer._switch_left.getType() == Switch.Type.NormallyClosed
     assert printer._switch_right.getType() == Switch.Type.NormallyClosed
 
+
 def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
 

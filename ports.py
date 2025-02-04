@@ -23,6 +23,7 @@ class CAN(Immutable):
     drivetrain_motor_driving_fr = 8
     elevator_motor = 9
 
+
 class PWM(Immutable):
     arm_motor = 0
     printer_motor = 1

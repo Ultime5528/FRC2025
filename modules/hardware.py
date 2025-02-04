@@ -15,11 +15,15 @@ class HardwareModule(Module):
         self.drivetrain = Drivetrain()
         self.arm = Arm()
 
-
         self.elevator = Elevator()
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
 
         self.controller = commands2.button.CommandXboxController(0)
         self.printer = Printer()
 
-        self.subsystems: list[Subsystem] = [self.drivetrain, self.printer, self.arm, self.elevator]
+        self.subsystems: list[Subsystem] = [
+            self.drivetrain,
+            self.printer,
+            self.arm,
+            self.elevator,
+        ]
