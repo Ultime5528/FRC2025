@@ -5,6 +5,8 @@
 | Name                                    |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |---------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | commands/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
+| commands/arm/extendarm.py               |       19 |        0 |        0 |        0 |    100% |           |
+| commands/arm/retractarm.py              |       19 |        0 |        0 |        0 |    100% |           |
 | commands/claw/drop.py                   |       53 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/\_\_init\_\_.py    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
@@ -16,20 +18,23 @@
 | modules/autonomous.py                   |       18 |        2 |        4 |        2 |     82% |    30, 34 |
 | modules/batterysim.py                   |       11 |        2 |        0 |        0 |     82% |     14-15 |
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
-| modules/dashboard.py                    |       47 |        2 |       12 |        3 |     92% |56, 60->63, 68 |
+| modules/dashboard.py                    |       50 |        2 |       12 |        3 |     92% |59, 63->66, 71 |
 | modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
-| modules/hardware.py                     |       16 |        0 |        0 |        0 |    100% |           |
+| modules/hardware.py                     |       18 |        0 |        0 |        0 |    100% |           |
 | modules/logging.py                      |       20 |        3 |        6 |        1 |     85% |     25-28 |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
-| ports.py                                |       19 |        0 |        0 |        0 |    100% |           |
+| ports.py                                |       20 |        0 |        0 |        0 |    100% |           |
 | properties.py                           |       93 |       75 |       16 |        1 |     17% |19-27, 37-59, 63-79, 83-96, 100-142, 146-180 |
 | robot.py                                |       25 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
+| subsystems/arm.py                       |       17 |        1 |        0 |        0 |     94% |        25 |
 | subsystems/claw.py                      |       15 |        0 |        0 |        0 |    100% |           |
 | subsystems/drivetrain.py                |       13 |        1 |        0 |        0 |     92% |        13 |
 | subsystems/elevator.py                  |      110 |        6 |       12 |        2 |     93% |57->exit, 101, 118, 130, 139, 142, 145 |
+| subsystems/printer.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/conftest.py                       |        1 |        0 |        0 |        0 |    100% |           |
+| tests/test\_arm.py                      |       30 |        0 |        0 |        0 |    100% |           |
 | tests/test\_claw.py                     |       71 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |        0 |        0 |        0 |        0 |    100% |           |
@@ -57,7 +62,7 @@
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       33 |       42 |       11 |     59% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 161, 168, 176, 188, 194, 199-200, 203 |
-|                               **TOTAL** | **1828** |  **498** |  **318** |   **45** | **70%** |           |
+|                               **TOTAL** | **1919** |  **499** |  **318** |   **45** | **71%** |           |
 
 
 ## Setup coverage badge
