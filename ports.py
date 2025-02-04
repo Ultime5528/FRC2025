@@ -25,7 +25,10 @@ class CAN(Immutable):
 
 
 class PWM(Immutable):
-    printer_motor = 1
+    claw_motor_right = 0
+    claw_motor_left = 1
+    arm_motor = 2
+    printer_motor = 3
 
 
 class DIO:

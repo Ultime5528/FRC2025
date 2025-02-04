@@ -1,6 +1,9 @@
 import commands2
 import wpilib
 
+from commands.arm.extendarm import ExtendArm
+from commands.arm.retractarm import RetractArm
+from commands.claw.drop import Drop
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -46,9 +49,21 @@ class DashboardModule(Module):
         putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.rightUntilReef(hardware.printer))
 
-    def robotInit(self) -> None:
-        components = self._hardware.subsystems + self._module_list.modules
+        """
+        Claw
+        """
+        putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
+        putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
 
+        """
+        Arm
+        """
+        putCommandOnDashboard("Arm", RetractArm(hardware.arm))
+        putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
+
+    def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 
