@@ -25,4 +25,3 @@ class GrabAlgae(Command):
     def end(self, interrupted: bool):
         self.intake.stopGrab()
         self.timer.stop()
-
