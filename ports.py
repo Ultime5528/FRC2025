@@ -22,6 +22,7 @@ class CAN(Immutable):
     drivetrain_motor_turning_fr = 7
     drivetrain_motor_driving_fr = 8
     elevator_motor = 9
+    climber_motor = 10
 
 
 class PWM(Immutable):
@@ -32,6 +33,7 @@ class PWM(Immutable):
 
 class DIO:
     elevator_switch = 0
+    climber_switch = 1
 
 
 class PDP:
