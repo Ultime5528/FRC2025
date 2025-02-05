@@ -1,5 +1,7 @@
 import commands2
+from commands2.button import Trigger
 
+from commands.claw.loadcoral import LoadCoral
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm
 from subsystems.claw import Claw
@@ -18,6 +20,7 @@ class HardwareModule(Module):
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
 
         self.claw = Claw()
+        Trigger(self.claw.hasCoralInLoader).onTrue(LoadCoral(self.claw))
 
         self.arm = Arm()
 

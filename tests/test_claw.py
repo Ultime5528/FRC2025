@@ -2,6 +2,7 @@ from _pytest.python_api import approx
 from commands2 import Command
 
 from commands.claw.drop import Drop, drop_properties
+from commands.claw.loadcoral import LoadCoral
 from robot import Robot
 from ultime.tests import RobotTestController
 
@@ -9,6 +10,7 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     assert robot.hardware.claw._motor_right.getChannel() == 0
     assert robot.hardware.claw._motor_left.getChannel() == 1
+    assert robot.hardware.claw._sensor.getType() == 1
 
 
 def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
@@ -128,3 +130,34 @@ def _testDropLevelCommon(
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
+
+
+def testLoadCoral(
+    robot_controller: RobotTestController,
+    robot: Robot,
+):
+    robot_controller.startTeleop()
+    claw = robot.hardware.claw
+
+    claw._sensor.setSimUnpressed()
+
+    assert not claw.hasCoralInLoader()
+
+    claw._sensor.setSimPressed()
+
+    assert claw.hasCoralInLoader()
+    assert robot.hardware.claw._motor_left.get() == approx(
+        LoadCoral.speed_left, rel=0.1
+    )
+    assert robot.hardware.claw._motor_right.get() == approx(
+        LoadCoral.speed_right, rel=0.1
+    )
+
+    claw._sensor.setSimUnpressed()
+
+    assert not claw.hasCoralInLoader()
+
+    robot_controller.wait(LoadCoral.delay + 0.02)
+
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
