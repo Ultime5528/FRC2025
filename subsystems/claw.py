@@ -1,4 +1,5 @@
 from wpilib import VictorSP
+from ultime.switch import Switch
 
 import ports
 from ultime.subsystem import Subsystem
@@ -9,6 +10,7 @@ class Claw(Subsystem):
         super().__init__()
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
+        self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell_sensor)
 
     def stop(self):
         self._motor_right.stopMotor()
@@ -19,3 +21,6 @@ class Claw(Subsystem):
 
     def setLeft(self, speed: float):
         self._motor_left.set(speed)
+
+    def hasCoral(self):
+        return self._sensor.isPressed()
