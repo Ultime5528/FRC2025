@@ -1,14 +1,13 @@
 from _pytest.python_api import approx
 from commands2 import Command
 
-from commands.claw.drop import Drop, drop_properties
 from commands.claw.autodrop import AutoDrop
+from commands.claw.drop import Drop, drop_properties
+from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from robot import Robot
-from commands.elevator.moveelevator import MoveElevator
 from subsystems.elevator import Elevator
 from ultime.tests import RobotTestController
-
 
 
 def test_ports(robot: Robot):
@@ -134,14 +133,15 @@ def _testDropLevelCommon(
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
 
+
 def common_test_autodrop(
-        robot_controller: RobotTestController,
-        robot: Robot,
-        CreateMoveElevator,
-        elevator_state,
-        speed_left,
-        speed_right
-    ):
+    robot_controller: RobotTestController,
+    robot: Robot,
+    CreateMoveElevator,
+    elevator_state,
+    speed_left,
+    speed_right,
+):
 
     robot_controller.startTeleop()
 
@@ -173,6 +173,7 @@ def test_AutoDrop_Level1(robot_controller, robot):
         drop_properties.speed_level_1_right,
     )
 
+
 def test_AutoDrop_Level2(robot_controller, robot):
     common_test_autodrop(
         robot_controller,
@@ -183,6 +184,7 @@ def test_AutoDrop_Level2(robot_controller, robot):
         drop_properties.speed_level_2_right,
     )
 
+
 def test_AutoDrop_Level3(robot_controller, robot):
     common_test_autodrop(
         robot_controller,
@@ -192,6 +194,7 @@ def test_AutoDrop_Level3(robot_controller, robot):
         drop_properties.speed_level_3_left,
         drop_properties.speed_level_3_right,
     )
+
 
 def test_AutoDrop_Level4(robot_controller, robot):
     common_test_autodrop(

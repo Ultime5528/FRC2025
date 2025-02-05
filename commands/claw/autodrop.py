@@ -16,5 +16,5 @@ class AutoDrop(SelectCommand):
                 Elevator.State.Level3: Drop.atLevel3(claw),
                 Elevator.State.Level4: Drop.atLevel4(claw),
             },
-            lambda: elevator.state
+            lambda: elevator.state,
         )
