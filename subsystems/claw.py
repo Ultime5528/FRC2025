@@ -1,8 +1,8 @@
 from wpilib import VictorSP
-from ultime.switch import Switch
 
 import ports
 from ultime.subsystem import Subsystem
+from ultime.switch import Switch
 
 
 class Claw(Subsystem):
@@ -22,5 +22,5 @@ class Claw(Subsystem):
     def setLeft(self, speed: float):
         self._motor_left.set(speed)
 
-    def hasCoral(self):
+    def hasCoralInLoader(self):
         return self._sensor.isPressed()

@@ -1,14 +1,14 @@
 import wpilib
+from commands2 import Command
 
 from subsystems.claw import Claw
-from commands2 import Command
-from commands.claw.drop import drop_properties
-
 from ultime.autoproperty import autoproperty
 
 
 class LoadCoral(Command):
     delay = autoproperty(0.7)
+    speed_left = autoproperty(0.5)
+    speed_right = autoproperty(-0.5)
 
     def __init__(self, claw: Claw):
         super().__init__()
@@ -17,22 +17,18 @@ class LoadCoral(Command):
         self.timer = wpilib.Timer()
 
     def initialize(self):
-        self.timer.restart()
+        self.timer.stop()
+        self.timer.reset()
 
     def execute(self):
-        if self.claw.hasCoral():
-            self.claw.setLeft(drop_properties.speed_level_2_left)
-            self.claw.setRight(drop_properties.speed_level_2_right)
-            if not self.claw.hasCoral():
-                self.timer.start()
-            print(self.claw.hasCoral())
-        
-
+        self.claw.setLeft(self.speed_left)
+        self.claw.setRight(self.speed_right)
+        if not self.claw.hasCoralInLoader():
+            self.timer.start()
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.delay
+        return not self.claw.hasCoralInLoader() and self.timer.get() >= self.delay
 
     def end(self, interrupted: bool):
-        print(self.claw.hasCoral())
         self.claw.stop()
-
+        self.timer.stop()
