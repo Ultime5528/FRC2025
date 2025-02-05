@@ -34,8 +34,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
-
-        putCommandOnDashboard("Auto Drop", AutoDrop(hardware.claw, hardware.elevator))
+        putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
 
         putCommandOnDashboard("Arm", RetractArm(hardware.arm))
         putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
