@@ -29,12 +29,18 @@ class PWM(Immutable):
     claw_motor_right = 0
     claw_motor_left = 1
     arm_motor = 2
+    printer_motor = 3
 
 
 class DIO:
     elevator_switch = 0
     claw_photocell_sensor = 1
-    climber_switch = 2
+    printer_switch_right = 2
+    printer_switch_left = 3
+    printer_encoder_a = 4
+    printer_encoder_b = 5
+    printer_photocell = 6
+    climber_switch = 7
 
 
 class PDP:

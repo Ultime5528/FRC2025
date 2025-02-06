@@ -8,6 +8,7 @@ from subsystems.claw import Claw
 from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
+from subsystems.printer import Printer
 from ultime.module import Module
 from ultime.subsystem import Subsystem
 
@@ -25,6 +26,8 @@ class HardwareModule(Module):
 
         self.arm = Arm()
 
+        self.printer = Printer()
+
         self.climber = Climber()
 
         self.controller = commands2.button.CommandXboxController(0)
@@ -34,5 +37,6 @@ class HardwareModule(Module):
             self.elevator,
             self.claw,
             self.arm,
+            self.printer,
             self.climber,
         ]
