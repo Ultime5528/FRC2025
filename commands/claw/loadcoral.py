@@ -23,8 +23,12 @@ class LoadCoral(Command):
     def execute(self):
         self.claw.setLeft(self.speed_left)
         self.claw.setRight(self.speed_right)
+
         if not self.claw.hasCoralInLoader():
             self.timer.start()
+        else:
+            self.timer.stop()
+            self.timer.reset()
 
     def isFinished(self) -> bool:
         return not self.claw.hasCoralInLoader() and self.timer.get() >= self.delay
