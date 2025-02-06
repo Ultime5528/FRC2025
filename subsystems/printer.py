@@ -20,8 +20,8 @@ class Printer(Subsystem):
         Reset = auto()
 
     class MovementState(Enum):
-        Disabled = auto()
-        Enabled = auto()
+        AvoidMiddleZone = auto()
+        FreeToMove = auto()
         Unknown = auto()
 
     speed = autoproperty(0.5)
@@ -106,7 +106,7 @@ class Printer(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.movement_state == Printer.MovementState.Disabled:
+        if self.movement_state == Printer.MovementState.AvoidMiddleZone:
             speed = 0.0
         elif self.isLeft():
             speed = speed if speed <= 0.0 else 0.0

@@ -23,8 +23,8 @@ class Elevator(Subsystem):
         Level4 = auto()
 
     class MovementState(Enum):
-        Disabled = auto()
-        Enabled = auto()
+        AvoidLowerZone = auto()
+        FreeToMove = auto()
         Unknown = auto()
 
     speed_up = autoproperty(0.5)
@@ -102,12 +102,14 @@ class Elevator(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.isDown():
-            self._motor.set(speed if speed >= 0 else 0)
+        if self.movement_state == Elevator.MovementState.AvoidLowerZone:
+            speed = 0.0
+        elif self.isDown():
+            speed = speed if speed >= 0.0 else 0.0
         elif self.isUp():
-            self._motor.set(speed if speed <= 0 else 0)
-        else:
-            self._motor.set(speed)
+            speed = speed if speed <= 0.0 else 0.0
+
+        self._motor.set(speed)
 
     def maintain(self):
         self.setSpeed(self.speed_maintain)
