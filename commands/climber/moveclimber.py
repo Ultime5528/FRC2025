@@ -29,6 +29,7 @@ class MovingClimber(Command):
     def __init__(self, climber: Climber, state: Climber.State):
         super().__init__()
         self.climber = climber
+        self.addRequirements(self.climber)
         self.new_state = state
 
     def initialize(self):
