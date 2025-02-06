@@ -38,6 +38,7 @@ class DIO:
     printer_encoder_a = 3
     printer_encoder_b = 4
     printer_photocell = 5
+    claw_photocell = 6
 
 
 class PDP:

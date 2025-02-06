@@ -5,6 +5,7 @@ from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
+from commands.claw.loadcoral import LoadCoral
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -58,6 +59,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
+        putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
 
         """
         Arm
