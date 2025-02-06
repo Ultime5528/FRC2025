@@ -1,5 +1,4 @@
 from rev import SparkMax
-from rev import SparkMaxSim
 from wpilib.simulation import SimDeviceSim
 
 

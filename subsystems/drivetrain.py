@@ -2,23 +2,20 @@ import math
 
 import wpilib
 from photonlibpy.photonCamera import PhotonCamera
-from wpilib import RobotBase, ADIS16470_IMU
+from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
     ChassisSpeeds,
     SwerveDrive4Kinematics,
     SwerveModuleState,
-    SwerveDrive2Odometry,
-    SwerveDrive4Odometry,
 )
 
 import ports
-from ultime.gyro import ADIS16470
 from ultime.autoproperty import autoproperty
+from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule
-
 from ultime.swerveconstants import Constants
 
 
@@ -37,8 +34,6 @@ class Drivetrain(Subsystem):
         self.period_seconds = period
 
         self.constants = Constants.DriveConstants
-    def getCurrentDrawAmps(self):
-        return 0.0
 
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
@@ -248,3 +243,6 @@ class Drivetrain(Subsystem):
             ),
             pose,
         )
+
+    def getCurrentDrawAmps(self):
+        return 0.0

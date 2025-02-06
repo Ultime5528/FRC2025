@@ -1,4 +1,5 @@
 from rev import SparkMaxConfig, ClosedLoopConfig, SparkBaseConfig
+
 from ultime.swerveconstants import Constants
 
 

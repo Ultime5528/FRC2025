@@ -1,4 +1,5 @@
 import math
+
 from rev import SparkMax, SparkBase
 from rev import SparkMaxSim
 from wpilib import RobotBase
