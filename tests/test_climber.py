@@ -11,7 +11,7 @@ def test_ports(robot: Robot):
     climber = robot.hardware.climber
 
     assert climber._motor.getDeviceId() == 10
-    assert climber._switch.getChannel() == 1
+    assert climber._switch.getChannel() == 7
 
 
 def test_settings(robot: Robot):

@@ -71,7 +71,6 @@ class DashboardModule(Module):
         """
         Climber
         """
-
         putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
         putCommandOnDashboard("Climber", Climb(hardware.climber))
         putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
