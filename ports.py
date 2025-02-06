@@ -34,7 +34,7 @@ class PWM(Immutable):
 class DIO:
     elevator_switch = 0
     claw_photocell_sensor = 1
-    climber_switch = 1
+    climber_switch = 2
 
 
 class PDP:
