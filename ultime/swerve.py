@@ -1,9 +1,9 @@
 import math
-
+from ultime.sparkmaxsimutils import SparkMaxSimU
 from rev import SparkMax, SparkBase
 from rev import SparkMaxSim
 from wpilib import RobotBase
-from wpilib.simulation import FlywheelSim, RoboRioSim
+from wpilib.simulation import FlywheelSim, RoboRioSim, SimDeviceSim
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.system.plant import DCMotor, LinearSystemId
@@ -66,6 +66,8 @@ class SwerveModule:
                 [0.0],
             )
             self.sim_motor_turn = SparkMaxSim(self._turning_motor, DCMotor.NEO550(1))
+            #self.sim_encoder_turn = self.sim_motor_turn.getRelativeEncoderSim()
+            self.sim_encoder_turn = SparkMaxSimU(self._turning_motor)
 
             self.sim_wheel_drive = FlywheelSim(
                 LinearSystemId.identifyVelocitySystemMeters(3, 1.24),
@@ -73,6 +75,8 @@ class SwerveModule:
                 [0.075],
             )
             self.sim_motor_drive = SparkMaxSim(self._driving_motor, DCMotor.NEO(1))
+            #self.sim_encoder_drive = self.sim_motor_drive.getRelativeEncoderSim()
+            self.sim_encoder_drive = SparkMaxSimU(self._driving_motor)
 
     def getVelocity(self) -> float:
         return self._driving_encoder.getVelocity()
@@ -142,27 +146,21 @@ class SwerveModule:
         # Drive
 
         self.sim_wheel_drive.setInputVoltage(
-            self.sim_motor_drive.getAppliedOutput() * RoboRioSim.getVInVoltage()
+            self.sim_motor_drive.getVelocity() * RoboRioSim.getVInVoltage()
         )
 
         self.sim_wheel_drive.update(period)
 
-        self.sim_motor_drive.iterate(
-            radians_per_second_to_rpm(self.sim_wheel_drive.getAngularVelocity()),
-            RoboRioSim.getVInVoltage(),
-            period,
-        )
+        self.sim_encoder_drive.setPosition(self.sim_wheel_drive.getAngularVelocity())
+        self.sim_encoder_drive.setVelocity(self.sim_wheel_drive.getAngularVelocity())
 
         # Turn
 
         self.sim_wheel_turn.setInputVoltage(
-            self.sim_motor_turn.getAppliedOutput() * RoboRioSim.getVInVoltage()
+            self.sim_motor_turn.getVelocity() * RoboRioSim.getVInVoltage()
         )
 
         self.sim_wheel_turn.update(period)
 
-        self.sim_motor_turn.iterate(
-            radians_per_second_to_rpm(self.sim_wheel_turn.getAngularVelocity()),
-            RoboRioSim.getVInVoltage(),
-            period,
-        )
+        #self.sim_encoder_turn.setPosition(self.sim_wheel_turn.getAngularVelocity())
+        #self.sim_encoder_turn.setVelocity(self.sim_wheel_turn.getAngularVelocity())
