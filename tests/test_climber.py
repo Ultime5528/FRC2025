@@ -90,4 +90,4 @@ def test_climber_initial(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(20)
 
     assert climber._motor.get() == approx(0.0, abs=0.1)
-    assert climber.state == climber.State.Initial
+    assert climber.isInitial()
