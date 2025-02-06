@@ -69,7 +69,7 @@ class Intake(Subsystem):
         self.grab_motor.stopMotor()
 
     def getPos(self):
-        # getPosition
+        """gets Position"""
         return self.pivot_encoder.get()
 
     def hasReset(self):

@@ -25,8 +25,8 @@ class CAN(Immutable):
 
 
 class PWM(Immutable):
-    intake_motor_pivot = 0
-    intake_motor_grab = 1
+    intake_motor_pivot = 3
+    intake_motor_grab = 4
 
 
 class DIO:

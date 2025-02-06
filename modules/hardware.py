@@ -3,6 +3,7 @@ import commands2
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
+from subsystems.intake import Intake
 from ultime.module import Module
 from ultime.subsystem import Subsystem
 
@@ -14,6 +15,8 @@ class HardwareModule(Module):
 
         self.elevator = Elevator()
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
+
+        self.intake = Intake()
 
         self.controller = commands2.button.CommandXboxController(0)
 

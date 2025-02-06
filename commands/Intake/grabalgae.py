@@ -16,8 +16,9 @@ class GrabAlgae(Command):
         if not self.switch.isPressed():
             self.intake.grab()
             self.timer.stop()
+            self.timer.reset()
         else:
-            self.timer.restart()
+            self.timer.start()
 
     def isFinished(self) -> bool:
         return self.timer.get() >= self.intake.grab_delay
