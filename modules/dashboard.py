@@ -6,7 +6,6 @@ from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
-from commands.climber.moveclimber import MoveClimber
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -67,14 +66,6 @@ class DashboardModule(Module):
         """
         putCommandOnDashboard("Arm", RetractArm(hardware.arm))
         putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
-
-        putCommandOnDashboard(
-            "Climber", MoveClimber.toInitialPosition(hardware.climber)
-        )
-        putCommandOnDashboard("Climber", MoveClimber.toReadyPosition(hardware.climber))
-        putCommandOnDashboard(
-            "Climber", MoveClimber.toClimbedPosition(hardware.climber)
-        )
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
