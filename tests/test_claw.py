@@ -10,7 +10,7 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     assert robot.hardware.claw._motor_right.getChannel() == 0
     assert robot.hardware.claw._motor_left.getChannel() == 1
-    assert robot.hardware.claw._sensor.getType() == 1
+    assert robot.hardware.claw._sensor.getChannel() == 1
 
 
 def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
@@ -144,20 +144,19 @@ def testLoadCoral(
     assert not claw.hasCoralInLoader()
 
     claw._sensor.setSimPressed()
-
     assert claw.hasCoralInLoader()
-    assert robot.hardware.claw._motor_left.get() == approx(
-        LoadCoral.speed_left, rel=0.1
-    )
-    assert robot.hardware.claw._motor_right.get() == approx(
-        LoadCoral.speed_right, rel=0.1
-    )
+
+    robot_controller.wait(0.1)
+
+    cmd = LoadCoral(claw)
+
+    assert robot.hardware.claw._motor_left.get() == approx(cmd.speed_left, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(cmd.speed_right, rel=0.1)
 
     claw._sensor.setSimUnpressed()
-
     assert not claw.hasCoralInLoader()
 
-    robot_controller.wait(LoadCoral.delay + 0.02)
+    robot_controller.wait(0.05 + cmd.delay)
 
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
