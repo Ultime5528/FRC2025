@@ -13,7 +13,7 @@ from ultime.switch import Switch
 
 class Climber(Subsystem):
     class State(Enum):
-        Invalid = auto()
+        Unknown = auto()
         Moving = auto()
         Initial = auto()
         Ready = auto()
@@ -56,9 +56,7 @@ class Climber(Subsystem):
             self._switch.setSimUnpressed()
 
     def isInitial(self):
-        if self.state == self.State.Initial:
-            return True
-        return False
+        return self.state == self.State.Initial
 
     def isClimbed(self):
         return self._switch.isPressed()

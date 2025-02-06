@@ -5,7 +5,7 @@ from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
 
-class MovingClimber(Command):
+class MoveClimber(Command):
     def __init__(self, climber: Climber, state: Climber.State):
         super().__init__()
         self.climber = climber
@@ -17,23 +17,22 @@ class MovingClimber(Command):
 
     @abstractmethod
     def execute(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def isFinished(self) -> bool:
         raise NotImplementedError()
 
-    @abstractmethod
     def end(self, interrupted: bool):
         self.climber.stop()
         if interrupted:
-            self.climber.state = Climber.State.Invalid
+            self.climber.state = Climber.State.Unknown
         else:
             self.climber.state = self.new_state
 
 
-class ReadyClimber(MovingClimber):
-    position_ready = autoproperty(5.0)
+class ReadyClimber(MoveClimber):
+    position = autoproperty(5.0)
 
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Ready)
@@ -42,10 +41,10 @@ class ReadyClimber(MovingClimber):
         self.climber.pull()
 
     def isFinished(self) -> bool:
-        return self.climber.getPosition() >= self.position_ready
+        return self.climber.getPosition() >= self.position
 
 
-class ClimbClimber(MovingClimber):
+class Climb(MoveClimber):
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Climbed)
 
@@ -53,10 +52,10 @@ class ClimbClimber(MovingClimber):
         self.climber.pull()
 
     def isFinished(self) -> bool:
-        return self.climber._switch.isPressed()
+        return self.climber.isClimbed()
 
 
-class ReleaseClimber(MovingClimber):
+class ReleaseClimber(MoveClimber):
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Initial)
 

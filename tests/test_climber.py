@@ -1,7 +1,7 @@
 from _pytest.python_api import approx
 from rev import SparkBase, SparkBaseConfig
 
-from commands.climber.moveclimber import ReadyClimber, ReleaseClimber, ClimbClimber
+from commands.climber.moveclimber import ReadyClimber, ReleaseClimber, Climb
 from robot import Robot
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
@@ -54,7 +54,7 @@ def test_climber_climbed(robot_controller: RobotTestController, robot: Robot):
     climber = robot.hardware.climber
     robot_controller.startTeleop()
 
-    cmd = ClimbClimber(climber)
+    cmd = Climb(climber)
     cmd.schedule()
 
     robot_controller.wait(0.5)
@@ -73,7 +73,7 @@ def test_climber_initial(robot_controller: RobotTestController, robot: Robot):
     climber = robot.hardware.climber
     robot_controller.startTeleop()
 
-    cmd = ClimbClimber(climber)
+    cmd = Climb(climber)
     cmd.schedule()
 
     robot_controller.wait(20)
