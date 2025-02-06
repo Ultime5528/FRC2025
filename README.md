@@ -7,7 +7,9 @@
 | commands/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
 | commands/arm/extendarm.py               |       19 |        0 |        0 |        0 |    100% |           |
 | commands/arm/retractarm.py              |       19 |        0 |        0 |        0 |    100% |           |
-| commands/claw/drop.py                   |       53 |        0 |        0 |        0 |    100% |           |
+| commands/claw/\_\_init\_\_.py           |        0 |        0 |        0 |        0 |    100% |           |
+| commands/claw/autodrop.py               |        9 |        0 |        0 |        0 |    100% |           |
+| commands/claw/drop.py                   |       54 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/\_\_init\_\_.py    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py   |       16 |        0 |        2 |        0 |    100% |           |
@@ -18,7 +20,7 @@
 | modules/autonomous.py                   |       18 |        2 |        4 |        2 |     82% |    30, 34 |
 | modules/batterysim.py                   |       11 |        2 |        0 |        0 |     82% |     14-15 |
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
-| modules/dashboard.py                    |       50 |        2 |       12 |        3 |     92% |59, 63->66, 71 |
+| modules/dashboard.py                    |       52 |        2 |       12 |        3 |     92% |61, 65->68, 73 |
 | modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
 | modules/hardware.py                     |       18 |        0 |        0 |        0 |    100% |           |
 | modules/logging.py                      |       20 |        3 |        6 |        1 |     85% |     25-28 |
@@ -35,7 +37,7 @@
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/conftest.py                       |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_arm.py                      |       30 |        0 |        0 |        0 |    100% |           |
-| tests/test\_claw.py                     |       71 |        0 |        0 |        0 |    100% |           |
+| tests/test\_claw.py                     |       95 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                 |      118 |        0 |        4 |        0 |    100% |           |
@@ -44,7 +46,7 @@
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
 | ultime/autoproperty.py                  |       58 |       31 |       20 |        2 |     37% |35, 39, 53-102 |
 | ultime/axistrigger.py                   |        8 |        8 |        2 |        0 |      0% |      1-16 |
-| ultime/command.py                       |        7 |        4 |        0 |        0 |     43% |      7-11 |
+| ultime/command.py                       |        7 |        0 |        0 |        0 |    100% |           |
 | ultime/coroutinecommand.py              |       27 |       27 |        6 |        0 |      0% |      1-41 |
 | ultime/gyro.py                          |      122 |      122 |       10 |        0 |      0% |     1-181 |
 | ultime/immutable.py                     |        6 |        2 |        0 |        0 |     67% |      3, 8 |
@@ -55,14 +57,14 @@
 | ultime/switch.py                        |       66 |        6 |       42 |        7 |     88% |29->exit, 41, 53, 57, 67, 71, 81 |
 | ultime/tests/\_\_init\_\_.py            |        7 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_alert.py             |       41 |        0 |        0 |        0 |    100% |           |
-| ultime/tests/test\_commands.py          |       74 |       11 |       54 |        5 |     81% |59->51, 61-64, 71-82, 98->95, 106 |
+| ultime/tests/test\_commands.py          |       74 |        5 |       54 |        5 |     92% |59->51, 61-64, 77->67, 79-82, 106 |
 | ultime/tests/test\_modules.py           |       41 |        1 |        0 |        0 |     98% |        17 |
 | ultime/tests/test\_properties.py        |        3 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_subsystems.py        |       17 |        0 |        8 |        0 |    100% |           |
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       33 |       42 |       11 |     59% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 161, 168, 176, 188, 194, 199-200, 203 |
-|                               **TOTAL** | **1919** |  **499** |  **318** |   **45** | **71%** |           |
+|                               **TOTAL** | **1955** |  **489** |  **318** |   **45** | **73%** |           |
 
 
 ## Setup coverage badge
