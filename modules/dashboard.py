@@ -4,7 +4,7 @@ import wpilib
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.drop import Drop
-from commands.climber.moveclimber import MoveClimber
+from commands.climber.moveclimber import ClimbClimber, ReadyClimber, ReleaseClimber
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -38,13 +38,9 @@ class DashboardModule(Module):
         putCommandOnDashboard("Arm", RetractArm(hardware.arm))
         putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
 
-        putCommandOnDashboard(
-            "Climber", MoveClimber.toInitialPosition(hardware.climber)
-        )
-        putCommandOnDashboard("Climber", MoveClimber.toReadyPosition(hardware.climber))
-        putCommandOnDashboard(
-            "Climber", MoveClimber.toClimbedPosition(hardware.climber)
-        )
+        putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
+        putCommandOnDashboard("Climber", ClimbClimber(hardware.climber))
+        putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

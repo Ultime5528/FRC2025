@@ -5,26 +5,6 @@ from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
 
-class MoveClimber:
-    @staticmethod
-    def toReadyPosition(climber: Climber):
-        cmd = ReadyClimber(climber)
-        cmd.setName(MoveClimber.__name__ + ".toReadyPosition")
-        return cmd
-
-    @staticmethod
-    def toClimbedPosition(climber: Climber):
-        cmd = ClimbClimber(climber)
-        cmd.setName(MoveClimber.__name__ + ".toClimbedPosition")
-        return cmd
-
-    @staticmethod
-    def toInitialPosition(climber: Climber):
-        cmd = ReleaseClimber(climber)
-        cmd.setName(MoveClimber.__name__ + ".toInitialPosition")
-        return cmd
-
-
 class MovingClimber(Command):
     def __init__(self, climber: Climber, state: Climber.State):
         super().__init__()
