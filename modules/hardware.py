@@ -25,6 +25,8 @@ class HardwareModule(Module):
 
         self.arm = Arm()
 
+        self.printer = Printer()
+
         self.controller = commands2.button.CommandXboxController(0)
 
         self.subsystems: list[Subsystem] = [
@@ -32,4 +34,5 @@ class HardwareModule(Module):
             self.elevator,
             self.claw,
             self.arm,
+            self.printer,
         ]
