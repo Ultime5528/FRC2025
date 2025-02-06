@@ -10,7 +10,6 @@ from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetLeft import ResetPrinterLeft
 from commands.printer.resetright import ResetPrinterRight
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
@@ -39,11 +38,12 @@ class DashboardModule(Module):
         Printer
         """
         putCommandOnDashboard("Printer", ResetPrinterRight(hardware.printer))
-        putCommandOnDashboard("Printer", ResetPrinterLeft(hardware.printer))
         putCommandOnDashboard("Printer", ManualMovePrinter.left(hardware.printer))
         putCommandOnDashboard("Printer", ManualMovePrinter.right(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.toLeft(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddleLeft(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.toMiddle(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddleRight(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.toRight(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.toLoading(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))

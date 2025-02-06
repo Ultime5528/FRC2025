@@ -13,7 +13,7 @@ from ultime.switch import Switch
 
 class Printer(Subsystem):
     class State(Enum):
-        Invalid = auto()
+        Unknown = auto()
         Moving = auto()
         Left = auto()
         MiddleLeft = auto()
@@ -54,7 +54,7 @@ class Printer(Subsystem):
         self._has_reset = False
         self._prev_is_right = False
         self._prev_is_left = False
-        self.state = Printer.State.Invalid
+        self.state = Printer.State.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
@@ -160,3 +160,4 @@ class Printer(Subsystem):
         builder.addBooleanProperty("switch_left", self._switch_left.isPressed, noop)
         builder.addBooleanProperty("isRight", self.isRight, noop)
         builder.addBooleanProperty("isLeft", self.isLeft, noop)
+        builder.addBooleanProperty("seesReef", self.seesReef, noop)

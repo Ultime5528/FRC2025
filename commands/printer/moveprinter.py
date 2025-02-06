@@ -74,7 +74,7 @@ class MovePrinter:
         cmd = sequence(
             MovePrinter.toMiddleLeft(printer), MovePrinterWithSensor.left(printer)
         )
-        cmd.setName(MovePrinter.__name__ + "leftUntilReef")
+        cmd.setName(MovePrinter.__name__ + ".leftUntilReef")
         return cmd
 
     @staticmethod
@@ -82,7 +82,7 @@ class MovePrinter:
         cmd = sequence(
             MovePrinter.toMiddleRight(printer), MovePrinterWithSensor.right(printer)
         )
-        cmd.setName(MovePrinter.__name__ + "rightUntilReef")
+        cmd.setName(MovePrinter.__name__ + ".rightUntilReef")
         return cmd
 
 
@@ -124,7 +124,7 @@ class MovePrinterSetpoint(Command):
         self.printer.stop()
 
         if interrupted:
-            self.printer.state = Printer.State.Invalid
+            self.printer.state = Printer.State.Unknown
         else:
             self.printer.state = self.new_state
 
