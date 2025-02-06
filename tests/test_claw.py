@@ -14,7 +14,7 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     assert robot.hardware.claw._motor_right.getChannel() == 0
     assert robot.hardware.claw._motor_left.getChannel() == 1
-    assert robot.hardware.claw._sensor.getChannel() == 1
+    assert robot.hardware.claw._sensor.getChannel() == 6
 
 
 def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
