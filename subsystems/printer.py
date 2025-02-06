@@ -79,8 +79,6 @@ class Printer(Subsystem):
         self._sim_place += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
 
-        # print(f"sim_place={self._sim_place:.2f}  distance={distance:.2f}")
-
         if self._sim_place <= self.right:
             self._switch_right.setSimPressed()
             self._switch_left.setSimUnpressed()
