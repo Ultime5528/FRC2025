@@ -37,6 +37,8 @@ class Drivetrain(Subsystem):
         self.period_seconds = period
 
         self.constants = Constants.DriveConstants
+    def getCurrentDrawAmps(self):
+        return 0.0
 
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)

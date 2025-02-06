@@ -21,14 +21,17 @@ class CAN(Immutable):
     drivetrain_motor_turning_fl = 6
     drivetrain_motor_turning_fr = 7
     drivetrain_motor_driving_fr = 8
+    elevator_motor = 9
 
 
 class PWM(Immutable):
-    pass
+    claw_motor_right = 0
+    claw_motor_left = 1
+    arm_motor = 2
 
 
 class DIO:
-    pass
+    elevator_switch = 0
 
 
 class PDP:
