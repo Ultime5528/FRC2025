@@ -6,7 +6,7 @@ from ultime.command import Command, with_timeout
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
-@with_timeout(5.0)
+@with_timeout(10.0)
 class MoveElevator(Command):
     @classmethod
     def toLevel1(cls, elevator: Elevator):

@@ -1,7 +1,7 @@
 from typing import Type
 
 import wpilib
-from commands2 import Command, ParallelRaceGroup, WaitCommand
+from commands2 import Command
 from wpilib import Timer
 
 
@@ -11,25 +11,6 @@ def ignore_requirements(reqs: list[str]):
         return actual_cls
 
     return _ignore
-
-
-class WaitCommandError(Command):
-    def __init__(self, seconds: float, cmd: Command):
-        super().__init__()
-        self.seconds = seconds
-        self.cmd = cmd
-        self.timer = Timer()
-
-    def initialize(self):
-        self.timer.restart()
-
-    def isFinished(self) -> bool:
-        return self.timer.get() >= self.seconds
-
-    def end(self, interrupted: bool):
-        if not interrupted:
-            wpilib.reportError(f"Command {self.cmd.getName()} got interrupted after {self.seconds} seconds")
-
 
 def with_timeout(seconds: float, print_error=True):
     def add_timeout(CommandClass):
@@ -51,7 +32,9 @@ def with_timeout(seconds: float, print_error=True):
                 super().end(interrupted)
                 self.timer.stop()
                 if self.timer.get() >= self.seconds:
-                    wpilib.reportError(f"Command {self.getName()} got interrupted after {self.seconds} seconds")
+                    wpilib.reportError(
+                        f"Command {self.getName()} got interrupted after {self.seconds} seconds"
+                    )
 
         return CommandWithTimeout
 

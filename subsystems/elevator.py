@@ -72,7 +72,7 @@ class Elevator(Subsystem):
         else:
             gravity = 0.0
 
-        distance = (self._motor.get() - gravity) * 0.011
+        distance = (self._motor.get() - gravity) * 0.031
 
         self._sim_height += distance
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
