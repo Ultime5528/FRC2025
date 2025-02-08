@@ -17,7 +17,6 @@ class ExtendArm(Command):
         self.timer.restart()
 
     def execute(self):
-        self.arm.state = Arm.State.Moving
         self.arm.extend()
 
     def isFinished(self) -> bool:

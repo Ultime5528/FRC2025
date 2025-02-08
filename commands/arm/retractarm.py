@@ -17,7 +17,6 @@ class RetractArm(Command):
         self.timer.restart()
 
     def execute(self):
-        self.arm.state = Arm.State.Moving
         self.arm.retract()
 
     def isFinished(self) -> bool:

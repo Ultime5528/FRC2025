@@ -15,7 +15,7 @@ class Arm(Subsystem):
         Retracted = auto()
 
     class MovementState(Enum):
-        DoNotExtend = auto()
+        DoNotExtendOrRetract = auto()
         FreeToMove = auto()
         Unknown = auto()
 
@@ -28,21 +28,17 @@ class Arm(Subsystem):
         self.movement_state = Arm.MovementState.Unknown
 
     def extend(self):
-        if (
-            self.movement_state == Arm.MovementState.DoNotExtend
-            and not self.isInMovement()
-        ):
+        if self.movement_state == Arm.MovementState.DoNotExtendOrRetract:
             self._motor.stopMotor()
         else:
+            self.state = Arm.State.Moving
             self._motor.set(self.speed)
 
     def retract(self):
-        if (
-            self.movement_state == Arm.MovementState.DoNotExtend
-            and not self.isInMovement()
-        ):
+        if self.movement_state == Arm.MovementState.DoNotExtendOrRetract:
             self._motor.stopMotor()
         else:
+            self.state = Arm.State.Moving
             self._motor.set(-self.speed)
 
     def stop(self):
@@ -50,6 +46,3 @@ class Arm(Subsystem):
 
     def getCurrentDrawAmps(self) -> float:
         return 0.0
-
-    def isInMovement(self) -> bool:
-        return self.state == Arm.State.Moving

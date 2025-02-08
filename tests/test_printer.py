@@ -3,6 +3,9 @@ from wpilib.simulation import stepTiming
 
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
+from subsystems.arm import Arm
+from subsystems.elevator import Elevator
+from subsystems.printer import Printer
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
 
@@ -16,6 +19,7 @@ def test_ports(robot: Robot):
 
 
 def test_settings(robot: Robot):
+
     printer = robot.hardware.printer
 
     assert not printer._motor.getInverted()
@@ -26,7 +30,16 @@ def test_settings(robot: Robot):
 def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
 
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
     printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
     printer._sim_encoder.setDistance(0.5)
 
     # Enable robot and schedule command

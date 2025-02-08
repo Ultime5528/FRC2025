@@ -5,6 +5,9 @@ from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
 from commands.elevator.resetelevator import ResetElevator
 from robot import Robot
+from subsystems.arm import Arm
+from subsystems.elevator import Elevator
+from subsystems.printer import Printer
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
 
@@ -35,7 +38,15 @@ def test_settings(robot: Robot):
 
 
 def test_maintain(robot_controller: RobotTestController, robot: Robot):
+    arm = robot.hardware.arm
     elevator = robot.hardware.elevator
+    printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
 
     robot_controller.startTeleop()
 
@@ -66,31 +77,41 @@ def common_test_moveElevator_from_switch_down(
     MoveElevatorCommand,
     wantedHeight,
 ):
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
+    printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
     robotController.startTeleop()
     # Set hasReset to true
-    robot.hardware.elevator._has_reset = True
+    elevator._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
-    robot.hardware.elevator._sim_motor.setPosition(-0.05)
-    robot.hardware.elevator._sim_height = -0.05
+    elevator._sim_motor.setPosition(-0.05)
+    elevator._sim_height = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
-    assert robot.hardware.elevator.isDown()
+    assert elevator.isDown()
 
-    cmd = MoveElevatorCommand(robot.hardware.elevator)
+    cmd = MoveElevatorCommand(elevator)
     cmd.schedule()
 
     robotController.wait(0.5)
     counter = 0
-    assert robot.hardware.elevator._motor.get() > 0.0
+    assert elevator._motor.get() > 0.0
 
     robotController.wait(10)
 
-    assert not robot.hardware.elevator._switch.isPressed()
+    assert not elevator._switch.isPressed()
 
     robotController.wait(20)
 
-    assert robot.hardware.elevator._motor.get() == approx(0.1)
-    assert robot.hardware.elevator.getHeight() == approx(wantedHeight, rel=0.1)
+    assert elevator._motor.get() == approx(0.1)
+    assert elevator.getHeight() == approx(wantedHeight, rel=0.1)
 
 
 def test_moveElevator_toLevel1(robot_controller: RobotTestController, robot: Robot):
@@ -139,6 +160,17 @@ def test_moveElevator_toLoading(robot_controller: RobotTestController, robot: Ro
 
 
 def test_resetCommand(robot_controller: RobotTestController, robot: Robot):
+
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
+    printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
     robot_controller.startTeleop()
 
     # Enable robot and schedule command
@@ -147,27 +179,27 @@ def test_resetCommand(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(0.05)
 
     counter = 0
-    while not robot.hardware.elevator._switch.isPressed() and counter < 1000:
-        assert robot.hardware.elevator._motor.get() < 0.0
+    while not elevator._switch.isPressed() and counter < 1000:
+        assert elevator._motor.get() < 0.0
         robot_controller.wait(0.01)
         counter += 1
 
     assert counter < 1000, "isPressed takes too long to happen"
-    assert robot.hardware.elevator._switch.isPressed()
+    assert elevator._switch.isPressed()
 
     counter = 0
-    while robot.hardware.elevator._switch.isPressed() and counter < 1000:
-        assert robot.hardware.elevator._motor.get() > 0.0
+    while elevator._switch.isPressed() and counter < 1000:
+        assert elevator._motor.get() > 0.0
         robot_controller.wait(0.01)
         counter += 1
 
     assert counter < 1000, "not isPressed takes too long to happen"
-    assert not robot.hardware.elevator._switch.isPressed()
+    assert not elevator._switch.isPressed()
 
     robot_controller.wait(1.0)
 
-    assert robot.hardware.elevator._motor.get() == approx(0.0)
-    assert robot.hardware.elevator.getHeight() == approx(0.0, abs=0.02)
+    assert elevator._motor.get() == approx(0.0)
+    assert elevator.getHeight() == approx(0.0, abs=0.02)
 
     assert not cmd.isScheduled()
 
@@ -204,27 +236,49 @@ def test_requirements_toLoading(robot_controller: RobotTestController, robot: Ro
 
 
 def test_manual_move_up(robot_controller: RobotTestController, robot: Robot):
+
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
+    printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
     robot_controller.startTeleop()
 
-    start_height = robot.hardware.elevator.getHeight()
+    start_height = elevator.getHeight()
     cmd = ManualMoveElevator.up(robot.hardware.elevator)
     cmd.schedule()
 
     robot_controller.wait(0.5)
-    finish_height = robot.hardware.elevator.getHeight()
+    finish_height = elevator.getHeight()
 
     assert start_height < finish_height
 
 
 def test_manual_move_down(robot_controller: RobotTestController, robot: Robot):
+
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
+    printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
     robot_controller.startTeleop()
 
-    start_height = robot.hardware.elevator.getHeight()
+    start_height = elevator.getHeight()
     cmd = ManualMoveElevator.down(robot.hardware.elevator)
     cmd.schedule()
 
     robot_controller.wait(0.5)
 
-    finish_height = robot.hardware.elevator.getHeight()
+    finish_height = elevator.getHeight()
 
     assert start_height > finish_height

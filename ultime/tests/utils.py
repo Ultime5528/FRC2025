@@ -44,12 +44,14 @@ class RobotTestController:
         DriverStationSim.setAutonomous(False)
         DriverStationSim.setEnabled(True)
         DriverStationSim.notifyNewData()
+        stepTiming(0.04)
 
     def startAutonomous(self):
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(True)
         DriverStationSim.setEnabled(True)
         DriverStationSim.notifyNewData()
+        stepTiming(0.04)
 
     def wait(self, seconds: float):
         assert seconds > 0
