@@ -1,5 +1,7 @@
 import wpilib
+from commands2 import ConditionalCommand, SelectCommand
 
+from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 from ultime.command import Command
@@ -28,6 +30,16 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
+    def toLevel2Algae(cls, elevator: Elevator):
+        cmd = cls(
+            elevator,
+            lambda: move_elevator_properties.position_level2_algae,
+            Elevator.State.Level2Algae,
+        )
+        cmd.setName(cmd.getName() + ".toLevel2Algae")
+        return cmd
+
+    @classmethod
     def toLevel3(cls, elevator: Elevator):
         cmd = cls(
             elevator,
@@ -35,6 +47,16 @@ class MoveElevator(Command):
             elevator.State.Level3,
         )
         cmd.setName(cmd.getName() + ".toLevel3")
+        return cmd
+
+    @classmethod
+    def toLevel3Algae(cls, elevator: Elevator):
+        cmd = cls(
+            elevator,
+            lambda: move_elevator_properties.position_level3_algae,
+            Elevator.State.Level3Algae,
+        )
+        cmd.setName(cmd.getName() + ".toLevel3Algae")
         return cmd
 
     @classmethod
@@ -55,6 +77,24 @@ class MoveElevator(Command):
             Elevator.State.Loading,
         )
         cmd.setName(cmd.getName() + ".toLoading")
+        return cmd
+
+    @staticmethod
+    def ifArm(elevator: Elevator, arm: Arm):
+        cmd = ConditionalCommand(
+            SelectCommand(
+                {
+                    Elevator.State.Level4: MoveElevator.toLevel3Algae(elevator),
+                    Elevator.State.Level3: MoveElevator.toLevel2Algae(elevator),
+                },
+                lambda: elevator.state,
+            ),
+            None,
+            # lambda: arm.state == Arm.State.Extended
+        )
+
+        cmd.setName(cmd.getName() + ".ifArm")
+
         return cmd
 
     def __init__(
@@ -102,7 +142,9 @@ class MoveElevator(Command):
 class _ClassProperties:
     position_level1 = autoproperty(0.5, subtable=MoveElevator.__name__)
     position_level2 = autoproperty(1.0, subtable=MoveElevator.__name__)
+    position_level2_algae = autoproperty(1.1, subtable=MoveElevator.__name__)
     position_level3 = autoproperty(1.5, subtable=MoveElevator.__name__)
+    position_level3_algae = autoproperty(1.6, subtable=MoveElevator.__name__)
     position_level4 = autoproperty(1.9, subtable=MoveElevator.__name__)
     position_loading = autoproperty(1.3, subtable=MoveElevator.__name__)
 

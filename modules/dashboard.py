@@ -36,7 +36,6 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
-
         """
         Printer
         """

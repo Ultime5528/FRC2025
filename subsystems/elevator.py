@@ -21,6 +21,8 @@ class Elevator(Subsystem):
         Level2 = auto()
         Level3 = auto()
         Level4 = auto()
+        Level2Algae = auto()
+        Level3Algae = auto()
 
     speed_up = autoproperty(0.5)
     speed_down = autoproperty(-0.3)
