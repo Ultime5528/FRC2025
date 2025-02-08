@@ -12,6 +12,7 @@ def ignore_requirements(reqs: list[str]):
 
     return _ignore
 
+
 def with_timeout(seconds: float, print_error=True):
     def add_timeout(CommandClass):
         class CommandWithTimeout(CommandClass):
