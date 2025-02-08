@@ -3,7 +3,7 @@ import math
 
 class Constants:
     class DriveConstants:
-        max_speed_per_second = 4.6
+        max_speed_per_second = 4.7
         max_angular_speed = 2 * math.pi
 
         # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion

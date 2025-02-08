@@ -29,7 +29,7 @@ class Configs:
         driving_config.closedLoop.setFeedbackSensor(
             ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
         )
-        driving_config.closedLoop.pid(0.04, 0, 0)
+        driving_config.closedLoop.pid(0.04, 0.0, 0.0)#0.04
         driving_config.closedLoop.velocityFF(driving_velocity_feed_forward)
         driving_config.closedLoop.outputRange(-1, 1)
 
@@ -44,7 +44,7 @@ class Configs:
         turning_config.closedLoop.setFeedbackSensor(
             ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
         )
-        turning_config.closedLoop.pid(0.4, 0, 0)
+        turning_config.closedLoop.pid(0.4, 0.0, 0.0)
         turning_config.closedLoop.outputRange(-1, 1)
         turning_config.closedLoop.positionWrappingEnabled(True)
         turning_config.closedLoop.positionWrappingInputRange(0, turning_factor)
