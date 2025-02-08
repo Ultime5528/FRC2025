@@ -38,11 +38,11 @@ class MoveIntake(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            start_position=self.intake.getPos(),
+            start_position=self.intake.getPivotPosition(),
             end_position=self.end_position_getter(),
             start_speed=max(
                 move_intake_properties.speed_min,
-                abs(self.intake.getMotorInput("pivot")),
+                abs(self.intake.getPivotMotorInput()),
             ),
             end_speed=move_intake_properties.speed_min,
             max_speed=move_intake_properties.speed_max,
@@ -51,7 +51,7 @@ class MoveIntake(Command):
         self.intake.state = Intake.State.Moving
 
     def execute(self):
-        pos = self.intake.getPos()
+        pos = self.intake.getPivotPosition()
         self.motion.setPosition(pos)
         self.intake.setSpeedPivot(self.motion.getSpeed())
 
@@ -60,18 +60,19 @@ class MoveIntake(Command):
 
     def end(self, interrupted: bool):
         if not self.intake.hasReset():
-            wpilib.reportError("Intake has not reset: cannot Intake")
+            wpilib.reportError("Intake has not reset: cannot MoveIntake")
 
         if interrupted:
-            self.intake.state = Intake.State.Invalid
+            self.intake.state = Intake.State.Unknown
         else:
             self.intake.state = self.new_state
+
         self.intake.stopPivot()
 
 
 class _ClassProperties:
-    position_extended = autoproperty(default_value=1, subtable=MoveIntake.__name__)
-    position_retracted = autoproperty(default_value=0, subtable=MoveIntake.__name__)
+    position_extended = autoproperty(default_value=1.0, subtable=MoveIntake.__name__)
+    position_retracted = autoproperty(default_value=0.0, subtable=MoveIntake.__name__)
 
     speed_min = autoproperty(default_value=0.5, subtable=MoveIntake.__name__)
     speed_max = autoproperty(default_value=0.8, subtable=MoveIntake.__name__)

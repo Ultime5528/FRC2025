@@ -1,35 +1,37 @@
 from commands2 import Command, SequentialCommandGroup
 from wpilib import Timer
 
-from commands.Intake.moveintake import MoveIntake
+from commands.intake.moveintake import MoveIntake
 from subsystems.intake import Intake
 from ultime.autoproperty import autoproperty
+from ultime.command import ignore_requirements
 
 
+@ignore_requirements(["intake"])
 class DropAlgae(SequentialCommandGroup):
     def __init__(self, intake: Intake):
         super().__init__(_DropAlgae(intake), MoveIntake.toRetracted(intake))
 
 
 class _DropAlgae(Command):
-    drop_delay = autoproperty(3)
+    delay = autoproperty(3.0)
 
     def __init__(self, intake: Intake):
         super().__init__()
         self.intake = intake
+        self.addRequirements(intake)
         self.timer = Timer()
-
-    def initialize(self):
-        self.timer.restart()
 
     def execute(self):
         self.intake.drop()
-        if self.intake.hasAlgae():
-            self.timer.restart()
+
+        if not self.intake.hasAlgae():
+            self.timer.start()
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.drop_delay
+        return self.timer.get() >= self.delay
 
     def end(self, interrupted: bool):
         self.intake.stopGrab()
         self.timer.stop()
+        self.timer.reset()

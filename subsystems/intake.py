@@ -12,22 +12,19 @@ from ultime.switch import Switch
 
 class Intake(Subsystem):
     class State(Enum):
-        Invalid = auto()
+        Unknown = auto()
         Moving = auto()
-        Reset = auto()
         Extended = auto()
         Retracted = auto()
 
     pivot_speed = autoproperty(0.5)
     grab_speed = autoproperty(0.3)
-    pivot_encoder_threshold = autoproperty(50)
-    pivot_height_max = autoproperty(0)
-    position_conversion_factor = autoproperty(0.002)
-
-    retracted = autoproperty(-0.01)
+    pivot_height_max = autoproperty(0.0)
+    position_conversion_factor = autoproperty(0.02)
 
     def __init__(self):
         super().__init__()
+        self.state = Intake.State.Unknown
 
         self._pivot_motor = VictorSP(ports.PWM.intake_motor_pivot)
         self._pivot_encoder = wpilib.Encoder(
@@ -46,7 +43,7 @@ class Intake(Subsystem):
         )
 
         self._has_reset = False
-        self._prev_is_in = False
+        self._prev_is_retracted = False
         self._offset = 0.0
 
         if RobotBase.isSimulation():
@@ -56,10 +53,10 @@ class Intake(Subsystem):
             self._sim_pos = 0.3
 
     def periodic(self) -> None:
-        if self._prev_is_in and not self._pivot_switch.isPressed():
-            self._offset = self.pivot_height_max - self._pivot_encoder.getPosition()
+        if self._prev_is_retracted and not self.isRetracted():
+            self._offset = self.pivot_height_max - self._pivot_encoder.get()
             self._has_reset = True
-        self._prev_is_in = self._pivot_switch.isPressed()
+        self._prev_is_retracted = self.isRetracted()
 
     def simulationPeriodic(self) -> None:
         distance = self._pivot_motor.get() * 0.02
@@ -67,17 +64,17 @@ class Intake(Subsystem):
         self._sim_pos += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
 
-        if self._sim_pos <= self.retracted:
+        if self._sim_pos <= -0.01:
             self._pivot_switch.setSimPressed()
         else:
             self._pivot_switch.setSimUnpressed()
 
     def retractPivot(self):
         if not self._pivot_switch.isPressed():
-            self._pivot_motor.set(self.pivot_speed)
+            self._pivot_motor.set(-1 * self.pivot_speed)
 
     def extendPivot(self):
-        self._pivot_motor.set(-1 * self.pivot_speed)
+        self._pivot_motor.set(self.pivot_speed)
 
     def stopPivot(self):
         self._pivot_motor.stopMotor()
@@ -94,9 +91,8 @@ class Intake(Subsystem):
     def stopGrab(self):
         self._grab_motor.stopMotor()
 
-    def getPos(self):
-        """gets Position"""
-        return self._pivot_encoder.get()
+    def getPivotPosition(self):
+        return self._pivot_encoder.get() + self._offset
 
     def hasReset(self):
         return self._has_reset
@@ -107,14 +103,8 @@ class Intake(Subsystem):
     def hasAlgae(self):
         return self._grab_switch.isPressed()
 
-    def getMotorInput(self, motor: str):
-        """motor should be "pivot" or "grab" """
-        if motor == "pivot":
-            return self._pivot_motor.get()
-        elif motor == "grab":
-            return self._grab_motor.get()
-        else:
-            print("what? this isn't even a motor")
+    def getPivotMotorInput(self):
+        return self._pivot_motor.get()
 
     def getCurrentDrawAmps(self) -> float:
-        pass
+        return 0.0

@@ -15,15 +15,17 @@ class ResetIntake(Command):
         self.intake.state = self.intake.State.Moving
 
     def execute(self):
-        if self.intake.isRetracted():  # If the pivot switch is pressed extend.
+        if (
+            not self.intake.isRetracted() and not self.pivot_switch_was_pressed
+        ):  # if pivot switch is not pressed retract until pressed.
+            self.intake.retractPivot()
+        else:  # If the pivot switch is pressed extend.
             self.intake.extendPivot()
             self.pivot_switch_was_pressed = True
-        else:
-            self.intake.retractPivot()  # if pivot switch is not pressed retract until pressed.
 
     def isFinished(self) -> bool:
         return not self.intake.isRetracted() and self.pivot_switch_was_pressed
 
     def end(self, interrupted: bool):
-        self.intake.state = self.intake.State.Reset
+        self.intake.state = Intake.State.Retracted
         self.intake.stopPivot()
