@@ -79,13 +79,13 @@ class MoveElevator(Command):
         cmd.setName(cmd.getName() + ".toLoading")
         return cmd
 
-    @staticmethod
-    def ifArm(elevator: Elevator, arm: Arm):
+    @classmethod
+    def ifArm(cls, elevator: Elevator, arm: Arm):
         cmd = ConditionalCommand(
             SelectCommand(
                 {
-                    Elevator.State.Level4: MoveElevator.toLevel3Algae(elevator),
-                    Elevator.State.Level3: MoveElevator.toLevel2Algae(elevator),
+                    Elevator.State.Level4: cls.toLevel3Algae(elevator),
+                    Elevator.State.Level3: cls.toLevel2Algae(elevator),
                 },
                 lambda: elevator.state,
             ),
