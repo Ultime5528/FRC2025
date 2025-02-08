@@ -1,8 +1,8 @@
 import commands2
 from commands2.button import Trigger
 
-from commands.drivetrain.drive import DriveField
 from commands.claw.loadcoral import LoadCoral
+from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm
 from subsystems.claw import Claw
@@ -19,7 +19,7 @@ class HardwareModule(Module):
         super().__init__()
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.drivetrain = Drivetrain(0.02)
+        self.drivetrain = Drivetrain()
         self.drivetrain.setDefaultCommand(DriveField(self.drivetrain, self.controller))
 
         self.elevator = Elevator()

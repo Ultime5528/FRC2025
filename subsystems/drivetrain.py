@@ -16,7 +16,7 @@ from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule
-from ultime.swerveconstants import SwerveConstants
+from ultime.swerveconfig import SwerveConstants
 
 
 class Drivetrain(Subsystem):
@@ -29,9 +29,9 @@ class Drivetrain(Subsystem):
     angular_offset_bl = autoproperty(3.14)
     angular_offset_br = autoproperty(1.57)
 
-    def __init__(self, period: float) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.period_seconds = period
+        self.period_seconds = 0.02
 
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
