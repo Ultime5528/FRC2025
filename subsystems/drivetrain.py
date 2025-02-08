@@ -120,8 +120,6 @@ class Drivetrain(Subsystem):
         else:
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
-        print(rot_speed)
-
         corrected_chassis_speed = self.correctForDynamics(base_chassis_speed)
 
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
@@ -131,7 +129,6 @@ class Drivetrain(Subsystem):
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerve_module_states, SwerveConstants.max_speed_per_second
         )
-        print(swerve_module_states[0])
         self.swerve_module_fl.setDesiredState(swerve_module_states[0])
         self.swerve_module_fr.setDesiredState(swerve_module_states[1])
         self.swerve_module_bl.setDesiredState(swerve_module_states[2])
@@ -227,7 +224,6 @@ class Drivetrain(Subsystem):
             self.swerve_module_bl.getState(),
             self.swerve_module_br.getState(),
         )
-        # print(module_states[0])
         chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(module_states)
         chassis_rotation_speed = chassis_speed.omega
         self.sim_yaw += chassis_rotation_speed * self.period_seconds
