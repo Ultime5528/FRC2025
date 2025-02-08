@@ -16,7 +16,7 @@ from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule
-from ultime.swerveconstants import Constants
+from ultime.swerveconstants import SwerveConstants
 
 
 class Drivetrain(Subsystem):
@@ -32,8 +32,6 @@ class Drivetrain(Subsystem):
     def __init__(self, period: float) -> None:
         super().__init__()
         self.period_seconds = period
-
-        self.constants = Constants.DriveConstants
 
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
@@ -103,8 +101,8 @@ class Drivetrain(Subsystem):
         rot_speed: float,
         is_field_relative: bool,
     ):
-        x_speed = x_speed_input * self.constants.max_speed_per_second
-        y_speed = y_speed_input * self.constants.max_speed_per_second
+        x_speed = x_speed_input * SwerveConstants.max_speed_per_second
+        y_speed = y_speed_input * SwerveConstants.max_speed_per_second
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
@@ -131,7 +129,7 @@ class Drivetrain(Subsystem):
         )
 
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, self.constants.max_speed_per_second
+            swerve_module_states, SwerveConstants.max_speed_per_second
         )
         print(swerve_module_states[0])
         self.swerve_module_fl.setDesiredState(swerve_module_states[0])
@@ -229,7 +227,7 @@ class Drivetrain(Subsystem):
             self.swerve_module_bl.getState(),
             self.swerve_module_br.getState(),
         )
-        #print(module_states[0])
+        # print(module_states[0])
         chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(module_states)
         chassis_rotation_speed = chassis_speed.omega
         self.sim_yaw += chassis_rotation_speed * self.period_seconds
