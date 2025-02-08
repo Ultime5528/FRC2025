@@ -5,10 +5,15 @@ from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
+from commands.claw.loadcoral import LoadCoral
+from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
+from commands.printer.manualmoveprinter import ManualMovePrinter
+from commands.printer.moveprinter import MovePrinter
+from commands.printer.resetright import ResetPrinterRight
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -19,7 +24,9 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
-        # Classer par subsystem
+        """
+        Elevator
+        """
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MaintainElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", ManualMoveElevator.down(hardware.elevator))
@@ -30,14 +37,43 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
+        """
+        Printer
+        """
+        putCommandOnDashboard("Printer", ResetPrinterRight(hardware.printer))
+        putCommandOnDashboard("Printer", ManualMovePrinter.left(hardware.printer))
+        putCommandOnDashboard("Printer", ManualMovePrinter.right(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toLeft(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddleLeft(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddle(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toMiddleRight(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toRight(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.toLoading(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))
+        putCommandOnDashboard("Printer", MovePrinter.rightUntilReef(hardware.printer))
+
+        """
+        Claw
+        """
         putCommandOnDashboard("Claw", Drop.atLevel1(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel2(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
+        putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
 
+        """
+        Arm
+        """
         putCommandOnDashboard("Arm", RetractArm(hardware.arm))
         putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
+
+        """
+        Climber
+        """
+        putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
+        putCommandOnDashboard("Climber", Climb(hardware.climber))
+        putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

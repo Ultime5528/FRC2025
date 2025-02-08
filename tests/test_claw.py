@@ -3,6 +3,7 @@ from commands2 import Command
 
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop, drop_properties
+from commands.claw.loadcoral import LoadCoral
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from robot import Robot
@@ -13,6 +14,7 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     assert robot.hardware.claw._motor_right.getChannel() == 0
     assert robot.hardware.claw._motor_left.getChannel() == 1
+    assert robot.hardware.claw._sensor.getChannel() == 6
 
 
 def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
@@ -132,6 +134,36 @@ def _testDropLevelCommon(
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
+
+
+def testLoadCoral(
+    robot_controller: RobotTestController,
+    robot: Robot,
+):
+    robot_controller.startTeleop()
+    claw = robot.hardware.claw
+
+    claw._sensor.setSimUnpressed()
+
+    assert not claw.hasCoralInLoader()
+
+    claw._sensor.setSimPressed()
+    assert claw.hasCoralInLoader()
+
+    robot_controller.wait(0.1)
+
+    cmd = LoadCoral(claw)
+
+    assert robot.hardware.claw._motor_left.get() == approx(cmd.speed_left, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(cmd.speed_right, rel=0.1)
+
+    claw._sensor.setSimUnpressed()
+    assert not claw.hasCoralInLoader()
+
+    robot_controller.wait(0.05 + cmd.delay)
+
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
 
 
 def common_test_autodrop(
