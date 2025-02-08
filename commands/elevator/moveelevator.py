@@ -2,10 +2,11 @@ import wpilib
 
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
-from ultime.command import Command
+from ultime.command import Command, with_timeout
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
+@with_timeout(5.0)
 class MoveElevator(Command):
     @classmethod
     def toLevel1(cls, elevator: Elevator):
