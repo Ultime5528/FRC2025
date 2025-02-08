@@ -31,14 +31,11 @@ class PWM(Immutable):
     arm_motor = 2
     printer_motor = 3
     intake_motor_grab = 4
-    intake_motor_pivot = 3
+    intake_motor_pivot = 5
 
 
 class DIO:
     elevator_switch = 0
-    intake_encoder = 1
-    intake_switch_pivot = 2
-    intake_switch_grab = 3
     printer_switch_right = 1
     printer_switch_left = 2
     printer_encoder_a = 3
@@ -46,6 +43,10 @@ class DIO:
     printer_photocell = 5
     claw_photocell = 6
     climber_switch = 7
+    intake_switch_pivot = 8
+    intake_switch_grab = 9
+    intake_encoder_a = 10
+    intake_encoder_b = 11
 
 
 class PDP:

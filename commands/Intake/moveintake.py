@@ -8,7 +8,7 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 class MoveIntake(Command):
     @classmethod
-    def toExtend(cls, intake: Intake):
+    def toExtended(cls, intake: Intake):
         cmd = cls(
             intake,
             lambda: move_intake_properties.position_extended,
@@ -18,7 +18,7 @@ class MoveIntake(Command):
         return cmd
 
     @classmethod
-    def toLevel2(cls, intake: Intake):
+    def toRetracted(cls, intake: Intake):
         cmd = cls(
             intake,
             lambda: move_intake_properties.position_retracted,
@@ -41,7 +41,8 @@ class MoveIntake(Command):
             start_position=self.intake.getPos(),
             end_position=self.end_position_getter(),
             start_speed=max(
-                move_intake_properties.speed_min, abs(self.intake.getMotorInput())
+                move_intake_properties.speed_min,
+                abs(self.intake.getMotorInput("pivot")),
             ),
             end_speed=move_intake_properties.speed_min,
             max_speed=move_intake_properties.speed_max,
