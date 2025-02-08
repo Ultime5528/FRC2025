@@ -1,8 +1,14 @@
 import math
 
 import wpilib
+from commands2 import Command
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.config import RobotConfig, ModuleConfig
+from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.telemetry import PPLibTelemetry
+from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
 from photonlibpy.photonCamera import PhotonCamera
-from wpilib import RobotBase
+from wpilib import RobotBase, DriverStation
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -20,8 +26,8 @@ from ultime.swerveconstants import SwerveConstants
 
 
 class Drivetrain(Subsystem):
-    width = 0.597
-    length = 0.597
+    width = 0.762
+    length = 0.685
     max_angular_speed = autoproperty(25.0)
 
     angular_offset_fl = autoproperty(-1.57)
@@ -91,8 +97,18 @@ class Drivetrain(Subsystem):
         )
         self.cam = PhotonCamera("mainCamera")
 
+        AutoBuilder.configureCustom(
+            self.getCommandFromPathplannerPath,
+            self.resetToPose,
+            True,
+            should_flip_path
+        )
+
         if RobotBase.isSimulation():
             self.sim_yaw = 0
+
+    def getCommandFromPathplannerPath(self, path: PathPlannerPath):
+        return FollowPathplannerPath(path.flipPath() if should_flip_path() else path, self)
 
     def drive(
         self,
@@ -120,7 +136,6 @@ class Drivetrain(Subsystem):
         else:
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
-        print(rot_speed)
 
         corrected_chassis_speed = self.correctForDynamics(base_chassis_speed)
 
@@ -131,7 +146,6 @@ class Drivetrain(Subsystem):
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerve_module_states, SwerveConstants.max_speed_per_second
         )
-        print(swerve_module_states[0])
         self.swerve_module_fl.setDesiredState(swerve_module_states[0])
         self.swerve_module_fr.setDesiredState(swerve_module_states[1])
         self.swerve_module_bl.setDesiredState(swerve_module_states[2])
@@ -227,11 +241,23 @@ class Drivetrain(Subsystem):
             self.swerve_module_bl.getState(),
             self.swerve_module_br.getState(),
         )
-        # print(module_states[0])
         chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(module_states)
         chassis_rotation_speed = chassis_speed.omega
         self.sim_yaw += chassis_rotation_speed * self.period_seconds
         self._gyro.setSimAngle(math.degrees(self.sim_yaw))
+
+    def getRobotRelativeChassisSpeeds(self):
+        """
+        Returns robot relative chassis speeds from current swerve module states
+        """
+        module_states = (
+            self.swerve_module_fl.getState(),
+            self.swerve_module_fr.getState(),
+            self.swerve_module_bl.getState(),
+            self.swerve_module_br.getState(),
+        )
+        chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(module_states)
+        return chassis_speed
 
     def resetToPose(self, pose: Pose2d):
         self.swerve_estimator.resetPosition(
@@ -247,3 +273,52 @@ class Drivetrain(Subsystem):
 
     def getCurrentDrawAmps(self):
         return 0.0
+
+
+def should_flip_path():
+    # Boolean supplier that controls when the path will be mirrored for the red alliance
+    # This will flip the path being followed to the red side of the field.
+    # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+
+class FollowPathplannerPath(Command):
+    delta_t = autoproperty(0.1)
+    pos_tolerance = autoproperty(0.1)
+    rot_tolerance = autoproperty(1)
+
+    def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
+        super().__init__()
+        self.sampled_trajectory = None
+        self.drivetrain = drivetrain
+        self.pathplanner_path = pathplanner_path
+        self.addRequirements(drivetrain)
+        self.sampled_trajectory: list[PathPlannerTrajectoryState] = []
+        self.current_goal = 0
+
+    def initialize(self):
+        self.pathplanner_path = self.pathplanner_path.flipPath() if should_flip_path() else self.pathplanner_path
+        PPLibTelemetry.setCurrentPath(self.pathplanner_path)
+        trajectory = self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings())
+        for i in range(math.ceil(trajectory.getEndState().timeSeconds / self.delta_t)):
+            self.sampled_trajectory.append(trajectory.sample(i * self.delta_t))
+
+    def execute(self):
+        PPLibTelemetry.setCurrentPose(self.drivetrain.getPose())
+        PPLibTelemetry.setTargetPose(Pose2d(self.sampled_trajectory[self.current_goal].pose.X(),
+                                            self.sampled_trajectory[self.current_goal].pose.Y(),
+                                            self.sampled_trajectory[self.current_goal].heading))
+        position_error = self.sampled_trajectory[
+                             self.current_goal].pose.translation() - self.drivetrain.getPose().translation()
+        rotation_error:Rotation2d = self.sampled_trajectory[self.current_goal].heading - self.drivetrain.getPose().rotation()
+        if math.hypot(position_error.X(), position_error.Y()) <= self.pos_tolerance:
+            self.current_goal += 1
+        else:
+            PPLibTelemetry.setVelocities(math.hypot(self.drivetrain.getRobotRelativeChassisSpeeds().vx, self.drivetrain.getRobotRelativeChassisSpeeds().vy),
+                                         self.sampled_trajectory[self.current_goal].linearVelocity, self.drivetrain.getRobotRelativeChassisSpeeds().omega, self.drivetrain.getRobotRelativeChassisSpeeds().omega)
+            self.drivetrain.drive(position_error.X(), position_error.Y(), rotation_error.radians(), True)
+
+    def isFinished(self) -> bool:
+        return self.current_goal >= len(self.sampled_trajectory)
+
+    def end(self, interrupted: bool):
+        self.drivetrain.drive(0, 0, 0, True)

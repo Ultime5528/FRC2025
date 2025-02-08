@@ -2,6 +2,7 @@ from typing import Optional
 
 import commands2
 import wpilib
+from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from ultime.module import Module
 
@@ -12,17 +13,18 @@ class AutonomousModule(Module):
 
         self.auto_command: Optional[commands2.Command] = None
 
-        self.auto_chooser = wpilib.SendableChooser()
+        self.auto_chooser = AutoBuilder.buildAutoChooser()
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
 
-        # self.auto_chooser.addOption(
-        #     Auto1.__name__,
-        #     CenterShoot(
-        #         self.drivetrain, self.shooter, self.pivot, self.intake, self.vision
-        #     ),
-        # )
+    def setupCommandsOnPathPlanner(self):
+        NamedCommands.registerCommand(
+            "print_shizzle", commands2.PrintCommand("shizzle")
+        )
+        NamedCommands.registerCommand(
+            "print_bingus", commands2.PrintCommand("bingus")
+        )
 
     def autonomousInit(self):
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
