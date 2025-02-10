@@ -1,5 +1,5 @@
 import wpilib
-from commands2 import ConditionalCommand, SelectCommand
+from commands2 import SelectCommand
 
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
@@ -80,20 +80,16 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def ifArm(cls, elevator: Elevator, arm: Arm):
-        cmd = ConditionalCommand(
-            SelectCommand(
-                {
-                    Elevator.State.Level4: cls.toLevel3Algae(elevator),
-                    Elevator.State.Level3: cls.toLevel2Algae(elevator),
-                },
-                lambda: elevator.state,
-            ),
-            None,
-            # lambda: arm.state == Arm.State.Extended
+    def toAlgae(cls, elevator: Elevator, arm: Arm):
+        cmd = SelectCommand(
+            {
+                Elevator.State.Level4: cls.toLevel3Algae(elevator),
+                Elevator.State.Level3: cls.toLevel2Algae(elevator),
+            },
+            lambda: elevator.state,
         )
 
-        cmd.setName(cmd.getName() + ".ifArm")
+        cmd.setName(cmd.getName() + ".toAlgae")
 
         return cmd
 
