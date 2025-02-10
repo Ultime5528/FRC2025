@@ -3,6 +3,7 @@ from enum import Enum, auto
 import wpilib
 from wpilib import VictorSP, Encoder, RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
+from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
@@ -40,6 +41,10 @@ class Intake(Subsystem):
         self._grab_switch = Switch(
             Switch.Type.NormallyOpen, ports.DIO.intake_switch_grab
         )
+
+        self.addChild("pivot_motor", self._pivot_motor)
+        self.addChild("grab_motor", self._grab_motor)
+        self.addChild("pivot_encoder", self._pivot_encoder)
 
         self._has_reset = False
         self._prev_is_retracted = False
@@ -102,3 +107,27 @@ class Intake(Subsystem):
 
     def getCurrentDrawAmps(self) -> float:
         return 0.0
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def setOffset(value: float):
+            self._offset = value
+
+        def noop(x):
+            pass
+
+        def setHasReset(value: bool):
+            self._has_reset = value
+
+        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
+        builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
+        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.getPosition, noop)
+        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
+        builder.addFloatProperty("position", self.getPivotPosition, noop)
+        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
+        builder.addBooleanProperty("grab_switch", self._grab_switch.isPressed, noop)
+        builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
+        builder.addBooleanProperty("isRetracted", self.isRetracted, noop)
+        
