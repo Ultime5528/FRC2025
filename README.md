@@ -22,8 +22,8 @@
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py   |       16 |        0 |        2 |        0 |    100% |           |
 | commands/elevator/manualmoveelevator.py |       28 |        1 |        0 |        0 |     96% |        32 |
-| commands/elevator/moveelevator.py       |       63 |        2 |        4 |        2 |     94% |    92, 97 |
-| commands/elevator/resetelevator.py      |       21 |        0 |        2 |        0 |    100% |           |
+| commands/elevator/moveelevator.py       |       64 |        2 |        4 |        2 |     94% |    93, 98 |
+| commands/elevator/resetelevator.py      |       22 |        0 |        2 |        0 |    100% |           |
 | commands/printer/\_\_init\_\_.py        |        0 |        0 |        0 |        0 |    100% |           |
 | commands/printer/manualmoveprinter.py   |       31 |        0 |        4 |        1 |     97% |  31->exit |
 | commands/printer/moveprinter.py         |       91 |        2 |        4 |        2 |     96% |  122, 127 |
@@ -61,7 +61,7 @@
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
 | ultime/autoproperty.py                  |       58 |       31 |       20 |        2 |     37% |35, 39, 53-102 |
 | ultime/axistrigger.py                   |        8 |        8 |        2 |        0 |      0% |      1-16 |
-| ultime/command.py                       |        7 |        0 |        0 |        0 |    100% |           |
+| ultime/command.py                       |       31 |        3 |        2 |        1 |     88% |     36-38 |
 | ultime/coroutinecommand.py              |       27 |       27 |        6 |        0 |      0% |      1-41 |
 | ultime/gyro.py                          |      122 |       51 |       10 |        5 |     58% |19, 28->exit, 31->exit, 34->exit, 37->exit, 40, 43, 49-51, 56-62, 65, 68, 71, 74, 79-83, 86, 89, 92, 95, 114, 122, 126, 131-135, 138, 141, 144, 147, 152-161, 164, 167, 170-171, 174-175, 178, 181 |
 | ultime/immutable.py                     |        6 |        2 |        0 |        0 |     67% |      3, 8 |
@@ -74,14 +74,14 @@
 | ultime/switch.py                        |       66 |        6 |       42 |        7 |     88% |29->exit, 41, 53, 57, 67, 71, 81 |
 | ultime/tests/\_\_init\_\_.py            |        7 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_alert.py             |       41 |        0 |        0 |        0 |    100% |           |
-| ultime/tests/test\_commands.py          |       74 |        4 |       54 |        4 |     94% |59->51, 61-64, 77->67, 79-82 |
+| ultime/tests/test\_commands.py          |       76 |        4 |       56 |        4 |     94% |62->54, 64-67, 80->70, 82-85 |
 | ultime/tests/test\_modules.py           |       41 |        1 |        0 |        0 |     98% |        17 |
 | ultime/tests/test\_properties.py        |        3 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_subsystems.py        |       17 |        0 |        8 |        0 |    100% |           |
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       29 |       42 |        7 |     64% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 176, 199-200, 203 |
-|                               **TOTAL** | **2885** |  **453** |  **382** |   **61** | **82%** |           |
+|                               **TOTAL** | **2913** |  **456** |  **386** |   **62** | **82%** |           |
 
 
 ## Setup coverage badge
