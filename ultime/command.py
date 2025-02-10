@@ -1,6 +1,8 @@
 from typing import Type
 
+import wpilib
 from commands2 import Command
+from wpilib import Timer, DataLogManager
 
 
 def ignore_requirements(reqs: list[str]):
@@ -9,3 +11,32 @@ def ignore_requirements(reqs: list[str]):
         return actual_cls
 
     return _ignore
+
+
+def with_timeout(seconds: float):
+    def add_timeout(CommandClass):
+        class CommandWithTimeout(CommandClass):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.setName(CommandClass.__name__)
+                self.seconds = seconds
+                self.timer = Timer()
+
+            def initialize(self):
+                super().initialize()
+                self.timer.restart()
+
+            def isFinished(self) -> bool:
+                return super().isFinished() or self.timer.get() >= self.seconds
+
+            def end(self, interrupted: bool):
+                super().end(interrupted)
+                self.timer.stop()
+                if self.timer.get() >= self.seconds:
+                    msg = f"Command {self.getName()} got interrupted after {self.seconds} seconds"
+                    wpilib.reportError(msg)
+                    DataLogManager.log(msg)
+
+        return CommandWithTimeout
+
+    return add_timeout
