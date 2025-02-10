@@ -2,7 +2,7 @@ from typing import Type
 
 import wpilib
 from commands2 import Command
-from wpilib import Timer
+from wpilib import Timer, DataLogManager
 
 
 def ignore_requirements(reqs: list[str]):
@@ -13,7 +13,7 @@ def ignore_requirements(reqs: list[str]):
     return _ignore
 
 
-def with_timeout(seconds: float, print_error=True):
+def with_timeout(seconds: float):
     def add_timeout(CommandClass):
         class CommandWithTimeout(CommandClass):
             def __init__(self, *args, **kwargs):
@@ -33,9 +33,9 @@ def with_timeout(seconds: float, print_error=True):
                 super().end(interrupted)
                 self.timer.stop()
                 if self.timer.get() >= self.seconds:
-                    wpilib.reportError(
-                        f"Command {self.getName()} got interrupted after {self.seconds} seconds"
-                    )
+                    msg = f"Command {self.getName()} got interrupted after {self.seconds} seconds"
+                    wpilib.reportError(msg)
+                    DataLogManager.log(msg)
 
         return CommandWithTimeout
 
