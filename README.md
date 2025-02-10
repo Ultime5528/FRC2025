@@ -16,6 +16,9 @@
 | commands/climber/moveclimber.py         |       45 |        3 |        2 |        1 |     91% |20, 24, 29 |
 | commands/diagnostics/\_\_init\_\_.py    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
+| commands/drivetrain/drive.py            |       56 |       12 |       12 |        4 |     71% |18, 22-25, 68-70, 79-80, 83-85 |
+| commands/drivetrain/resetgyro.py        |       17 |        1 |        2 |        1 |     89% |        18 |
+| commands/drivetrain/resetpose.py        |       13 |        6 |        0 |        0 |     54% |9-12, 15, 18 |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py   |       16 |        0 |        2 |        0 |    100% |           |
 | commands/elevator/manualmoveelevator.py |       28 |        1 |        0 |        0 |     96% |        32 |
@@ -31,7 +34,7 @@
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
 | modules/dashboard.py                    |       77 |        2 |       12 |        3 |     94% |97, 101->104, 109 |
 | modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
-| modules/hardware.py                     |       25 |        0 |        0 |        0 |    100% |           |
+| modules/hardware.py                     |       27 |        0 |        0 |        0 |    100% |           |
 | modules/logging.py                      |       20 |        3 |        6 |        1 |     85% |     25-28 |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | ports.py                                |       29 |        0 |        0 |        0 |    100% |           |
@@ -41,7 +44,7 @@
 | subsystems/arm.py                       |       17 |        1 |        0 |        0 |     94% |        25 |
 | subsystems/claw.py                      |       19 |        0 |        0 |        0 |    100% |           |
 | subsystems/climber.py                   |       66 |        2 |        8 |        2 |     95% |45->exit, 68, 90 |
-| subsystems/drivetrain.py                |       13 |        1 |        0 |        0 |     92% |        13 |
+| subsystems/drivetrain.py                |       97 |        8 |        4 |        2 |     90% |94->exit, 121, 141, 144, 153-162, 245 |
 | subsystems/elevator.py                  |      110 |        6 |       12 |        2 |     93% |57->exit, 101, 118, 130, 139, 142, 145 |
 | subsystems/printer.py                   |      113 |        4 |       14 |        1 |     96% |59->exit, 137, 143, 146, 149 |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
@@ -50,7 +53,7 @@
 | tests/test\_claw.py                     |      113 |        0 |        0 |        0 |    100% |           |
 | tests/test\_climber.py                  |       56 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
-| tests/test\_drivetrain.py               |        0 |        0 |        0 |        0 |    100% |           |
+| tests/test\_drivetrain.py               |       10 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                 |      118 |        0 |        4 |        0 |    100% |           |
 | tests/test\_printer.py                  |      130 |        2 |        8 |        1 |     98% |   195-196 |
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
@@ -60,12 +63,14 @@
 | ultime/axistrigger.py                   |        8 |        8 |        2 |        0 |      0% |      1-16 |
 | ultime/command.py                       |        7 |        0 |        0 |        0 |    100% |           |
 | ultime/coroutinecommand.py              |       27 |       27 |        6 |        0 |      0% |      1-41 |
-| ultime/gyro.py                          |      122 |      122 |       10 |        0 |      0% |     1-181 |
+| ultime/gyro.py                          |      122 |       51 |       10 |        5 |     58% |19, 28->exit, 31->exit, 34->exit, 37->exit, 40, 43, 49-51, 56-62, 65, 68, 71, 74, 79-83, 86, 89, 92, 95, 114, 122, 126, 131-135, 138, 141, 144, 147, 152-161, 164, 167, 170-171, 174-175, 178, 181 |
 | ultime/immutable.py                     |        6 |        2 |        0 |        0 |     67% |      3, 8 |
 | ultime/linearinterpolator.py            |       25 |       25 |        6 |        0 |      0% |      1-36 |
 | ultime/module.py                        |       78 |       10 |       16 |        1 |     88% |15, 21, 24, 27, 45, 51, 63, 66, 69, 97 |
 | ultime/modulerobot.py                   |       43 |        3 |        4 |        2 |     89% |18->exit, 24->exit, 55, 58, 61 |
 | ultime/subsystem.py                     |       27 |        3 |        4 |        0 |     90% |11, 15, 37 |
+| ultime/swerve.py                        |       63 |        1 |        2 |        1 |     97% |14, 55->exit |
+| ultime/swerveconfig.py                  |       41 |        0 |        0 |        0 |    100% |           |
 | ultime/switch.py                        |       66 |        6 |       42 |        7 |     88% |29->exit, 41, 53, 57, 67, 71, 81 |
 | ultime/tests/\_\_init\_\_.py            |        7 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_alert.py             |       41 |        0 |        0 |        0 |    100% |           |
@@ -76,7 +81,7 @@
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       50 |       10 |        8 |        0 |     83% |25-26, 37-40, 49-52 |
 | ultime/trapezoidalmotion.py             |      104 |       29 |       42 |        7 |     64% |20, 22, 40-44, 59->exit, 73-91, 110-111, 136->exit, 176, 199-200, 203 |
-|                               **TOTAL** | **2599** |  **497** |  **362** |   **48** | **79%** |           |
+|                               **TOTAL** | **2885** |  **453** |  **382** |   **61** | **82%** |           |
 
 
 ## Setup coverage badge
