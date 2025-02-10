@@ -17,7 +17,6 @@ class Intake(Subsystem):
         Extended = auto()
         Retracted = auto()
 
-    pivot_speed = autoproperty(0.5)
     grab_speed = autoproperty(0.3)
     pivot_height_max = autoproperty(0.0)
     position_conversion_factor = autoproperty(0.02)
@@ -69,17 +68,12 @@ class Intake(Subsystem):
         else:
             self._pivot_switch.setSimUnpressed()
 
-    def retractPivot(self):
-        if not self._pivot_switch.isPressed():
-            self._pivot_motor.set(-1 * self.pivot_speed)
-
-    def extendPivot(self):
-        self._pivot_motor.set(self.pivot_speed)
-
     def stopPivot(self):
         self._pivot_motor.stopMotor()
 
-    def setSpeedPivot(self, speed: float):
+    def setPivotSpeed(self, speed: float):
+        if speed < 0.0 and self.isRetracted():
+            self._pivot_motor.set(0.0)
         self._pivot_motor.set(speed)
 
     def grab(self):

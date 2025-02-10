@@ -53,7 +53,7 @@ class MoveIntake(Command):
     def execute(self):
         pos = self.intake.getPivotPosition()
         self.motion.setPosition(pos)
-        self.intake.setSpeedPivot(self.motion.getSpeed())
+        self.intake.setPivotSpeed(self.motion.getSpeed())
 
     def isFinished(self) -> bool:
         return self.motion.isFinished() or not self.intake.hasReset()
