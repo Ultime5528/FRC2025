@@ -41,6 +41,7 @@ class DIO:
     printer_photocell = 5
     claw_photocell = 6
     climber_switch = 7
+    led_strip = 8
 
 
 class PDP:
