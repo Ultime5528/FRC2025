@@ -2,7 +2,7 @@ from subsystems.elevator import Elevator
 from ultime.command import Command, with_timeout
 
 
-@with_timeout(5.0)
+@with_timeout(10.0)
 class ResetElevator(Command):
     def __init__(self, elevator: Elevator):
         super().__init__()
