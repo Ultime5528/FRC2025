@@ -130,4 +130,3 @@ class Intake(Subsystem):
         builder.addBooleanProperty("grab_switch", self._grab_switch.isPressed, noop)
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)
-        
