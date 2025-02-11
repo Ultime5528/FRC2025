@@ -16,6 +16,11 @@ class Printer(Subsystem):
     class State(Enum):
         Unknown = auto()
         Moving = auto()
+        Left = auto()
+        MiddleLeft = auto()
+        Middle = auto()
+        MiddleRight = auto()
+        Right = auto()
         Loading = auto()
         Reset = auto()
 
@@ -24,9 +29,9 @@ class Printer(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.5)
-    left = autoproperty(0.4)
-    right = autoproperty(0.0)
+    speed = autoproperty(0.3)
+    left = autoproperty(0.41)
+    right = autoproperty(-0.01)
     left_zone = autoproperty(0.3)
     right_zone = autoproperty(0.1)
 
@@ -47,23 +52,23 @@ class Printer(Subsystem):
             ports.DIO.printer_encoder_b,
             reverseDirection=True,
         )
-        self._encoder.setDistancePerPulse(0.03)
+        self._encoder.setDistancePerPulse(self.position_conversion_factor)
         self.addChild("motor", self._motor)
         self.addChild("encoder", self._encoder)
 
-        # self.photocell_captor = wpilib.
+        self.photocell = Switch(Switch.Type.NormallyOpen, ports.DIO.printer_photocell)
 
         self._offset = 0.0
         self._has_reset = False
         self._prev_is_right = False
         self._prev_is_left = False
-        self.state = Printer.State.Unknown
         self.movement_state = Printer.MovementState.Unknown
+        self.state = Printer.State.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
             self._sim_encoder = EncoderSim(self._encoder)
-            self._sim_place = 5.0
+            self._sim_place = 0.01
 
     def periodic(self) -> None:
         if self._prev_is_right and not self._switch_right.isPressed():
@@ -78,7 +83,7 @@ class Printer(Subsystem):
         self._prev_is_right = self._switch_right.isPressed()
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.2
+        distance = self._motor.get() * 0.02
 
         self._sim_place += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
@@ -120,6 +125,9 @@ class Printer(Subsystem):
 
     def isRight(self) -> bool:
         return self._switch_right.isPressed()
+
+    def seesReef(self):
+        return self.photocell.isPressed()
 
     def isInMiddleZone(self) -> bool:
         pose = self.getPose()
@@ -165,3 +173,4 @@ class Printer(Subsystem):
         builder.addBooleanProperty("switch_left", self._switch_left.isPressed, noop)
         builder.addBooleanProperty("isRight", self.isRight, noop)
         builder.addBooleanProperty("isLeft", self.isLeft, noop)
+        builder.addBooleanProperty("seesReef", self.seesReef, noop)

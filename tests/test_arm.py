@@ -11,7 +11,7 @@ from ultime.tests import RobotTestController
 
 
 def test_ports(robot: Robot):
-    assert robot.hardware.arm._motor.getChannel() == 0
+    assert robot.hardware.arm._motor.getChannel() == 2
 
 
 def test_settings(robot: Robot):
@@ -93,7 +93,7 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(sampling_time + 0.02)
 
-    assert arm._motor.get() == approx(0.0, rel=0.1)
+    assert arm._motor.get() == 0.0
 
 
 def testRetractFailBadElevatorPosition(
