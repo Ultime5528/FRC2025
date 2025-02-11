@@ -42,4 +42,5 @@ class HardwareModule(Module):
             self.arm,
             self.printer,
             self.climber,
+            self.intake,
         ]
