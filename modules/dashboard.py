@@ -7,6 +7,7 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
+from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -74,6 +75,10 @@ class DashboardModule(Module):
         putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
         putCommandOnDashboard("Climber", Climb(hardware.climber))
         putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
+        """
+        Drivetrain
+        """
+        putCommandOnDashboard("Drivetrain", DriveToPoses.back(hardware.drivetrain, -5))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
