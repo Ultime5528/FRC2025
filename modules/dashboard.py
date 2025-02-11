@@ -75,10 +75,6 @@ class DashboardModule(Module):
         putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
         putCommandOnDashboard("Climber", Climb(hardware.climber))
         putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
-        """
-        Drivetrain
-        """
-        putCommandOnDashboard("Drivetrain", DriveToPoses.back(hardware.drivetrain, -5))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
