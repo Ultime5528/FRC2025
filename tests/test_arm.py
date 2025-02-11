@@ -1,13 +1,11 @@
 import pytest
 from _pytest.python_api import approx
-from commands2 import Command
 
 from commands.arm.extendarm import ExtendArm, arm_properties
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
-
-from commands.printer.moveprinter import MovePrinterSetpoint, MovePrinter
+from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
 from subsystems.arm import Arm
@@ -103,7 +101,9 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
 
 
 @pytest.mark.specific
-def testRetractFailBadElevatorPosition(robot_controller: RobotTestController, robot: Robot):
+def testRetractFailBadElevatorPosition(
+    robot_controller: RobotTestController, robot: Robot
+):
 
     class TestParameters:
 
@@ -121,7 +121,9 @@ def testRetractFailBadElevatorPosition(robot_controller: RobotTestController, ro
 
         initial_move_elevator_cmd = MoveElevator.toLoading
 
-        initial_printer_pose = (robot.hardware.printer.right_zone + robot.hardware.printer.left_zone) * 0.5
+        initial_printer_pose = (
+            robot.hardware.printer.right_zone + robot.hardware.printer.left_zone
+        ) * 0.5
         initial_printer_function = Printer.stop
 
         initial_move_printer_cmd = MovePrinter.toMiddle
@@ -133,9 +135,8 @@ def testRetractFailBadElevatorPosition(robot_controller: RobotTestController, ro
 
         end_arm_speed = 0.0
 
-
-
     _genericTest(robot_controller, robot, TestParameters)
+
 
 def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters):
 

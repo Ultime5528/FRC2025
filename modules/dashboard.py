@@ -14,8 +14,6 @@ from commands.elevator.resetelevator import ResetElevator
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetright import ResetPrinterRight
-from commands.arm.extendarm import ExtendArm
-from commands.arm.retractarm import RetractArm
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 

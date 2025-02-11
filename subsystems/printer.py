@@ -1,7 +1,6 @@
 from enum import Enum, auto
 
 import wpilib
-from _pytest.python_api import approx
 from wpilib import RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder

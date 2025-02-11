@@ -1,5 +1,3 @@
-from _pytest.python_api import approx
-
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
