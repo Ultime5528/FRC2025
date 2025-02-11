@@ -111,12 +111,30 @@ def test_moveElevator_toLevel2(robot_controller: RobotTestController, robot: Rob
     )
 
 
+def test_moveElevator_toLevel2Algae(robot_controller: RobotTestController, robot: Robot):
+    common_test_moveElevator_from_switch_down(
+        robot_controller,
+        robot,
+        MoveElevator.toLevel2Algae,
+        move_elevator_properties.position_level2_algae,
+    )
+
+
 def test_moveElevator_toLevel3(robot_controller: RobotTestController, robot: Robot):
     common_test_moveElevator_from_switch_down(
         robot_controller,
         robot,
         MoveElevator.toLevel3,
         move_elevator_properties.position_level3,
+    )
+
+
+def test_moveElevator_toLevel3Algae(robot_controller: RobotTestController, robot: Robot):
+    common_test_moveElevator_from_switch_down(
+        robot_controller,
+        robot,
+        MoveElevator.toLevel3,
+        move_elevator_properties.position_level3_algae,
     )
 
 
@@ -191,8 +209,16 @@ def test_requirements_toLevel2(robot_controller: RobotTestController, robot: Rob
     common_test_requirements(robot_controller, robot, MoveElevator.toLevel2)
 
 
+def test_requirements_toLevel2Algae(robot_controller: RobotTestController, robot: Robot):
+    common_test_requirements(robot_controller, robot, MoveElevator.toLevel2Algae)
+
+
 def test_requirements_toLevel3(robot_controller: RobotTestController, robot: Robot):
     common_test_requirements(robot_controller, robot, MoveElevator.toLevel3)
+
+
+def test_requirements_toLevel3Algae(robot_controller: RobotTestController, robot: Robot):
+    common_test_requirements(robot_controller, robot, MoveElevator.toLevel3Algae)
 
 
 def test_requirements_toLevel4(robot_controller: RobotTestController, robot: Robot):
