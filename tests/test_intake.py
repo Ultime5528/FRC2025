@@ -3,7 +3,11 @@ from commands2.cmd import runOnce
 
 from commands.intake.dropalgae import DropAlgae
 from commands.intake.grabalgae import _GrabAlgae, GrabAlgae
-from commands.intake.moveintake import MoveIntake, _ClassProperties, move_intake_properties
+from commands.intake.moveintake import (
+    MoveIntake,
+    _ClassProperties,
+    move_intake_properties,
+)
 from commands.intake.resetintake import ResetIntake
 from robot import Robot
 from ultime.switch import Switch
@@ -93,14 +97,14 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
 
     wait(0.5)
 
-    assert intake._grab_motor.get() == approx((-1*intake.grab_speed), rel=0.1)
+    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
     assert intake._pivot_motor.get() == 0.0
 
     intake._grab_switch.setSimUnpressed()
 
     wait(1.5)
 
-    assert intake._grab_motor.get() == approx((-1*intake.grab_speed), rel=0.1)
+    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
 
     wait(3)
 
@@ -113,14 +117,15 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
 
     assert intake._pivot_motor.get() == 0.0
 
-#def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
-    # setting up shortcuts
+
+# def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
+# setting up shortcuts
 #    def wait(time):
 #       robot_controller.wait(time)
 #
 #    intake = robot.hardware.intake
 
-    # actual test
+# actual test
 #    robot_controller.startTeleop()
 #    assert not intake._has_reset
 
