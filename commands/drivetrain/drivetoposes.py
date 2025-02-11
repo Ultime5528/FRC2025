@@ -1,6 +1,5 @@
 from typing import List, Callable
 
-from commands2 import Command
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 
 from subsystems.drivetrain import Drivetrain
@@ -38,7 +37,9 @@ class DriveToPoses(Command):
     rot_tol_pos_last = autoproperty(5.0)
     rot_speed_max = autoproperty(16.0)
 
-    def __init__(self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]):
+    def __init__(
+        self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
+    ):
         super().__init__()
         self.addRequirements(drivetrain)
         self.drivetrain = drivetrain

@@ -7,7 +7,6 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
-from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
