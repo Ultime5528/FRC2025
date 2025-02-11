@@ -43,10 +43,9 @@ class DIO:
     printer_photocell = 5
     claw_photocell = 6
     climber_switch = 7
-    intake_switch_pivot = 8
-    intake_switch_grab = 9
-    intake_encoder_a = 10
-    intake_encoder_b = 11
+    intake_switch_grab = 8
+    intake_encoder_a = 9
+    intake_encoder_b = 10
 
 
 class PDP:
