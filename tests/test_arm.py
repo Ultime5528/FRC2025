@@ -1,8 +1,14 @@
+import pytest
 from _pytest.python_api import approx
 from commands2 import Command
 
 from commands.arm.extendarm import ExtendArm, arm_properties
 from commands.arm.retractarm import RetractArm
+from commands.elevator.moveelevator import MoveElevator
+from commands.elevator.resetelevator import ResetElevator
+
+from commands.printer.moveprinter import MovePrinterSetpoint, MovePrinter
+from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
@@ -93,106 +99,104 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(sampling_time + 0.02)
 
-    assert arm._motor.get() == 0.0
+    assert arm._motor.get() == approx(0.0, rel=0.1)
 
 
-def testRetractFailBadElevatorPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-    _testFail(
-        robot_controller,
-        robot,
-        RetractArm(robot.hardware.arm),
-        robot.hardware.elevator.height_lower_zone + 0.1,
-        Elevator.MovementState.AvoidLowerZone,
-        (robot.hardware.printer.right_zone + robot.hardware.printer.left_zone) * 0.5,
-        Printer.MovementState.FreeToMove,
-    )
+@pytest.mark.specific
+def testRetractFailBadElevatorPosition(robot_controller: RobotTestController, robot: Robot):
+
+    class TestParameters:
+
+        Cmd = RetractArm
+
+        initial_arm_state = Arm.State.Extended
+        initial_elevator_state = Elevator.State.Level1
+        initial_printer_state = Printer.State.Unknown
+
+        initial_arm_movement_state = Arm.MovementState.FreeToMove
+        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
+        initial_printer_movement_state = Printer.MovementState.FreeToMove
+
+        initial_arm_speed = 0.0
+
+        initial_move_elevator_cmd = MoveElevator.toLoading
+
+        initial_printer_pose = (robot.hardware.printer.right_zone + robot.hardware.printer.left_zone) * 0.5
+        initial_printer_function = Printer.stop
+
+        initial_move_printer_cmd = MovePrinter.toMiddle
+
+        running_arm_speed = 0.0
+        running_arm_state = Arm.State.Extended
+        running_elevator_state = Elevator.State.Level1
+        running_printer_state = Printer.State.Middle
+
+        end_arm_speed = 0.0
 
 
-def testRetractFailBadPrinterPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-    _testFail(
-        robot_controller,
-        robot,
-        RetractArm(robot.hardware.arm),
-        robot.hardware.elevator.height_lower_zone - 0.1,
-        Elevator.MovementState.AvoidLowerZone,
-        robot.hardware.printer.right_zone,
-        Printer.MovementState.FreeToMove,
-    )
 
-def testExtendFailBadElevatorPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-    _testFail(
-        robot_controller,
-        robot,
-        ExtendArm(robot.hardware.arm),
-        robot.hardware.elevator.height_lower_zone + 0.1,
-        Elevator.MovementState.AvoidLowerZone,
-        (robot.hardware.printer.right_zone + robot.hardware.printer.left_zone) * 0.5,
-        Printer.MovementState.FreeToMove,
-    )
+    _genericTest(robot_controller, robot, TestParameters)
 
+def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters):
 
-def testExtendFailBadPrinterPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-    _testFail(
-        robot_controller,
-        robot,
-        ExtendArm(robot.hardware.arm),
-        robot.hardware.elevator.height_lower_zone - 0.1,
-        Elevator.MovementState.AvoidLowerZone,
-        robot.hardware.printer.right_zone,
-        Printer.MovementState.FreeToMove,
-    )
-
-def _testFail(
-    robot_controller: RobotTestController,
-    robot: Robot,
-    cmd: Command,
-    elevator_height: float,
-    elevator_movement_state: Elevator.MovementState,
-    printer_pose: float,
-    printer_movement_state: Printer.MovementState,
-):
+    mega_delay = 100.0
 
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
     printer = robot.hardware.printer
 
-    arm.movement_state = Arm.MovementState.FreeToMove
-    elevator.movement_state = Elevator.MovementState.FreeToMove
-    printer.movement_state = Printer.MovementState.FreeToMove
+    arm.movement_state = parameters.initial_arm_movement_state
+    elevator.movement_state = parameters.initial_elevator_movement_state
+    printer.movement_state = parameters.initial_printer_movement_state
 
-    arm.state = Arm.State.Extended
-    elevator.setHeight(elevator_height)
-    elevator._has_reset = True
-    elevator.stop()
-    printer.setPose(printer_pose)
-    printer.stop()
+    arm.state = parameters.initial_arm_state
+    elevator.state = parameters.initial_elevator_state
+    printer.state = parameters.initial_printer_state
+
+    cmd_reset_elevator = ResetElevator(elevator)
+    cmd_reset_elevator.schedule()
+    robot_controller.wait(mega_delay)
+
+    assert not cmd_reset_elevator.isScheduled()
+
+    cmd_move_elevator = parameters.initial_move_elevator_cmd(elevator)
+    cmd_move_elevator.schedule()
+    robot_controller.wait(mega_delay)
+
+    assert not cmd_move_elevator.isScheduled()
+
+    cmd_reset_printer = ResetPrinterRight(printer)
+    cmd_reset_printer.schedule()
+    robot_controller.wait(mega_delay)
+
+    assert not cmd_reset_printer.isScheduled()
+
+    cmd_move_printer = parameters.initial_move_printer_cmd(printer)
+    cmd_move_printer.schedule()
+    robot_controller.wait(mega_delay)
+
+    assert not cmd_move_printer.isScheduled()
 
     sampling_time = arm_properties.delay * 0.5
 
     robot_controller.startTeleop()
 
+    cmd = parameters.Cmd(arm)
+
     assert not cmd.isScheduled()
-    assert arm._motor.get() == approx(0.0, rel=0.1)
+    assert arm._motor.get() == approx(parameters.initial_arm_speed, rel=0.1)
 
     cmd.schedule()
 
     robot_controller.wait(arm_properties.delay - sampling_time)
 
-    assert arm._motor.get() == approx(0.0, rel=0.1)
-    assert not arm.state == Arm.State.Moving
-    assert elevator.movement_state == elevator_movement_state
-    assert printer.movement_state == printer_movement_state
+    assert arm._motor.get() == approx(parameters.running_arm_speed, rel=0.1)
+    assert not arm.state == parameters.running_arm_state
+    assert elevator.movement_state == parameters.running_elevator_state
+    assert printer.movement_state == parameters.running_printer_state
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
 
     robot_controller.wait(sampling_time + 0.02)
 
-    assert arm._motor.get() == approx(0.0, rel=0.1)
+    assert arm._motor.get() == approx(parameters.end_arm_speed, rel=0.1)

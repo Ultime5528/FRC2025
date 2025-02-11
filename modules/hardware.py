@@ -22,7 +22,6 @@ class HardwareModule(Module):
         self.drivetrain = Drivetrain()
         self.drivetrain.setDefaultCommand(DriveField(self.drivetrain, self.controller))
 
-        self.arm = Arm()
         self.elevator = Elevator()
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
 
