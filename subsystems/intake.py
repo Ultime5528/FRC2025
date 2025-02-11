@@ -123,7 +123,7 @@ class Intake(Subsystem):
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
         builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
-        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.getPosition, noop)
+        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
