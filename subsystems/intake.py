@@ -19,7 +19,7 @@ class Intake(Subsystem):
         Retracted = auto()
 
     grab_speed = autoproperty(0.3)
-    pivot_position_min = autoproperty(0.0)
+    pivot_height_max = autoproperty(0.0)
     position_conversion_factor = autoproperty(0.02)
 
     def __init__(self):
@@ -33,7 +33,9 @@ class Intake(Subsystem):
             reverseDirection=False,
         )
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
-        self._pivot_switch = Switch(switch_type=Switch.Type.AlwaysUnpressed)
+        self._pivot_switch = Switch(
+            switch_type=Switch.Type.NormallyOpen, port=ports.DIO.intake_switch_pivot
+        )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
         self._grab_switch = Switch(
@@ -44,7 +46,7 @@ class Intake(Subsystem):
         self.addChild("grab_motor", self._grab_motor)
         self.addChild("pivot_encoder", self._pivot_encoder)
 
-        self._has_reset = True
+        self._has_reset = False
         self._prev_is_retracted = False
         self._offset = 0.0
 
@@ -56,7 +58,7 @@ class Intake(Subsystem):
 
     def periodic(self) -> None:
         if self._prev_is_retracted and not self.isRetracted():
-            self._offset = self.pivot_position_min - self._pivot_encoder.get()
+            self._offset = self.pivot_height_max - self._pivot_encoder.get()
             self._has_reset = True
         self._prev_is_retracted = self.isRetracted()
 
@@ -66,10 +68,17 @@ class Intake(Subsystem):
         self._sim_pos += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
 
+        if self._sim_pos <= -0.01:
+            self._pivot_switch.setSimPressed()
+        else:
+            self._pivot_switch.setSimUnpressed()
+
     def stopPivot(self):
         self._pivot_motor.stopMotor()
 
     def setPivotSpeed(self, speed: float):
+        if speed < 0.0 and self.isRetracted():
+            self._pivot_motor.set(0.0)
         self._pivot_motor.set(speed)
 
     def grab(self):
@@ -114,7 +123,7 @@ class Intake(Subsystem):
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
         builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
-        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
+        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.getPosition, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)

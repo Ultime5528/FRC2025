@@ -3,11 +3,7 @@ from commands2.cmd import runOnce
 
 from commands.intake.dropalgae import DropAlgae
 from commands.intake.grabalgae import _GrabAlgae, GrabAlgae
-from commands.intake.moveintake import (
-    MoveIntake,
-    _ClassProperties,
-    move_intake_properties,
-)
+from commands.intake.moveintake import MoveIntake
 from commands.intake.resetintake import ResetIntake
 from robot import Robot
 from ultime.switch import Switch
@@ -21,13 +17,14 @@ def test_ports(robot: Robot):
     assert intake._grab_motor.getChannel() == 4
     assert intake._pivot_motor.getChannel() == 5
 
-    assert intake._grab_switch.getChannel() == 8
+    assert intake._pivot_switch.getChannel() == 8
+    assert intake._grab_switch.getChannel() == 9
 
 
 def test_settings(robot: Robot):
     intake = robot.hardware.intake
 
-    assert intake._pivot_switch.getType() == Switch.Type.AlwaysUnpressed
+    assert intake._pivot_switch.getType() == Switch.Type.NormallyOpen
 
     assert not intake._pivot_motor.getInverted()
 
@@ -57,20 +54,20 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     wait(1)
 
     assert intake._grab_motor.get() == approx(0.0)
-    assert intake._pivot_motor.get() >= move_intake_properties.speed_min
+    assert intake._pivot_motor.get() > 0.0
 
     intake._sim_encoder.setDistance(1)
 
     wait(0.3)
 
-    assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
+    assert intake._grab_motor.get() == approx(0.3, rel=0.1)
     assert intake._pivot_motor.get() == 0.0
 
     intake._grab_switch.setSimPressed()
 
     wait(0.5)
 
-    assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
+    assert intake._grab_motor.get() == approx(0.3, rel=0.1)
 
     wait(5)
 
@@ -97,19 +94,19 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
 
     wait(0.5)
 
-    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
+    assert intake._grab_motor.get() == approx(-0.3, rel=0.1)
     assert intake._pivot_motor.get() == 0.0
 
     intake._grab_switch.setSimUnpressed()
 
     wait(1.5)
 
-    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
+    assert intake._grab_motor.get() == approx(-0.3, rel=0.1)
 
     wait(3)
 
     assert intake._grab_motor.get() == 0.0
-    assert intake._pivot_motor.get() <= -1 * move_intake_properties.speed_min
+    assert intake._pivot_motor.get() < 0.0
 
     intake._sim_encoder.setDistance(0.0)
 
@@ -118,25 +115,25 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
     assert intake._pivot_motor.get() == 0.0
 
 
-# def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
-# setting up shortcuts
-#    def wait(time):
-#       robot_controller.wait(time)
-#
-#    intake = robot.hardware.intake
+def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
+    # setting up shortcuts
+    def wait(time):
+        robot_controller.wait(time)
 
-# actual test
-#    robot_controller.startTeleop()
-#    assert not intake._has_reset
+    intake = robot.hardware.intake
 
-#    wait(0.5)
+    # actual test
+    robot_controller.startTeleop()
+    assert not intake._has_reset
 
-#    intake._pivot_switch.setSimUnpressed()
+    wait(0.5)
 
-#    cmd = ResetIntake(intake)
-#    cmd.schedule()
+    intake._pivot_switch.setSimUnpressed()
 
-#    wait(5)
+    cmd = ResetIntake(intake)
+    cmd.schedule()
 
-#    assert intake.hasReset()
-#    assert intake.getPivotPosition() == approx(0, abs=0.2)
+    wait(5)
+
+    assert intake.hasReset()
+    assert intake.getPivotPosition() == approx(0, abs=0.2)
