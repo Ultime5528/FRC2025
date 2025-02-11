@@ -45,7 +45,7 @@ def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(10)
 
-    assert climber.getPosition() == approx(5.0, abs=0.01)
+    assert climber.getPosition() == approx(5.0, abs=0.03)
     assert climber.state == climber.State.Ready
     assert climber._motor.get() == 0.0
 

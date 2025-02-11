@@ -47,7 +47,7 @@ class Climber(Subsystem):
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.011
+        distance = self._motor.get() * 0.021
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
 
         if self._sim_encoder.getPosition() >= 10:
