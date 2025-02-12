@@ -128,7 +128,7 @@ def testRetractFailBadElevatorPosition(
 
         running_arm_speed = 0.0
         running_arm_state = Arm.State.Extended
-        running_elevator_state = Elevator.State.Level1
+        running_elevator_state = Elevator.State.Loading
         running_printer_state = Printer.State.Middle
 
         end_arm_speed = 0.0
@@ -138,7 +138,7 @@ def testRetractFailBadElevatorPosition(
 
 def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters):
 
-    mega_delay = 100.0
+    mega_delay = 10.0
 
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
@@ -151,6 +151,8 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     arm.state = parameters.initial_arm_state
     elevator.state = parameters.initial_elevator_state
     printer.state = parameters.initial_printer_state
+
+    robot_controller.startTeleop()
 
     cmd_reset_elevator = ResetElevator(elevator)
     cmd_reset_elevator.schedule()
@@ -176,9 +178,6 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
 
     assert not cmd_move_printer.isScheduled()
 
-
-    robot_controller.startTeleop()
-
     cmd = parameters.Cmd(arm)
     sampling_time = cmd.delay * 0.5
 
@@ -190,9 +189,9 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     robot_controller.wait(cmd.delay - sampling_time)
 
     assert arm._motor.get() == approx(parameters.running_arm_speed, rel=0.1)
-    assert not arm.state == parameters.running_arm_state
-    assert elevator.movement_state == parameters.running_elevator_state
-    assert printer.movement_state == parameters.running_printer_state
+    assert arm.state == parameters.running_arm_state
+    assert elevator.state == parameters.running_elevator_state
+    assert printer.state == parameters.running_printer_state
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
 
