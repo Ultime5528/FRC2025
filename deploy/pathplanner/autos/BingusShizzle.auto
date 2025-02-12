@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "print_bingus"
+                  "name": "LoadCoral"
                 }
               }
             ]
@@ -26,7 +26,7 @@
         {
           "type": "named",
           "data": {
-            "name": "print_shizzle"
+            "name": "MoveElevator.toLevel1"
           }
         }
       ]

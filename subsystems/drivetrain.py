@@ -8,7 +8,7 @@ from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
 from photonlibpy.photonCamera import PhotonCamera
-from wpilib import RobotBase, DriverStation
+from wpilib import RobotBase, DriverStation, SmartDashboard
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -16,6 +16,7 @@ from wpimath.kinematics import (
     SwerveDrive4Kinematics,
     SwerveModuleState,
 )
+from wpimath.units import radians
 
 import ports
 from ultime.autoproperty import autoproperty
@@ -286,6 +287,7 @@ class FollowPathplannerPath(Command):
     pos_tolerance = autoproperty(0.1)
     rot_tolerance = autoproperty(1)
 
+
     def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
         super().__init__()
         self.sampled_trajectory = None
@@ -315,7 +317,13 @@ class FollowPathplannerPath(Command):
         else:
             PPLibTelemetry.setVelocities(math.hypot(self.drivetrain.getRobotRelativeChassisSpeeds().vx, self.drivetrain.getRobotRelativeChassisSpeeds().vy),
                                          self.sampled_trajectory[self.current_goal].linearVelocity, self.drivetrain.getRobotRelativeChassisSpeeds().omega, self.drivetrain.getRobotRelativeChassisSpeeds().omega)
-            self.drivetrain.drive(position_error.X(), position_error.Y(), rotation_error.radians(), True)
+            # self.drivetrain.drive(position_error.X(), position_error.Y(), rotation_error.radians(), True)
+            self.drivetrain.drive(math.copysign(min(self.sampled_trajectory[self.current_goal].linearVelocity, abs(position_error.X())), position_error.X()),
+                                  math.copysign(min(self.sampled_trajectory[self.current_goal].linearVelocity,
+                                                    abs(position_error.Y())), position_error.Y()),
+                                  rotation_error.radians(),
+                                  True)
+
 
     def isFinished(self) -> bool:
         return self.current_goal >= len(self.sampled_trajectory)
