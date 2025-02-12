@@ -37,8 +37,13 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", ManualMoveElevator.up(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel1(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel2Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel3Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
+        putCommandOnDashboard(
+            "Elevator", MoveElevator.toAlgae(hardware.elevator, hardware.arm)
+        )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
         """

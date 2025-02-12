@@ -66,10 +66,17 @@ class Intake(Subsystem):
         self._sim_pos += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
 
+        if self._sim_pos <= -0.01:
+            self._pivot_switch.setSimPressed()
+        else:
+            self._pivot_switch.setSimUnpressed()
+
     def stopPivot(self):
         self._pivot_motor.stopMotor()
 
     def setPivotSpeed(self, speed: float):
+        if speed < 0.0 and self.isRetracted():
+            self._pivot_motor.set(0.0)
         self._pivot_motor.set(speed)
 
     def grab(self):
