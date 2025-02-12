@@ -4,6 +4,9 @@ from wpilib.simulation import stepTiming
 from commands.printer.moveprinter import MovePrinter, move_printer_properties
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
+from subsystems.arm import Arm
+from subsystems.elevator import Elevator
+from subsystems.printer import Printer
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
 
@@ -17,6 +20,7 @@ def test_ports(robot: Robot):
 
 
 def test_settings(robot: Robot):
+
     printer = robot.hardware.printer
 
     assert not printer._motor.getInverted()
@@ -27,7 +31,17 @@ def test_settings(robot: Robot):
 def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
 
+    arm = robot.hardware.arm
+    elevator = robot.hardware.elevator
     printer = robot.hardware.printer
+
+    arm.movement_state = Arm.MovementState.FreeToMove
+    elevator.movement_state = Elevator.MovementState.FreeToMove
+    printer.movement_state = Printer.MovementState.FreeToMove
+
+    arm.state = Arm.State.Retracted
+
+    printer._sim_encoder.setDistance(0.5)
 
     # Enable robot and schedule command
     robot_controller.wait(0.5)
@@ -57,7 +71,7 @@ def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(1.0)
 
     assert printer._motor.get() == approx(0.0)
-    assert printer.getPose() == approx(0.0, abs=1.0)
+    assert printer.getPosition() == approx(0.0, abs=1.0)
 
     assert not cmd.isScheduled()
 
@@ -72,7 +86,7 @@ def common_test_movePrinter_from_switch_right(
     # Set hasReset to true
     robot.hardware.printer._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
-    robot.hardware.printer.setPose(-0.05)
+    robot.hardware.printer.setPosition(-0.05)
     robot.hardware.printer._sim_place = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
@@ -92,7 +106,7 @@ def common_test_movePrinter_from_switch_right(
     robotController.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(wantedHeight, abs=0.05)
+    assert robot.hardware.printer.getPosition() == approx(wantedHeight, abs=0.05)
 
 
 def test_movePrinter_toLeft(robot_controller: RobotTestController, robot: Robot):
@@ -139,7 +153,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
     robot_controller.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(0.05, rel=0.005)
+    assert robot.hardware.printer.getPosition() == approx(0.05, rel=0.005)
 
 
 def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot):
@@ -168,7 +182,7 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     robot_controller.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(0.0, abs=0.005)
+    assert robot.hardware.printer.getPosition() == approx(0.0, abs=0.005)
 
 
 def test_move_printer_leftUntilReef(
