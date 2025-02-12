@@ -1,0 +1,562 @@
+[
+  {
+    "name": "/Properties/LoadCoral/delay",
+    "type": "double",
+    "value": 0.7,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/LoadCoral/speed_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/LoadCoral/speed_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/ADIS16470/pitch_offset",
+    "type": "double",
+    "value": 4.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drivetrain/max_angular_speed",
+    "type": "double",
+    "value": 25.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drivetrain/angular_offset_fl",
+    "type": "double",
+    "value": -1.57,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drivetrain/angular_offset_fr",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drivetrain/angular_offset_bl",
+    "type": "double",
+    "value": 3.14,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drivetrain/angular_offset_br",
+    "type": "double",
+    "value": 1.57,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/DriveField/rotation_deadzone",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/DriveField/rotate_speed",
+    "type": "double",
+    "value": 0.03,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/DriveField/speed_rate",
+    "type": "double",
+    "value": 0.33,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/DriveField/moving_deadzone",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/speed_up",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/speed_down",
+    "type": "double",
+    "value": -0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/speed_maintain",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/height_min",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/height_max",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/height_maintain",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Elevator/position_conversion_factor",
+    "type": "double",
+    "value": 0.002,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Arm/speed",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Climber/position_conversion_factor",
+    "type": "double",
+    "value": 0.002,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Climber/speed",
+    "type": "int",
+    "value": 1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Intake/grab_speed",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Intake/pivot_position_min",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Intake/position_conversion_factor",
+    "type": "double",
+    "value": 0.02,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Printer/speed",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Printer/left",
+    "type": "double",
+    "value": 0.41,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Printer/right",
+    "type": "double",
+    "value": -0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Printer/position_conversion_factor",
+    "type": "double",
+    "value": 0.002,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/ExtendArm/delay",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/RetractArm/delay",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_1_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_1_right",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_2_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_2_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_3_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_3_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_4_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_4_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/delay",
+    "type": "double",
+    "value": 2.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/ReadyClimber/position",
+    "type": "double",
+    "value": 5.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/ManualMoveElevator/speed",
+    "type": "double",
+    "value": 0.25,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level1",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level2",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level2_algae",
+    "type": "double",
+    "value": 1.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level3",
+    "type": "double",
+    "value": 1.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level3_algae",
+    "type": "double",
+    "value": 1.6,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level4",
+    "type": "double",
+    "value": 1.9,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_loading",
+    "type": "double",
+    "value": 1.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/speed_min",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/speed_max",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/accel",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveIntake/position_extended",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveIntake/position_retracted",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveIntake/speed_min",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveIntake/speed_max",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveIntake/accel",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_DropAlgae/delay",
+    "type": "double",
+    "value": 3.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_GrabAlgae/delay",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/ManualMovePrinter/speed",
+    "type": "double",
+    "value": 0.05,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_left",
+    "type": "double",
+    "value": 0.4,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_middle",
+    "type": "double",
+    "value": 0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_right",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_loading",
+    "type": "double",
+    "value": 0.05,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_middle_left",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/position_middle_right",
+    "type": "double",
+    "value": 0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/speed_min",
+    "type": "double",
+    "value": 0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/speed_max",
+    "type": "double",
+    "value": 0.4,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MovePrinter/accel",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  }
+]

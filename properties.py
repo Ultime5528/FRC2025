@@ -4,8 +4,6 @@ import subprocess
 import time
 from datetime import datetime
 
-from ast_selector import AstSelector
-from asttokens import ASTTokens
 from ntcore import NetworkTableInstance
 
 from ultime.autoproperty import registry
@@ -97,6 +95,9 @@ def save_once():
 
 
 def update_files():
+    from ast_selector import AstSelector
+    from asttokens import ASTTokens
+
     with open("robot_networktables.json", "r") as f:
         data = json.load(f)
 
