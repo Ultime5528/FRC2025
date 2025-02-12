@@ -27,7 +27,6 @@ class DashboardModule(Module):
         """
         Elevator
         """
-        # Classer par subsystem
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", MaintainElevator(hardware.elevator))
         putCommandOnDashboard("Elevator", ManualMoveElevator.down(hardware.elevator))
@@ -52,8 +51,6 @@ class DashboardModule(Module):
         putCommandOnDashboard("Printer", MovePrinter.toLoading(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.rightUntilReef(hardware.printer))
-        putCommandOnDashboard("Arm", RetractArm(hardware.arm))
-        putCommandOnDashboard("Arm", ExtendArm(hardware.arm))
 
         """
         Claw

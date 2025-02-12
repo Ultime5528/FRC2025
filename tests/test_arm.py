@@ -1,7 +1,7 @@
 import pytest
 from _pytest.python_api import approx
 
-from commands.arm.extendarm import ExtendArm, arm_properties
+from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
@@ -24,7 +24,6 @@ def test_settings(robot: Robot):
 
 
 def test_RetractArm(robot_controller: RobotTestController, robot: Robot):
-
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
     printer = robot.hardware.printer
@@ -36,20 +35,20 @@ def test_RetractArm(robot_controller: RobotTestController, robot: Robot):
     elevator.setHeight(elevator.height_lower_zone + 0.1)
     elevator._has_reset = True
     elevator.stop()
-    printer.setPose(printer.right)
+    printer.setPosition(printer.right)
     printer.stop()
 
-    sampling_time = arm_properties.delay * 0.5
+    cmd = RetractArm(arm)
+    sampling_time = cmd.delay * 0.5
 
     robot_controller.startTeleop()
 
-    cmd = RetractArm(arm)
     assert not cmd.isScheduled()
     assert arm._motor.get() == approx(0.0, rel=0.1)
 
     cmd.schedule()
 
-    robot_controller.wait(arm_properties.delay - sampling_time)
+    robot_controller.wait(cmd.delay - sampling_time)
 
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
@@ -61,7 +60,6 @@ def test_RetractArm(robot_controller: RobotTestController, robot: Robot):
 
 
 def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
-
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
     printer = robot.hardware.printer
@@ -73,21 +71,20 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
     elevator.setHeight(elevator.height_lower_zone + 0.1)
     elevator._has_reset = True
     elevator.stop()
-    printer.setPose(printer.right)
+    printer.setPosition(printer.right)
     printer.stop()
 
-    sampling_time = arm_properties.delay * 0.5
+    cmd = ExtendArm(arm)
+    sampling_time = cmd.delay * 0.5
 
     robot_controller.startTeleop()
-
-    cmd = ExtendArm(arm)
 
     assert not cmd.isScheduled()
     assert arm._motor.get() == approx(0.0, rel=0.1)
 
     cmd.schedule()
 
-    robot_controller.wait(arm_properties.delay - sampling_time)
+    robot_controller.wait(cmd.delay - sampling_time)
 
     assert arm._motor.get() == approx(arm.speed, rel=0.1)
     assert elevator.movement_state == Elevator.MovementState.AvoidLowerZone
@@ -122,7 +119,8 @@ def testRetractFailBadElevatorPosition(
         initial_move_elevator_cmd = MoveElevator.toLoading
 
         initial_printer_pose = (
-            robot.hardware.printer.right_zone + robot.hardware.printer.left_zone
+            robot.hardware.printer.middle_zone_right
+            + robot.hardware.printer.middle_zone_left
         ) * 0.5
         initial_printer_function = Printer.stop
 

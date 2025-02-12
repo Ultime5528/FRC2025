@@ -6,12 +6,11 @@ from ultime.module import Module
 
 
 class ArmCollision(Module):
-    def __init__(self, hardwareModule: HardwareModule):
+    def __init__(self, hardware: HardwareModule):
         super().__init__()
-
-        self.arm = hardwareModule.arm
-        self.printer = hardwareModule.printer
-        self.elevator = hardwareModule.elevator
+        self.arm = hardware.arm
+        self.printer = hardware.printer
+        self.elevator = hardware.elevator
 
     def robotPeriodic(self) -> None:
         self.arm.movement_state = Arm.MovementState.FreeToMove
@@ -19,10 +18,10 @@ class ArmCollision(Module):
         self.printer.movement_state = Printer.MovementState.FreeToMove
 
         if self.elevator.isInLowerZone() and self.arm.state == Arm.State.Retracted:
-            self.arm.movement_state = Arm.MovementState.DoNotExtendOrRetract
+            self.arm.movement_state = Arm.MovementState.DoNotMove
 
         if self.printer.isInMiddleZone() and not self.arm.state == Arm.State.Moving:
-            self.arm.movement_state = Arm.MovementState.DoNotExtendOrRetract
+            self.arm.movement_state = Arm.MovementState.DoNotMove
 
         if self.arm.state == Arm.State.Unknown:
             self.elevator.movement_state = Elevator.MovementState.AvoidLowerZone

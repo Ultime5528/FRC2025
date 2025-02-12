@@ -102,7 +102,7 @@ class Elevator(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.movement_state == Elevator.MovementState.AvoidLowerZone:
+        if self.movement_state == Elevator.MovementState.AvoidLowerZone and speed < 0:
             speed = 0.0
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
@@ -157,6 +157,9 @@ class Elevator(Subsystem):
             self._has_reset = value
 
         builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty(
+            "state_movement", lambda: self.movement_state.name, noop
+        )
         builder.addFloatProperty("motor_input", self._motor.get, noop)
         builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
@@ -166,3 +169,4 @@ class Elevator(Subsystem):
         builder.addBooleanProperty("isUp", self.isUp, noop)
         builder.addBooleanProperty("isDown", self.isDown, noop)
         builder.addBooleanProperty("shouldMaintain", self.shouldMaintain, noop)
+        builder.addBooleanProperty("isInLowerZone", self.isInLowerZone, noop)

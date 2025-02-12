@@ -15,7 +15,7 @@ class Arm(Subsystem):
         Retracted = auto()
 
     class MovementState(Enum):
-        DoNotExtendOrRetract = auto()
+        DoNotMove = auto()
         FreeToMove = auto()
         Unknown = auto()
 
@@ -28,14 +28,14 @@ class Arm(Subsystem):
         self.movement_state = Arm.MovementState.Unknown
 
     def extend(self):
-        if self.movement_state == Arm.MovementState.DoNotExtendOrRetract:
+        if self.movement_state == Arm.MovementState.DoNotMove:
             self._motor.stopMotor()
         else:
             self.state = Arm.State.Moving
             self._motor.set(self.speed)
 
     def retract(self):
-        if self.movement_state == Arm.MovementState.DoNotExtendOrRetract:
+        if self.movement_state == Arm.MovementState.DoNotMove:
             self._motor.stopMotor()
         else:
             self.state = Arm.State.Moving
