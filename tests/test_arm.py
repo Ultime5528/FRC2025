@@ -176,18 +176,18 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
 
     assert not cmd_move_printer.isScheduled()
 
-    sampling_time = arm_properties.delay * 0.5
 
     robot_controller.startTeleop()
 
     cmd = parameters.Cmd(arm)
+    sampling_time = cmd.delay * 0.5
 
     assert not cmd.isScheduled()
     assert arm._motor.get() == approx(parameters.initial_arm_speed, rel=0.1)
 
     cmd.schedule()
 
-    robot_controller.wait(arm_properties.delay - sampling_time)
+    robot_controller.wait(cmd.delay - sampling_time)
 
     assert arm._motor.get() == approx(parameters.running_arm_speed, rel=0.1)
     assert not arm.state == parameters.running_arm_state
