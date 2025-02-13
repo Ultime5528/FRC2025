@@ -4,7 +4,7 @@ import subprocess
 import time
 from datetime import datetime
 
-from ntcore import NetworkTableInstance
+from ntcore import NetworkTableInstance, MultiSubscriber
 
 from ultime.autoproperty import registry
 
@@ -41,8 +41,7 @@ def clear():
         time.sleep(0.5)
         print("Waiting for connection...")
 
-    # robot = Robot()
-    # robot.robotInit()
+    sub = MultiSubscriber(inst, ["/Properties"])
 
     topics = inst.getTopics()
     registry_keys = list(map(lambda x: x.key, registry))

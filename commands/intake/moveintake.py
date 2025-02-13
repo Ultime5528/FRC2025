@@ -14,7 +14,7 @@ class MoveIntake(Command):
             lambda: move_intake_properties.position_extended,
             Intake.State.Extended,
         )
-        cmd.setName(cmd.getName() + "toExtended")
+        cmd.setName(cmd.getName() + ".toExtended")
         return cmd
 
     @classmethod
