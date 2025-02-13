@@ -21,7 +21,7 @@ class AutopropertyCall:
     col_offset: int
 
 
-mode = PropertyMode.Dashboard
+mode = PropertyMode.Local
 
 registry: list[AutopropertyCall] = []
 
@@ -86,6 +86,10 @@ def autoproperty(
             calframe.positions.col_offset,
         )
     )
+
+    if isinstance(default_value, int):
+        print(f"{full_key} was converted to double")
+        default_value = float(default_value)
 
     with open(os.devnull, "w") as devnull:
         with contextlib.redirect_stdout(devnull):

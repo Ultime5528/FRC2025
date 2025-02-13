@@ -20,7 +20,7 @@ class Arm(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.3)
+    speed = autoproperty(-0.3)
 
     def __init__(self):
         super().__init__()
@@ -55,5 +55,5 @@ class Arm(Subsystem):
             pass
 
         builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addStringProperty("state", self.state.name, noop)
-        builder.addStringProperty("state_movement", self.movement_state.name, noop)
+        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty("state_movement", lambda: self.movement_state.name, noop)

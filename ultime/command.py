@@ -1,3 +1,5 @@
+import functools
+from functools import wraps
 from typing import Type
 
 import wpilib
@@ -15,6 +17,7 @@ def ignore_requirements(reqs: list[str]):
 
 def with_timeout(seconds: float):
     def add_timeout(CommandClass):
+        @wraps(CommandClass, updated=())
         class CommandWithTimeout(CommandClass):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
@@ -37,6 +40,7 @@ def with_timeout(seconds: float):
                     wpilib.reportError(msg)
                     DataLogManager.log(msg)
 
+        # functools.update_wrapper(CommandWithTimeout, CommandClass)
         return CommandWithTimeout
 
     return add_timeout

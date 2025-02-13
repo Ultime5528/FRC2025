@@ -29,15 +29,15 @@ class Elevator(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed_up = autoproperty(0.5)
-    speed_down = autoproperty(-0.3)
-    speed_maintain = autoproperty(0.1)
+    speed_up = autoproperty(0.1)
+    speed_down = autoproperty(-0.1)
+    speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
     height_max = autoproperty(2.0)
     height_maintain = autoproperty(0.1)
     height_lower_zone = autoproperty(0.4)
 
-    position_conversion_factor = autoproperty(0.002)
+    position_conversion_factor = autoproperty(0.00623)
 
     def __init__(self):
         super().__init__()
@@ -104,7 +104,7 @@ class Elevator(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.movement_state == Elevator.MovementState.AvoidLowerZone and speed < 0:
+        if self.movement_state == Elevator.MovementState.AvoidLowerZone and self.isInLowerZone() and speed < 0:
             speed = 0.0
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0

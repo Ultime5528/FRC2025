@@ -28,7 +28,7 @@ class Printer(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.3)
+    speed = autoproperty(0.5)
     left = autoproperty(0.41)
     right = autoproperty(-0.01)
     middle_zone_left = autoproperty(0.3)
@@ -46,6 +46,7 @@ class Printer(Subsystem):
         )
 
         self._motor = wpilib.VictorSP(ports.PWM.printer_motor)
+        self._motor.setInverted(True)
         self._encoder = wpilib.Encoder(
             ports.DIO.printer_encoder_a,
             ports.DIO.printer_encoder_b,
@@ -74,9 +75,9 @@ class Printer(Subsystem):
             self._offset = self.right - self._encoder.getDistance()
             self._has_reset = True
 
-        if self._prev_is_left and not self._switch_left.isPressed():
-            self._offset = self.left - self._encoder.getDistance()
-            self._has_reset = True
+        # if self._prev_is_left and not self._switch_left.isPressed():
+        #     self._offset = self.left - self._encoder.getDistance()
+        #     self._has_reset = True
 
         self._prev_is_left = self._switch_left.isPressed()
         self._prev_is_right = self._switch_right.isPressed()

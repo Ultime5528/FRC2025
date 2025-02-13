@@ -2,7 +2,7 @@
   {
     "name": "/Properties/LoadCoral/delay",
     "type": "double",
-    "value": 0.7,
+    "value": 0.0,
     "properties": {
       "persistent": true
     }
@@ -10,7 +10,7 @@
   {
     "name": "/Properties/LoadCoral/speed_left",
     "type": "double",
-    "value": 0.5,
+    "value": -0.1,
     "properties": {
       "persistent": true
     }
@@ -18,7 +18,7 @@
   {
     "name": "/Properties/LoadCoral/speed_right",
     "type": "double",
-    "value": -0.5,
+    "value": 0.1,
     "properties": {
       "persistent": true
     }
@@ -122,7 +122,7 @@
   {
     "name": "/Properties/Elevator/speed_maintain",
     "type": "double",
-    "value": 0.0,
+    "value": 0.02,
     "properties": {
       "persistent": true
     }
@@ -152,9 +152,17 @@
     }
   },
   {
+    "name": "/Properties/Elevator/height_lower_zone",
+    "type": "double",
+    "value": 0.4,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
     "name": "/Properties/Elevator/position_conversion_factor",
     "type": "double",
-    "value": 0.002,
+    "value": 0.00623,
     "properties": {
       "persistent": true
     }
@@ -162,7 +170,7 @@
   {
     "name": "/Properties/Arm/speed",
     "type": "double",
-    "value": 0.3,
+    "value": -0.3,
     "properties": {
       "persistent": true
     }
@@ -170,15 +178,15 @@
   {
     "name": "/Properties/Climber/position_conversion_factor",
     "type": "double",
-    "value": 0.002,
+    "value": 0.184,
     "properties": {
       "persistent": true
     }
   },
   {
     "name": "/Properties/Climber/speed",
-    "type": "int",
-    "value": 1,
+    "type": "double",
+    "value": 0.5,
     "properties": {
       "persistent": true
     }
@@ -210,7 +218,7 @@
   {
     "name": "/Properties/Printer/speed",
     "type": "double",
-    "value": 0.3,
+    "value": 0.5,
     "properties": {
       "persistent": true
     }
@@ -232,6 +240,22 @@
     }
   },
   {
+    "name": "/Properties/Printer/middle_zone_left",
+    "type": "double",
+    "value": 0.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Printer/middle_zone_right",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
     "name": "/Properties/Printer/position_conversion_factor",
     "type": "double",
     "value": 0.002,
@@ -242,7 +266,7 @@
   {
     "name": "/Properties/ExtendArm/delay",
     "type": "double",
-    "value": 3.0,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -250,21 +274,21 @@
   {
     "name": "/Properties/RetractArm/delay",
     "type": "double",
-    "value": 3.0,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_1_left",
+    "name": "/Properties/Drop/speed_level_1_left",
     "type": "double",
-    "value": 0.5,
+    "value": -0.2,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_1_right",
+    "name": "/Properties/Drop/speed_level_1_right",
     "type": "double",
     "value": 0.0,
     "properties": {
@@ -272,7 +296,23 @@
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_2_left",
+    "name": "/Properties/Drop/speed_level_2_left",
+    "type": "double",
+    "value": -0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drop/speed_level_2_right",
+    "type": "double",
+    "value": 0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/Drop/speed_level_3_left",
     "type": "double",
     "value": 0.5,
     "properties": {
@@ -280,7 +320,7 @@
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_2_right",
+    "name": "/Properties/Drop/speed_level_3_right",
     "type": "double",
     "value": -0.5,
     "properties": {
@@ -288,7 +328,7 @@
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_3_left",
+    "name": "/Properties/Drop/speed_level_4_left",
     "type": "double",
     "value": 0.5,
     "properties": {
@@ -296,7 +336,7 @@
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_3_right",
+    "name": "/Properties/Drop/speed_level_4_right",
     "type": "double",
     "value": -0.5,
     "properties": {
@@ -304,25 +344,9 @@
     }
   },
   {
-    "name": "/Properties/_ClassProperties/speed_level_4_left",
+    "name": "/Properties/Drop/delay",
     "type": "double",
-    "value": 0.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/_ClassProperties/speed_level_4_right",
-    "type": "double",
-    "value": -0.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/_ClassProperties/delay",
-    "type": "double",
-    "value": 2.0,
+    "value": 1.0,
     "properties": {
       "persistent": true
     }
@@ -338,13 +362,13 @@
   {
     "name": "/Properties/ManualMoveElevator/speed",
     "type": "double",
-    "value": 0.25,
+    "value": 0.15,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Properties/CommandWithTimeout/position_level1",
+    "name": "/Properties/MoveElevator/position_level1",
     "type": "double",
     "value": 0.5,
     "properties": {
@@ -352,63 +376,15 @@
     }
   },
   {
-    "name": "/Properties/CommandWithTimeout/position_level2",
+    "name": "/Properties/MoveElevator/position_level2",
     "type": "double",
-    "value": 1.0,
+    "value": 0.7,
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/Properties/CommandWithTimeout/position_level2_algae",
-    "type": "double",
-    "value": 1.1,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/position_level3",
-    "type": "double",
-    "value": 1.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/position_level3_algae",
-    "type": "double",
-    "value": 1.6,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/position_level4",
-    "type": "double",
-    "value": 1.9,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/position_loading",
-    "type": "double",
-    "value": 1.3,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/speed_min",
-    "type": "double",
-    "value": 0.5,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
-    "name": "/Properties/CommandWithTimeout/speed_max",
+    "name": "/Properties/MoveElevator/position_level2_algae",
     "type": "double",
     "value": 0.8,
     "properties": {
@@ -416,9 +392,57 @@
     }
   },
   {
-    "name": "/Properties/CommandWithTimeout/accel",
+    "name": "/Properties/MoveElevator/position_level3",
     "type": "double",
-    "value": 0.01,
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/position_level3_algae",
+    "type": "double",
+    "value": 1.6,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/position_level4",
+    "type": "double",
+    "value": 1.9,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/position_loading",
+    "type": "double",
+    "value": 0.1,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/speed_min",
+    "type": "double",
+    "value": 0.12,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/speed_max",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/MoveElevator/accel",
+    "type": "double",
+    "value": 7.0,
     "properties": {
       "persistent": true
     }
@@ -482,7 +506,7 @@
   {
     "name": "/Properties/ManualMovePrinter/speed",
     "type": "double",
-    "value": 0.05,
+    "value": 0.4,
     "properties": {
       "persistent": true
     }
@@ -555,6 +579,158 @@
     "name": "/Properties/MovePrinter/accel",
     "type": "double",
     "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level1",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level2",
+    "type": "double",
+    "value": 0.7,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level2_algae",
+    "type": "double",
+    "value": 0.8,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level3",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level3_algae",
+    "type": "double",
+    "value": 1.6,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_level4",
+    "type": "double",
+    "value": 1.9,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/position_loading",
+    "type": "double",
+    "value": 1.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/speed_min",
+    "type": "double",
+    "value": 0.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/speed_max",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/CommandWithTimeout/accel",
+    "type": "double",
+    "value": 0.01,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_1_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_1_right",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_2_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_2_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_3_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_3_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_4_left",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/speed_level_4_right",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Properties/_ClassProperties/delay",
+    "type": "double",
+    "value": 2.0,
     "properties": {
       "persistent": true
     }
