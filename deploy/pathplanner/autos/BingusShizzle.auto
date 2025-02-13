@@ -17,16 +17,23 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "LoadCoral"
+                  "name": "MoveElevator.toLevel1"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "MoveElevator.toLevel1"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "LoadCoral"
+                }
+              }
+            ]
           }
         }
       ]

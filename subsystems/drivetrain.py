@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 import wpilib
 from commands2 import Command
@@ -9,6 +10,7 @@ from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase, DriverStation, SmartDashboard
+from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -98,6 +100,7 @@ class Drivetrain(Subsystem):
         )
         self.cam = PhotonCamera("mainCamera")
 
+        # Flipping must be done by the command because the AutoBuilder uses custom code
         AutoBuilder.configureCustom(
             self.getCommandFromPathplannerPath,
             self.resetToPose,
@@ -280,27 +283,44 @@ def should_flip_path():
     # Boolean supplier that controls when the path will be mirrored for the red alliance
     # This will flip the path being followed to the red side of the field.
     # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+    return DriverStation.getAlliance() == DriverStation.Alliance.kBlue
 
 class FollowPathplannerPath(Command):
     delta_t = autoproperty(0.1)
     pos_tolerance = autoproperty(0.1)
-    rot_tolerance = autoproperty(1)
+    rot_tolerance = autoproperty(0.5)
 
 
     def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
         super().__init__()
         self.sampled_trajectory = None
         self.drivetrain = drivetrain
-        self.pathplanner_path = pathplanner_path
+        self.pathplanner_path_base = pathplanner_path
         self.addRequirements(drivetrain)
         self.sampled_trajectory: list[PathPlannerTrajectoryState] = []
         self.current_goal = 0
+        self.path_flipped = False
 
     def initialize(self):
-        self.pathplanner_path = self.pathplanner_path.flipPath() if should_flip_path() else self.pathplanner_path
+        self.pathplanner_path = self.pathplanner_path_base
+        if should_flip_path() and not self.path_flipped:
+            self.pathplanner_path = self.pathplanner_path_base.flipPath()
+            self.path_flipped = True
         PPLibTelemetry.setCurrentPath(self.pathplanner_path)
         trajectory = self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings())
+        states = []
+        for state in trajectory.getStates():
+            # Calculate acceleration from velocity change if needed
+            acceleration = 0.0  # Or calculate based on velocity differences
+            heading_rad = state.heading.radians()
+            states.append(Trajectory.State(
+                state.timeSeconds,
+                state.linearVelocity,
+                acceleration,
+                state.pose,
+                heading_rad
+            ))
+        self.drivetrain._field.getObject("traj").setTrajectory(Trajectory(states))
         for i in range(math.ceil(trajectory.getEndState().timeSeconds / self.delta_t)):
             self.sampled_trajectory.append(trajectory.sample(i * self.delta_t))
 
@@ -311,22 +331,37 @@ class FollowPathplannerPath(Command):
                                             self.sampled_trajectory[self.current_goal].heading))
         position_error = self.sampled_trajectory[
                              self.current_goal].pose.translation() - self.drivetrain.getPose().translation()
-        rotation_error:Rotation2d = self.sampled_trajectory[self.current_goal].heading - self.drivetrain.getPose().rotation()
-        if math.hypot(position_error.X(), position_error.Y()) <= self.pos_tolerance:
+        rotation_error:Rotation2d = self.sampled_trajectory[self.current_goal].pose.rotation() - self.drivetrain.getPose().rotation()
+        if math.hypot(position_error.X(), position_error.Y()) <= self.pos_tolerance and rotation_error.degrees() <= self.rot_tolerance:
             self.current_goal += 1
         else:
             PPLibTelemetry.setVelocities(math.hypot(self.drivetrain.getRobotRelativeChassisSpeeds().vx, self.drivetrain.getRobotRelativeChassisSpeeds().vy),
-                                         self.sampled_trajectory[self.current_goal].linearVelocity, self.drivetrain.getRobotRelativeChassisSpeeds().omega, self.drivetrain.getRobotRelativeChassisSpeeds().omega)
-            # self.drivetrain.drive(position_error.X(), position_error.Y(), rotation_error.radians(), True)
-            self.drivetrain.drive(math.copysign(min(self.sampled_trajectory[self.current_goal].linearVelocity, abs(position_error.X())), position_error.X()),
-                                  math.copysign(min(self.sampled_trajectory[self.current_goal].linearVelocity,
-                                                    abs(position_error.Y())), position_error.Y()),
-                                  rotation_error.radians(),
-                                  True)
+                                                 math.copysign(min(self.sampled_trajectory[self.current_goal].linearVelocity,
+                                                     abs(position_error.X())), position_error.X()),
+                                         rotation_error.radians(), self.drivetrain.getRobotRelativeChassisSpeeds().omega)
+            self.drivetrain.drive(
+                math.copysign(
+                    min(
+                        self.sampled_trajectory[self.current_goal].linearVelocity,
+                        abs(position_error.X() * self.sampled_trajectory[self.current_goal].linearVelocity)
+                    ),
+                    position_error.X()
+                ),
+                math.copysign(
+                    min(
+                        self.sampled_trajectory[self.current_goal].linearVelocity,
+                        abs(position_error.Y() * self.sampled_trajectory[self.current_goal].linearVelocity)
+                    ),
+                    position_error.Y()
+                ),
+                rotation_error.radians(),
+                True
+            )
 
 
     def isFinished(self) -> bool:
         return self.current_goal >= len(self.sampled_trajectory)
 
     def end(self, interrupted: bool):
+        yield False
         self.drivetrain.drive(0, 0, 0, True)
