@@ -71,7 +71,7 @@ class MoveIntake(Command):
 
 
 class _ClassProperties:
-    position_extended = autoproperty(default_value=1.0, subtable=MoveIntake.__name__)
+    position_extended = autoproperty(default_value=90.0, subtable=MoveIntake.__name__)
     position_retracted = autoproperty(default_value=0.0, subtable=MoveIntake.__name__)
 
     speed_min = autoproperty(default_value=0.5, subtable=MoveIntake.__name__)

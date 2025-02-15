@@ -1,3 +1,4 @@
+import pytest
 from _pytest.python_api import approx
 from commands2.cmd import runOnce
 
@@ -36,6 +37,7 @@ def test_settings(robot: Robot):
     assert not intake._grab_motor.getInverted()
 
 
+@pytest.mark.specific
 def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     # setting up shortcuts
     def wait(time):
@@ -59,9 +61,10 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     assert intake._grab_motor.get() == approx(0.0)
     assert intake._pivot_motor.get() >= move_intake_properties.speed_min
 
-    intake._sim_encoder.setDistance(50)
-
-    wait(0.3)
+    robot_controller.wait_until(
+        lambda: intake.getPivotPosition() >= move_intake_properties.position_extended,
+        10.0,
+    )
 
     assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
     assert intake._pivot_motor.get() == 0.0
