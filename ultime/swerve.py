@@ -83,16 +83,6 @@ class SwerveModule:
             Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
         )
 
-    # def getHolonomicPathFollowerConfig(self) -> HolonomicPathFollowerConfig:
-    #     return HolonomicPathFollowerConfig(
-    #         PIDConstants(self.driving_PID_P, self.driving_PID_I, self.driving_PID_D),
-    #         PIDConstants(self.turning_PID_P, self.turning_PID_I, self.turning_PID_D),
-    #         self.max_speed,
-    #         math.sqrt((drivetrain.width / 2) ** 2 + (drivetrain.length / 2) ** 2),
-    #         # Recalculates path often because robot doesn't follow path very closely
-    #         ReplanningConfig(enableDynamicReplanning=False),
-    #     )
-
     def setDesiredState(self, desired_state: SwerveModuleState):
         corrected_desired_state = SwerveModuleState()
         corrected_desired_state.speed = desired_state.speed

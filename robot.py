@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import wpilib
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.commands import PathfindingCommand
+from pathplannerlib.pathfinding import Pathfinding
 
 from modules.autonomous import AutonomousModule
 from modules.batterysim import BatterySimModule
@@ -16,7 +19,6 @@ class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def __init__(self):
         super().__init__()
-
         wpilib.LiveWindow.enableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
