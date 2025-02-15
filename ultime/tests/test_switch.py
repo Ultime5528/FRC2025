@@ -3,8 +3,9 @@ import pytest
 from ultime.switch import Switch
 
 
+# port 30 is max we can put so it doesn't interfere with robot
 def test_normallyOpened():
-    switch = Switch(Switch.Type.NormallyOpen, 1)
+    switch = Switch(Switch.Type.NormallyOpen, 30)
     switch.setSimPressed()
     assert switch.isPressed()
     assert switch._input.get()
@@ -14,7 +15,7 @@ def test_normallyOpened():
 
 
 def test_normallyClosed():
-    switch = Switch(Switch.Type.NormallyClosed, 1)
+    switch = Switch(Switch.Type.NormallyClosed, 30)
     switch.setSimPressed()
     assert switch.isPressed()
     assert not switch._input.get()
