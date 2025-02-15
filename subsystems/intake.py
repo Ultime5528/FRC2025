@@ -1,8 +1,9 @@
 from enum import Enum, auto
+from operator import truediv
 
 import wpilib
-from wpilib import VictorSP, Encoder, RobotBase
-from wpilib.simulation import PWMSim, EncoderSim
+from wpilib import VictorSP, Encoder, RobotBase, AnalogInput
+from wpilib.simulation import PWMSim, EncoderSim, AnalogInputSim
 from wpiutil import SendableBuilder
 
 import ports
@@ -21,6 +22,7 @@ class Intake(Subsystem):
     grab_speed = autoproperty(0.3)
     pivot_position_min = autoproperty(0.0)
     position_conversion_factor = autoproperty(0.02)
+    grab_sensor_distance = autoproperty(2)
 
     def __init__(self):
         super().__init__()
@@ -36,9 +38,7 @@ class Intake(Subsystem):
         self._pivot_switch = Switch(switch_type=Switch.Type.AlwaysUnpressed)
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
-        self._grab_switch = Switch(
-            Switch.Type.NormallyOpen, ports.DIO.intake_switch_grab
-        )
+        self._grab_sensor = wpilib.AnalogInput(ports.Analog.intake_grab_sensor)
 
         self.addChild("pivot_motor", self._pivot_motor)
         self.addChild("grab_motor", self._grab_motor)
@@ -53,6 +53,7 @@ class Intake(Subsystem):
             self._sim_pivot_motor = PWMSim(self._pivot_motor)
             self._sim_encoder = EncoderSim(self._pivot_encoder)
             self._sim_pos = 0.3
+            self._sim_grab_sensor = AnalogInputSim(self._grab_sensor)
 
     def periodic(self) -> None:
         if self._prev_is_retracted and not self.isRetracted():
@@ -98,7 +99,10 @@ class Intake(Subsystem):
         return self._pivot_switch.isPressed()
 
     def hasAlgae(self):
-        return self._grab_switch.isPressed()
+        if self._grab_sensor.getValue() >= self.grab_sensor_distance:
+            return True
+        else:
+            return False
 
     def getPivotMotorInput(self):
         return self._pivot_motor.get()
@@ -125,6 +129,6 @@ class Intake(Subsystem):
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("grab_switch", self._grab_switch.isPressed, noop)
+        builder.addBooleanProperty("grab_sensor", self.hasAlgae, noop)
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)

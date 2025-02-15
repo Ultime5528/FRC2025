@@ -50,3 +50,6 @@ class DIO:
 
 class PDP:
     pass
+
+class Analog:
+    intake_grab_sensor = 0
