@@ -29,7 +29,7 @@ class Printer(Subsystem):
         Unknown = auto()
 
     speed = autoproperty(0.5)
-    left = autoproperty(0.41)
+    left = autoproperty(0.42)
     right = autoproperty(-0.01)
     middle_zone_left = autoproperty(0.3)
     middle_zone_right = autoproperty(0.1)
@@ -83,7 +83,7 @@ class Printer(Subsystem):
         self._prev_is_right = self._switch_right.isPressed()
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.02
+        distance = self._motor.get() * 0.05
 
         self._sim_place += distance
         self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)

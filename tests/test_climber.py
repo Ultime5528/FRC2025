@@ -10,8 +10,8 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     climber = robot.hardware.climber
 
-    assert climber._motor.getDeviceId() == 10
-    assert climber._switch.getChannel() == 7
+    assert climber._motor.getDeviceId() == 9
+    assert climber._switch.getChannel() == 9
 
 
 def test_settings(robot: Robot):
@@ -28,7 +28,7 @@ def test_settings(robot: Robot):
     assert climber._motor.configAccessor.getSmartCurrentLimit() == 30
     assert (
         climber._motor.configAccessor.encoder.getPositionConversionFactor()
-        == approx(0.002)
+        == approx(0.184)
     )
 
 
@@ -45,7 +45,7 @@ def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(10)
 
-    assert climber.getPosition() == approx(5.0, abs=0.01)
+    assert climber.getPosition() == approx(45.0, abs=0.1)
     assert climber.state == climber.State.Ready
     assert climber._motor.get() == 0.0
 

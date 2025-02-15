@@ -1,4 +1,3 @@
-import functools
 from functools import wraps
 from typing import Type
 
@@ -40,7 +39,8 @@ def with_timeout(seconds: float):
                     wpilib.reportError(msg)
                     DataLogManager.log(msg)
 
-        # functools.update_wrapper(CommandWithTimeout, CommandClass)
+        setattr(CommandWithTimeout, "__wrapped_class", CommandClass)
+
         return CommandWithTimeout
 
     return add_timeout

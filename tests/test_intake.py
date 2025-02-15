@@ -1,14 +1,10 @@
 from _pytest.python_api import approx
-from commands2.cmd import runOnce
 
 from commands.intake.dropalgae import DropAlgae
-from commands.intake.grabalgae import _GrabAlgae, GrabAlgae
+from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import (
-    MoveIntake,
-    _ClassProperties,
     move_intake_properties,
 )
-from commands.intake.resetintake import ResetIntake
 from robot import Robot
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
@@ -18,10 +14,10 @@ from ultime.tests.utils import robot_controller
 def test_ports(robot: Robot):
     intake = robot.hardware.intake
 
-    assert intake._grab_motor.getChannel() == 4
-    assert intake._pivot_motor.getChannel() == 5
+    assert intake._grab_motor.getChannel() == 5
+    assert intake._pivot_motor.getChannel() == 4
 
-    assert intake._grab_switch.getChannel() == 8
+    assert intake._grab_switch.getChannel() == 10
 
 
 def test_settings(robot: Robot):

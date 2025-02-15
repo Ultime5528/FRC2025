@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 
 from commands.arm.extendarm import ExtendArm
@@ -15,7 +14,7 @@ from ultime.tests import RobotTestController
 
 
 def test_ports(robot: Robot):
-    assert robot.hardware.arm._motor.getChannel() == 2
+    assert robot.hardware.arm._motor.getChannel() == 3
 
 
 def test_settings(robot: Robot):
@@ -97,7 +96,6 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
     assert arm._motor.get() == approx(0.0, rel=0.1)
 
 
-@pytest.mark.specific
 def testRetractFailBadElevatorPosition(
     robot_controller: RobotTestController, robot: Robot
 ):

@@ -56,4 +56,6 @@ class Arm(Subsystem):
 
         builder.addFloatProperty("motor_input", self._motor.get, noop)
         builder.addStringProperty("state", lambda: self.state.name, noop)
-        builder.addStringProperty("state_movement", lambda: self.movement_state.name, noop)
+        builder.addStringProperty(
+            "state_movement", lambda: self.movement_state.name, noop
+        )

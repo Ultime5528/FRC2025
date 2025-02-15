@@ -81,7 +81,7 @@ class Elevator(Subsystem):
         else:
             gravity = 0.0
 
-        distance = (self._motor.get() - gravity) * 0.031
+        distance = (self._motor.get() - gravity) * 0.051
 
         self._sim_height += distance
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
@@ -104,7 +104,11 @@ class Elevator(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.movement_state == Elevator.MovementState.AvoidLowerZone and self.isInLowerZone() and speed < 0:
+        if (
+            self.movement_state == Elevator.MovementState.AvoidLowerZone
+            and self.isInLowerZone()
+            and speed < 0
+        ):
             speed = 0.0
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
@@ -120,7 +124,7 @@ class Elevator(Subsystem):
         return self._switch.isPressed()
 
     def isUp(self) -> bool:
-        return self._has_reset and self.getHeight() > self.height_max
+        return self._has_reset and self.getHeight() >= self.height_max
 
     def stop(self):
         self._motor.stopMotor()

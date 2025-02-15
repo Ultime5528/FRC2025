@@ -28,6 +28,7 @@ class Claw(Subsystem):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
+
         def noop(_):
             pass
 

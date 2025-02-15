@@ -1,4 +1,3 @@
-import wpilib
 from commands2 import Command, SequentialCommandGroup
 from wpilib import Timer
 
