@@ -53,7 +53,7 @@
 | subsystems/climber.py                   |       66 |        2 |        8 |        2 |     95% |45->exit, 68, 90 |
 | subsystems/drivetrain.py                |       97 |        8 |        4 |        2 |     90% |94->exit, 121, 141, 144, 153-162, 245 |
 | subsystems/elevator.py                  |      124 |        5 |       14 |        2 |     95% |66->exit, 116, 148, 157, 160, 163 |
-| subsystems/intake.py                    |       92 |        6 |        8 |        2 |     92% |51->exit, 59-60, 107, 113, 116, 119 |
+| subsystems/intake.py                    |       91 |        8 |        8 |        4 |     88% |50->exit, 58-59, 74, 83, 113, 119, 122, 125 |
 | subsystems/printer.py                   |      128 |        4 |       16 |        2 |     96% |68->exit, 121->129, 160, 166, 169, 172 |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_arm.py                      |      129 |        0 |        0 |        0 |    100% |           |
@@ -87,9 +87,9 @@
 | ultime/tests/test\_properties.py        |        3 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/test\_subsystems.py        |       17 |        0 |        8 |        0 |    100% |           |
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
-| ultime/tests/utils.py                   |       60 |       18 |       10 |        0 |     71% |25-26, 37-41, 51-55, 69-75 |
+| ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       29 |       42 |        6 |     65% |20, 22, 40-44, 59->exit, 73-91, 110-111, 168, 199-200, 203 |
-|                               **TOTAL** | **3517** |  **493** |  **432** |   **71** | **83%** |           |
+|                               **TOTAL** | **3516** |  **489** |  **432** |   **73** | **84%** |           |
 
 
 ## Setup coverage badge
