@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 import wpilib
-from wpilib import VictorSP, Encoder, RobotBase
+from wpilib import VictorSP, RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
