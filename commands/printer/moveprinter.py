@@ -98,7 +98,7 @@ class MovePrinterSetpoint(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            start_position=self.printer.getPose(),
+            start_position=self.printer.getPosition(),
             end_position=self.end_position_getter(),
             start_speed=max(
                 move_printer_properties.speed_min, abs(self.printer.getMotorInput())
@@ -110,7 +110,7 @@ class MovePrinterSetpoint(Command):
         self.printer.state = Printer.State.Moving
 
     def execute(self):
-        height = self.printer.getPose()
+        height = self.printer.getPosition()
         self.motion.setPosition(height)
         self.printer.setSpeed(self.motion.getSpeed())
 
