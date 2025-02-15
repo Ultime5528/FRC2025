@@ -32,7 +32,7 @@ class Intake(Subsystem):
             ports.DIO.intake_encoder_b,
             reverseDirection=False,
         )
-        
+
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(
             Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
