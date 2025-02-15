@@ -1,8 +1,7 @@
 from enum import Enum, auto
-from operator import truediv
 
 import wpilib
-from wpilib import VictorSP, Encoder, RobotBase, AnalogInput
+from wpilib import VictorSP, RobotBase
 from wpilib.simulation import PWMSim, EncoderSim, AnalogInputSim
 from wpiutil import SendableBuilder
 
@@ -33,9 +32,6 @@ class Intake(Subsystem):
             ports.DIO.intake_encoder_a,
             ports.DIO.intake_encoder_b,
             reverseDirection=False,
-        )
-        self._pivot_switch = Switch(
-            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
         )
 
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
@@ -141,6 +137,8 @@ class Intake(Subsystem):
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("hasAlgae", self.hasAlgae, noop)
         builder.addFloatProperty("grab_voltage", self._grab_sensor.getVoltage, noop)
-        builder.addFloatProperty("grab_voltage_average", self._grab_sensor.getAverageVoltage, noop)
+        builder.addFloatProperty(
+            "grab_voltage_average", self._grab_sensor.getAverageVoltage, noop
+        )
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)

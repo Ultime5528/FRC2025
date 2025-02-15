@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 

@@ -52,7 +52,7 @@ class DIO:
 
     intake_encoder_a = 7
     intake_encoder_b = 8
-    intake_switch_grab = 10
+    intake_switch_pivot = 10
 
     climber_switch = 9
 
