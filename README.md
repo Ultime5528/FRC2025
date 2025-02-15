@@ -27,8 +27,8 @@
 | commands/intake/\_\_init\_\_.py         |        0 |        0 |        0 |        0 |    100% |           |
 | commands/intake/dropalgae.py            |       27 |        0 |        2 |        0 |    100% |           |
 | commands/intake/grabalgae.py            |       29 |        0 |        2 |        0 |    100% |           |
-| commands/intake/moveintake.py           |       45 |        2 |        4 |        2 |     92% |    63, 66 |
-| commands/intake/resetintake.py          |       21 |        9 |        2 |        0 |     52% |14-15, 18-24, 27, 30-31 |
+| commands/intake/moveintake.py           |       45 |        1 |        4 |        1 |     96% |        66 |
+| commands/intake/resetintake.py          |       21 |        0 |        2 |        0 |    100% |           |
 | commands/printer/\_\_init\_\_.py        |        0 |        0 |        0 |        0 |    100% |           |
 | commands/printer/manualmoveprinter.py   |       31 |        0 |        4 |        1 |     97% |  31->exit |
 | commands/printer/moveprinter.py         |       91 |        2 |        4 |        2 |     96% |  122, 127 |
@@ -44,7 +44,7 @@
 | modules/hardware.py                     |       29 |        0 |        0 |        0 |    100% |           |
 | modules/logging.py                      |       18 |        1 |        6 |        1 |     92% |        25 |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
-| ports.py                                |       34 |        0 |        0 |        0 |    100% |           |
+| ports.py                                |       35 |        0 |        0 |        0 |    100% |           |
 | properties.py                           |       95 |       79 |       18 |        1 |     15% |17-25, 35-59, 63-79, 83-96, 100-146, 150-184 |
 | robot.py                                |       27 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
@@ -53,7 +53,7 @@
 | subsystems/climber.py                   |       66 |        2 |        8 |        2 |     95% |45->exit, 68, 90 |
 | subsystems/drivetrain.py                |       97 |        8 |        4 |        2 |     90% |94->exit, 121, 141, 144, 153-162, 245 |
 | subsystems/elevator.py                  |      124 |        5 |       14 |        2 |     95% |66->exit, 116, 148, 157, 160, 163 |
-| subsystems/intake.py                    |       91 |        8 |        8 |        4 |     88% |50->exit, 58-59, 74, 83, 113, 119, 122, 125 |
+| subsystems/intake.py                    |       92 |        5 |        8 |        2 |     93% |54->exit, 87, 117, 123, 126, 129 |
 | subsystems/printer.py                   |      128 |        4 |       16 |        2 |     96% |68->exit, 121->129, 160, 166, 169, 172 |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_arm.py                      |      129 |        0 |        0 |        0 |    100% |           |
@@ -62,7 +62,7 @@
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |       10 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                 |      162 |        0 |        4 |        0 |    100% |           |
-| tests/test\_intake.py                   |       65 |        0 |        0 |        0 |    100% |           |
+| tests/test\_intake.py                   |       93 |        0 |        0 |        0 |    100% |           |
 | tests/test\_printer.py                  |      159 |        4 |        8 |        2 |     96% |229-230, 270-271 |
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py              |       77 |       77 |        2 |        0 |      0% |     1-122 |
@@ -89,7 +89,7 @@
 | ultime/tests/test\_switch.py            |       33 |        0 |        0 |        0 |    100% |           |
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       29 |       42 |        6 |     65% |20, 22, 40-44, 59->exit, 73-91, 110-111, 168, 199-200, 203 |
-|                               **TOTAL** | **3516** |  **489** |  **432** |   **73** | **84%** |           |
+|                               **TOTAL** | **3546** |  **476** |  **432** |   **70** | **84%** |           |
 
 
 ## Setup coverage badge
