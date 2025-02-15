@@ -87,6 +87,10 @@ def autoproperty(
         )
     )
 
+    if isinstance(default_value, int):
+        print(f"{full_key} was converted to double")
+        default_value = float(default_value)
+
     with open(os.devnull, "w") as devnull:
         with contextlib.redirect_stdout(devnull):
             prop = _old_ntproperty(

@@ -19,8 +19,8 @@ class Climber(Subsystem):
         Ready = auto()
         Climbed = auto()
 
-    position_conversion_factor = autoproperty(0.002)
-    speed = autoproperty(1)
+    position_conversion_factor = autoproperty(0.184)
+    speed = autoproperty(0.5)
 
     def __init__(self):
         super().__init__()
@@ -47,10 +47,10 @@ class Climber(Subsystem):
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.011
+        distance = self._motor.get() * 0.184
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
 
-        if self._sim_encoder.getPosition() >= 10:
+        if self._sim_encoder.getPosition() >= 90:
             self._switch.setSimPressed()
         else:
             self._switch.setSimUnpressed()
