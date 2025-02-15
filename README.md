@@ -33,6 +33,7 @@
 | commands/printer/manualmoveprinter.py   |       31 |        0 |        4 |        1 |     97% |  31->exit |
 | commands/printer/moveprinter.py         |       91 |        2 |        4 |        2 |     96% |  122, 127 |
 | commands/printer/resetright.py          |       21 |        0 |        2 |        0 |    100% |           |
+| conftest.py                             |        1 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
 | modules/autonomous.py                   |       18 |        2 |        4 |        2 |     82% |    30, 34 |
 | modules/batterysim.py                   |       11 |        2 |        0 |        0 |     82% |     14-15 |
@@ -54,7 +55,6 @@
 | subsystems/intake.py                    |       92 |        6 |        8 |        2 |     92% |51->exit, 59-60, 107, 113, 116, 119 |
 | subsystems/printer.py                   |      113 |        4 |       14 |        1 |     96% |59->exit, 137, 143, 146, 149 |
 | tests/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
-| tests/conftest.py                       |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_arm.py                      |       30 |        0 |        0 |        0 |    100% |           |
 | tests/test\_claw.py                     |      113 |        0 |        0 |        0 |    100% |           |
 | tests/test\_climber.py                  |       56 |        0 |        0 |        0 |    100% |           |
