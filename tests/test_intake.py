@@ -33,7 +33,6 @@ def test_settings(robot: Robot):
     assert not intake._grab_motor.getInverted()
 
 
-@pytest.mark.specific
 def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     # setting up shortcuts
     def wait(time):
@@ -43,10 +42,8 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
 
     # actual test
     robot_controller.startTeleop()
-    wait(0.5)
 
     intake._has_reset = True
-    intake._sim_encoder.setDistance(0)
     intake._grab_switch.setSimUnpressed()
 
     cmd = GrabAlgae(robot.hardware.intake)
@@ -61,6 +58,8 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
         lambda: intake.getPivotPosition() >= move_intake_properties.position_extended,
         10.0,
     )
+
+    robot_controller.wait(0.1)
 
     assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
     assert intake._pivot_motor.get() == 0.0
@@ -83,36 +82,38 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
 
     intake = robot.hardware.intake
 
-    # actual test
     robot_controller.startTeleop()
-    intake._grab_switch.setSimPressed()
-    intake._sim_encoder.setDistance(100)
     intake._has_reset = True
+    intake._grab_switch.setSimUnpressed()
 
-    wait(0.5)
+    cmd = GrabAlgae(robot.hardware.intake)
+    cmd.schedule()
+
+    wait(10.0)
+    intake._grab_switch.setSimPressed()
+    wait(10.0)
+
+    assert not cmd.isScheduled()
+
+    # actual test
 
     cmd = DropAlgae(intake)
     cmd.schedule()
 
-    wait(0.5)
+    wait(0.05)
 
-    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
-    assert intake._pivot_motor.get() == 0.0
+    assert intake._grab_motor.get() == approx(-1 * intake.grab_speed, rel=0.1)
+    assert intake._pivot_motor.get() == approx(0.0)
 
     intake._grab_switch.setSimUnpressed()
 
-    wait(1.5)
+    robot_controller.wait_until(lambda: intake._grab_motor.get() == approx(0.0), 10.0)
 
-    assert intake._grab_motor.get() == approx((-1 * intake.grab_speed), rel=0.1)
+    wait(0.05)
 
-    wait(3)
-
-    assert intake._grab_motor.get() == 0.0
     assert intake._pivot_motor.get() <= -1 * move_intake_properties.speed_min
 
-    intake._sim_encoder.setDistance(0.0)
-
-    wait(1)
+    robot_controller.wait_until(lambda: intake.getPivotPosition() <= 0.0, 10.0)
 
     assert intake._pivot_motor.get() == 0.0
 
