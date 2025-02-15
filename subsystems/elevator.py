@@ -95,8 +95,6 @@ class Elevator(Subsystem):
         self.setSpeed(self.speed_down)
 
     def setSpeed(self, speed: float):
-        assert -1.0 <= speed <= 1.0
-
         if self.isDown():
             self._motor.set(speed if speed >= 0 else 0)
         elif self.isUp():

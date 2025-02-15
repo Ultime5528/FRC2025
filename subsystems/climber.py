@@ -19,7 +19,8 @@ class Climber(Subsystem):
         Ready = auto()
         Climbed = auto()
 
-    position_conversion_factor = autoproperty(0.002)
+    height_max = autoproperty(90.0)
+    position_conversion_factor = autoproperty(0.180)
     speed = autoproperty(1)
 
     def __init__(self):
@@ -28,7 +29,6 @@ class Climber(Subsystem):
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(30)
         self._config.inverted(False)
-        self._config.encoder.positionConversionFactor(self.position_conversion_factor)
 
         self._motor = SparkMax(ports.CAN.climber_motor, SparkMax.MotorType.kBrushless)
         self._encoder = self._motor.getEncoder()
@@ -40,31 +40,38 @@ class Climber(Subsystem):
             SparkBase.PersistMode.kPersistParameters,
         )
 
-        self.state = self.State.Initial
+        self.state = self.State.Unknown
+        self._prev_is_down = False
+        self._has_reset = False
+        self._offset = 0.0
 
         if RobotBase.isSimulation():
+            self._sim_height = 5.0
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
 
+    def periodic(self) -> None:
+        if self._prev_is_down and not self._switch.isPressed():
+            self._offset = self.height_max - self.getPosition()
+            self._has_reset = True
+        self._prev_is_down = self._switch.isPressed()
+
+
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.011
+        distance = self._motor.get()
+        self._sim_height += distance
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
 
-        if self._sim_encoder.getPosition() >= 10:
+        if self.position_conversion_factor * self._sim_height >= self.height_max:
             self._switch.setSimPressed()
         else:
             self._switch.setSimUnpressed()
-
-    def isInitial(self):
-        return self.state == self.State.Initial
 
     def isClimbed(self):
         return self._switch.isPressed()
 
     def setSpeed(self, speed: float):
-        assert -1.0 <= speed <= 1.0
-
-        if self.isInitial():
+        if self.getPosition() <= 0.0:
             self._motor.set(speed if speed >= 0 else 0)
         elif self.isClimbed():
             self._motor.set(speed if speed <= 0 else 0)
@@ -75,7 +82,7 @@ class Climber(Subsystem):
         self._motor.stopMotor()
 
     def getPosition(self):
-        return self._encoder.getPosition()
+        return self.position_conversion_factor * self._encoder.getPosition()
 
     def pull(self):
         self.setSpeed(self.speed)
@@ -91,5 +98,6 @@ class Climber(Subsystem):
 
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("motor_input", self._motor.get, noop)
+        builder.addFloatProperty("position", self.getPosition, noop)
         builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
         builder.addBooleanProperty("climbed", self.isClimbed, noop)
