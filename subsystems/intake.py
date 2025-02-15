@@ -34,7 +34,9 @@ class Intake(Subsystem):
             ports.DIO.intake_encoder_b,
             reverseDirection=False,
         )
-        self._pivot_switch = Switch(switch_type=Switch.Type.AlwaysUnpressed)
+        self._pivot_switch = Switch(
+            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
+        )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
         self._grab_sensor = wpilib.AnalogInput(ports.Analog.intake_grab_sensor)
@@ -43,7 +45,7 @@ class Intake(Subsystem):
         self.addChild("grab_motor", self._grab_motor)
         self.addChild("pivot_encoder", self._pivot_encoder)
 
-        self._has_reset = True
+        self._has_reset = False
         self._prev_is_retracted = False
         self._offset = 0.0
 
@@ -105,7 +107,7 @@ class Intake(Subsystem):
         return self._pivot_switch.isPressed()
 
     def hasAlgae(self):
-        return self._grab_sensor.getValue() >= self.threshold_grab
+        return self._grab_sensor.getVoltage() >= self.threshold_grab
 
     def getPivotMotorInput(self):
         return self._pivot_motor.get()
@@ -132,6 +134,8 @@ class Intake(Subsystem):
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("has_algae", self.hasAlgae, noop)
+        builder.addBooleanProperty("hasAlgae", self.hasAlgae, noop)
+        builder.addFloatProperty("grab_voltage", self._grab_sensor.getVoltage, noop)
+        builder.addFloatProperty("grab_voltage_average", self._grab_sensor.getAverageVoltage, noop)
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)
