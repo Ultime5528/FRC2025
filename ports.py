@@ -45,6 +45,7 @@ class DIO:
     printer_switch_left = 2
     printer_encoder_a = 0
     printer_encoder_b = 1
+    intake_switch_pivot = 11
 
     printer_photocell = 4
     claw_photocell = 5
