@@ -15,10 +15,10 @@ from ultime.tests.utils import robot_controller
 def test_ports(robot: Robot):
     intake = robot.hardware.intake
 
-    assert intake._grab_motor.getChannel() == 4
-    assert intake._pivot_motor.getChannel() == 5
+    assert intake._grab_motor.getChannel() == 5
+    assert intake._pivot_motor.getChannel() == 4
 
-    assert intake._grab_switch.getChannel() == 8
+    assert intake._grab_switch.getChannel() == 10
 
 
 def test_settings(robot: Robot):
