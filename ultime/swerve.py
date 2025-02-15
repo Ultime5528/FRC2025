@@ -2,10 +2,10 @@ import math
 
 from rev import SparkMax, SparkBase, SparkSim
 from wpilib import RobotBase
-from wpilib.simulation import FlywheelSim, RoboRioSim
+from wpilib.simulation import RoboRioSim
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
-from wpimath.system.plant import DCMotor, LinearSystemId
+from wpimath.system.plant import DCMotor
 
 from ultime import swerveconfig
 

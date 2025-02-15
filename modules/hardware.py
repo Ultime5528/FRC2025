@@ -9,6 +9,7 @@ from subsystems.claw import Claw
 from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
+from subsystems.intake import Intake
 from subsystems.printer import Printer
 from ultime.module import Module
 from ultime.subsystem import Subsystem
@@ -19,11 +20,13 @@ class HardwareModule(Module):
         super().__init__()
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.drivetrain = Drivetrain(0.02)
+        self.drivetrain = Drivetrain()
         self.drivetrain.setDefaultCommand(DriveField(self.drivetrain, self.controller))
 
         self.elevator = Elevator()
         self.elevator.setDefaultCommand(MaintainElevator(self.elevator))
+
+        self.intake = Intake()
 
         self.claw = Claw()
         Trigger(self.claw.hasCoralInLoader).onTrue(LoadCoral(self.claw))
@@ -43,4 +46,5 @@ class HardwareModule(Module):
             self.arm,
             self.printer,
             self.climber,
+            self.intake,
         ]

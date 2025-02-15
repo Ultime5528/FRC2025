@@ -13,7 +13,7 @@ from ultime.switch import Switch
 
 class Elevator(Subsystem):
     class State(Enum):
-        Invalid = auto()
+        Unknown = auto()
         Moving = auto()
         Loading = auto()
         Reset = auto()
@@ -21,15 +21,23 @@ class Elevator(Subsystem):
         Level2 = auto()
         Level3 = auto()
         Level4 = auto()
+        Level2Algae = auto()
+        Level3Algae = auto()
 
-    speed_up = autoproperty(0.5)
-    speed_down = autoproperty(-0.3)
-    speed_maintain = autoproperty(0.1)
+    class MovementState(Enum):
+        AvoidLowerZone = auto()
+        FreeToMove = auto()
+        Unknown = auto()
+
+    speed_up = autoproperty(0.1)
+    speed_down = autoproperty(-0.1)
+    speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
     height_max = autoproperty(2.0)
     height_maintain = autoproperty(0.1)
+    height_lower_zone = autoproperty(0.4)
 
-    position_conversion_factor = autoproperty(0.002)
+    position_conversion_factor = autoproperty(0.00623)
 
     def __init__(self):
         super().__init__()
@@ -52,7 +60,8 @@ class Elevator(Subsystem):
         self._offset = 0.0
         self._has_reset = False
         self._prev_is_down = False
-        self.state = Elevator.State.Invalid
+        self.state = Elevator.State.Unknown
+        self.movement_state = Elevator.MovementState.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
@@ -72,7 +81,7 @@ class Elevator(Subsystem):
         else:
             gravity = 0.0
 
-        distance = (self._motor.get() - gravity) * 0.011
+        distance = (self._motor.get() - gravity) * 0.051
 
         self._sim_height += distance
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
@@ -95,12 +104,18 @@ class Elevator(Subsystem):
     def setSpeed(self, speed: float):
         assert -1.0 <= speed <= 1.0
 
-        if self.isDown():
-            self._motor.set(speed if speed >= 0 else 0)
+        if (
+            self.movement_state == Elevator.MovementState.AvoidLowerZone
+            and self.isInLowerZone()
+            and speed < 0
+        ):
+            speed = 0.0
+        elif self.isDown():
+            speed = speed if speed >= 0.0 else 0.0
         elif self.isUp():
-            self._motor.set(speed if speed <= 0 else 0)
-        else:
-            self._motor.set(speed)
+            speed = speed if speed <= 0.0 else 0.0
+
+        self._motor.set(speed)
 
     def maintain(self):
         self.setSpeed(self.speed_maintain)
@@ -109,7 +124,7 @@ class Elevator(Subsystem):
         return self._switch.isPressed()
 
     def isUp(self) -> bool:
-        return self._has_reset and self.getHeight() > self.height_max
+        return self._has_reset and self.getHeight() >= self.height_max
 
     def stop(self):
         self._motor.stopMotor()
@@ -119,6 +134,9 @@ class Elevator(Subsystem):
 
     def getHeight(self):
         return self._encoder.getPosition() + self._offset
+
+    def isInLowerZone(self) -> bool:
+        return self.getHeight() <= self.height_lower_zone
 
     def getMotorInput(self):
         return self._motor.get()
@@ -145,6 +163,9 @@ class Elevator(Subsystem):
             self._has_reset = value
 
         builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty(
+            "state_movement", lambda: self.movement_state.name, noop
+        )
         builder.addFloatProperty("motor_input", self._motor.get, noop)
         builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
@@ -154,3 +175,4 @@ class Elevator(Subsystem):
         builder.addBooleanProperty("isUp", self.isUp, noop)
         builder.addBooleanProperty("isDown", self.isDown, noop)
         builder.addBooleanProperty("shouldMaintain", self.shouldMaintain, noop)
+        builder.addBooleanProperty("isInLowerZone", self.isInLowerZone, noop)

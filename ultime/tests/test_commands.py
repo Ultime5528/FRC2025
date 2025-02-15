@@ -23,6 +23,7 @@ def get_commands() -> List[Type[Command]]:
                 and not cls.__module__.startswith("commands2")
                 and cls not in cmds
             ):
+                cls = getattr(cls, "__wrapped_class", cls)
                 cmds.append(cls)
     return cmds
 

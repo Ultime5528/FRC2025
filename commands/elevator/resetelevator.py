@@ -1,7 +1,8 @@
 from subsystems.elevator import Elevator
-from ultime.command import Command
+from ultime.command import Command, with_timeout
 
 
+@with_timeout(10.0)
 class ResetElevator(Command):
     def __init__(self, elevator: Elevator):
         super().__init__()
@@ -24,5 +25,8 @@ class ResetElevator(Command):
         return not self.elevator.isDown() and self.switch_down_was_pressed
 
     def end(self, interrupted: bool):
-        self.elevator.state = self.elevator.State.Reset
+        if interrupted:
+            self.elevator.state = self.elevator.State.Unknown
+        else:
+            self.elevator.state = self.elevator.State.Reset
         self.elevator.stop()
