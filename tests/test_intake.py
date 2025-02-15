@@ -1,11 +1,9 @@
 from _pytest.python_api import approx
-from commands2.cmd import runOnce
 
 from commands.intake.dropalgae import DropAlgae
-from commands.intake.grabalgae import _GrabAlgae, GrabAlgae
+from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import (
     MoveIntake,
-    _ClassProperties,
     move_intake_properties,
 )
 from commands.intake.resetintake import ResetIntake
@@ -22,12 +20,13 @@ def test_ports(robot: Robot):
     assert intake._pivot_motor.getChannel() == 5
 
     assert intake._grab_switch.getChannel() == 8
+    assert intake._pivot_switch.getChannel() == 11
 
 
 def test_settings(robot: Robot):
     intake = robot.hardware.intake
 
-    assert intake._pivot_switch.getType() == Switch.Type.AlwaysUnpressed
+    assert intake._pivot_switch.getType() == Switch.Type.NormallyOpen
 
     assert not intake._pivot_motor.getInverted()
 
@@ -118,25 +117,47 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
     assert intake._pivot_motor.get() == 0.0
 
 
-# def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
-# setting up shortcuts
-#    def wait(time):
-#       robot_controller.wait(time)
-#
-#    intake = robot.hardware.intake
+def test_reset_intake(robot_controller: RobotTestController, robot: Robot):
+    # setting up shortcuts
+    def wait(time):
+        robot_controller.wait(time)
 
-# actual test
-#    robot_controller.startTeleop()
-#    assert not intake._has_reset
+    intake = robot.hardware.intake
 
-#    wait(0.5)
+    # actual test
+    robot_controller.startTeleop()
+    assert not intake._has_reset
 
-#    intake._pivot_switch.setSimUnpressed()
+    wait(0.5)
 
-#    cmd = ResetIntake(intake)
-#    cmd.schedule()
+    intake._pivot_switch.setSimUnpressed()
 
-#    wait(5)
+    cmd = ResetIntake(intake)
+    cmd.schedule()
 
-#    assert intake.hasReset()
-#    assert intake.getPivotPosition() == approx(0, abs=0.2)
+    wait(5)
+
+    assert intake.hasReset()
+    assert intake.getPivotPosition() == approx(0, abs=0.2)
+
+
+def test_move_intake_has_not_reset(robot_controller: RobotTestController, robot: Robot):
+    # setting up shortcuts
+    def wait(time):
+        robot_controller.wait(time)
+
+    intake = robot.hardware.intake
+
+    # actual testing
+    robot_controller.startTeleop()
+    wait(0.5)
+    intake._sim_encoder.setDistance(500)
+    assert intake.hasReset() == False
+
+    cmd = MoveIntake.toRetracted(intake)
+    cmd.schedule()
+
+    wait(1)
+
+    assert intake._pivot_motor.get() == 0.0
+    assert not cmd.isScheduled()

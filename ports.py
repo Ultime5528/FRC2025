@@ -46,6 +46,7 @@ class DIO:
     intake_switch_grab = 8
     intake_encoder_a = 9
     intake_encoder_b = 10
+    intake_switch_pivot = 11
 
 
 class PDP:

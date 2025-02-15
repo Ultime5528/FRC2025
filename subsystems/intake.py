@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 import wpilib
-from wpilib import VictorSP, Encoder, RobotBase
+from wpilib import VictorSP, RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
@@ -33,7 +33,9 @@ class Intake(Subsystem):
             reverseDirection=False,
         )
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
-        self._pivot_switch = Switch(switch_type=Switch.Type.AlwaysUnpressed)
+        self._pivot_switch = Switch(
+            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
+        )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
         self._grab_switch = Switch(
@@ -44,7 +46,7 @@ class Intake(Subsystem):
         self.addChild("grab_motor", self._grab_motor)
         self.addChild("pivot_encoder", self._pivot_encoder)
 
-        self._has_reset = True
+        self._has_reset = False
         self._prev_is_retracted = False
         self._offset = 0.0
 
