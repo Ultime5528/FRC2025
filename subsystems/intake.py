@@ -38,6 +38,11 @@ class Intake(Subsystem):
             Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
         )
 
+        self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
+        self._pivot_switch = Switch(
+            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
+        )
+
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
         self._grab_sensor = wpilib.AnalogInput(ports.Analog.intake_grab_sensor)
 
