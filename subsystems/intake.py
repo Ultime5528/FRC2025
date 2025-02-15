@@ -63,7 +63,7 @@ class Intake(Subsystem):
         distance = self._pivot_motor.get() * 0.02
 
         self._sim_pos += distance
-        self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
+        self._sim_encoder.set(int(self._sim_encoder.get() + distance / self.position_conversion_factor))
 
         if self._sim_pos <= -0.01:
             self._pivot_switch.setSimPressed()
