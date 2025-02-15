@@ -6,6 +6,7 @@ from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType, Alert
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
@@ -48,6 +49,8 @@ class Intake(Subsystem):
         self._prev_is_retracted = False
         self._offset = 0.0
 
+        self._alert_current = self.createAlert("", AlertType.Error)
+
         if RobotBase.isSimulation():
             self._sim_grab_motor = PWMSim(self._grab_motor)
             self._sim_pivot_motor = PWMSim(self._pivot_motor)
@@ -59,6 +62,10 @@ class Intake(Subsystem):
             self._offset = self.pivot_position_min - self._pivot_encoder.get()
             self._has_reset = True
         self._prev_is_retracted = self.isRetracted()
+
+        if True:
+            self._alert_current.setText("Intake motor X exceeded 20 amps : ")
+            self._alert_current.set(True)
 
     def simulationPeriodic(self) -> None:
         distance = self._pivot_motor.get() * 0.02
