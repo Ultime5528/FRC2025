@@ -6,7 +6,7 @@ from ultime.autoproperty import autoproperty
 
 
 class ExtendArm(Command):
-    delay = autoproperty(3.0)
+    delay = autoproperty(1.0)
 
     def __init__(self, arm: Arm):
         super().__init__()
@@ -25,3 +25,8 @@ class ExtendArm(Command):
 
     def end(self, interrupted: bool):
         self.arm.stop()
+
+        if interrupted:
+            self.arm.state = Arm.State.Unknown
+        else:
+            self.arm.state = Arm.State.Extended

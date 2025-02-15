@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 import wpilib
-from wpilib import VictorSP, Encoder, RobotBase
+from wpilib import VictorSP, RobotBase
 from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
@@ -89,7 +89,7 @@ class Intake(Subsystem):
         self._grab_motor.stopMotor()
 
     def getPivotPosition(self):
-        return self._pivot_encoder.get() + self._offset
+        return self._pivot_encoder.getDistance() + self._offset
 
     def hasReset(self):
         return self._has_reset
@@ -121,7 +121,7 @@ class Intake(Subsystem):
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
         builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
-        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
+        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.getDistance, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
