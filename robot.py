@@ -11,6 +11,7 @@ from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.modulerobot import ModuleRobot
 
+
 class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def __init__(self):
