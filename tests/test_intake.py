@@ -84,13 +84,13 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
     intake._sim_grab_sensor.setVoltage(5)
     intake._sim_encoder.setDistance(50)
     intake._has_reset = True
-    intake._grab_switch.setSimUnpressed()
+    intake._sim_grab_sensor.setVoltage(0)
 
     cmd = GrabAlgae(robot.hardware.intake)
     cmd.schedule()
 
     wait(10.0)
-    intake._grab_switch.setSimPressed()
+    intake._sim_grab_sensor.setVoltage(5)
     wait(10.0)
 
     assert not cmd.isScheduled()
