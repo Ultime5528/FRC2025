@@ -32,7 +32,6 @@ class Intake(Subsystem):
             ports.DIO.intake_encoder_b,
             reverseDirection=False,
         )
-        self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(switch_type=Switch.Type.AlwaysUnpressed)
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
@@ -89,7 +88,9 @@ class Intake(Subsystem):
         self._grab_motor.stopMotor()
 
     def getPivotPosition(self):
-        return self._pivot_encoder.get() + self._offset
+        return (
+            self._pivot_encoder.get() + self._offset
+        ) * self.position_conversion_factor
 
     def hasReset(self):
         return self._has_reset

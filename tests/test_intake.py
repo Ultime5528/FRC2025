@@ -59,7 +59,7 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     assert intake._grab_motor.get() == approx(0.0)
     assert intake._pivot_motor.get() >= move_intake_properties.speed_min
 
-    intake._sim_encoder.setDistance(1)
+    intake._sim_encoder.setDistance(50)
 
     wait(0.3)
 
@@ -87,7 +87,7 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
     # actual test
     robot_controller.startTeleop()
     intake._grab_switch.setSimPressed()
-    intake._sim_encoder.setDistance(50)
+    intake._sim_encoder.setDistance(100)
     intake._has_reset = True
 
     wait(0.5)
