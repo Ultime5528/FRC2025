@@ -1,4 +1,5 @@
 from wpilib import VictorSP
+from wpiutil import SendableBuilder
 
 import ports
 from ultime.subsystem import Subsystem
@@ -24,3 +25,13 @@ class Claw(Subsystem):
 
     def hasCoralInLoader(self):
         return self._sensor.isPressed()
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def noop(_):
+            pass
+
+        builder.addFloatProperty("motor_left", self._motor_left.get, noop)
+        builder.addFloatProperty("motor_right", self._motor_right.get, noop)
+        builder.addBooleanProperty("has_coral", self.hasCoralInLoader, noop)
