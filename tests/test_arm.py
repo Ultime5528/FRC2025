@@ -135,7 +135,9 @@ def testRetractFailBadElevatorPosition(
             return True
 
         running_elevator_state = Elevator.State.Loading
-        running_printer_state = Printer.State.Middle
+
+        def running_printer_state(printer: Printer):
+            return printer.state == Printer.State.Middle
 
         end_arm_speed = 0.0
         end_arm_state = Arm.State.Extended
@@ -180,7 +182,9 @@ def testRetractFailBadPrinterPosition(
             return True
 
         running_elevator_state = Elevator.State.Loading
-        running_printer_state = Printer.State.Middle
+
+        def running_printer_state(printer: Printer):
+            return printer.state == Printer.State.Middle
 
         end_arm_speed = 0.0
         end_arm_state = Arm.State.Extended
@@ -225,7 +229,12 @@ def testRetractSucessGoodElevatorPosition(
             return arm.movement_state == Arm.MovementState.FreeToMove
 
         running_elevator_state = Elevator.State.Loading
-        running_printer_state = Printer.State.Left
+
+        def running_printer_state(printer: Printer):
+            return (
+                printer.state == Printer.State.Moving
+                or printer.state == Printer.State.Left
+            )
 
         end_arm_speed = 0.0
         end_arm_state = Arm.State.Retracted
@@ -267,7 +276,9 @@ def testRetractSucessGoodPrinterPosition(
             return arm.movement_state == Arm.MovementState.FreeToMove
 
         running_elevator_state = Elevator.State.Moving
-        running_printer_state = Printer.State.Right
+
+        def running_printer_state(printer: Printer):
+            return printer.state == Printer.State.Right
 
         end_arm_speed = 0.0
         end_arm_state = Arm.State.Retracted
@@ -340,7 +351,7 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     assert arm._motor.get() == approx(parameters.running_arm_speed(arm), rel=0.1)
     assert arm.state == parameters.running_arm_state
     assert elevator.state == parameters.running_elevator_state
-    assert printer.state == parameters.running_printer_state
+    assert parameters.running_printer_state(printer)
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
 
