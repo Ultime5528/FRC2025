@@ -11,6 +11,10 @@ from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
+from commands.intake.dropalgae import DropAlgae
+from commands.intake.grabalgae import GrabAlgae
+from commands.intake.moveintake import MoveIntake
+from commands.intake.resetintake import ResetIntake
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetright import ResetPrinterRight
@@ -33,8 +37,13 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", ManualMoveElevator.up(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel1(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel2(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel2Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3(hardware.elevator))
+        putCommandOnDashboard("Elevator", MoveElevator.toLevel3Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
+        putCommandOnDashboard(
+            "Elevator", MoveElevator.toAlgae(hardware.elevator, hardware.arm)
+        )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
         """
@@ -74,6 +83,15 @@ class DashboardModule(Module):
         putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
         putCommandOnDashboard("Climber", Climb(hardware.climber))
         putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
+
+        """
+        Intake
+        """
+        putCommandOnDashboard("Intake", DropAlgae(hardware.intake))
+        putCommandOnDashboard("Intake", GrabAlgae(hardware.intake))
+        putCommandOnDashboard("Intake", MoveIntake.toExtended(hardware.intake))
+        putCommandOnDashboard("Intake", MoveIntake.toRetracted(hardware.intake))
+        putCommandOnDashboard("Intake", ResetIntake(hardware.intake))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

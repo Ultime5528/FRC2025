@@ -21,6 +21,8 @@ class Elevator(Subsystem):
         Level2 = auto()
         Level3 = auto()
         Level4 = auto()
+        Level2Algae = auto()
+        Level3Algae = auto()
 
     class MovementState(Enum):
         AvoidLowerZone = auto()
@@ -79,7 +81,7 @@ class Elevator(Subsystem):
         else:
             gravity = 0.0
 
-        distance = (self._motor.get() - gravity) * 0.011
+        distance = (self._motor.get() - gravity) * 0.031
 
         self._sim_height += distance
         self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)

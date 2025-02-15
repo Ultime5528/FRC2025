@@ -23,6 +23,9 @@ def get_commands() -> List[Type[Command]]:
                 and not cls.__module__.startswith("commands2")
                 and cls not in cmds
             ):
+                if cls.__name__ == "CommandWithTimeout":
+                    cls = cls.mro()[1]
+
                 cmds.append(cls)
     return cmds
 
