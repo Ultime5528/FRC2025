@@ -20,7 +20,7 @@ class Intake(Subsystem):
 
     grab_speed = autoproperty(0.3)
     pivot_position_min = autoproperty(0.0)
-    position_conversion_factor = autoproperty(0.02)
+    position_conversion_factor = autoproperty(0.180)
 
     def __init__(self):
         super().__init__()
@@ -60,7 +60,7 @@ class Intake(Subsystem):
         self._prev_is_retracted = self.isRetracted()
 
     def simulationPeriodic(self) -> None:
-        distance = self._pivot_motor.get() * 0.02
+        distance = self._pivot_motor.get()
 
         self._sim_pos += distance
         self._sim_encoder.setCount(
@@ -80,7 +80,7 @@ class Intake(Subsystem):
 
     def setPivotSpeed(self, speed: float):
         if speed < 0.0 and self.isRetracted():
-            self._pivot_motor.set(0.0)
+            speed = 0.0
         self._pivot_motor.set(speed)
 
     def grab(self):
@@ -129,7 +129,7 @@ class Intake(Subsystem):
         builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
         builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("position", self.getPivotPosition, noop)
+        builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("grab_switch", self._grab_switch.isPressed, noop)
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
