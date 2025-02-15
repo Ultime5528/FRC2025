@@ -68,7 +68,7 @@ def save_loop():
 
     try:
         while True:
-            save_once()
+            update_files()
             current_time = time.time()
             while current_time - last_save_time < loop_delay:
                 entry_mirror.setDouble(entry_time.getDouble(current_time))
@@ -101,16 +101,15 @@ def update_files():
     from asttokens import ASTTokens
     import robot  # noqa
 
-    with open("robot_networktables.json", "r") as f:
-        data = json.load(f)
+    inst = getNTInst()
 
-    for entry in data:
-        matched_prop = next(
-            (prop for prop in registry if prop.key == entry["name"]), None
-        )
+    for matched_prop in registry:
+        entry = inst.getEntry(matched_prop.key).getValue()
 
-        if matched_prop:
-            print("Updating", entry["name"])
+        if not entry.isValid():
+            print(f"Key '{matched_prop.key}' could not be found")
+        else:
+            print("Updating", matched_prop.key)
 
             with open(matched_prop.filename, "r") as f:
                 file_content = f.read()
@@ -139,7 +138,7 @@ def update_files():
             value_expr = call.args[0]
             start = value_expr.first_token.startpos
             end = value_expr.last_token.endpos
-            new_file = atok.text[:start] + str(entry["value"]) + atok.text[end:]
+            new_file = atok.text[:start] + str(entry.value()) + atok.text[end:]
 
             # Rewrite file
             with open(matched_prop.filename, "w") as f:

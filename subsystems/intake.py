@@ -20,7 +20,7 @@ class Intake(Subsystem):
 
     grab_speed = autoproperty(0.3)
     pivot_position_min = autoproperty(0.0)
-    position_conversion_factor = autoproperty(0.180)
+    position_conversion_factor = autoproperty(0.18)
 
     def __init__(self):
         super().__init__()
