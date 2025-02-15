@@ -14,7 +14,7 @@ from ultime.tests import RobotTestController
 
 
 def test_ports(robot: Robot):
-    assert robot.hardware.arm._motor.getChannel() == 2
+    assert robot.hardware.arm._motor.getChannel() == 3
 
 
 def test_settings(robot: Robot):

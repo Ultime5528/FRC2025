@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 import wpilib
+from wpiutil import SendableBuilder
 
 from ports import PWM
 from ultime.autoproperty import autoproperty
@@ -19,7 +20,7 @@ class Arm(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.3)
+    speed = autoproperty(-0.3)
 
     def __init__(self):
         super().__init__()
@@ -46,3 +47,15 @@ class Arm(Subsystem):
 
     def getCurrentDrawAmps(self) -> float:
         return 0.0
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def noop(_):
+            pass
+
+        builder.addFloatProperty("motor_input", self._motor.get, noop)
+        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty(
+            "state_movement", lambda: self.movement_state.name, noop
+        )

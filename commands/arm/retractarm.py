@@ -6,7 +6,7 @@ from ultime.autoproperty import autoproperty
 
 
 class RetractArm(Command):
-    delay = autoproperty(2.0)
+    delay = autoproperty(1.0)
 
     def __init__(self, arm: Arm):
         super().__init__()
