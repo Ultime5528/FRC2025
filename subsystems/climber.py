@@ -82,7 +82,7 @@ class Climber(Subsystem):
         self._motor.stopMotor()
 
     def getPosition(self):
-        return self.position_conversion_factor * self._encoder.getPosition()
+        return self.position_conversion_factor * (self._encoder.getPosition() + self._offset)
 
     def pull(self):
         self.setSpeed(self.speed)
@@ -92,12 +92,19 @@ class Climber(Subsystem):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
+        def setOffset(value: float):
+            self._offset = value
+
+        def setHasReset(value: bool):
+            self._has_reset = value
 
         def noop(x):
             pass
 
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addFloatProperty("position", self.getPosition, noop)
         builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
-        builder.addBooleanProperty("climbed", self.isClimbed, noop)
+        builder.addFloatProperty("position", self.getPosition, noop)
+        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
+        builder.addBooleanProperty("isClimbed", self.isClimbed, noop)
+        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
