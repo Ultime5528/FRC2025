@@ -1,6 +1,8 @@
+import pytest
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 
+from commands.arm.retractarm import RetractArm
 from commands.printer.moveprinter import MovePrinter, move_printer_properties
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
@@ -81,7 +83,7 @@ def common_test_movePrinter_from_switch_right(
     cmd = MovePrinterCommand(robot.hardware.printer)
     cmd.schedule()
 
-    robotController.wait(0.5)
+    robotController.wait(0.05)
 
     assert robot.hardware.printer._motor.get() > 0.0
 
@@ -95,6 +97,7 @@ def common_test_movePrinter_from_switch_right(
     assert robot.hardware.printer.getPose() == approx(wantedHeight, abs=0.05)
 
 
+@pytest.mark.specific
 def test_movePrinter_toLeft(robot_controller: RobotTestController, robot: Robot):
     common_test_movePrinter_from_switch_right(
         robot_controller,
@@ -113,6 +116,7 @@ def test_moveElevator_toMiddle(robot_controller: RobotTestController, robot: Rob
     )
 
 
+@pytest.mark.specific
 def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
     # Set hasReset to true
@@ -128,7 +132,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
     cmd = MovePrinter.toLoading(robot.hardware.printer)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.05)
 
     assert robot.hardware.printer._motor.get() < 0.0
 
@@ -157,7 +161,7 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     cmd = MovePrinter.toRight(robot.hardware.printer)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.05)
 
     assert robot.hardware.printer._motor.get() < 0.0
 
@@ -171,12 +175,21 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     assert robot.hardware.printer.getPose() == approx(0.0, abs=0.005)
 
 
+@pytest.mark.specific
 def test_move_printer_leftUntilReef(
     robot_controller: RobotTestController, robot: Robot
 ):
     robot_controller.startTeleop()
 
-    robot.hardware.printer._has_reset = True
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
+    cmd = ResetPrinterRight(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(10)
 
     cmd = MovePrinter.toLeft(robot.hardware.printer)
     cmd.schedule()
