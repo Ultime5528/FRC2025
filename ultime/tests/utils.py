@@ -72,7 +72,7 @@ class RobotTestController:
         while not cond():
             self.wait(delta)
             time += delta
-            assert time < seconds, f"Condition was not reached within {seconds} seconds"
+            assert time < seconds, f"Condition was not reached within {seconds} seconds. "
 
 
 @pytest.fixture(scope="function")

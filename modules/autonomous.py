@@ -6,12 +6,9 @@ import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.path import PathConstraints, PathPlannerPath
-from wpilib import SmartDashboard, Field2d
 from wpimath.geometry import Pose2d
-from wpimath.units import degreesToRadians
 
 from commands.arm.retractarm import RetractArm
-from commands.claw.loadcoral import LoadCoral
 from commands.elevator.moveelevator import MoveElevator
 from commands.printer.moveprinter import MovePrinter
 from modules.hardware import HardwareModule
