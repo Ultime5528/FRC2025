@@ -15,13 +15,19 @@ class ExtendArm(Command):
         self.addRequirements(arm)
 
     def initialize(self):
-        self.timer.restart()
+        self.timer.stop()
+        self.timer.reset()
 
     def execute(self):
-        self.arm.extend()
+        if self.arm.movement_state == Arm.MovementState.DoNotMove:
+            self.arm.stop()
+            self.timer.reset()
+        else:
+            self.timer.start()
+            self.arm.extend()
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.delay
+        return self.timer.hasElapsed(self.delay)
 
     def end(self, interrupted: bool):
         self.arm.stop()

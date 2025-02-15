@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 
 from commands.arm.extendarm import ExtendArm
@@ -56,6 +55,7 @@ def test_RetractArm(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(sampling_time + 0.02)
 
+    assert not cmd.isScheduled()
     assert arm._motor.get() == approx(0.0)
 
 
@@ -94,10 +94,10 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(sampling_time + 0.02)
 
+    assert not cmd.isScheduled()
     assert arm._motor.get() == approx(0.0, rel=0.1)
 
 
-@pytest.mark.specific
 def testRetractFailBadElevatorPosition(
     robot_controller: RobotTestController, robot: Robot
 ):
@@ -132,6 +132,46 @@ def testRetractFailBadElevatorPosition(
         running_printer_state = Printer.State.Middle
 
         end_arm_speed = 0.0
+        end_arm_state = Arm.State.Extended
+
+    _genericTest(robot_controller, robot, TestParameters)
+
+
+def testRetractFailBadPrinterPosition(
+    robot_controller: RobotTestController, robot: Robot
+):
+
+    class TestParameters:
+
+        Cmd = RetractArm
+
+        initial_arm_state = Arm.State.Extended
+        initial_elevator_state = Elevator.State.Level1
+        initial_printer_state = Printer.State.Middle
+
+        initial_arm_movement_state = Arm.MovementState.FreeToMove
+        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
+        initial_printer_movement_state = Printer.MovementState.FreeToMove
+
+        initial_arm_speed = 0.0
+
+        initial_move_elevator_cmd = MoveElevator.toLoading
+
+        initial_printer_pose = (
+            robot.hardware.printer.middle_zone_right
+            + robot.hardware.printer.middle_zone_left
+        ) * 0.5
+        initial_printer_function = Printer.stop
+
+        initial_move_printer_cmd = MovePrinter.toMiddle
+
+        running_arm_speed = 0.0
+        running_arm_state = Arm.State.Extended
+        running_elevator_state = Elevator.State.Loading
+        running_printer_state = Printer.State.Middle
+
+        end_arm_speed = 0.0
+        end_arm_state = Arm.State.Extended
 
     _genericTest(robot_controller, robot, TestParameters)
 
@@ -198,3 +238,4 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     robot_controller.wait(sampling_time + 0.02)
 
     assert arm._motor.get() == approx(parameters.end_arm_speed, rel=0.1)
+    assert arm.state == parameters.end_arm_state
