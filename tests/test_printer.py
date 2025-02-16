@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 
@@ -59,7 +58,7 @@ def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     robot_controller.wait(1.0)
 
     assert printer._motor.get() == approx(0.0)
-    assert printer.getPose() == approx(0.0, abs=1.0)
+    assert printer.getPosition() == approx(0.0, abs=1.0)
 
     assert not cmd.isScheduled()
 
@@ -74,8 +73,8 @@ def common_test_movePrinter_from_switch_right(
     # Set hasReset to true
     robot.hardware.printer._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
-    robot.hardware.printer.setPose(-0.05)
-    robot.hardware.printer._sim_place = -0.05
+    robot.hardware.printer.setPosition(-0.05)
+    robot.hardware.printer._sim_position = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
     assert robot.hardware.printer.isRight()
@@ -94,10 +93,9 @@ def common_test_movePrinter_from_switch_right(
     robotController.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(wantedHeight, abs=0.05)
+    assert robot.hardware.printer.getPosition() == approx(wantedHeight, abs=0.05)
 
 
-@pytest.mark.specific
 def test_movePrinter_toLeft(robot_controller: RobotTestController, robot: Robot):
     common_test_movePrinter_from_switch_right(
         robot_controller,
@@ -116,7 +114,6 @@ def test_moveElevator_toMiddle(robot_controller: RobotTestController, robot: Rob
     )
 
 
-@pytest.mark.specific
 def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
     # Set hasReset to true
@@ -143,7 +140,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
     robot_controller.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(0.05, rel=0.005)
+    assert robot.hardware.printer.getPosition() == approx(0.05, rel=0.005)
 
 
 def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot):
@@ -172,10 +169,9 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     robot_controller.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPose() == approx(0.0, abs=0.005)
+    assert robot.hardware.printer.getPosition() == approx(0.0, abs=0.005)
 
 
-@pytest.mark.specific
 def test_move_printer_leftUntilReef(
     robot_controller: RobotTestController, robot: Robot
 ):

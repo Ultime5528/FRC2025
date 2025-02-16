@@ -58,7 +58,8 @@ class Printer(Subsystem):
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
             self._sim_encoder = EncoderSim(self._encoder)
-            self._sim_place = 0.03
+            self._sim_initial_position = 0.03
+            self._sim_position = self._sim_initial_position
 
     def periodic(self) -> None:
         if self._prev_is_right and not self._switch_right.isPressed():
@@ -69,16 +70,19 @@ class Printer(Subsystem):
     def simulationPeriodic(self) -> None:
         distance = self._motor.get() * 0.05
 
-        self._sim_place += distance
+        self._sim_position += distance
+
         self._sim_encoder.setCount(
-            self._sim_encoder.getCount()
-            + int(distance / self.position_conversion_factor)
+            int(
+                (self._sim_position - self._sim_initial_position)
+                / self.position_conversion_factor
+            )
         )
 
-        if self._sim_place <= self.right:
+        if self._sim_position <= self.right:
             self._switch_right.setSimPressed()
             self._switch_left.setSimUnpressed()
-        elif self._sim_place >= self.left:
+        elif self._sim_position >= self.left:
             self._switch_left.setSimPressed()
             self._switch_right.setSimUnpressed()
         else:
@@ -115,10 +119,10 @@ class Printer(Subsystem):
     def stop(self):
         self._motor.stopMotor()
 
-    def setPose(self, reset_value):
-        self._offset = reset_value - self._encoder.getDistance()
+    def setPosition(self, reset_value):
+        self._offset = reset_value - self._encoder.get()
 
-    def getPose(self):
+    def getPosition(self):
         return (self._encoder.get() + self._offset) * self.position_conversion_factor
 
     def getMotorInput(self):
@@ -146,7 +150,7 @@ class Printer(Subsystem):
         builder.addFloatProperty("motor_input", self._motor.get, noop)
         builder.addFloatProperty("encoder", self._encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("pose", self.getPose, noop)
+        builder.addFloatProperty("pose", self.getPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("switch_right", self._switch_right.isPressed, noop)
         builder.addBooleanProperty("switch_left", self._switch_left.isPressed, noop)
