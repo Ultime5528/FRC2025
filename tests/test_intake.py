@@ -6,6 +6,7 @@ from commands.intake.moveintake import (
     MoveIntake,
     move_intake_properties,
 )
+from commands.intake.resetintake import ResetIntake
 from robot import Robot
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
