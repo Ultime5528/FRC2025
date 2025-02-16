@@ -88,7 +88,7 @@ def common_test_movePrinter_from_switch_right(
     robot.hardware.printer._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
     robot.hardware.printer.setPosition(-0.05)
-    robot.hardware.printer._sim_place = -0.05
+    robot.hardware.printer._sim_position = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
     assert robot.hardware.printer.isRight()
@@ -101,7 +101,7 @@ def common_test_movePrinter_from_switch_right(
     cmd = MovePrinterCommand(robot.hardware.printer)
     cmd.schedule()
 
-    robotController.wait(0.5)
+    robotController.wait(0.05)
 
     assert robot.hardware.printer._motor.get() > 0.0
 
@@ -162,7 +162,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
     robot_controller.wait(20)
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
-    assert robot.hardware.printer.getPosition() == approx(0.05, abs=0.01)
+    assert robot.hardware.printer.getPosition() == approx(0.05, rel=0.005)
 
 
 def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot):
@@ -208,6 +208,13 @@ def test_move_printer_leftUntilReef(
     robot_controller.wait(10)
 
     robot.hardware.printer._has_reset = True
+
+    robot_controller.wait(10)
+
+    cmd = ResetPrinterRight(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(10)
 
     cmd = MovePrinter.toLeft(robot.hardware.printer)
     cmd.schedule()

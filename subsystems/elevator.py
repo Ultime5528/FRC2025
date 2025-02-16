@@ -102,8 +102,6 @@ class Elevator(Subsystem):
         self.setSpeed(self.speed_down)
 
     def setSpeed(self, speed: float):
-        assert -1.0 <= speed <= 1.0
-
         if (
             self.movement_state == Elevator.MovementState.AvoidLowerZone
             and self.isInLowerZone()
