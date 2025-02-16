@@ -15,8 +15,8 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     elevator = robot.hardware.elevator
 
-    assert elevator._motor.getDeviceId() == 9
-    assert elevator._switch.getChannel() == 0
+    assert elevator._motor.getDeviceId() == 10
+    assert elevator._switch.getChannel() == 6
 
 
 def test_settings(robot: Robot):
@@ -33,7 +33,7 @@ def test_settings(robot: Robot):
     assert elevator._motor.configAccessor.getSmartCurrentLimit() == 30
     assert (
         elevator._motor.configAccessor.encoder.getPositionConversionFactor()
-        == approx(0.002)
+        == approx(0.00623)
     )
 
 
@@ -101,7 +101,7 @@ def common_test_moveElevator_from_switch_down(
     cmd.schedule()
 
     robotController.wait(0.5)
-    counter = 0
+
     assert elevator._motor.get() > 0.0
 
     robotController.wait(10)
@@ -110,7 +110,7 @@ def common_test_moveElevator_from_switch_down(
 
     robotController.wait(20)
 
-    assert elevator._motor.get() == approx(0.1)
+    assert elevator._motor.get() == approx(0.02)  # speed_maintain
     assert elevator.getHeight() == approx(wantedHeight, rel=0.1)
 
 
@@ -158,7 +158,7 @@ def test_moveElevator_toLevel3Algae(
     common_test_moveElevator_from_switch_down(
         robot_controller,
         robot,
-        MoveElevator.toLevel3,
+        MoveElevator.toLevel3Algae,
         move_elevator_properties.position_level3_algae,
     )
 

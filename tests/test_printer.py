@@ -1,6 +1,7 @@
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 
+from commands.arm.retractarm import RetractArm
 from commands.printer.moveprinter import MovePrinter, move_printer_properties
 from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
@@ -14,16 +15,16 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     printer = robot.hardware.printer
 
-    assert printer._motor.getChannel() == 3
+    assert printer._motor.getChannel() == 2
     assert printer._switch_left.getChannel() == 2
-    assert printer._switch_right.getChannel() == 1
+    assert printer._switch_right.getChannel() == 3
 
 
 def test_settings(robot: Robot):
 
     printer = robot.hardware.printer
 
-    assert not printer._motor.getInverted()
+    assert printer._motor.getInverted()
     assert printer._switch_left.getType() == Switch.Type.NormallyClosed
     assert printer._switch_right.getType() == Switch.Type.NormallyClosed
 
@@ -87,15 +88,20 @@ def common_test_movePrinter_from_switch_right(
     robot.hardware.printer._has_reset = True
     # Set encoder to the minimum value so switch_down is pressed
     robot.hardware.printer.setPosition(-0.05)
-    robot.hardware.printer._sim_place = -0.05
+    robot.hardware.printer._sim_position = -0.05
     # Enable robot and schedule command
     robotController.wait(0.5)
     assert robot.hardware.printer.isRight()
 
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
+
+    robotController.wait(10)
+
     cmd = MovePrinterCommand(robot.hardware.printer)
     cmd.schedule()
 
-    robotController.wait(0.5)
+    robotController.wait(0.05)
 
     assert robot.hardware.printer._motor.get() > 0.0
 
@@ -129,6 +135,9 @@ def test_moveElevator_toMiddle(robot_controller: RobotTestController, robot: Rob
 
 def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
+
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
     # Set hasReset to true
     robot.hardware.printer._has_reset = True
     # Set printer in the middle
@@ -142,7 +151,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
     cmd = MovePrinter.toLoading(robot.hardware.printer)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.05)
 
     assert robot.hardware.printer._motor.get() < 0.0
 
@@ -158,6 +167,9 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
 
 def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
+
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
     # Set hasReset to true
     robot.hardware.printer._has_reset = True
     # Set printer in the middle
@@ -171,7 +183,7 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     cmd = MovePrinter.toRight(robot.hardware.printer)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.05)
 
     assert robot.hardware.printer._motor.get() < 0.0
 
@@ -190,7 +202,19 @@ def test_move_printer_leftUntilReef(
 ):
     robot_controller.startTeleop()
 
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
     robot.hardware.printer._has_reset = True
+
+    robot_controller.wait(10)
+
+    cmd = ResetPrinterRight(robot.hardware.printer)
+    cmd.schedule()
+
+    robot_controller.wait(10)
 
     cmd = MovePrinter.toLeft(robot.hardware.printer)
     cmd.schedule()
@@ -222,6 +246,13 @@ def test_move_printer_rightUntilReef(
     robot_controller: RobotTestController, robot: Robot
 ):
     robot_controller.startTeleop()
+
+    cmd = RetractArm(robot.hardware.arm)
+    cmd.schedule()
+
+    robot_controller.wait(10)
+
+    assert not cmd.isScheduled()
 
     robot.hardware.printer._has_reset = True
 
