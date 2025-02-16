@@ -85,8 +85,9 @@ class MovePrinter:
         cmd.setName(MovePrinter.__name__ + ".rightUntilReef")
         return cmd
 
+
 @with_timeout(5.0)
-class MovePrinterSetpoint(Command):
+class _MovePrinterSetpoint(Command):
     def __init__(
         self, printer: Printer, end_position: FloatProperty, new_state: Printer.State
     ):
@@ -128,8 +129,9 @@ class MovePrinterSetpoint(Command):
         else:
             self.printer.state = self.new_state
 
+
 @with_timeout(5.0)
-class MovePrinterWithSensor(Command):
+class _MovePrinterWithSensor(Command):
     @staticmethod
     def left(printer: Printer):
         cmd = ManualMovePrinter.left(printer).until(lambda: printer.seesReef())

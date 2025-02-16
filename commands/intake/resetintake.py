@@ -1,8 +1,10 @@
 from commands2 import Command
 
 from subsystems.intake import Intake
+from ultime.command import with_timeout
 
 
+@with_timeout(5.0)
 class ResetIntake(Command):
     def __init__(self, intake: Intake):
         super().__init__()

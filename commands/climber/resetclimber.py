@@ -1,8 +1,10 @@
 from commands2 import Command
 
 from subsystems.climber import Climber
+from ultime.command import with_timeout
 
 
+@with_timeout(10.0)
 class ResetClimber(Command):
     def __init__(self, climber: Climber):
         super().__init__()

@@ -30,6 +30,7 @@ class MoveClimber(Command):
         else:
             self.climber.state = self.new_state
 
+
 @with_timeout(5.0)
 class ReadyClimber(MoveClimber):
     position = autoproperty(45.0)
@@ -43,6 +44,7 @@ class ReadyClimber(MoveClimber):
     def isFinished(self) -> bool:
         return self.climber.getPosition() >= self.position
 
+
 @with_timeout(15.0)
 class Climb(MoveClimber):
     def __init__(self, climber: Climber):
@@ -53,6 +55,7 @@ class Climb(MoveClimber):
 
     def isFinished(self) -> bool:
         return self.climber.isClimbed()
+
 
 @with_timeout(15.0)
 class ReleaseClimber(MoveClimber):
