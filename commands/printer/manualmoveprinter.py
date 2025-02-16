@@ -22,6 +22,9 @@ class ManualMovePrinter(Command):
         self.addRequirements(self.printer)
         self.get_speed = asCallable(speed)
 
+    def initialize(self):
+        self.printer.state = Printer.State.Moving
+
     def execute(self):
         self.printer.setSpeed(self.get_speed())
 
@@ -33,6 +36,7 @@ class ManualMovePrinter(Command):
 
     def end(self, interrupted: bool):
         self.printer.stop()
+        self.printer.state = Printer.State.Unknown
 
 
 class _ClassProperties:
