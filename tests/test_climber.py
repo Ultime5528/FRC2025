@@ -11,9 +11,8 @@ from ultime.tests import RobotTestController
 def test_ports(robot: Robot):
     climber = robot.hardware.climber
 
-    assert climber._motor.getDeviceId() == 10
-    assert climber._switch.getChannel() == 7
-
+    assert climber._motor.getDeviceId() == 9
+    assert climber._switch.getChannel() == 9
 
 def test_settings(robot: Robot):
     climber = robot.hardware.climber
