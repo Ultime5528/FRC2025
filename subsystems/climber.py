@@ -56,10 +56,11 @@ class Climber(Subsystem):
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
 
-
     def simulationPeriodic(self) -> None:
         distance = self._motor.get()
-        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance / self.position_conversion_factor)
+        self._sim_encoder.setPosition(
+            self._sim_encoder.getPosition() + distance / self.position_conversion_factor
+        )
 
         if self._sim_encoder.getPosition() >= 90:
             self._switch.setSimPressed()
@@ -84,7 +85,9 @@ class Climber(Subsystem):
         self._motor.stopMotor()
 
     def getPosition(self):
-        return self.position_conversion_factor * (self._encoder.getPosition() + self._offset)
+        return self.position_conversion_factor * (
+            self._encoder.getPosition() + self._offset
+        )
 
     def pull(self):
         self.setSpeed(self.speed)
@@ -94,6 +97,7 @@ class Climber(Subsystem):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
+
         def setOffset(value: float):
             self._offset = value
 

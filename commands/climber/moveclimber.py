@@ -43,6 +43,7 @@ class ReadyClimber(MoveClimber):
     def isFinished(self) -> bool:
         return self.climber.getPosition() >= self.position
 
+
 class Climb(MoveClimber):
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Climbed)

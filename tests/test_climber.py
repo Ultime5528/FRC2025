@@ -15,6 +15,7 @@ def test_ports(robot: Robot):
     assert climber._motor.getDeviceId() == 9
     assert climber._switch.getChannel() == 9
 
+
 def test_settings(robot: Robot):
     climber = robot.hardware.climber
 
@@ -28,6 +29,7 @@ def test_settings(robot: Robot):
     )
     assert climber._motor.configAccessor.getSmartCurrentLimit() == 30
 
+
 def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
     climber = robot.hardware.climber
     robot_controller.startTeleop()
@@ -39,7 +41,7 @@ def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
 
     assert climber._motor.get() > 0.0
 
-    robot_controller.wait_until(lambda : climber.state == Climber.State.Ready, 4.0)
+    robot_controller.wait_until(lambda: climber.state == Climber.State.Ready, 4.0)
 
     assert climber.getPosition() == approx(45.0, abs=1.0)
     assert climber.state == Climber.State.Ready
@@ -88,6 +90,7 @@ def test_climber_initial(robot_controller: RobotTestController, robot: Robot):
     assert climber._motor.get() == approx(0.0, abs=0.1)
     assert climber.isInitial()
 
+
 def testResetClimber(robot_controller: RobotTestController, robot: Robot):
     climber = robot.hardware.climber
     robot_controller.startTeleop()
@@ -106,7 +109,9 @@ def testResetClimber(robot_controller: RobotTestController, robot: Robot):
     assert not climber.isClimbed()
     assert not climber._switch.isPressed()
     assert climber._motor.get() == 0.0
-    assert climber.state == climber.State.Unknown or climber.state == climber.State.Moving
+    assert (
+        climber.state == climber.State.Unknown or climber.state == climber.State.Moving
+    )
 
     robot_controller.wait(0.02)
 
@@ -116,13 +121,15 @@ def testResetClimber(robot_controller: RobotTestController, robot: Robot):
     assert climber._motor.get() > 0.0
     assert climber.state == climber.State.Moving
 
-    robot_controller.wait_until(lambda : climber._switch.isPressed(), 10.0)
+    robot_controller.wait_until(lambda: climber._switch.isPressed(), 10.0)
 
     assert cmd.isScheduled()
     assert climber.isClimbed()
     assert climber._switch.isPressed()
     assert climber._motor.get() <= 0.0
-    assert climber.state == climber.State.Climbed or climber.state == climber.State.Moving
+    assert (
+        climber.state == climber.State.Climbed or climber.state == climber.State.Moving
+    )
 
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
@@ -131,5 +138,3 @@ def testResetClimber(robot_controller: RobotTestController, robot: Robot):
     assert not climber._switch.isPressed()
     assert climber._motor.get() == 0.0
     assert climber.state == climber.State.Initial
-
-

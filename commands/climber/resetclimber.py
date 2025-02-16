@@ -4,7 +4,7 @@ from subsystems.climber import Climber
 
 
 class ResetClimber(Command):
-    def __init__(self, climber : Climber):
+    def __init__(self, climber: Climber):
         super().__init__()
         self.climber = climber
         self.addRequirements(climber)
@@ -24,7 +24,7 @@ class ResetClimber(Command):
             self.climber.pull()
 
     def isFinished(self) -> bool:
-       return self.touched_switch and self.climber.getPosition() <= 0.0
+        return self.touched_switch and self.climber.getPosition() <= 0.0
 
     def end(self, interrupted: bool):
         if interrupted:
