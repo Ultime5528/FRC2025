@@ -8,6 +8,7 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.dropprepareload import DropPrepareLoad
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -19,6 +20,7 @@ from commands.intake.resetintake import ResetIntake
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
+from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -94,6 +96,13 @@ class DashboardModule(Module):
         putCommandOnDashboard("Intake", MoveIntake.toExtended(hardware.intake))
         putCommandOnDashboard("Intake", MoveIntake.toRetracted(hardware.intake))
         putCommandOnDashboard("Intake", ResetIntake(hardware.intake))
+
+        """
+        Groups
+        """
+        putCommandOnDashboard("Group", ResetAll(hardware.elevator, hardware.printer, hardware.arm, hardware.intake, hardware.climber))
+        putCommandOnDashboard("Group", DropPrepareLoad.left(hardware.arm, hardware.claw, hardware.drivetrain, hardware.elevator, hardware.printer))
+        putCommandOnDashboard("Group", DropPrepareLoad.right(hardware.arm, hardware.claw, hardware.drivetrain, hardware.elevator, hardware.printer))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

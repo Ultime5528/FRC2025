@@ -39,6 +39,7 @@ class DropPrepareLoad:
         cmd.setName(DropPrepareLoad.__name__ + ".left")
         return cmd
 
+    @staticmethod
     def right(
         arm: Arm,
         claw: Claw,
