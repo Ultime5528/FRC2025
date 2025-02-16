@@ -25,7 +25,9 @@ def test_ports(robot: Robot):
 def test_settings(robot: Robot):
     intake = robot.hardware.intake
 
-    assert intake._pivot_switch.getType() == Switch.Type.NormallyOpen
+    assert intake._pivot_switch.getType() == Switch.Type.NormallyClosed
+
+    assert intake._grab_sensor.getChannel() == 0
 
     assert not intake._pivot_motor.getInverted()
 
