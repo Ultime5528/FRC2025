@@ -1,5 +1,4 @@
 import argparse
-import json
 import subprocess
 import time
 from datetime import datetime
@@ -12,17 +11,19 @@ loop_delay = 30.0
 entry_name_check_time = "/CheckSaveLoop/time"
 entry_name_check_mirror = "/CheckSaveLoop/mirror"
 
+_nt_inst = None
+
 
 def getNTInst() -> NetworkTableInstance:
-    inst = NetworkTableInstance.getDefault()
+    global _nt_inst
+    if _nt_inst is None:
+        _nt_inst = NetworkTableInstance.getDefault()
 
-    inst.stopLocal()
-    inst.startClient4("properties-py")
-    inst.setServerTeam(5528)
-    # inst.startDSClient()
-    # inst.setServer("localhost")
+        _nt_inst.stopLocal()
+        _nt_inst.startClient4("properties-py")
+        _nt_inst.setServerTeam(5528)
 
-    return inst
+    return _nt_inst
 
 
 def clear():
@@ -80,37 +81,19 @@ def save_loop():
 
 
 def save_once():
-    print(
-        f"[{datetime.now().time().replace(microsecond=0).isoformat()}] Connecting to robot..."
-    )
-    proc = subprocess.run(
-        "scp -o StrictHostKeyChecking=no -o ConnectTimeout=3 lvuser@10.55.28.2:/home/lvuser/networktables.ini robot_networktables.json"
-    )
-
-    # Error code
-    if proc.returncode != 0:
-        return
-
-    print("Saved properties to robot_networktables.json")
-
-    update_files()
-
-
-def update_files():
     from ast_selector import AstSelector
     from asttokens import ASTTokens
     import robot  # noqa
 
-    with open("robot_networktables.json", "r") as f:
-        data = json.load(f)
+    inst = getNTInst()
 
-    for entry in data:
-        matched_prop = next(
-            (prop for prop in registry if prop.key == entry["name"]), None
-        )
+    for matched_prop in registry:
+        entry = inst.getEntry(matched_prop.key).getValue()
 
-        if matched_prop:
-            print("Updating", entry["name"])
+        if not entry.isValid():
+            print(f"Key '{matched_prop.key}' could not be found")
+        else:
+            print("Updating", matched_prop.key)
 
             with open(matched_prop.filename, "r") as f:
                 file_content = f.read()
@@ -139,7 +122,7 @@ def update_files():
             value_expr = call.args[0]
             start = value_expr.first_token.startpos
             end = value_expr.last_token.endpos
-            new_file = atok.text[:start] + str(entry["value"]) + atok.text[end:]
+            new_file = atok.text[:start] + str(entry.value()) + atok.text[end:]
 
             # Rewrite file
             with open(matched_prop.filename, "w") as f:
@@ -162,23 +145,16 @@ if __name__ == "__main__":
     # Save once
     parser_save_once = subparsers.add_parser(
         "saveonce",
-        help="Save once real robot's NetworkTables properties to local file.",
+        help="Save once real robot's NetworkTables properties in project.",
     )
     parser_save_once.set_defaults(func=save_once)
 
     # Save loop
     parser_save_loop = subparsers.add_parser(
         "saveloop",
-        help="Save periodically real robot's NetworkTables properties to local file.",
+        help="Save periodically real robot's NetworkTables properties in project.",
     )
     parser_save_loop.set_defaults(func=save_loop)
-
-    # Update files
-    parser_update_files = subparsers.add_parser(
-        "updatefiles",
-        help="Update files autoproperties values with robot_networktables.json values.",
-    )
-    parser_update_files.set_defaults(func=update_files)
 
     args = parser.parse_args()
     args.func()

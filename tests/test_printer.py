@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 from wpilib.simulation import stepTiming
 
@@ -134,7 +133,6 @@ def test_moveElevator_toMiddle(robot_controller: RobotTestController, robot: Rob
     )
 
 
-@pytest.mark.specific
 def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
 
@@ -199,7 +197,6 @@ def test_movePrinter_toRight(robot_controller: RobotTestController, robot: Robot
     assert robot.hardware.printer.getPosition() == approx(0.0, abs=0.005)
 
 
-@pytest.mark.specific
 def test_move_printer_leftUntilReef(
     robot_controller: RobotTestController, robot: Robot
 ):
@@ -238,7 +235,6 @@ def test_move_printer_leftUntilReef(
     assert robot.hardware.printer._motor.get() == approx(0.0)
 
 
-@pytest.mark.specific
 def test_move_printer_rightUntilReef(
     robot_controller: RobotTestController, robot: Robot
 ):
