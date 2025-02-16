@@ -79,7 +79,7 @@ class AbsoluteVision(Vision):
         else:
             return None
 
-    def getTimeStamp(self):
+    def getEstimatedPoseTimeStamp(self):
         if self.estimated_pose:
             return self.estimated_pose.timestampSeconds
 
