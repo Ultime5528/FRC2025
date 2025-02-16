@@ -1,7 +1,7 @@
 import importlib
 import pkgutil
 from types import ModuleType
-from typing import Dict
+from typing import Dict, Callable
 
 import pytest
 from pyfrc.test_support.controller import TestController
@@ -38,18 +38,21 @@ class RobotTestController:
         DriverStationSim.setAutonomous(False)
         DriverStationSim.setEnabled(False)
         DriverStationSim.notifyNewData()
+        stepTiming(0.05)
 
     def startTeleop(self):
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(False)
         DriverStationSim.setEnabled(True)
         DriverStationSim.notifyNewData()
+        stepTiming(0.05)
 
     def startAutonomous(self):
         DriverStationSim.setDsAttached(True)
         DriverStationSim.setAutonomous(True)
         DriverStationSim.setEnabled(True)
         DriverStationSim.notifyNewData()
+        stepTiming(0.05)
 
     def wait(self, seconds: float):
         assert seconds > 0
@@ -61,6 +64,15 @@ class RobotTestController:
             DriverStationSim.notifyNewData()
             stepTiming(delta)
             time += delta
+
+    def wait_until(self, cond: Callable[[], bool], seconds: float):
+        time = 0.0
+        delta = 0.02
+
+        while not cond():
+            self.wait(delta)
+            time += delta
+            assert time < seconds, f"Condition was not reached within {seconds} seconds"
 
 
 @pytest.fixture(scope="function")
