@@ -5,7 +5,7 @@ from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
