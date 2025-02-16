@@ -3,7 +3,7 @@ from wpilib.simulation import stepTiming
 
 from commands.arm.retractarm import RetractArm
 from commands.printer.moveprinter import MovePrinter, move_printer_properties
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator

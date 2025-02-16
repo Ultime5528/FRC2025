@@ -18,7 +18,7 @@ from commands.intake.moveintake import MoveIntake
 from commands.intake.resetintake import ResetIntake
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
