@@ -1,5 +1,5 @@
-from wpimath.geometry import Transform3d
 import wpimath
+from wpimath.geometry import Transform3d
 
 from ultime.vision import AbsoluteVision, RelativeVision, VisionMode
 
@@ -9,9 +9,12 @@ camera_offset_to_robot = wpimath.geometry.Transform3d(
     wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
 )
 
+
 class VisionModule(AbsoluteVision, RelativeVision):
     def __init__(self):
-        super().__init__(camera_name="Main Camera", camera_offset=camera_offset_to_robot)
+        super().__init__(
+            camera_name="Main Camera", camera_offset=camera_offset_to_robot
+        )
         self.mode = VisionMode.Absolute
 
     def getEstimatedPose(self):

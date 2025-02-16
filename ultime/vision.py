@@ -1,14 +1,14 @@
 from enum import Enum, auto
 from typing import List
+from typing import Optional
 
-from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
+from photonlibpy import PhotonPoseEstimator, PoseStrategy
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
-from wpiutil import Sendable
+
 from ultime.module import Module
-from typing import Optional
 
 
 class VisionMode(Enum):
@@ -45,6 +45,7 @@ class RelativeVision(Vision):
                 return target
         return None
 
+
 class AbsoluteVision(Vision):
     def __init__(self, camera_name: str, camera_offset: Transform3d):
         super().__init__(camera_name=camera_name)
@@ -56,7 +57,9 @@ class AbsoluteVision(Vision):
             camera_offset,
         )
         self.estimated_pose = None
-        self.camera_pose_estimator.multiTagFallbackStrategy = PoseStrategy.LOWEST_AMBIGUITY
+        self.camera_pose_estimator.multiTagFallbackStrategy = (
+            PoseStrategy.LOWEST_AMBIGUITY
+        )
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
@@ -93,4 +96,4 @@ class AbsoluteVision(Vision):
             pass
 
         builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
-        #builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
+        # builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
