@@ -19,7 +19,9 @@ class DriveToPoses(Command):
         def get_poses():
             get_distance = asCallable(distance)
             current_pose = drivetrain.getPose()
-            needed_pose = current_pose.transformBy(Transform2d(-get_distance(), 0.0, 0.0))
+            needed_pose = current_pose.transformBy(
+                Transform2d(-get_distance(), 0.0, 0.0)
+            )
             return [needed_pose]
 
         cmd = cls(drivetrain, get_poses)

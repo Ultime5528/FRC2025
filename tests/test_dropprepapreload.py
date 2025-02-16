@@ -15,8 +15,14 @@ from subsystems.elevator import Elevator
 from subsystems.printer import Printer
 from ultime.tests import RobotTestController
 
-@pytest.mark.specific
-def testDropPrepareLoadLeftWithExtendedArmToLevel4(robot_controller: RobotTestController, robot: Robot):
+
+def commun_test_drop_prepareLoad(
+    robot_controller: RobotTestController,
+    robot: Robot,
+    side: str,
+    extended: bool,
+    elevator_starting_level: int,
+):
 
     mega_delay = 10.0
 
@@ -40,7 +46,15 @@ def testDropPrepareLoadLeftWithExtendedArmToLevel4(robot_controller: RobotTestCo
 
     assert not cmd_reset_elevator.isScheduled()
 
-    cmd_move_elevator = MoveElevator.toLevel4(elevator)
+    if elevator_starting_level == 1:
+        cmd_move_elevator = MoveElevator.toLevel1(elevator)
+    elif elevator_starting_level == 2:
+        cmd_move_elevator = MoveElevator.toLevel2(elevator)
+    elif elevator_starting_level == 3:
+        cmd_move_elevator = MoveElevator.toLevel3(elevator)
+    else:
+        cmd_move_elevator = MoveElevator.toLevel4(elevator)
+
     cmd_move_elevator.schedule()
     robot_controller.wait(mega_delay)
 
@@ -51,14 +65,24 @@ def testDropPrepareLoadLeftWithExtendedArmToLevel4(robot_controller: RobotTestCo
     robot_controller.wait(mega_delay)
 
     assert not cmd_reset_printer.isScheduled()
+    ###all reset done
 
-    cmd_move_printer = MovePrinter.toLeft(printer)
+    if side == "Left":
+        cmd_move_printer = MovePrinter.toLeft(printer)
+    elif side == "Right":
+        cmd_move_printer = MovePrinter.toRight(printer)
+    else:
+        raise RuntimeError
+
     cmd_move_printer.schedule()
     robot_controller.wait(mega_delay)
 
     assert not cmd_move_printer.isScheduled()
 
-    cmd_extend_arm = ExtendArm(arm)
+    if extended:
+        cmd_extend_arm = ExtendArm(arm)
+    else:
+        cmd_extend_arm = RetractArm(arm)
     cmd_extend_arm.schedule()
     robot_controller.wait(mega_delay)
 
@@ -75,8 +99,43 @@ def testDropPrepareLoadLeftWithExtendedArmToLevel4(robot_controller: RobotTestCo
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
     assert not cmd.isScheduled()
-    assert arm.state == Arm.State.Extended
+
+    if extended:
+        assert arm.state == Arm.State.Extended
+    else:
+        assert arm.state == Arm.State.Retracted
+
     assert printer.state == Printer.State.Unknown
-    assert elevator.state == Elevator.State.Level3Algae
+
+    if elevator_starting_level == 1:
+        assert elevator.state == Elevator.State.Level1
+    elif elevator_starting_level == 2:
+        assert elevator.state == Elevator.State.Level2
+    elif elevator_starting_level == 3 and extended:
+        assert elevator.state == Elevator.State.Level2Algae
+    elif elevator_starting_level == 3 and not extended:
+        assert elevator.state == Elevator.State.Level3
+    elif elevator_starting_level == 4 and extended:
+        assert elevator.state == Elevator.State.Level3Algae
+    elif elevator_starting_level == 4 and not extended:
+        assert elevator.state == Elevator.State.Level4
     assert claw._motor_right.get() == 0.0
     assert claw._motor_left.get() == 0.0
+
+
+def test_left_extended_4(robot_controller: RobotTestController, robot: Robot):
+    list_level = [
+        1,
+        2,
+        3,
+        4
+    ]
+    list_side = ["Left", "Right"]
+    list_extend = [True, False]
+
+    for level in list_level:
+        for side in list_side:
+            for extended in list_extend:
+                commun_test_drop_prepareLoad(
+                    robot_controller, robot, side, extended, level
+                )

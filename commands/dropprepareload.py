@@ -16,7 +16,13 @@ from ultime.autoproperty import autoproperty
 
 class DropPrepareLoad:
     @staticmethod
-    def left(arm: Arm, claw: Claw, drivetrain: Drivetrain, elevator: Elevator, printer: Printer):
+    def left(
+        arm: Arm,
+        claw: Claw,
+        drivetrain: Drivetrain,
+        elevator: Elevator,
+        printer: Printer,
+    ):
         cmd = sequence(
             MovePrinter.leftUntilReef(printer),
             AutoDrop(claw, elevator),
@@ -28,13 +34,18 @@ class DropPrepareLoad:
                 none(),
                 lambda: arm.state == Arm.State.Extended,
             ),
-
             # TODO PrepareLoad()
         )
         cmd.setName(DropPrepareLoad.__name__ + ".left")
         return cmd
 
-    def right(arm: Arm, claw: Claw, drivetrain: Drivetrain, elevator: Elevator, printer: Printer):
+    def right(
+        arm: Arm,
+        claw: Claw,
+        drivetrain: Drivetrain,
+        elevator: Elevator,
+        printer: Printer,
+    ):
 
         cmd = sequence(
             MovePrinter.rightUntilReef(printer),
@@ -47,7 +58,6 @@ class DropPrepareLoad:
                 none(),
                 lambda: arm.state == Arm.State.Extended,
             ),
-
             # TODO PrepareLoad()
         )
         cmd.setName(DropPrepareLoad.__name__ + ".right")
