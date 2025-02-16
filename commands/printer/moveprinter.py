@@ -4,7 +4,7 @@ from commands2.cmd import sequence
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
-from ultime.command import Command
+from ultime.command import Command, with_timeout
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
@@ -86,6 +86,7 @@ class MovePrinter:
         return cmd
 
 
+@with_timeout(5.0)
 class _MovePrinterSetpoint(Command):
     def __init__(
         self, printer: Printer, end_position: FloatProperty, new_state: Printer.State
@@ -129,6 +130,7 @@ class _MovePrinterSetpoint(Command):
             self.printer.state = self.new_state
 
 
+@with_timeout(5.0)
 class _MovePrinterWithSensor(Command):
     @staticmethod
     def left(printer: Printer):

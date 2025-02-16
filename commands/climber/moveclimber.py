@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from subsystems.climber import Climber
 from ultime.autoproperty import autoproperty
-from ultime.command import Command
+from ultime.command import Command, with_timeout
 
 
 class MoveClimber(Command):
@@ -31,6 +31,7 @@ class MoveClimber(Command):
             self.climber.state = self.new_state
 
 
+@with_timeout(5.0)
 class ReadyClimber(MoveClimber):
     position = autoproperty(45.0)
 
@@ -44,6 +45,7 @@ class ReadyClimber(MoveClimber):
         return self.climber.getPosition() >= self.position
 
 
+@with_timeout(15.0)
 class Climb(MoveClimber):
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Climbed)
@@ -55,6 +57,7 @@ class Climb(MoveClimber):
         return self.climber.isClimbed()
 
 
+@with_timeout(15.0)
 class ReleaseClimber(MoveClimber):
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Initial)
