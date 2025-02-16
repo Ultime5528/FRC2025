@@ -1,7 +1,5 @@
 import argparse
-import subprocess
 import time
-from datetime import datetime
 
 from ntcore import NetworkTableInstance, MultiSubscriber
 

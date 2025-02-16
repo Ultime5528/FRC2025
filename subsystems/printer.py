@@ -52,7 +52,6 @@ class Printer(Subsystem):
             ports.DIO.printer_encoder_b,
             reverseDirection=True,
         )
-        self._encoder.setDistancePerPulse(self.position_conversion_factor)
         self.addChild("motor", self._motor)
         self.addChild("encoder", self._encoder)
 
@@ -68,30 +67,31 @@ class Printer(Subsystem):
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
             self._sim_encoder = EncoderSim(self._encoder)
-            self._sim_place = 0.01
+            self._sim_initial_position = 0.03
+            self._sim_position = self._sim_initial_position
 
     def periodic(self) -> None:
         if self._prev_is_right and not self._switch_right.isPressed():
-            self._offset = self.right - self._encoder.getDistance()
+            self._offset = self.right - self._encoder.get()
             self._has_reset = True
-
-        # if self._prev_is_left and not self._switch_left.isPressed():
-        #     self._offset = self.left - self._encoder.getDistance()
-        #     self._has_reset = True
-
-        self._prev_is_left = self._switch_left.isPressed()
         self._prev_is_right = self._switch_right.isPressed()
 
     def simulationPeriodic(self) -> None:
         distance = self._motor.get() * 0.05
 
-        self._sim_place += distance
-        self._sim_encoder.setDistance(self._sim_encoder.getDistance() + distance)
+        self._sim_position += distance
 
-        if self._sim_place <= self.right:
+        self._sim_encoder.setCount(
+            int(
+                (self._sim_position - self._sim_initial_position)
+                / self.position_conversion_factor
+            )
+        )
+
+        if self._sim_position <= self.right:
             self._switch_right.setSimPressed()
             self._switch_left.setSimUnpressed()
-        elif self._sim_place >= self.left:
+        elif self._sim_position >= self.left:
             self._switch_left.setSimPressed()
             self._switch_right.setSimUnpressed()
         else:
@@ -142,10 +142,10 @@ class Printer(Subsystem):
         self._motor.stopMotor()
 
     def setPosition(self, reset_value):
-        self._offset = reset_value - self._encoder.getDistance()
+        self._offset = reset_value - self._encoder.get()
 
     def getPosition(self):
-        return self._encoder.getDistance() + self._offset
+        return (self._encoder.get() + self._offset) * self.position_conversion_factor
 
     def getMotorInput(self):
         return self._motor.get()
@@ -173,7 +173,7 @@ class Printer(Subsystem):
             "state_movement", lambda: self.movement_state.name, noop
         )
         builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addFloatProperty("encoder", self._encoder.getDistance, noop)
+        builder.addFloatProperty("encoder", self._encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("position", self.getPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
