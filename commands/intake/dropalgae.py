@@ -14,7 +14,7 @@ class DropAlgae(SequentialCommandGroup):
 
 
 class _DropAlgae(Command):
-    delay = autoproperty(3.0)
+    delay = autoproperty(1.0)
 
     def __init__(self, intake: Intake):
         super().__init__()

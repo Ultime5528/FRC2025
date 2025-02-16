@@ -54,7 +54,8 @@ class Intake(Subsystem):
             self._sim_grab_motor = PWMSim(self._grab_motor)
             self._sim_pivot_motor = PWMSim(self._pivot_motor)
             self._sim_encoder = EncoderSim(self._pivot_encoder)
-            self._sim_pos = 0.3
+            self._sim_pos_initial = 0.3
+            self._sim_pos = self._sim_pos_initial
             self._sim_grab_sensor = AnalogInputSim(self._grab_sensor)
 
     def periodic(self) -> None:
@@ -64,13 +65,12 @@ class Intake(Subsystem):
         self._prev_is_retracted = self.isRetracted()
 
     def simulationPeriodic(self) -> None:
-        distance = self._pivot_motor.get()
+        distance = self._pivot_motor.get() * 3
 
         self._sim_pos += distance
         self._sim_encoder.setCount(
             int(
-                self._sim_encoder.getCount()
-                + distance / self.position_conversion_factor
+                (self._sim_pos - self._sim_pos_initial) / self.position_conversion_factor
             )
         )
 
@@ -131,7 +131,7 @@ class Intake(Subsystem):
         builder.addStringProperty("state", lambda: self.state.name, noop)
         builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
         builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
-        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.getDistance, noop)
+        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
         builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)

@@ -48,7 +48,7 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     cmd = GrabAlgae(robot.hardware.intake)
     cmd.schedule()
 
-    wait(1)
+    wait(0.05)
 
     assert intake._grab_motor.get() == approx(0.0)
     assert intake._pivot_motor.get() >= move_intake_properties.speed_min
