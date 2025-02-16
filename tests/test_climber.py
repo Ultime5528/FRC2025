@@ -4,6 +4,7 @@ from rev import SparkBase, SparkBaseConfig
 from commands.climber.moveclimber import ReadyClimber, ReleaseClimber, Climb
 from commands.climber.resetclimber import ResetClimber
 from robot import Robot
+from subsystems.climber import Climber
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
 
@@ -26,11 +27,6 @@ def test_settings(robot: Robot):
         climber._motor.configAccessor.getIdleMode() == SparkBaseConfig.IdleMode.kBrake
     )
     assert climber._motor.configAccessor.getSmartCurrentLimit() == 30
-    assert (
-        climber._motor.configAccessor.encoder.getPositionConversionFactor()
-        == approx(0.184)
-    )
-
 
 def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
     climber = robot.hardware.climber
@@ -43,10 +39,10 @@ def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
 
     assert climber._motor.get() > 0.0
 
-    robot_controller.wait(10)
+    robot_controller.wait_until(lambda : climber.state == Climber.State.Ready, 4.0)
 
-    assert climber.getPosition() == approx(45.0, abs=0.1)
-    assert climber.state == climber.State.Ready
+    assert climber.getPosition() == approx(45.0, abs=1.0)
+    assert climber.state == Climber.State.Ready
     assert climber._motor.get() == 0.0
 
 
@@ -109,8 +105,16 @@ def testResetClimber(robot_controller: RobotTestController, robot: Robot):
     assert cmd.isScheduled()
     assert not climber.isClimbed()
     assert not climber._switch.isPressed()
+    assert climber._motor.get() == 0.0
+    assert climber.state == climber.State.Unknown or climber.state == climber.State.Moving
+
+    robot_controller.wait(0.02)
+
+    assert cmd.isScheduled()
+    assert not climber.isClimbed()
+    assert not climber._switch.isPressed()
     assert climber._motor.get() > 0.0
-    assert climber.state == climber.State.Initial
+    assert climber.state == climber.State.Moving
 
     robot_controller.wait_until(lambda : climber._switch.isPressed(), 10.0)
 

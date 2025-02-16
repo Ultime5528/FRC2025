@@ -109,6 +109,7 @@ class Printer(Subsystem):
         self.setSpeed(-self.speed)
 
     def setSpeed(self, speed: float):
+        if (
             self.movement_state == Printer.MovementState.AvoidMiddleZone
             and self.isInMiddleZone()
         ):
@@ -117,10 +118,8 @@ class Printer(Subsystem):
 
             if (position < middle and speed > 0.0) or position > middle and speed < 0.0:
                 speed = 0.0
-
         elif self.isLeft():
             speed = speed if speed <= 0.0 else 0.0
-        if (
         elif self.isRight():
             speed = speed if speed >= 0.0 else 0.0
 

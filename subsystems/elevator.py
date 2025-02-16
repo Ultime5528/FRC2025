@@ -102,6 +102,7 @@ class Elevator(Subsystem):
         self.setSpeed(self.speed_down)
 
     def setSpeed(self, speed: float):
+        if (
             self.movement_state == Elevator.MovementState.AvoidLowerZone
             and self.isInLowerZone()
             and speed < 0
@@ -109,7 +110,6 @@ class Elevator(Subsystem):
             speed = 0.0
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
-        if (
         elif self.isUp():
             speed = speed if speed <= 0.0 else 0.0
 

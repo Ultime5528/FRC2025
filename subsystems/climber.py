@@ -20,7 +20,7 @@ class Climber(Subsystem):
         Climbed = auto()
 
     height_max = autoproperty(90.0)
-    position_conversion_factor = autoproperty(0.184)
+    position_conversion_factor = autoproperty(1.0)
     speed = autoproperty(0.5)
 
     def __init__(self):
@@ -58,13 +58,16 @@ class Climber(Subsystem):
 
 
     def simulationPeriodic(self) -> None:
-        distance = self._motor.get() * 0.184
-        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
+        distance = self._motor.get()
+        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance / self.position_conversion_factor)
 
         if self._sim_encoder.getPosition() >= 90:
             self._switch.setSimPressed()
         else:
             self._switch.setSimUnpressed()
+
+    def isInitial(self):
+        return self.state == self.State.Initial
 
     def isClimbed(self):
         return self._switch.isPressed()
