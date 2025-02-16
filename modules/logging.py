@@ -23,9 +23,8 @@ class LoggingModule(Module):
             print("Testing in CI: URCL is disabled")
         else:
             print("Not in CI: URCL is enabled")
-            import urcl
 
-            urcl.URCL.start(can_id_aliases)
+            # urcl.URCL.start(can_id_aliases)
 
         DataLogManager.start()
         DriverStation.startDataLog(DataLogManager.getLog())

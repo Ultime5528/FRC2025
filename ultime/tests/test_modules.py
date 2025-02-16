@@ -30,6 +30,10 @@ class ModuleB(Module):
         self.called_autonomous_exit += 1
 
 
+class ModuleBChild(ModuleB):
+    pass
+
+
 def test_module_list():
     module_a = ModuleA()
     module_b = ModuleB()
@@ -57,3 +61,13 @@ def test_redefines_init_sendable():
 
     assert module_a.redefines_init_sendable
     assert not module_b.redefines_init_sendable
+
+
+def test_calls_parent_methods():
+    module_b_child = ModuleBChild()
+
+    modules = ModuleList(module_b_child)
+
+    modules.robotPeriodic()
+
+    assert module_b_child.called_robot_periodic == 1
