@@ -21,7 +21,7 @@ class Intake(Subsystem):
     grab_speed = autoproperty(0.3)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
-    position_conversion_factor = autoproperty(0.180)
+    position_conversion_factor = autoproperty(0.18)
 
     def __init__(self):
         super().__init__()
@@ -36,7 +36,7 @@ class Intake(Subsystem):
 
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(
-            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
+            Switch.Type.NormallyClosed, ports.DIO.intake_switch_pivot
         )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)

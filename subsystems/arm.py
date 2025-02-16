@@ -30,14 +30,14 @@ class Arm(Subsystem):
 
     def extend(self):
         if self.movement_state == Arm.MovementState.DoNotMove:
-            self._motor.stopMotor()
+            self.stop()
         else:
             self.state = Arm.State.Moving
             self._motor.set(self.speed)
 
     def retract(self):
         if self.movement_state == Arm.MovementState.DoNotMove:
-            self._motor.stopMotor()
+            self.stop()
         else:
             self.state = Arm.State.Moving
             self._motor.set(-self.speed)

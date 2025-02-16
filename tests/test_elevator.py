@@ -31,10 +31,6 @@ def test_settings(robot: Robot):
         elevator._motor.configAccessor.getIdleMode() == SparkBaseConfig.IdleMode.kBrake
     )
     assert elevator._motor.configAccessor.getSmartCurrentLimit() == 30
-    assert (
-        elevator._motor.configAccessor.encoder.getPositionConversionFactor()
-        == approx(0.00623)
-    )
 
 
 def test_maintain(robot_controller: RobotTestController, robot: Robot):

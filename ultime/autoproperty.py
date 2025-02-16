@@ -45,7 +45,6 @@ def autoproperty(
     table: Optional[str] = None,
     subtable: Optional[str] = _DEFAULT_CLASS_NAME,
     full_key: Optional[str] = None,
-    write: bool = False,
 ):
     if mode == PropertyMode.Local:
         return property(lambda _: default_value)
@@ -94,7 +93,7 @@ def autoproperty(
     with open(os.devnull, "w") as devnull:
         with contextlib.redirect_stdout(devnull):
             prop = _old_ntproperty(
-                full_key, default_value, writeDefault=write, persistent=True
+                full_key, default_value, writeDefault=False, persistent=False
             )
 
     def fget(_):
