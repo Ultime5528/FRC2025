@@ -147,12 +147,12 @@ class _ClassProperties:
     position_right = autoproperty(0.0, subtable=MovePrinter.__name__)
     position_loading = autoproperty(0.05, subtable=MovePrinter.__name__)
 
-    position_middle_left = autoproperty(0.3, subtable=MovePrinter.__name__)
-    position_middle_right = autoproperty(0.2, subtable=MovePrinter.__name__)
+    position_middle_left = autoproperty(0.22, subtable=MovePrinter.__name__)
+    position_middle_right = autoproperty(0.18, subtable=MovePrinter.__name__)
 
     speed_min = autoproperty(0.2, subtable=MovePrinter.__name__)
-    speed_max = autoproperty(0.4, subtable=MovePrinter.__name__)
-    accel = autoproperty(0.01, subtable=MovePrinter.__name__)
+    speed_max = autoproperty(1.0, subtable=MovePrinter.__name__)
+    accel = autoproperty(6.5, subtable=MovePrinter.__name__)
 
 
 move_printer_properties = _ClassProperties()

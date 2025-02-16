@@ -7,8 +7,8 @@ from ultime.autoproperty import autoproperty
 
 class LoadCoral(Command):
     delay = autoproperty(0.0)
-    speed_left = autoproperty(-0.1)
-    speed_right = autoproperty(0.1)
+    speed_left = autoproperty(-0.19)
+    speed_right = autoproperty(0.19)
 
     def __init__(self, claw: Claw):
         super().__init__()
