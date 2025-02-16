@@ -70,7 +70,8 @@ class Intake(Subsystem):
         self._sim_pos += distance
         self._sim_encoder.setCount(
             int(
-                (self._sim_pos - self._sim_pos_initial) / self.position_conversion_factor
+                (self._sim_pos - self._sim_pos_initial)
+                / self.position_conversion_factor
             )
         )
 
