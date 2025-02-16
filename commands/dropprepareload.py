@@ -1,7 +1,5 @@
-import commands2
 from commands2.cmd import sequence, either, none
 
-from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator

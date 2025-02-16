@@ -100,9 +100,36 @@ class DashboardModule(Module):
         """
         Groups
         """
-        putCommandOnDashboard("Group", ResetAll(hardware.elevator, hardware.printer, hardware.arm, hardware.intake, hardware.climber))
-        putCommandOnDashboard("Group", DropPrepareLoad.left(hardware.arm, hardware.claw, hardware.drivetrain, hardware.elevator, hardware.printer))
-        putCommandOnDashboard("Group", DropPrepareLoad.right(hardware.arm, hardware.claw, hardware.drivetrain, hardware.elevator, hardware.printer))
+        putCommandOnDashboard(
+            "Group",
+            ResetAll(
+                hardware.elevator,
+                hardware.printer,
+                hardware.arm,
+                hardware.intake,
+                hardware.climber,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoad.left(
+                hardware.arm,
+                hardware.claw,
+                hardware.drivetrain,
+                hardware.elevator,
+                hardware.printer,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoad.right(
+                hardware.arm,
+                hardware.claw,
+                hardware.drivetrain,
+                hardware.elevator,
+                hardware.printer,
+            ),
+        )
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

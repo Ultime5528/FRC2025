@@ -1,16 +1,13 @@
-import pytest
+from commands.printer.resetright import ResetPrinterRight
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.claw.autodrop import AutoDrop
 from commands.dropprepareload import DropPrepareLoad
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetright import ResetPrinterRight
 from robot import Robot
 from subsystems.arm import Arm
-from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.printer import Printer
 from ultime.tests import RobotTestController
@@ -124,12 +121,7 @@ def commun_test_drop_prepareLoad(
 
 
 def test_left_extended_4(robot_controller: RobotTestController, robot: Robot):
-    list_level = [
-        1,
-        2,
-        3,
-        4
-    ]
+    list_level = [1, 2, 3, 4]
     list_side = ["Left", "Right"]
     list_extend = [True, False]
 
