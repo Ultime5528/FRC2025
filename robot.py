@@ -8,6 +8,7 @@ from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.logging import LoggingModule
+from modules.vision import VisionModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from ultime.modulerobot import ModuleRobot
 
@@ -29,6 +30,7 @@ class Robot(ModuleRobot):
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
         self.battery_sim = BatterySimModule(self.hardware)
+        self.vision = VisionModule()
 
         self.addModules(
             self.hardware,
@@ -38,5 +40,6 @@ class Robot(ModuleRobot):
             self.diagnostics,
             self.logging,
             self.property_save_checker,
+            self.vision
             # self.battery_sim,  # Current becomes so low, robot stops working
         )

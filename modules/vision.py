@@ -1,45 +1,21 @@
-from photonlibpy import PhotonPoseEstimator, PoseStrategy
-from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
+import wpimath
 
-from ultime.vision import Vision
+from ultime.vision import AbsoluteVision, RelativeVision, VisionMode
 
+### Offset of the camera relative to the middle of the robot. In robot Coordinate system
+camera_offset_to_robot = wpimath.geometry.Transform3d(
+    wpimath.geometry.Translation3d(0.0, 0.0, 0.0),
+    wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
+)
 
-class VisionModule(Vision):
-    def __init__(self, cameraname: str, camera_offset: Transform3d):
-        super().__init__(
-            cameraname=cameraname
-        )
-        self.camera_pose_estimator = PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagField.kDefaultField),
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            self._cam,
-            camera_offset,
-        )
+class VisionModule(AbsoluteVision, RelativeVision):
+    def __init__(self):
+        super().__init__(camera_name="Main Camera", camera_offset=camera_offset_to_robot)
+        self.mode = VisionMode.Absolute
 
+    def getEstimatedPose(self):
+        return self.getEstimatedPose2D()
 
-
-    def getEstimatedPose3D(self):
-        if self.estimated_pose:
-            return self.estimated_pose.estimatedPose
-        else:
-            return None
-
-    def getEstimatedPose2D(self):
-        if self.estimated_pose:
-            return self.estimated_pose.estimatedPose.toPose2d()
-        else:
-            return None
-
-    def getUsedTagIDs(self):
-        if self.estimated_pose:
-            return [target.fiducialId for target in self.estimated_pose.targetsUsed]
-        else:
-            return []
-
-    def initSendable(self, builder):
-        def noop(x):
-            pass
-
-        builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
-        # builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
+    def getEstimatedPoseTimeStamp(self):
+        return self.getTimeStamp()
