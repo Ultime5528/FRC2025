@@ -34,7 +34,7 @@
 | commands/printer/\_\_init\_\_.py        |        0 |        0 |        0 |        0 |    100% |           |
 | commands/printer/manualmoveprinter.py   |       31 |        0 |        4 |        1 |     97% |  31->exit |
 | commands/printer/moveprinter.py         |       91 |        2 |        4 |        2 |     96% |  122, 127 |
-| commands/printer/resetright.py          |       21 |        0 |        2 |        0 |    100% |           |
+| commands/printer/resetprinter.py        |       21 |        0 |        2 |        0 |    100% |           |
 | conftest.py                             |        1 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
 | modules/armcollision.py                 |       26 |        0 |       10 |        0 |    100% |           |
