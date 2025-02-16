@@ -35,7 +35,7 @@ class Intake(Subsystem):
 
         self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(
-            Switch.Type.NormallyOpen, ports.DIO.intake_switch_pivot
+            Switch.Type.NormallyClosed, ports.DIO.intake_switch_pivot
         )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
