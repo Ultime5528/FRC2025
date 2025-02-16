@@ -106,12 +106,16 @@ class ModuleList(Module):
 
         for name, methods in self._methods.items():
             for module in self.modules:
-                if name in module.__class__.__dict__:
-                    module_method = getattr(module, name)
-                    methods.append(module_method)
+                for module_parent in module.__class__.mro():
+                    if module_parent is Module:
+                        break
 
-                    if name == "initSendable":
-                        module.redefines_init_sendable = True
+                    if name in module_parent.__dict__:
+                        module_method = getattr(module, name)
+                        methods.append(module_method)
+
+                        if name == "initSendable":
+                            module.redefines_init_sendable = True
 
             if len(methods) > 0:
                 original_func = getattr(self, name)

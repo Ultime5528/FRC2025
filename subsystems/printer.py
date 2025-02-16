@@ -23,9 +23,16 @@ class Printer(Subsystem):
         Loading = auto()
         Reset = auto()
 
-    speed = autoproperty(0.3)
-    left = autoproperty(0.41)
-    right = autoproperty(0.0)
+    class MovementState(Enum):
+        AvoidMiddleZone = auto()
+        FreeToMove = auto()
+        Unknown = auto()
+
+    speed = autoproperty(0.5)
+    left = autoproperty(0.42)
+    right = autoproperty(-0.01)
+    middle_zone_left = autoproperty(0.3)
+    middle_zone_right = autoproperty(0.1)
 
     position_conversion_factor = autoproperty(0.002)
 
@@ -39,6 +46,7 @@ class Printer(Subsystem):
         )
 
         self._motor = wpilib.VictorSP(ports.PWM.printer_motor)
+        self._motor.setInverted(True)
         self._encoder = wpilib.Encoder(
             ports.DIO.printer_encoder_a,
             ports.DIO.printer_encoder_b,
@@ -53,6 +61,7 @@ class Printer(Subsystem):
         self._has_reset = False
         self._prev_is_right = False
         self._prev_is_left = False
+        self.movement_state = Printer.MovementState.Unknown
         self.state = Printer.State.Unknown
 
         if RobotBase.isSimulation():
@@ -100,12 +109,21 @@ class Printer(Subsystem):
         self.setSpeed(-self.speed)
 
     def setSpeed(self, speed: float):
-        if self.isLeft():
-            self._motor.set(speed if speed <= 0.0 else 0.0)
+        if (
+            self.movement_state == Printer.MovementState.AvoidMiddleZone
+            and self.isInMiddleZone()
+        ):
+            middle = (self.middle_zone_left + self.middle_zone_right) / 2.0
+            position = self.getPosition()
+
+            if (position < middle and speed > 0.0) or position > middle and speed < 0.0:
+                speed = 0.0
+        elif self.isLeft():
+            speed = speed if speed <= 0.0 else 0.0
         elif self.isRight():
-            self._motor.set(speed if speed >= 0.0 else 0.0)
-        else:
-            self._motor.set(speed)
+            speed = speed if speed >= 0.0 else 0.0
+
+        self._motor.set(speed)
 
     def isLeft(self) -> bool:
         return self._switch_left.isPressed()
@@ -115,6 +133,10 @@ class Printer(Subsystem):
 
     def seesReef(self):
         return self.photocell.isPressed()
+
+    def isInMiddleZone(self) -> bool:
+        pose = self.getPosition()
+        return pose >= self.middle_zone_right and pose <= self.middle_zone_left
 
     def stop(self):
         self._motor.stopMotor()
@@ -147,13 +169,17 @@ class Printer(Subsystem):
             self._has_reset = value
 
         builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty(
+            "state_movement", lambda: self.movement_state.name, noop
+        )
         builder.addFloatProperty("motor_input", self._motor.get, noop)
         builder.addFloatProperty("encoder", self._encoder.get, noop)
         builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("pose", self.getPosition, noop)
+        builder.addFloatProperty("position", self.getPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("switch_right", self._switch_right.isPressed, noop)
         builder.addBooleanProperty("switch_left", self._switch_left.isPressed, noop)
         builder.addBooleanProperty("isRight", self.isRight, noop)
         builder.addBooleanProperty("isLeft", self.isLeft, noop)
         builder.addBooleanProperty("seesReef", self.seesReef, noop)
+        builder.addBooleanProperty("isInMiddleZone", self.isInMiddleZone, noop)

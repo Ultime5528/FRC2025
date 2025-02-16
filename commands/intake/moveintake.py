@@ -14,7 +14,7 @@ class MoveIntake(Command):
             lambda: move_intake_properties.position_extended,
             Intake.State.Extended,
         )
-        cmd.setName(cmd.getName() + "toExtended")
+        cmd.setName(cmd.getName() + ".toExtended")
         return cmd
 
     @classmethod
@@ -71,12 +71,12 @@ class MoveIntake(Command):
 
 
 class _ClassProperties:
-    position_extended = autoproperty(default_value=1.0, subtable=MoveIntake.__name__)
-    position_retracted = autoproperty(default_value=0.0, subtable=MoveIntake.__name__)
+    position_extended = autoproperty(90.0, subtable=MoveIntake.__name__)
+    position_retracted = autoproperty(0.0, subtable=MoveIntake.__name__)
 
-    speed_min = autoproperty(default_value=0.5, subtable=MoveIntake.__name__)
-    speed_max = autoproperty(default_value=0.8, subtable=MoveIntake.__name__)
-    accel = autoproperty(default_value=0.01, subtable=MoveIntake.__name__)
+    speed_min = autoproperty(0.5, subtable=MoveIntake.__name__)
+    speed_max = autoproperty(0.8, subtable=MoveIntake.__name__)
+    accel = autoproperty(0.01, subtable=MoveIntake.__name__)
 
 
 move_intake_properties = _ClassProperties()
