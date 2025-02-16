@@ -48,7 +48,7 @@
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | modules/vision.py                       |        8 |        0 |        0 |        0 |    100% |           |
 | ports.py                                |       36 |        0 |        0 |        0 |    100% |           |
-| properties.py                           |       95 |       79 |       18 |        1 |     15% |17-25, 35-59, 63-79, 83-96, 100-146, 150-184 |
+| properties.py                           |       87 |       72 |       18 |        1 |     15% |19-26, 36-60, 64-80, 84-129, 133-160 |
 | robot.py                                |       29 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
 | subsystems/arm.py                       |       43 |        3 |        4 |        1 |     91% |33, 49, 55 |
@@ -65,13 +65,13 @@
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |       10 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                 |      162 |        0 |        4 |        0 |    100% |           |
-| tests/test\_intake.py                   |       92 |        0 |        0 |        0 |    100% |           |
+| tests/test\_intake.py                   |       93 |        0 |        0 |        0 |    100% |           |
 | tests/test\_printer.py                  |      155 |        4 |        8 |        2 |     96% |226-227, 266-267 |
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py              |       77 |       77 |        2 |        0 |      0% |     1-122 |
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
 | ultime/auto.py                          |        5 |        1 |        0 |        0 |     80% |         7 |
-| ultime/autoproperty.py                  |       61 |       34 |       22 |        2 |     35% |35, 39, 53-106 |
+| ultime/autoproperty.py                  |       61 |       34 |       22 |        2 |     35% |35, 39, 52-105 |
 | ultime/axistrigger.py                   |        8 |        8 |        2 |        0 |      0% |      1-16 |
 | ultime/command.py                       |       34 |        3 |        2 |        1 |     89% |     38-40 |
 | ultime/coroutinecommand.py              |       27 |       27 |        6 |        0 |      0% |      1-41 |
@@ -94,7 +94,7 @@
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       28 |       42 |        5 |     66% |20, 22, 40-44, 59->exit, 73-91, 110-111, 199-200, 203 |
 | ultime/vision.py                        |       63 |       17 |       18 |        3 |     60% |37-40, 43-46, 67->exit, 71-74, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **3776** |  **529** |  **466** |   **73** | **83%** |           |
+|                               **TOTAL** | **3769** |  **522** |  **466** |   **73** | **84%** |           |
 
 
 ## Setup coverage badge
