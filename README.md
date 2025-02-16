@@ -17,6 +17,7 @@
 | commands/diagnostics/\_\_init\_\_.py    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/drive.py            |       56 |       12 |       12 |        4 |     71% |18, 22-25, 68-70, 79-80, 83-85 |
+| commands/drivetrain/drivetoposes.py     |       67 |       36 |        4 |        0 |     44% |13, 19-26, 43-47, 53, 59-72, 82-84, 87-114, 117, 120, 123, 129 |
 | commands/drivetrain/resetgyro.py        |       17 |        1 |        2 |        1 |     89% |        18 |
 | commands/drivetrain/resetpose.py        |       13 |        6 |        0 |        0 |     54% |9-12, 15, 18 |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
@@ -68,6 +69,7 @@
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py              |       77 |       77 |        2 |        0 |      0% |     1-122 |
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
+| ultime/auto.py                          |        5 |        1 |        0 |        0 |     80% |         7 |
 | ultime/autoproperty.py                  |       61 |       34 |       22 |        2 |     35% |35, 39, 53-106 |
 | ultime/axistrigger.py                   |        8 |        8 |        2 |        0 |      0% |      1-16 |
 | ultime/command.py                       |       34 |        3 |        2 |        1 |     89% |     38-40 |
@@ -91,7 +93,7 @@
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       28 |       42 |        5 |     66% |20, 22, 40-44, 59->exit, 73-91, 110-111, 199-200, 203 |
 | ultime/vision.py                        |       63 |       17 |       18 |        3 |     60% |37-40, 43-46, 67->exit, 71-74, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **3630** |  **490** |  **454** |   **73** | **84%** |           |
+|                               **TOTAL** | **3702** |  **527** |  **458** |   **73** | **83%** |           |
 
 
 ## Setup coverage badge
