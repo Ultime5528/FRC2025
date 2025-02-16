@@ -4,9 +4,7 @@ import subprocess
 import time
 from datetime import datetime
 
-from ast_selector import AstSelector
-from asttokens import ASTTokens
-from ntcore import NetworkTableInstance
+from ntcore import NetworkTableInstance, MultiSubscriber
 
 from ultime.autoproperty import registry
 
@@ -21,7 +19,7 @@ def getNTInst() -> NetworkTableInstance:
     inst.stopLocal()
     inst.startClient4("properties-py")
     inst.setServerTeam(5528)
-    inst.startDSClient()
+    # inst.startDSClient()
     # inst.setServer("localhost")
 
     return inst
@@ -31,17 +29,19 @@ def clear():
     """
     Clear real robot's NetworkTables of persistent properties that no longer exist.
 
-    It is dangerous to run this in Robot.robotInit(): if another branch's code is ru2n on the robot where
+    It is dangerous to run this in Robot.robotInit(): if another branch's code is run on the robot where
     new autoproperties do not exist yet, they will be deleted and set values will be lost.
     """
-    from robot import Robot
+    import robot  # noqa
 
     print("Connecting to robot...")
 
     inst = getNTInst()
+    while not inst.isConnected():
+        time.sleep(0.5)
+        print("Waiting for connection...")
 
-    robot = Robot()
-    robot.robotInit()
+    sub = MultiSubscriber(inst, ["/Properties"])
 
     topics = inst.getTopics()
     registry_keys = list(map(lambda x: x.key, registry))
@@ -97,6 +97,10 @@ def save_once():
 
 
 def update_files():
+    from ast_selector import AstSelector
+    from asttokens import ASTTokens
+    import robot  # noqa
+
     with open("robot_networktables.json", "r") as f:
         data = json.load(f)
 
