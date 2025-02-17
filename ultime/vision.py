@@ -64,7 +64,7 @@ class AbsoluteVision(Vision):
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
 
-        if self.mode == VisionMode.Absolute:
+        if self.mode == VisionMode.Absolute and self._cam.isConnected():
             self.estimated_pose = self.camera_pose_estimator.update()
 
     def getEstimatedPose3D(self):

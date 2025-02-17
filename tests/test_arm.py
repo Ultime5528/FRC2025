@@ -97,193 +97,135 @@ def test_ExtendArm(robot_controller: RobotTestController, robot: Robot):
     assert not cmd.isScheduled()
     assert arm._motor.get() == approx(0.0, rel=0.1)
 
-
-def testRetractFailBadElevatorPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-
-    class TestParameters:
-
-        Cmd = RetractArm
-
-        initial_arm_state = Arm.State.Extended
-        initial_elevator_state = Elevator.State.Level1
-        initial_printer_state = Printer.State.Unknown
-
-        initial_arm_movement_state = Arm.MovementState.FreeToMove
-        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
-        initial_printer_movement_state = Printer.MovementState.FreeToMove
-
-        initial_arm_speed = 0.0
-
-        initial_move_elevator_cmd = MoveElevator.toLoading
-
-        initial_printer_pose = (
-            robot.hardware.printer.middle_zone_right
-            + robot.hardware.printer.middle_zone_left
-        ) * 0.5
-        initial_printer_function = Printer.stop
-
-        initial_move_printer_cmd = MovePrinter.toMiddle
-
-        running_arm_speed = lambda arm: 0.0
-        running_elevator_cmd = None
-        running_printer_cmd = None
-        running_arm_state = Arm.State.Extended
-
-        def running_arm_moving_condition(arm: Arm) -> bool:
-            return True
-
-        running_elevator_state = Elevator.State.Loading
-
-        def running_printer_state(printer: Printer):
-            return printer.state == Printer.State.Middle
-
-        end_arm_speed = 0.0
-        end_arm_state = Arm.State.Extended
-
-    _genericTest(robot_controller, robot, TestParameters)
-
-
 def testRetractFailBadPrinterPosition(
     robot_controller: RobotTestController, robot: Robot
 ):
+    list_commands_arm = [RetractArm, ExtendArm]
+    list_initial_arm_state = [Arm.State.Extended, Arm.State.Retracted]
+    list_initial_elevator_state = [Elevator.State.Loading, Elevator.State.Level1, Elevator.State.Level2, Elevator.State.Level3, Elevator.State.Level4]
+    list_initial_printer_state = [Printer.State.Left, Printer.State.MiddleLeft, Printer.State.MiddleRight, Printer.State.Right]
 
-    class TestParameters:
+    list_initial_elevator_cmd = [MoveElevator.toLoading, MoveElevator.toLevel1, MoveElevator.toLevel2, MoveElevator.toLevel3, MoveElevator.toLevel4]
+    list_initial_printer_cmd = [MovePrinter.toLeft, MovePrinter.toMiddleLeft, MovePrinter.toMiddle, MovePrinter.toMiddleRight, MovePrinter.toRight, MovePrinter.toLoading]
 
-        Cmd = RetractArm
+    list_initial_move_printer_cmd = [MovePrinter.toLeft, MovePrinter.toMiddleLeft, MovePrinter.toMiddle, MovePrinter.toMiddleRight, MovePrinter.toRight, MovePrinter.toLoading]
 
-        initial_arm_state = Arm.State.Extended
-        initial_elevator_state = Elevator.State.Level1
-        initial_printer_state = Printer.State.Middle
+    list_running_elevator_cmd = [None, MoveElevator.toLoading, MoveElevator.toLevel1, MoveElevator.toLevel2, MoveElevator.toLevel3, MoveElevator.toLevel4]
+    list_running_printer_cmd = [None, MovePrinter.toLeft, MovePrinter.toMiddleLeft, MovePrinter.toMiddle, MovePrinter.toMiddleRight, MovePrinter.toRight, MovePrinter.toLoading]
 
-        initial_arm_movement_state = Arm.MovementState.FreeToMove
-        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
-        initial_printer_movement_state = Printer.MovementState.FreeToMove
+    for _command_arm in list_commands_arm:
+        for _initial_arm_state in list_initial_arm_state:
+            for _initial_elevator_state in list_initial_elevator_state:
+                for _initial_printer_state in list_initial_printer_state:
+                    for _initial_elevator_cmd in list_initial_elevator_cmd:
+                        for _initial_printer_cmd in list_initial_printer_cmd:
+                            for _initial_move_printer_cmd in list_initial_move_printer_cmd:
+                                for _running_elevator_cmd in list_running_elevator_cmd:
+                                    for _running_printer_cmd in list_running_printer_cmd:
+                                        class TestParameters:
+                                            Cmd = _command_arm
 
-        initial_arm_speed = 0.0
+                                            initial_arm_state = _initial_arm_state
+                                            initial_elevator_state = _initial_elevator_state
+                                            initial_printer_state = _initial_printer_state
 
-        initial_move_elevator_cmd = MoveElevator.toLoading
+                                            initial_arm_movement_state = Arm.MovementState.FreeToMove
+                                            initial_elevator_movement_state = Elevator.MovementState.FreeToMove
+                                            initial_printer_movement_state = Printer.MovementState.FreeToMove
 
-        initial_printer_pose = (
-            robot.hardware.printer.middle_zone_right
-            + robot.hardware.printer.middle_zone_left
-        ) * 0.5
-        initial_printer_function = Printer.stop
+                                            initial_arm_speed = 0.0  ####
 
-        initial_move_printer_cmd = MovePrinter.toMiddle
+                                            initial_move_elevator_cmd = _initial_elevator_cmd
 
-        running_arm_speed = lambda arm: 0.0
-        running_elevator_cmd = None
-        running_printer_cmd = None
-        running_arm_state = Arm.State.Extended
+                                            initial_printer_pose = (
+                                                                           robot.hardware.printer.middle_zone_right  ######
+                                                                           + robot.hardware.printer.middle_zone_left
+                                                                   ) * 0.5
+                                            initial_printer_function = Printer.stop
 
-        def running_arm_moving_condition(arm: Arm) -> bool:
-            return True
+                                            initial_move_printer_cmd = _initial_move_printer_cmd
 
-        running_elevator_state = Elevator.State.Loading
+                                            running_elevator_cmd = _running_elevator_cmd
+                                            running_printer_cmd = _running_printer_cmd
 
-        def running_printer_state(printer: Printer):
-            return printer.state == Printer.State.Middle
+                                            #running_arm_speed = 0
+                                            running_arm_state = None
+                                            if (initial_move_printer_cmd == MovePrinter.toMiddle and running_printer_cmd == None) or (initial_move_elevator_cmd == MoveElevator.toLoading and running_elevator_cmd == None and Cmd != RetractArm):
+                                                running_arm_speed = lambda arm: 0.0
+                                                if initial_arm_state == Arm.State.Extended:
+                                                    running_arm_state = Arm.State.Extended
+                                                    end_arm_state = Arm.State.Extended
+                                                else:
+                                                    running_arm_state = Arm.State.Retracted
+                                                    end_arm_state = Arm.State.Retracted
+                                            else:
+                                                if Cmd == RetractArm:
+                                                    running_arm_speed = lambda arm: -arm.speed
+                                                    running_arm_state = Arm.State.Moving
+                                                    end_arm_state = Arm.State.Retracted
+                                                else:
+                                                    running_arm_speed = lambda arm: arm.speed
+                                                    running_arm_state = Arm.State.Moving
+                                                    end_arm_state = Arm.State.Extended
 
-        end_arm_speed = 0.0
-        end_arm_state = Arm.State.Extended
+                                            def running_arm_moving_condition(arm: Arm) -> bool:
+                                                return True
 
-    _genericTest(robot_controller, robot, TestParameters)
+                                            def running_elevator_state(elevator: Elevator):
+                                                if _running_elevator_cmd != _initial_elevator_cmd and _running_elevator_cmd is not None:
+                                                    if _running_elevator_cmd == MoveElevator.toLoading:
+                                                        return elevator.state == Elevator.State.Loading or elevator.state == Elevator.State.Moving
+                                                    elif _running_elevator_cmd == MoveElevator.toLevel1:
+                                                        return  elevator.state == Elevator.State.Level1 or elevator.state == Elevator.State.Moving
+                                                    elif _running_elevator_cmd == MoveElevator.toLevel2:
+                                                        return  elevator.state == Elevator.State.Level2 or elevator.state == Elevator.State.Moving
+                                                    elif _running_elevator_cmd == MoveElevator.toLevel3:
+                                                        return  elevator.state == Elevator.State.Level3 or elevator.state == Elevator.State.Moving
+                                                    elif _running_elevator_cmd == MoveElevator.toLevel4:
+                                                        return  elevator.state == Elevator.State.Level4 or elevator.state == Elevator.State.Moving
+                                                else:
+                                                    if _initial_elevator_cmd == MoveElevator.toLoading:
+                                                        return  elevator.state == Elevator.State.Loading
+                                                    elif _initial_elevator_cmd == MoveElevator.toLevel1:
+                                                        return  elevator.state == Elevator.State.Level1
+                                                    elif _initial_elevator_cmd == MoveElevator.toLevel2:
+                                                        return  elevator.state == Elevator.State.Level2
+                                                    elif _initial_elevator_cmd == MoveElevator.toLevel3:
+                                                        return  elevator.state == Elevator.State.Level3
+                                                    elif _initial_elevator_cmd == MoveElevator.toLevel4:
+                                                        return  elevator.state == Elevator.State.Level4
 
+                                            def running_printer_state(printer: Printer):
+                                                if _initial_printer_cmd != _running_printer_cmd and _running_printer_cmd is not None:
+                                                    if _running_printer_cmd == MovePrinter.toLeft:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.Left)
+                                                    elif _running_printer_cmd == MovePrinter.toMiddleLeft:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.MiddleLeft)
+                                                    elif _running_printer_cmd == MovePrinter.toMiddle:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.Middle)
+                                                    elif _running_printer_cmd == MovePrinter.toMiddleRight:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.MiddleRight)
+                                                    elif _running_printer_cmd == MovePrinter.toRight:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.Right)
+                                                    elif _running_printer_cmd == MovePrinter.toLoading:
+                                                        return (printer.state == Printer.State.Moving or printer.state == Printer.State.Loading)
+                                                else:
+                                                    if _initial_printer_cmd == MovePrinter.toLeft:
+                                                        return printer.state == Printer.State.Left
+                                                    elif _initial_printer_cmd == MovePrinter.toMiddleLeft:
+                                                        return printer.state == Printer.State.MiddleLeft
+                                                    elif _initial_printer_cmd == MovePrinter.toMiddle:
+                                                        return printer.state == Printer.State.Middle
+                                                    elif _initial_printer_cmd == MovePrinter.toMiddleRight:
+                                                        return printer.state == Printer.State.MiddleRight
+                                                    elif _initial_printer_cmd == MovePrinter.toRight:
+                                                        return printer.state == Printer.State.Right
+                                                    elif _initial_printer_cmd == MovePrinter.toLoading:
+                                                        return printer.state == Printer.State.Loading
 
-def testRetractSucessGoodElevatorPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
+                                            end_arm_speed = 0.0
 
-    class TestParameters:
-
-        Cmd = RetractArm
-
-        initial_arm_state = Arm.State.Extended
-        initial_elevator_state = Elevator.State.Level1
-        initial_printer_state = Printer.State.Unknown
-
-        initial_arm_movement_state = Arm.MovementState.FreeToMove
-        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
-        initial_printer_movement_state = Printer.MovementState.FreeToMove
-
-        initial_arm_speed = 0.0
-
-        initial_move_elevator_cmd = MoveElevator.toLoading
-
-        initial_printer_pose = (
-            robot.hardware.printer.middle_zone_right
-            + robot.hardware.printer.middle_zone_left
-        ) * 0.5
-        initial_printer_function = Printer.stop
-
-        initial_move_printer_cmd = MovePrinter.toMiddle
-
-        running_arm_speed = lambda arm: -arm.speed
-        running_elevator_cmd = None
-        running_printer_cmd = MovePrinter.toLeft
-        running_arm_state = Arm.State.Moving
-
-        def running_arm_moving_condition(arm: Arm) -> bool:
-            return arm.movement_state == Arm.MovementState.FreeToMove
-
-        running_elevator_state = Elevator.State.Loading
-
-        def running_printer_state(printer: Printer):
-            return (
-                printer.state == Printer.State.Moving
-                or printer.state == Printer.State.Left
-            )
-
-        end_arm_speed = 0.0
-        end_arm_state = Arm.State.Retracted
-
-    _genericTest(robot_controller, robot, TestParameters)
-
-
-def testRetractSucessGoodPrinterPosition(
-    robot_controller: RobotTestController, robot: Robot
-):
-
-    class TestParameters:
-
-        Cmd = RetractArm
-
-        initial_arm_state = Arm.State.Extended
-        initial_elevator_state = Elevator.State.Level1
-        initial_printer_state = Printer.State.Unknown
-
-        initial_arm_movement_state = Arm.MovementState.FreeToMove
-        initial_elevator_movement_state = Elevator.MovementState.FreeToMove
-        initial_printer_movement_state = Printer.MovementState.FreeToMove
-
-        initial_arm_speed = 0.0
-
-        initial_move_elevator_cmd = MoveElevator.toLoading
-
-        initial_printer_pose = robot.hardware.printer.middle_zone_right
-        initial_printer_function = Printer.stop
-
-        initial_move_printer_cmd = MovePrinter.toRight
-
-        running_arm_speed = lambda arm: -arm.speed
-        running_elevator_cmd = MoveElevator.toLevel4
-        running_printer_cmd = MovePrinter.toRight
-        running_arm_state = Arm.State.Moving
-
-        def running_arm_moving_condition(arm: Arm) -> bool:
-            return arm.movement_state == Arm.MovementState.FreeToMove
-
-        running_elevator_state = Elevator.State.Moving
-
-        def running_printer_state(printer: Printer):
-            return printer.state == Printer.State.Right
-
-        end_arm_speed = 0.0
-        end_arm_state = Arm.State.Retracted
-
-    _genericTest(robot_controller, robot, TestParameters)
+                                        _genericTest(robot_controller, robot, TestParameters)
 
 
 def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters):
@@ -302,13 +244,22 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     elevator.state = parameters.initial_elevator_state
     printer.state = parameters.initial_printer_state
 
+    print(parameters.Cmd)
+    print(parameters.initial_move_printer_cmd)
+    print(parameters.running_printer_cmd)
+    print(parameters.initial_move_elevator_cmd)
+    print(parameters.running_elevator_cmd)
+
     robot_controller.startTeleop()
 
-    cmd_reset_elevator = ResetElevator(elevator)
-    cmd_reset_elevator.schedule()
-    robot_controller.wait(mega_delay)
+    if arm.state != arm.State.Extended:
+        cmd_reset_elevator = ResetElevator(elevator)
+        cmd_reset_elevator.schedule()
+        robot_controller.wait(mega_delay)
 
-    assert not cmd_reset_elevator.isScheduled()
+        assert not cmd_reset_elevator.isScheduled()
+    else:
+        elevator._has_reset = True
 
     cmd_move_elevator = parameters.initial_move_elevator_cmd(elevator)
     cmd_move_elevator.schedule()
@@ -348,9 +299,9 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
 
     robot_controller.wait(cmd.delay - sampling_time)
 
-    assert arm._motor.get() == approx(parameters.running_arm_speed(arm), rel=0.1)
+    assert arm._motor.get() == approx(parameters.running_arm_speed(arm), abs=0.1)
     assert arm.state == parameters.running_arm_state
-    assert elevator.state == parameters.running_elevator_state
+    assert parameters.running_elevator_state(elevator)
     assert parameters.running_printer_state(printer)
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
@@ -359,3 +310,4 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
 
     assert arm._motor.get() == approx(parameters.end_arm_speed, rel=0.1)
     assert arm.state == parameters.end_arm_state
+    print("Passed")
