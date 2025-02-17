@@ -77,6 +77,7 @@ class Drop(Command):
 
     def end(self, interrupted: bool):
         self.claw.stop()
+        self.claw.has_coral = False
 
 
 class _ClassProperties:
