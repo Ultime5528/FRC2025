@@ -2,7 +2,7 @@ from commands.printer.resetprinter import ResetPrinterRight
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.dropprepareload import DropPrepareLoad
+from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.printer.moveprinter import MovePrinter
@@ -85,7 +85,7 @@ def commun_test_drop_prepareLoad(
 
     assert not cmd_extend_arm.isScheduled()
 
-    cmd = DropPrepareLoad.left(arm, claw, drivetrain, elevator, printer)
+    cmd = DropPrepareLoading.left(arm, claw, drivetrain, elevator, printer)
 
     assert not cmd.isScheduled()
 

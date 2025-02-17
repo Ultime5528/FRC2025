@@ -3,6 +3,7 @@ from commands2.cmd import sequence, either, none
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator
+from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from subsystems.arm import Arm
 from subsystems.claw import Claw
@@ -12,7 +13,7 @@ from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty
 
 
-class DropPrepareLoad:
+class DropPrepareLoading:
     @staticmethod
     def left(
         arm: Arm,
@@ -32,9 +33,9 @@ class DropPrepareLoad:
                 none(),
                 lambda: arm.state == Arm.State.Extended,
             ),
-            # TODO PrepareLoad()
+            PrepareLoading(elevator, arm, printer),
         )
-        cmd.setName(DropPrepareLoad.__name__ + ".left")
+        cmd.setName(DropPrepareLoading.__name__ + ".left")
         return cmd
 
     @staticmethod
@@ -59,12 +60,12 @@ class DropPrepareLoad:
             ),
             # TODO PrepareLoad()
         )
-        cmd.setName(DropPrepareLoad.__name__ + ".right")
+        cmd.setName(DropPrepareLoading.__name__ + ".right")
         return cmd
 
 
 class _ClassProperties:
-    distance_back = autoproperty(0.5, subtable=DropPrepareLoad.__name__)
+    distance_back = autoproperty(0.5, subtable=DropPrepareLoading.__name__)
 
 
 _properties = _ClassProperties()
