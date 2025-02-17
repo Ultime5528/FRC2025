@@ -1,4 +1,3 @@
-from commands.printer.resetright import ResetPrinterRight
 from commands2 import SequentialCommandGroup
 from commands2.cmd import parallel
 

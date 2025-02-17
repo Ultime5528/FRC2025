@@ -35,7 +35,11 @@ class DashboardModule(Module):
         """
         Drivetrain
         """
-        putCommandOnDashboard("Drivetrain", DriveToPoses.back(hardware.drivetrain, 1), name="DriveToPoses.back(1)")
+        putCommandOnDashboard(
+            "Drivetrain",
+            DriveToPoses.back(hardware.drivetrain, 1),
+            name="DriveToPoses.back(1)",
+        )
 
         """
         Elevator
