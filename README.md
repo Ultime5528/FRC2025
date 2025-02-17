@@ -23,7 +23,7 @@
 | commands/drivetrain/resetpose.py        |       13 |        6 |        0 |        0 |     54% |9-12, 15, 18 |
 | commands/elevator/\_\_init\_\_.py       |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py   |       16 |        0 |        2 |        0 |    100% |           |
-| commands/elevator/manualmoveelevator.py |       28 |        1 |        0 |        0 |     96% |        32 |
+| commands/elevator/manualmoveelevator.py |       28 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/moveelevator.py       |       83 |        2 |        4 |        2 |     95% |  129, 134 |
 | commands/elevator/resetelevator.py      |       24 |        1 |        4 |        1 |     93% |        29 |
 | commands/intake/\_\_init\_\_.py         |        0 |        0 |        0 |        0 |    100% |           |
@@ -31,10 +31,12 @@
 | commands/intake/grabalgae.py            |       29 |        0 |        2 |        0 |    100% |           |
 | commands/intake/moveintake.py           |       45 |        1 |        4 |        1 |     96% |        66 |
 | commands/intake/resetintake.py          |       21 |        0 |        2 |        0 |    100% |           |
+| commands/prepareloading.py              |       12 |        1 |        0 |        0 |     92% |        15 |
 | commands/printer/\_\_init\_\_.py        |        0 |        0 |        0 |        0 |    100% |           |
 | commands/printer/manualmoveprinter.py   |       31 |        0 |        4 |        1 |     97% |  31->exit |
 | commands/printer/moveprinter.py         |       91 |        2 |        4 |        2 |     96% |  122, 127 |
 | commands/printer/resetprinter.py        |       21 |        0 |        2 |        0 |    100% |           |
+| commands/resetall.py                    |       18 |        0 |        0 |        0 |    100% |           |
 | conftest.py                             |        1 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
 | modules/armcollision.py                 |       26 |        0 |       10 |        0 |    100% |           |
@@ -64,9 +66,10 @@
 | tests/test\_climber.py                  |       90 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |       10 |        0 |        0 |        0 |    100% |           |
-| tests/test\_elevator.py                 |      161 |        0 |        4 |        0 |    100% |           |
+| tests/test\_elevator.py                 |      152 |        0 |        0 |        0 |    100% |           |
 | tests/test\_intake.py                   |       93 |        0 |        0 |        0 |    100% |           |
-| tests/test\_printer.py                  |      159 |        4 |        8 |        2 |     96% |233-234, 273-274 |
+| tests/test\_printer.py                  |      147 |        6 |        8 |        4 |     94% |45, 54, 216-217, 256-257 |
+| tests/test\_resetall.py                 |       19 |        0 |        0 |        0 |    100% |           |
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py              |       77 |       77 |        2 |        0 |      0% |     1-122 |
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
@@ -94,7 +97,7 @@
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       28 |       42 |        5 |     66% |20, 22, 40-44, 59->exit, 73-91, 110-111, 199-200, 203 |
 | ultime/vision.py                        |       63 |       17 |       18 |        3 |     60% |37-40, 43-46, 67->exit, 71-74, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **3872** |  **525** |  **474** |   **75** | **84%** |           |
+|                               **TOTAL** | **3900** |  **527** |  **470** |   **77** | **84%** |           |
 
 
 ## Setup coverage badge
