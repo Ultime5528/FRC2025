@@ -12,6 +12,7 @@ class Claw(Subsystem):
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
+        self.coral_is_retracted = False
 
     def stop(self):
         self._motor_right.stopMotor()
@@ -26,6 +27,9 @@ class Claw(Subsystem):
     def hasCoralInLoader(self):
         return self._sensor.isPressed()
 
+    def isCoralRetracted(self):
+        return self.coral_is_retracted
+
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
 
@@ -35,3 +39,4 @@ class Claw(Subsystem):
         builder.addFloatProperty("motor_left", self._motor_left.get, noop)
         builder.addFloatProperty("motor_right", self._motor_right.get, noop)
         builder.addBooleanProperty("has_coral", self.hasCoralInLoader, noop)
+        builder.addBooleanProperty("coral_retracted", self.isCoralRetracted, noop)

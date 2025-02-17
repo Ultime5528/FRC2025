@@ -76,6 +76,7 @@ class Drop(Command):
         return self.timer.hasElapsed(drop_properties.delay)
 
     def end(self, interrupted: bool):
+        self.claw.coral_is_retracted = False
         self.claw.stop()
 
 
