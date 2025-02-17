@@ -6,7 +6,7 @@ from commands.climber.resetclimber import ResetClimber
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.intake.resetintake import ResetIntake
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 from subsystems.arm import Arm
 from subsystems.climber import Climber
 from subsystems.elevator import Elevator

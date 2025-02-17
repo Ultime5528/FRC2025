@@ -54,25 +54,25 @@ class RobotTestController:
         DriverStationSim.notifyNewData()
         stepTiming(0.05)
 
-    def wait(self, seconds: float):
+    def wait(self, seconds: float, delta: float = 0.02):
         assert seconds > 0
 
         time = 0.0
-        delta = 0.02
+        delta = min(seconds, delta)
 
         while time < seconds:
             DriverStationSim.notifyNewData()
             stepTiming(delta)
             time += delta
 
-    def wait_until(self, cond: Callable[[], bool], seconds: float):
+    def wait_until(self, cond: Callable[[], bool], timeout: float, delta: float = 0.02):
         time = 0.0
-        delta = 0.02
+        delta = min(delta, timeout)
 
         while not cond():
             self.wait(delta)
             time += delta
-            assert time < seconds, f"Condition was not reached within {seconds} seconds"
+            assert time < timeout, f"Condition was not reached within {timeout} seconds"
 
 
 @pytest.fixture(scope="function")
