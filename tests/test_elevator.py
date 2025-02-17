@@ -1,6 +1,7 @@
 from _pytest.python_api import approx
 from rev import SparkBase, SparkBaseConfig
 
+from commands.arm.retractarm import RetractArm
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
 from commands.elevator.resetelevator import ResetElevator
@@ -178,48 +179,36 @@ def test_moveElevator_toLoading(robot_controller: RobotTestController, robot: Ro
 
 
 def test_resetCommand(robot_controller: RobotTestController, robot: Robot):
-
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
-    printer = robot.hardware.printer
-
-    arm.movement_state = Arm.MovementState.FreeToMove
-    elevator.movement_state = Elevator.MovementState.FreeToMove
-    printer.movement_state = Printer.MovementState.FreeToMove
-
-    arm.state = Arm.State.Retracted
 
     robot_controller.startTeleop()
 
-    # Enable robot and schedule command
-    cmd = ResetElevator(robot.hardware.elevator)
+    # Retract Arm so the elevator is free to move
+    cmd = RetractArm(arm)
     cmd.schedule()
-    robot_controller.wait(0.05)
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 5.0)
 
-    counter = 0
-    while not elevator._switch.isPressed() and counter < 1000:
-        assert elevator._motor.get() < 0.0
-        robot_controller.wait(0.01)
-        counter += 1
+    cmd = ResetElevator(elevator)
+    cmd.schedule()
+    robot_controller.wait(0.02)
 
-    assert counter < 1000, "isPressed takes too long to happen"
+    assert elevator._motor.get() < 0.0
+
+    robot_controller.wait_until(lambda: elevator.isDown(), 5.0, delta=0.02)
+
     assert elevator._switch.isPressed()
+    assert elevator._motor.get() > 0.0
 
-    counter = 0
-    while elevator._switch.isPressed() and counter < 1000:
-        assert elevator._motor.get() > 0.0
-        robot_controller.wait(0.01)
-        counter += 1
+    robot_controller.wait_until(lambda: not elevator.isDown(), 5.0, delta=0.02)
 
-    assert counter < 1000, "not isPressed takes too long to happen"
     assert not elevator._switch.isPressed()
 
-    robot_controller.wait(1.0)
-
-    assert elevator._motor.get() == approx(0.0)
-    assert elevator.getHeight() == approx(0.0, abs=0.02)
+    robot_controller.wait(0.05)
 
     assert not cmd.isScheduled()
+    assert elevator._motor.get() == approx(0.0)
+    assert elevator.getHeight() == approx(0.0, abs=0.02)
 
 
 def common_test_requirements(
