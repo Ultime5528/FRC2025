@@ -13,7 +13,7 @@ class RetractCoralModule(Module):
     def robotPeriodic(self) -> None:
         if (
             self.elevator.state == Elevator.State.Level4
-            and self.claw.hasCoralInLoader()
+            and self.claw.has_coral
             and not self.claw.isCoralRetracted()
         ):
             cmd = BackCoral(self.claw)
