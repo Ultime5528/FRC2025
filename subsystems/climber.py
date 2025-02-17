@@ -67,9 +67,6 @@ class Climber(Subsystem):
         else:
             self._switch.setSimUnpressed()
 
-    def isInitial(self):
-        return self.state == self.State.Initial
-
     def isClimbed(self):
         return self._switch.isPressed()
 

@@ -29,7 +29,6 @@ class HardwareModule(Module):
         self.intake = Intake()
 
         self.claw = Claw()
-        Trigger(self.claw.hasCoralInLoader).onTrue(LoadCoral(self.claw))
 
         self.arm = Arm()
 
