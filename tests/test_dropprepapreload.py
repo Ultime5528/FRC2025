@@ -1,4 +1,4 @@
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
