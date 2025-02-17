@@ -5,14 +5,12 @@ from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
 
-class BackCoral(Command):
-    speed = autoproperty(-0.5)
+class RetractCoral(Command):
+    speed_left = autoproperty(0.25)
+    speed_right = autoproperty(-0.25)
     delay = autoproperty(0.2)
 
-    def __init__(
-        self,
-        claw: Claw,
-    ):
+    def __init__(self, claw: Claw):
         super().__init__()
         self.claw = claw
         self.timer = wpilib.Timer()
@@ -22,12 +20,12 @@ class BackCoral(Command):
         self.timer.restart()
 
     def execute(self):
-        self.claw.setLeft(self.speed)
-        self.claw.setRight(self.speed)
+        self.claw.setLeft(self.speed_left)
+        self.claw.setRight(self.speed_right)
 
     def isFinished(self) -> bool:
         return self.timer.hasElapsed(self.delay)
 
     def end(self, interrupted: bool):
         self.claw.stop()
-        self.claw.coral_is_retracted = True
+        self.claw.is_coral_retracted = True

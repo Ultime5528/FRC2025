@@ -10,7 +10,7 @@ from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
-from modules.retractcoral import RetractCoralModule
+from modules.coralretraction import CoralRetractionModule
 from modules.vision import VisionModule
 from ultime.modulerobot import ModuleRobot
 
@@ -34,7 +34,7 @@ class Robot(ModuleRobot):
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
         self.vision = VisionModule()
-        self.retract = RetractCoralModule(self.hardware.elevator, self.hardware.claw)
+        self.retract = CoralRetractionModule(self.hardware.elevator, self.hardware.claw)
 
         self.addModules(
             self.hardware,
