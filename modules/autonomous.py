@@ -6,6 +6,7 @@ import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.path import PathConstraints, PathPlannerPath
+from pathplannerlib.pathfinding import Pathfinding
 from wpimath.geometry import Pose2d
 
 from commands.arm.retractarm import RetractArm
@@ -20,6 +21,9 @@ def registerNamedCommand(command: Command):
 
 
 class AutonomousModule(Module):
+    def robotInit(self) -> None:
+        Pathfinding.ensureInitialized()
+
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.hardware = proxy(hardware)
