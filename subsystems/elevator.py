@@ -45,7 +45,6 @@ class Elevator(Subsystem):
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(30)
         self._config.inverted(False)
-        self._config.encoder.positionConversionFactor(self.position_conversion_factor)
 
         self._switch = Switch(Switch.Type.NormallyClosed, ports.DIO.elevator_switch)
         self._motor = SparkMax(ports.CAN.elevator_motor, SparkMax.MotorType.kBrushless)
@@ -84,7 +83,9 @@ class Elevator(Subsystem):
         distance = (self._motor.get() - gravity) * 0.051
 
         self._sim_height += distance
-        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
+        self._sim_encoder.setPosition(
+            self._sim_encoder.getPosition() + distance / self.position_conversion_factor
+        )
 
         if self._sim_height <= self.height_min:
             self._switch.setSimPressed()
@@ -102,8 +103,6 @@ class Elevator(Subsystem):
         self.setSpeed(self.speed_down)
 
     def setSpeed(self, speed: float):
-        assert -1.0 <= speed <= 1.0
-
         if (
             self.movement_state == Elevator.MovementState.AvoidLowerZone
             and self.isInLowerZone()
@@ -133,7 +132,9 @@ class Elevator(Subsystem):
         self._offset = reset_value - self._encoder.getPosition()
 
     def getHeight(self):
-        return self._encoder.getPosition() + self._offset
+        return self.position_conversion_factor * (
+            self._encoder.getPosition() + self._offset
+        )
 
     def isInLowerZone(self) -> bool:
         return self.getHeight() <= self.height_lower_zone

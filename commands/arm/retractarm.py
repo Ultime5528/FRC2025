@@ -15,10 +15,16 @@ class RetractArm(Command):
         self.addRequirements(arm)
 
     def initialize(self):
-        self.timer.restart()
+        self.timer.stop()
+        self.timer.reset()
 
     def execute(self):
-        self.arm.retract()
+        if self.arm.movement_state == Arm.MovementState.DoNotMove:
+            self.arm.stop()
+            self.timer.reset()
+        else:
+            self.timer.start()
+            self.arm.retract()
 
     def isFinished(self) -> bool:
         return self.timer.hasElapsed(self.delay)
