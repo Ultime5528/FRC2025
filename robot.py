@@ -34,7 +34,7 @@ class Robot(ModuleRobot):
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
         self.vision = VisionModule()
-        self.retract = CoralRetractionModule(self.hardware.elevator, self.hardware.claw)
+        self.coral_retraction = CoralRetractionModule(self.hardware.elevator, self.hardware.claw)
 
         self.addModules(
             self.hardware,
@@ -46,6 +46,6 @@ class Robot(ModuleRobot):
             self.property_save_checker,
             self.vision,
             self.arm_collision,
-            self.retract,
+            self.coral_retraction,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
