@@ -18,9 +18,9 @@ class ResetIntake(Command):
         if (
             not self.intake.isRetracted() and not self.pivot_switch_was_pressed
         ):  # if pivot switch is not pressed retract until pressed.
-            self.intake.setPivotSpeed(-0.5)
+            self.intake.retract()
         else:  # If the pivot switch is pressed extend.
-            self.intake.setPivotSpeed(0.5)
+            self.intake.extend()
             self.pivot_switch_was_pressed = True
 
     def isFinished(self) -> bool:

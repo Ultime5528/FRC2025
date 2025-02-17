@@ -33,7 +33,7 @@ class ManualMoveElevator(Command):
 
 
 class _ClassProperties:
-    speed = autoproperty(0.0, subtable=ManualMoveElevator.__name__)
+    speed = autoproperty(0.15, subtable=ManualMoveElevator.__name__)
 
 
 manual_move_properties = _ClassProperties()

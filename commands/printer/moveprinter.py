@@ -143,7 +143,7 @@ class _MovePrinterWithSensor(Command):
 
 class _ClassProperties:
     position_left = autoproperty(0.4, subtable=MovePrinter.__name__)
-    position_middle = autoproperty(0.2, subtable=MovePrinter.__name__)
+    position_middle = autoproperty(0.24, subtable=MovePrinter.__name__)
     position_right = autoproperty(0.0, subtable=MovePrinter.__name__)
     position_loading = autoproperty(0.05, subtable=MovePrinter.__name__)
 

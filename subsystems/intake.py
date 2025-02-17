@@ -18,7 +18,8 @@ class Intake(Subsystem):
         Extended = auto()
         Retracted = auto()
 
-    grab_speed = autoproperty(0.3)
+    speed_pivot = autoproperty(0.2)
+    speed_grab = autoproperty(0.3)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
     position_conversion_factor = autoproperty(0.18)
@@ -88,11 +89,17 @@ class Intake(Subsystem):
             speed = 0.0
         self._pivot_motor.set(speed)
 
+    def retract(self):
+        self.setPivotSpeed(-self.speed_pivot)
+
+    def extend(self):
+        self.setPivotSpeed(self.speed_pivot)
+
     def grab(self):
-        self._grab_motor.set(self.grab_speed)
+        self._grab_motor.set(self.speed_grab)
 
     def drop(self):
-        self._grab_motor.set(-1 * self.grab_speed)
+        self._grab_motor.set(-1 * self.speed_grab)
 
     def stopGrab(self):
         self._grab_motor.stopMotor()
