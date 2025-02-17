@@ -7,6 +7,7 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
+from commands.climber.resetclimber import ResetClimber
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -17,7 +18,7 @@ from commands.intake.moveintake import MoveIntake
 from commands.intake.resetintake import ResetIntake
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetright import ResetPrinterRight
+from commands.printer.resetprinter import ResetPrinterRight
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -83,6 +84,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Climber", ReadyClimber(hardware.climber))
         putCommandOnDashboard("Climber", Climb(hardware.climber))
         putCommandOnDashboard("Climber", ReleaseClimber(hardware.climber))
+        putCommandOnDashboard("Climber", ResetClimber(hardware.climber))
 
         """
         Intake

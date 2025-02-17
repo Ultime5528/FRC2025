@@ -13,6 +13,7 @@
 * Format code with black `python -m black .`
 * Save autoproperties : `python properties.py saveonce`
 * Save loop autoproperties : `python properties.py saveloop`
+* PyNetConsole : `python -m netconsole 10.55.28.2`
 
 
 ## Environment setup
