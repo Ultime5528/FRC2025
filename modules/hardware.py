@@ -1,7 +1,5 @@
 import commands2
-from commands2.button import Trigger
 
-from commands.claw.loadcoral import LoadCoral
 from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm
@@ -29,7 +27,6 @@ class HardwareModule(Module):
         self.intake = Intake()
 
         self.claw = Claw()
-        Trigger(self.claw.hasCoralInLoader).onTrue(LoadCoral(self.claw))
 
         self.arm = Arm()
 
