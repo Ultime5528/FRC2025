@@ -2,7 +2,6 @@ from wpilib import VictorSP
 from wpiutil import SendableBuilder
 
 import ports
-from commands.claw.loadcoral import LoadCoral
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
 
@@ -10,6 +9,7 @@ from ultime.switch import Switch
 class Claw(Subsystem):
     def __init__(self):
         super().__init__()
+        from commands.claw.loadcoral import LoadCoral
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
