@@ -154,7 +154,7 @@ def testLoadCoral(
     robot_controller.wait(1.0)
     claw._sensor.setSimUnpressed()
 
-    robot_controller.wait_until(lambda : not claw._load_command.isScheduled(), 5.0)
+    robot_controller.wait_until(lambda: not claw._load_command.isScheduled(), 5.0)
 
     assert claw.has_coral
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
@@ -167,6 +167,7 @@ def testLoadCoral(
 
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
+
 
 def common_test_autodrop(
     robot_controller: RobotTestController,

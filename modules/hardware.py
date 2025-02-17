@@ -1,7 +1,5 @@
 import commands2
-from commands2.button import Trigger
 
-from commands.claw.loadcoral import LoadCoral
 from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm
