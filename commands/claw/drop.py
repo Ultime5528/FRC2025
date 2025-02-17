@@ -78,6 +78,7 @@ class Drop(Command):
     def end(self, interrupted: bool):
         self.claw.coral_is_retracted = False
         self.claw.stop()
+        self.claw.has_coral = False
 
 
 class _ClassProperties:
