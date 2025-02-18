@@ -5,6 +5,7 @@ from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
 from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
+from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
@@ -33,6 +34,9 @@ class Robot(ModuleRobot):
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
         self.vision = VisionModule()
+        self.coral_retraction = CoralRetractionModule(
+            self.hardware.elevator, self.hardware.claw
+        )
 
         self.addModules(
             self.hardware,
@@ -44,5 +48,6 @@ class Robot(ModuleRobot):
             self.property_save_checker,
             self.vision,
             self.arm_collision,
+            self.coral_retraction,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
