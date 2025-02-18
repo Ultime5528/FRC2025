@@ -11,6 +11,7 @@ class ResetIntake(Command):
         self.pivot_switch_was_pressed = False
 
     def initialize(self):
+        self.intake._has_reset = False
         self.pivot_switch_was_pressed = False
         self.intake.state = self.intake.State.Moving
 

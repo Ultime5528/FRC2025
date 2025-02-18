@@ -18,11 +18,11 @@ class Intake(Subsystem):
         Extended = auto()
         Retracted = auto()
 
-    speed_pivot = autoproperty(0.2)
-    speed_grab = autoproperty(0.3)
+    speed_pivot = autoproperty(0.3)
+    speed_grab = autoproperty(0.8)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
-    position_conversion_factor = autoproperty(0.18)
+    position_conversion_factor = autoproperty(0.445)
 
     def __init__(self):
         super().__init__()
@@ -32,10 +32,9 @@ class Intake(Subsystem):
         self._pivot_encoder = wpilib.Encoder(
             ports.DIO.intake_encoder_a,
             ports.DIO.intake_encoder_b,
-            reverseDirection=False,
+            reverseDirection=True,
         )
 
-        self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(
             Switch.Type.NormallyClosed, ports.DIO.intake_switch_pivot
         )
@@ -60,10 +59,11 @@ class Intake(Subsystem):
             self._sim_grab_sensor = AnalogInputSim(self._grab_sensor)
 
     def periodic(self) -> None:
-        if self._prev_is_retracted and not self.isRetracted():
-            self._offset = self.pivot_position_min - self._pivot_encoder.get()
-            self._has_reset = True
-        self._prev_is_retracted = self.isRetracted()
+        if not self.hasReset():
+            if self._prev_is_retracted and not self.isRetracted():
+                self._offset = self.pivot_position_min - self._pivot_encoder.get()
+                self._has_reset = True
+            self._prev_is_retracted = self.isRetracted()
 
     def simulationPeriodic(self) -> None:
         distance = self._pivot_motor.get() * 3
