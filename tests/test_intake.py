@@ -62,14 +62,14 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
 
     robot_controller.wait(0.1)
 
-    assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
+    assert intake._grab_motor.get() == approx(intake.speed_grab, rel=0.1)
     assert intake._pivot_motor.get() == 0.0
 
     intake._sim_grab_sensor.setVoltage(intake.threshold_grab + 1)
 
     wait(0.5)
 
-    assert intake._grab_motor.get() == approx(intake.grab_speed, rel=0.1)
+    assert intake._grab_motor.get() == approx(intake.speed_grab, rel=0.1)
 
     wait(5)
 
@@ -105,7 +105,7 @@ def test_drop_algae(robot_controller: RobotTestController, robot: Robot):
 
     wait(0.05)
 
-    assert intake._grab_motor.get() == approx(-1 * intake.grab_speed, rel=0.1)
+    assert intake._grab_motor.get() == approx(-1 * intake.speed_grab, rel=0.1)
     assert intake._pivot_motor.get() == approx(0.0)
 
     intake._sim_grab_sensor.setVoltage(0)

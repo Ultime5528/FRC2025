@@ -5,6 +5,8 @@ import wpilib
 from commands2 import Command
 from wpilib import Timer, DataLogManager
 
+from ultime.autoproperty import FloatProperty, asCallable
+
 
 def ignore_requirements(reqs: list[str]):
     def _ignore(actual_cls: Type[Command]) -> Type[Command]:
@@ -44,3 +46,16 @@ def with_timeout(seconds: float):
         return CommandWithTimeout
 
     return add_timeout
+
+
+class WaitCommand(Command):
+    def __init__(self, seconds: FloatProperty):
+        super().__init__()
+        self.get_seconds = asCallable(seconds)
+        self.timer = wpilib.Timer()
+
+    def initialize(self):
+        self.timer.restart()
+
+    def isFinished(self) -> bool:
+        return self.timer.hasElapsed(self.get_seconds())

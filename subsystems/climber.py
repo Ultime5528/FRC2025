@@ -20,14 +20,14 @@ class Climber(Subsystem):
         Climbed = auto()
 
     height_max = autoproperty(90.0)
-    position_conversion_factor = autoproperty(1.0)
-    speed = autoproperty(0.5)
+    position_conversion_factor = autoproperty(0.1965)
+    speed = autoproperty(0.8)
 
     def __init__(self):
         super().__init__()
         self._config = SparkMaxConfig()
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
-        self._config.smartCurrentLimit(30)
+        self._config.smartCurrentLimit(40)
         self._config.inverted(False)
 
         self._motor = SparkMax(ports.CAN.climber_motor, SparkMax.MotorType.kBrushless)
@@ -52,7 +52,7 @@ class Climber(Subsystem):
 
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
-            self._offset = self.height_max - self.getPosition()
+            self._offset = self.height_max / self.position_conversion_factor - self._encoder.getPosition()
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
 
