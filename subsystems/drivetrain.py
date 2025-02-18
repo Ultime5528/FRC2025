@@ -3,7 +3,8 @@ import math
 import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.config import RobotConfig
+from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
@@ -101,24 +102,24 @@ class Drivetrain(Subsystem):
 
         # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
         # Must test which AutoBuilder works best
-        # AutoBuilder.configure(
-        #     self.getPose,
-        #     self.resetToPose,
-        #     self.getRobotRelativeChassisSpeeds,
-        #     self.driveFromChassisSpeeds,
-        #     PPHolonomicDriveController(
-        #         PIDConstants(5, 0, 0),
-        #         PIDConstants(5, 0, 0),
-        #     ),
-        #     RobotConfig.fromGUISettings(),
-        #     should_flip_path,
-        #     self,
-        # )
+        AutoBuilder.configure(
+            self.getPose,
+            self.resetToPose,
+            self.getRobotRelativeChassisSpeeds,
+            self.driveFromChassisSpeeds,
+            PPHolonomicDriveController(
+                PIDConstants(5, 0, 0),
+                PIDConstants(5, 0, 0),
+            ),
+            RobotConfig.fromGUISettings(),
+            should_flip_path,
+            self,
+        )
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
-        AutoBuilder.configureCustom(
-            self.getCommandFromPathplannerPath, self.resetToPose, True, should_flip_path
-        )
+        # AutoBuilder.configureCustom(
+        #     self.getCommandFromPathplannerPath, self.resetToPose, True, should_flip_path
+        # )
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
