@@ -23,7 +23,10 @@ class ManualMoveElevator(Command):
         self.get_speed = asCallable(speed)
 
     def execute(self):
-        self.elevator.setSpeed(self.get_speed())
+        if self.get_speed() < 0.0 and self.elevator.isDown():
+            self.elevator.setSpeed(0.0)
+        else:
+            self.elevator.setSpeed(self.get_speed())
 
     def isFinished(self) -> bool:
         return False
