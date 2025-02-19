@@ -6,9 +6,9 @@ from ultime.autoproperty import autoproperty
 
 
 class LoadCoral(Command):
-    delay = autoproperty(0.7)
-    speed_left = autoproperty(0.5)
-    speed_right = autoproperty(-0.5)
+    delay = autoproperty(0.0)
+    speed_left = autoproperty(-0.1)
+    speed_right = autoproperty(0.1)
 
     def __init__(self, claw: Claw):
         super().__init__()
@@ -24,15 +24,17 @@ class LoadCoral(Command):
         self.claw.setLeft(self.speed_left)
         self.claw.setRight(self.speed_right)
 
-        if not self.claw.hasCoralInLoader():
+        if not self.claw.seesObject():
             self.timer.start()
         else:
             self.timer.stop()
             self.timer.reset()
 
     def isFinished(self) -> bool:
-        return not self.claw.hasCoralInLoader() and self.timer.get() >= self.delay
+        return not self.claw.seesObject() and self.timer.get() >= self.delay
 
     def end(self, interrupted: bool):
         self.claw.stop()
         self.timer.stop()
+        if not interrupted:
+            self.claw.has_coral = True

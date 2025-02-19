@@ -6,7 +6,7 @@ from ultime.autoproperty import autoproperty
 
 
 class RetractArm(Command):
-    delay = autoproperty(3.0)
+    delay = autoproperty(1.0)
 
     def __init__(self, arm: Arm):
         super().__init__()
@@ -15,13 +15,24 @@ class RetractArm(Command):
         self.addRequirements(arm)
 
     def initialize(self):
-        self.timer.restart()
+        self.timer.stop()
+        self.timer.reset()
 
     def execute(self):
-        self.arm.retract()
+        if self.arm.movement_state == Arm.MovementState.DoNotMove:
+            self.arm.stop()
+            self.timer.reset()
+        else:
+            self.timer.start()
+            self.arm.retract()
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.delay
+        return self.timer.hasElapsed(self.delay)
 
     def end(self, interrupted: bool):
         self.arm.stop()
+
+        if interrupted:
+            self.arm.state = Arm.State.Unknown
+        else:
+            self.arm.state = Arm.State.Retracted

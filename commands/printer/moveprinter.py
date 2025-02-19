@@ -11,7 +11,7 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 class MovePrinter:
     @staticmethod
     def toLeft(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_left,
             Printer.State.Left,
@@ -21,7 +21,7 @@ class MovePrinter:
 
     @staticmethod
     def toMiddle(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_middle,
             Printer.State.Middle,
@@ -31,7 +31,7 @@ class MovePrinter:
 
     @staticmethod
     def toRight(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_right,
             printer.State.Right,
@@ -41,7 +41,7 @@ class MovePrinter:
 
     @staticmethod
     def toLoading(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_loading,
             Printer.State.Loading,
@@ -51,7 +51,7 @@ class MovePrinter:
 
     @staticmethod
     def toMiddleLeft(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_middle_left,
             Printer.State.MiddleLeft,
@@ -61,7 +61,7 @@ class MovePrinter:
 
     @staticmethod
     def toMiddleRight(printer: Printer):
-        cmd = MovePrinterSetpoint(
+        cmd = _MovePrinterSetpoint(
             printer,
             lambda: move_printer_properties.position_middle_right,
             Printer.State.MiddleRight,
@@ -72,7 +72,7 @@ class MovePrinter:
     @staticmethod
     def leftUntilReef(printer: Printer):
         cmd = sequence(
-            MovePrinter.toMiddleLeft(printer), MovePrinterWithSensor.left(printer)
+            MovePrinter.toMiddleLeft(printer), _MovePrinterWithSensor.left(printer)
         )
         cmd.setName(MovePrinter.__name__ + ".leftUntilReef")
         return cmd
@@ -80,13 +80,13 @@ class MovePrinter:
     @staticmethod
     def rightUntilReef(printer: Printer):
         cmd = sequence(
-            MovePrinter.toMiddleRight(printer), MovePrinterWithSensor.right(printer)
+            MovePrinter.toMiddleRight(printer), _MovePrinterWithSensor.right(printer)
         )
         cmd.setName(MovePrinter.__name__ + ".rightUntilReef")
         return cmd
 
 
-class MovePrinterSetpoint(Command):
+class _MovePrinterSetpoint(Command):
     def __init__(
         self, printer: Printer, end_position: FloatProperty, new_state: Printer.State
     ):
@@ -98,7 +98,7 @@ class MovePrinterSetpoint(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            start_position=self.printer.getPose(),
+            start_position=self.printer.getPosition(),
             end_position=self.end_position_getter(),
             start_speed=max(
                 move_printer_properties.speed_min, abs(self.printer.getMotorInput())
@@ -110,7 +110,7 @@ class MovePrinterSetpoint(Command):
         self.printer.state = Printer.State.Moving
 
     def execute(self):
-        height = self.printer.getPose()
+        height = self.printer.getPosition()
         self.motion.setPosition(height)
         self.printer.setSpeed(self.motion.getSpeed())
 
@@ -129,7 +129,7 @@ class MovePrinterSetpoint(Command):
             self.printer.state = self.new_state
 
 
-class MovePrinterWithSensor(Command):
+class _MovePrinterWithSensor(Command):
     @staticmethod
     def left(printer: Printer):
         cmd = ManualMovePrinter.left(printer).until(lambda: printer.seesReef())
