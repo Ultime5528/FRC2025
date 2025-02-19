@@ -50,4 +50,4 @@ class DiagnosticsModule(Module):
 
         builder.addBooleanProperty("Ready", lambda: True, noop)
         builder.addStringArrayProperty("Components", getComponentsNames, noop)
-        builder.addFloatArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
+        builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
