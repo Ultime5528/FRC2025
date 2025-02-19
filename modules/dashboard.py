@@ -21,6 +21,7 @@ from commands.prepareloading import PrepareLoading
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
+from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
@@ -64,6 +65,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Printer", MovePrinter.toLoading(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.leftUntilReef(hardware.printer))
         putCommandOnDashboard("Printer", MovePrinter.rightUntilReef(hardware.printer))
+        putCommandOnDashboard("Printer", ScanPrinter.left(hardware.printer))
+        putCommandOnDashboard("Printer", ScanPrinter.right(hardware.printer))
 
         """
         Claw
