@@ -1,6 +1,9 @@
 import commands2
 import wpilib
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.pathfinding import Pathfinding
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -28,6 +31,8 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
 
         """
         Elevator
