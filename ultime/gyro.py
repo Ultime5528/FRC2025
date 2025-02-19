@@ -131,12 +131,21 @@ class ADIS16470(Gyro):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
+
         def noop(_):
             pass
 
-        builder.addFloatProperty("yaw", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw), noop)
-        builder.addFloatProperty("pitch", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch), noop)
-        builder.addFloatProperty("roll", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll), noop)
+        builder.addFloatProperty(
+            "yaw", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw), noop
+        )
+        builder.addFloatProperty(
+            "pitch",
+            lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch),
+            noop,
+        )
+        builder.addFloatProperty(
+            "roll", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll), noop
+        )
 
 
 class ADXRS(Gyro):

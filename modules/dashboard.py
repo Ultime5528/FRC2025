@@ -105,13 +105,22 @@ class DashboardModule(Module):
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
 
-
         """
         Groups
         """
-        putCommandOnDashboard("Group", ResetAll(hardware.elevator, hardware.printer, hardware.arm, hardware.intake, hardware.climber))
-        putCommandOnDashboard("Group", PrepareLoading(hardware.elevator, hardware.arm,hardware.printer))
-
+        putCommandOnDashboard(
+            "Group",
+            ResetAll(
+                hardware.elevator,
+                hardware.printer,
+                hardware.arm,
+                hardware.intake,
+                hardware.climber,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group", PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
+        )
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

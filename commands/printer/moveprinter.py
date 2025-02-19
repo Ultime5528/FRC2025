@@ -138,7 +138,7 @@ class _MovePrinterWithSensor(Command):
                 WaitUntilCommand(lambda: printer.seesReef()),
                 WaitCommand(lambda: move_printer_properties.delay_reef),
             ),
-            ManualMovePrinter.left(printer)
+            ManualMovePrinter.left(printer),
         )
         return cmd
 
@@ -149,7 +149,7 @@ class _MovePrinterWithSensor(Command):
                 WaitUntilCommand(lambda: printer.seesReef()),
                 WaitCommand(lambda: move_printer_properties.delay_reef),
             ),
-            ManualMovePrinter.right(printer)
+            ManualMovePrinter.right(printer),
         )
         return cmd
 

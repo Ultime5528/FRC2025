@@ -52,7 +52,10 @@ class Climber(Subsystem):
 
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
-            self._offset = self.height_max / self.position_conversion_factor - self._encoder.getPosition()
+            self._offset = (
+                self.height_max / self.position_conversion_factor
+                - self._encoder.getPosition()
+            )
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
 
