@@ -8,6 +8,7 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.resetgyro import ResetGyro
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -16,9 +17,11 @@ from commands.intake.dropalgae import DropAlgae
 from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import MoveIntake
 from commands.intake.resetintake import ResetIntake
+from commands.prepareloading import PrepareLoading
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
+from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -94,10 +97,24 @@ class DashboardModule(Module):
         putCommandOnDashboard("Intake", MoveIntake.toExtended(hardware.intake))
         putCommandOnDashboard("Intake", MoveIntake.toRetracted(hardware.intake))
         putCommandOnDashboard("Intake", ResetIntake(hardware.intake))
+        """
+        Groups
+        """
+        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+
+
+        """
+        Groups
+        """
+        putCommandOnDashboard("Group", ResetAll(hardware.elevator, hardware.printer, hardware.arm, hardware.intake, hardware.climber))
+        putCommandOnDashboard("Group", PrepareLoading(hardware.elevator, hardware.arm,hardware.printer))
+
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
+
+        wpilib.SmartDashboard.putData("Gyro", self._hardware.drivetrain._gyro)
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:
