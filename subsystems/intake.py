@@ -18,7 +18,7 @@ class Intake(Subsystem):
         Extended = auto()
         Retracted = auto()
 
-    speed_pivot = autoproperty(0.2)
+    speed_pivot = autoproperty(0.3)
     speed_grab = autoproperty(0.8)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)

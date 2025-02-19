@@ -32,7 +32,7 @@ class MoveClimber(Command):
 
 
 class ReadyClimber(MoveClimber):
-    position = autoproperty(35.0)
+    position = autoproperty(20.0)
 
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Ready)
