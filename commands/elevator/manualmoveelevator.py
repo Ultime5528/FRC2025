@@ -26,7 +26,7 @@ class ManualMoveElevator(Command):
         self.elevator.setSpeed(self.get_speed())
 
     def isFinished(self) -> bool:
-        return False
+        return self.elevator.getMotorInput() < 0.0 and self.elevator.isDown()
 
     def end(self, interrupted: bool):
         self.elevator.stop()

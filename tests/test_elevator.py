@@ -301,3 +301,9 @@ def test_manual_move_down(robot_controller: RobotTestController, robot: Robot):
     finish_height = elevator.getHeight()
 
     assert start_height > finish_height
+
+    elevator._switch.setSimPressed()
+
+    robot_controller.wait(0.5)
+
+    assert elevator.getMotorInput() == 0.0
