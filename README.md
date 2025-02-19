@@ -6,13 +6,14 @@
 
 * Simulation : `python -m robotpy sim`
 * Deployment : `python -m robotpy deploy --skip-tests`
-* Run tests : `python -m robotpy test -- --exitfirst`
+* Run tests : `python -m robotpy test -- --exitfirst --timeout=60 --session-timeout=300`
 * Run tests with coverage : `python -m robotpy coverage test -- --exitfirst`
 * Create coverage HTML report : `coverage html`
 * Sync dependencies : `python -m robotpy sync`
 * Format code with black `python -m black .`
 * Save autoproperties : `python properties.py saveonce`
 * Save loop autoproperties : `python properties.py saveloop`
+* PyNetConsole : `python -m netconsole 10.55.28.2`
 
 
 ## Environment setup

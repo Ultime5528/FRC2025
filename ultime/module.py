@@ -9,6 +9,7 @@ from ultime.alert import Alert, AlertType
 class Module(Sendable):
     def __init__(self):
         super().__init__()
+        self.redefines_init_sendable = False
 
     def createAlert(self, message: str, alert_type: AlertType) -> Alert:
         return Alert(message, alert_type, self.getName() + "/Alerts")
@@ -105,14 +106,16 @@ class ModuleList(Module):
 
         for name, methods in self._methods.items():
             for module in self.modules:
-                module_method = getattr(module, name)
-                declaring_classes = []
-                for cls in inspect.getmro(module_method.__self__.__class__):
-                    if module_method.__name__ in cls.__dict__:
-                        declaring_classes.append(cls)
+                for module_parent in module.__class__.mro():
+                    if module_parent is Module:
+                        break
 
-                if len(declaring_classes) > 1:
-                    methods.append(module_method)
+                    if name in module_parent.__dict__:
+                        module_method = getattr(module, name)
+                        methods.append(module_method)
+
+                        if name == "initSendable":
+                            module.redefines_init_sendable = True
 
             if len(methods) > 0:
                 original_func = getattr(self, name)

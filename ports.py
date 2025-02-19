@@ -13,23 +13,53 @@ Order port numbers, ex:
 
 
 class CAN(Immutable):
-    drivetrain_motor_turning_br = 1
-    drivetrain_motor_driving_br = 2
-    drivetrain_motor_turning_bl = 3
-    drivetrain_motor_driving_bl = 4
-    drivetrain_motor_driving_fl = 5
-    drivetrain_motor_turning_fl = 6
+    drivetrain_motor_turning_br = 6
+    drivetrain_motor_driving_br = 5
+
+    drivetrain_motor_turning_bl = 1
+    drivetrain_motor_driving_bl = 2
+
+    drivetrain_motor_turning_fl = 3
+    drivetrain_motor_driving_fl = 4
+
     drivetrain_motor_turning_fr = 7
     drivetrain_motor_driving_fr = 8
 
+    elevator_motor = 10
+    climber_motor = 9
+
 
 class PWM(Immutable):
-    pass
+    claw_motor_right = 1
+    claw_motor_left = 0
+    arm_motor = 3
+    printer_motor = 2
+    intake_motor_grab = 5
+    intake_motor_pivot = 4
 
 
 class DIO:
-    pass
+    printer_encoder_a = 0
+    printer_encoder_b = 1
+    printer_switch_left = 2
+    printer_switch_right = 3
+
+    printer_photocell = 4
+
+    claw_photocell = 5
+
+    elevator_switch = 6
+
+    intake_encoder_a = 7
+    intake_encoder_b = 8
+    intake_switch_pivot = 10
+
+    climber_switch = 9
 
 
 class PDP:
     pass
+
+
+class Analog:
+    intake_grab_sensor = 0

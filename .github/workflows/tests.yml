@@ -48,7 +48,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with robotpy test
       run: |
-        python -m robotpy coverage test -- --exitfirst
+        python -m robotpy coverage test -- -s --exitfirst --timeout=60 --session-timeout=300
 
     - name: Coverage comment
       id: coverage_comment
