@@ -46,7 +46,7 @@
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py              |       13 |        1 |        2 |        1 |     87% |        20 |
 | modules/dashboard.py                    |       92 |        2 |       12 |        3 |     95% |117, 121->124, 129 |
-| modules/diagnostics.py                  |       40 |        8 |        4 |        1 |     75% |31-34, 37-38, 42, 52 |
+| modules/diagnostics.py                  |       38 |        8 |        4 |        1 |     74% |27-30, 33-34, 38, 48 |
 | modules/hardware.py                     |       26 |        0 |        0 |        0 |    100% |           |
 | modules/logging.py                      |       18 |        1 |        6 |        1 |     92% |        25 |
 | modules/propertysavechecker.py          |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
@@ -99,7 +99,7 @@
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       28 |       42 |        5 |     66% |20, 22, 40-44, 59->exit, 73-91, 110-111, 199-200, 203 |
 | ultime/vision.py                        |       63 |       17 |       18 |        3 |     60% |37-40, 43-46, 67->exit, 71-74, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **3951** |  **534** |  **476** |   **79** | **84%** |           |
+|                               **TOTAL** | **3949** |  **534** |  **476** |   **79** | **84%** |           |
 
 
 ## Setup coverage badge
