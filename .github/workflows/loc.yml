@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Launch action
-        uses: ./ # Uses an action in the root directory
+        uses: alexispurslane/GHA-LoC-Badge@2.0.0
         id: badge
         with:
           debug: true
