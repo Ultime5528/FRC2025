@@ -7,6 +7,7 @@ from pathplannerlib.pathfinding import Pathfinding
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.units import degreesToRadians
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -31,25 +32,12 @@ from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule, module_list: ModuleList, autonomous: AutonomousModule):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
 
-        self.autonomous = autonomous
-
-        # Since AutoBuilder is configured, we can use it to build pathfinding commands
-        pathfinding_command = DeferredCommand(lambda: AutoBuilder.pathfindToPose(
-            self.autonomous.getTagPoseToAlign(),
-            PathConstraints(
-                3.0, 4.0,
-                degreesToRadians(540), degreesToRadians(720)
-            )
-        ), self._hardware.drivetrain)
-
-        putCommandOnDashboard("Drivetrain",
-                              pathfinding_command
-                              )
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware))
 
         """
         Elevator

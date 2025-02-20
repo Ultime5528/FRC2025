@@ -26,7 +26,7 @@ class Robot(ModuleRobot):
         self.hardware = HardwareModule()
         self.control = ControlModule(self.hardware)
         self.autonomous = AutonomousModule(self.hardware)
-        self.dashboard = DashboardModule(self.hardware, self.modules, self.autonomous)
+        self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
