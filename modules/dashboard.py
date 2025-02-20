@@ -1,5 +1,11 @@
 import commands2
 import wpilib
+from commands2 import DeferredCommand
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.path import PathConstraints
+from pathplannerlib.pathfinding import Pathfinding
+from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.units import degreesToRadians
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
@@ -19,15 +25,31 @@ from commands.intake.resetintake import ResetIntake
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
+from modules.autonomous import AutonomousModule
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
+    def __init__(self, hardware: HardwareModule, module_list: ModuleList, autonomous: AutonomousModule):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+
+        self.autonomous = autonomous
+
+        # Since AutoBuilder is configured, we can use it to build pathfinding commands
+        pathfinding_command = DeferredCommand(lambda: AutoBuilder.pathfindToPose(
+            self.autonomous.getTagPoseToAlign(),
+            PathConstraints(
+                3.0, 4.0,
+                degreesToRadians(540), degreesToRadians(720)
+            )
+        ), self._hardware.drivetrain)
+
+        putCommandOnDashboard("Drivetrain",
+                              pathfinding_command
+                              )
 
         """
         Elevator
@@ -111,7 +133,7 @@ class DashboardModule(Module):
 
 
 def putCommandOnDashboard(
-    sub_table: str, cmd: commands2.Command, name: str = None, suffix: str = " commands"
+        sub_table: str, cmd: commands2.Command, name: str = None, suffix: str = " commands"
 ) -> commands2.Command:
     if not isinstance(sub_table, str):
         raise ValueError(

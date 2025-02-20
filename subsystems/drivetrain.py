@@ -1,6 +1,15 @@
 import math
 
 import wpilib
+from commands2 import Command
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.pathfinding import Pathfinding
+from pathplannerlib.telemetry import PPLibTelemetry
+from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
+from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
