@@ -19,6 +19,7 @@ class ScanPrinter(Command):
     def __init__(self, printer: Printer, speed: FloatProperty):
         super().__init__()
         self.printer = printer
+        self.addRequirements(printer)
         self._list_point = []
         self.get_speed = asCallable(speed)
         self.scanned = False

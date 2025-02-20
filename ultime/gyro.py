@@ -7,7 +7,7 @@ from wpilib.simulation import SimDeviceSim
 from wpimath.geometry import Rotation2d
 from wpiutil import Sendable, SendableBuilder
 
-from ultime.autoproperty import defaultSetter, autoproperty
+from ultime.autoproperty import autoproperty
 
 
 class AbstractSendableMetaclass(type(ABC), type(Sendable)):

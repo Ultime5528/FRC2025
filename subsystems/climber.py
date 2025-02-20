@@ -65,7 +65,7 @@ class Climber(Subsystem):
             self._sim_encoder.getPosition() + distance / self.position_conversion_factor
         )
 
-        if self._sim_encoder.getPosition() >= 90:
+        if self.getPosition() >= 90:
             self._switch.setSimPressed()
         else:
             self._switch.setSimUnpressed()

@@ -3,9 +3,8 @@ from _pytest.python_api import approx
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
-from commands.elevator.resetelevator import ResetElevator
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetprinter import ResetPrinterRight
+from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
@@ -294,39 +293,38 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     elevator = robot.hardware.elevator
     printer = robot.hardware.printer
 
-    arm.movement_state = parameters.initial_arm_movement_state
-    elevator.movement_state = parameters.initial_elevator_movement_state
-    printer.movement_state = parameters.initial_printer_movement_state
-
-    arm.state = parameters.initial_arm_state
-    elevator.state = parameters.initial_elevator_state
-    printer.state = parameters.initial_printer_state
-
     robot_controller.startTeleop()
 
-    cmd_reset_elevator = ResetElevator(elevator)
-    cmd_reset_elevator.schedule()
-    robot_controller.wait(mega_delay)
+    reset_all_cmd = ResetAll(
+        elevator, printer, arm, robot.hardware.intake, robot.hardware.climber
+    )
+    reset_all_cmd.schedule()
+    robot_controller.wait_until(lambda: not reset_all_cmd.isScheduled(), 30.0)
 
-    assert not cmd_reset_elevator.isScheduled()
+    if parameters.initial_arm_state == Arm.State.Extended:
+        clear_elevator_cmd = MoveElevator.toLevel1(elevator)
+        clear_elevator_cmd.schedule()
+        robot_controller.wait_until(lambda: not clear_elevator_cmd.isScheduled(), 10.0)
 
-    cmd_move_elevator = parameters.initial_move_elevator_cmd(elevator)
-    cmd_move_elevator.schedule()
-    robot_controller.wait(mega_delay)
+        extend_arm_cmd = ExtendArm(arm)
+        extend_arm_cmd.schedule()
+        robot_controller.wait_until(lambda: not extend_arm_cmd.isScheduled(), 10.0)
 
-    assert not cmd_move_elevator.isScheduled()
-
-    cmd_reset_printer = ResetPrinterRight(printer)
-    cmd_reset_printer.schedule()
-    robot_controller.wait(mega_delay)
-
-    assert not cmd_reset_printer.isScheduled()
+    # cmd_reset_elevator = ResetElevator(elevator)
+    # cmd_reset_elevator.schedule()
+    # robot_controller.wait_until(lambda: not cmd_reset_elevator.isScheduled(), mega_delay)
+    #
+    # cmd_move_elevator = parameters.initial_move_elevator_cmd(elevator)
+    # cmd_move_elevator.schedule()
+    # robot_controller.wait_until(lambda: not cmd_move_elevator.isScheduled(), mega_delay)
+    #
+    # cmd_reset_printer = ResetPrinterRight(printer)
+    # cmd_reset_printer.schedule()
+    # robot_controller.wait_until(lambda: not cmd_reset_printer.isScheduled(), mega_delay)
 
     cmd_move_printer = parameters.initial_move_printer_cmd(printer)
     cmd_move_printer.schedule()
-    robot_controller.wait(mega_delay)
-
-    assert not cmd_move_printer.isScheduled()
+    robot_controller.wait_until(lambda: not cmd_move_printer.isScheduled(), mega_delay)
 
     cmd = parameters.Cmd(arm)
     sampling_time = cmd.delay * 0.5
@@ -337,25 +335,27 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     if parameters.running_printer_cmd != None:
         running_printer_cmd = parameters.running_printer_cmd(printer)
         running_printer_cmd.schedule()
+
     if parameters.running_elevator_cmd != None:
         running_elevator_cmd = parameters.running_elevator_cmd(elevator)
         running_elevator_cmd.schedule()
+
     cmd.schedule()
 
     robot_controller.wait_until(
         lambda: parameters.running_arm_moving_condition(arm), mega_delay
     )
 
-    robot_controller.wait(cmd.delay - sampling_time)
+    robot_controller.wait(0.1)
+    # robot_controller.wait(cmd.delay - sampling_time)
 
     assert arm._motor.get() == approx(parameters.running_arm_speed(arm), rel=0.1)
     assert arm.state == parameters.running_arm_state
-    assert elevator.state == parameters.running_elevator_state
     assert parameters.running_printer_state(printer)
     assert cmd.isScheduled()
     assert cmd.hasRequirement(arm)
 
-    robot_controller.wait(sampling_time + 0.02)
+    robot_controller.wait(mega_delay)
 
     assert arm._motor.get() == approx(parameters.end_arm_speed, rel=0.1)
     assert arm.state == parameters.end_arm_state

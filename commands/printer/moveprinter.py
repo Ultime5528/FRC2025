@@ -1,6 +1,6 @@
 import wpilib
 from commands2 import WaitUntilCommand
-from commands2.cmd import sequence, deadline, race
+from commands2.cmd import sequence, race
 
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from subsystems.printer import Printer
