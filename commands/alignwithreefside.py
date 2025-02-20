@@ -15,22 +15,8 @@ from subsystems.drivetrain import Drivetrain
 
 # Links the sextants to the corresponding AprilTag ID for each reef
 tag_id = {
-    DriverStation.Alliance.kBlue: {
-        0: 21,
-        1: 20,
-        2: 19,
-        3: 18,
-        4: 17,
-        5: 22
-    },
-    DriverStation.Alliance.kRed: {
-        0: 7,
-        1: 8,
-        2: 9,
-        3: 10,
-        4: 11,
-        5: 6
-    }
+    DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
+    DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
 }
 
 
@@ -58,21 +44,31 @@ def getSextantFromPosition(robot_position: Pose2d, hexagon_position: Pose2d) -> 
 
 reef_centers = {
     DriverStation.Alliance.kBlue: Pose2d(4.56, 4.03, 0),
-    DriverStation.Alliance.kRed: Pose2d(13.04, 4.03, 0)
+    DriverStation.Alliance.kRed: Pose2d(13.04, 4.03, 0),
 }
+
 
 class AlignWithReefSide(SequentialCommandGroup):
     def __init__(self, drivetrain: Drivetrain):
         super().__init__(
-            DeferredCommand(lambda: AutoBuilder.pathfindToPose(AprilTagFieldLayout(r"C:\Users\First\Desktop\clone\FRC2025\2025-reefscape-andymark.json").getTagPose(tag_id[DriverStation.getAlliance()][
-                                                                        getSextantFromPosition(
-                                                                            drivetrain.getPose(),
-                                                                            reef_centers[
-                                                                                DriverStation.getAlliance()])]).toPose2d().rotateBy(
-                Rotation2d.fromDegrees(180)),
-                                       PathConstraints(
-                                           3, 4, degreesToRadians(540), degreesToRadians(720)
-                                       )), drivetrain)
+            DeferredCommand(
+                lambda: AutoBuilder.pathfindToPose(
+                    AprilTagFieldLayout(
+                        r"C:\Users\First\Desktop\clone\FRC2025\2025-reefscape-andymark.json"
+                    )
+                    .getTagPose(
+                        tag_id[DriverStation.getAlliance()][
+                            getSextantFromPosition(
+                                drivetrain.getPose(),
+                                reef_centers[DriverStation.getAlliance()],
+                            )
+                        ]
+                    )
+                    .toPose2d()
+                    .rotateBy(Rotation2d.fromDegrees(180)),
+                    PathConstraints(3, 4, degreesToRadians(540), degreesToRadians(720)),
+                ),
+                drivetrain,
+            )
         )
         self.addRequirements(drivetrain)
-
