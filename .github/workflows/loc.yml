@@ -15,7 +15,7 @@ jobs:
         with:
           debug: true
           directory: ./
-          patterns: '*.py'
+          patterns: '**/*.py'
           badge: ./output/badge.svg
 
       - name: Print the output
