@@ -12,6 +12,10 @@ from robotpy_apriltag import AprilTagFieldLayout
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d
 
+from commands.arm.retractarm import RetractArm
+from commands.elevator.moveelevator import MoveElevator
+from commands.printer.moveprinter import MovePrinter
+from modules.hardware import HardwareModule
 from ultime.module import Module
 
 
@@ -73,7 +77,7 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
 
 
 class AutonomousModule(Module):
-    def __init__(self):
+    def __init__(self, hardware: HardwareModule):
         super().__init__()
 
         self.auto_command: Optional[commands2.Command] = None
@@ -82,6 +86,8 @@ class AutonomousModule(Module):
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
+
+        self.hardware = hardware
 
         self.tag_field = AprilTagFieldLayout(r"C:\Users\First\Desktop\clone\FRC2025\2025-reefscape-andymark.json")
 

@@ -14,19 +14,14 @@ from wpimath.units import degreesToRadians
 from modules.autonomous import AutonomousModule
 from subsystems.drivetrain import Drivetrain
 
-class AlignWithReefSide(SequentialCommandGroup):
+class AlignWithReefSide(DeferredCommand):
     def __init__(self, drivetrain: Drivetrain, autonomous: AutonomousModule):
-        super().__init__()
-        self.autonomous = autonomous
-        self.drivetrain = drivetrain
-        self.addRequirements(drivetrain)
-
-    def initialize(self):
-        AutoBuilder.pathfindToPose(
-            self.autonomous.getTagPoseToAlign(),
-            PathConstraints(
-                3.0, 4.0,
-                degreesToRadians(540), degreesToRadians(720)
-            )
+        super().__init__(
+            lambda: AutoBuilder.pathfindToPose(
+                self.autonomous.getTagPoseToAlign(),
+                PathConstraints(
+                    3.0, 4.0,
+                    degreesToRadians(540), degreesToRadians(720)
+                )
+            ), self._hardware.drivetrain
         )
-

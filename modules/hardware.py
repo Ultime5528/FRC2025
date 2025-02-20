@@ -1,5 +1,6 @@
 import commands2
 from commands2.button import Trigger
+from pathplannerlib.pathfinding import Pathfinding
 
 from commands.claw.loadcoral import LoadCoral
 from commands.drivetrain.drive import DriveField
@@ -16,6 +17,9 @@ from ultime.subsystem import Subsystem
 
 
 class HardwareModule(Module):
+    def robotInit(self) -> None:
+        Pathfinding.ensureInitialized()
+
     def __init__(self):
         super().__init__()
         self.controller = commands2.button.CommandXboxController(0)
