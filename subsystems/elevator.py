@@ -33,9 +33,9 @@ class Elevator(Subsystem):
     speed_down = autoproperty(-0.1)
     speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
-    height_max = autoproperty(2.0)
-    height_maintain = autoproperty(0.1)
-    height_lower_zone = autoproperty(0.4)
+    height_max = autoproperty(1.37)
+    height_maintain = autoproperty(0.0)
+    height_lower_zone = autoproperty(0.12)
 
     position_conversion_factor = autoproperty(0.00623)
 
@@ -108,11 +108,11 @@ class Elevator(Subsystem):
             and self.isInLowerZone()
             and speed < 0
         ):
-            speed = 0.0
+            speed = self.speed_maintain
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
         elif self.isUp():
-            speed = speed if speed <= 0.0 else 0.0
+            speed = speed if speed <= 0.0 else self.speed_maintain
 
         self._motor.set(speed)
 

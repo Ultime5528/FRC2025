@@ -10,6 +10,7 @@ from wpimath.kinematics import (
     SwerveDrive4Kinematics,
     SwerveModuleState,
 )
+from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
@@ -243,3 +244,11 @@ class Drivetrain(Subsystem):
 
     def getCurrentDrawAmps(self):
         return 0.0
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def noop(_):
+            pass
+
+        builder.addFloatProperty("angle", self.getAngle, noop)
