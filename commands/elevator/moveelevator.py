@@ -15,9 +15,7 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 class MoveElevator(Command):
     def _is_algae_down(drivetrain: Drivetrain):
         alliance = DriverStation.Alliance.kRed
-        sextant = getSextantFromPosition(
-            drivetrain.getPose(), reef_centers[alliance]
-        )
+        sextant = getSextantFromPosition(drivetrain.getPose(), reef_centers[alliance])
         if sextant == 0 or sextant == 2 or sextant == 4:
             algae_is_down_blue = True
         else:
