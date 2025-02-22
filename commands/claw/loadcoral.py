@@ -6,15 +6,14 @@ from ultime.autoproperty import autoproperty
 
 
 class LoadCoral(Command):
-    delay = autoproperty(0.0)
-    speed_left = autoproperty(-0.2)
-    speed_right = autoproperty(0.2)
 
     def __init__(self, claw: Claw):
         super().__init__()
         self.claw = claw
         self.addRequirements(claw)
         self.timer = wpilib.Timer()
+        self.speed_left = load_coral_properties.speed_left
+        self.speed_right = load_coral_properties.speed_right
 
     def initialize(self):
         self.timer.stop()
@@ -38,3 +37,12 @@ class LoadCoral(Command):
         self.timer.stop()
         if not interrupted:
             self.claw.has_coral = True
+
+class _ClassProperties:
+    # Claw Properties #
+    delay = autoproperty(0.0, subtable=LoadCoral.__name__)
+    speed_left = autoproperty(-0.6, subtable=LoadCoral.__name__)
+    speed_right = autoproperty(0.6, subtable=LoadCoral.__name__)
+
+
+load_coral_properties = _ClassProperties()

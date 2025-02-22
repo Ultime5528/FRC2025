@@ -1,13 +1,17 @@
+import pytest
 from _pytest.python_api import approx
 from commands2 import Command
 
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop, drop_properties
-from commands.claw.loadcoral import LoadCoral
+from commands.claw.loadcoral import LoadCoral, load_coral_properties
 from commands.elevator.moveelevator import MoveElevator
+from commands.prepareloading import PrepareLoading
+from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.elevator import Elevator
+from subsystems.printer import Printer
 from ultime.tests import RobotTestController
 
 
@@ -245,3 +249,45 @@ def test_AutoDrop_Level4(robot_controller, robot):
         drop_properties.speed_level_4_left,
         drop_properties.speed_level_4_right,
     )
+@pytest.mark.specific
+def testLoadingDetection(robot_controller: RobotTestController, robot: Robot):
+    arm = robot.hardware.arm
+    claw = robot.hardware.claw
+    climber = robot.hardware.climber
+    elevator = robot.hardware.elevator
+    intake = robot.hardware.intake
+    printer = robot.hardware.printer
+
+    robot_controller.startTeleop()
+
+    cmd = ResetAll(elevator, printer, arm, intake, climber)
+    cmd.schedule()
+
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+
+    cmd = MoveElevator.toLevel4(elevator)
+    cmd.schedule()
+
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+
+    cmd = MovePrinter.toMiddleRight(printer)
+    cmd.schedule()
+
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+
+    claw._sensor.setSimPressed()
+
+    assert not claw.is_at_loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+
+    cmd = PrepareLoading(elevator, arm, printer)
+    cmd.schedule()
+
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+    robot_controller.wait(1.0)
+
+    assert claw.is_at_loading
+    assert claw._motor_right.get() == approx(load_coral_properties.speed_right, rel=0.1)
+    assert claw._motor_left.get() == approx(load_coral_properties.speed_left, rel=0.1)
+
