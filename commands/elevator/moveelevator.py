@@ -1,5 +1,5 @@
 import wpilib
-from commands2 import SelectCommand
+from commands2 import SelectCommand, ConditionalCommand
 from wpilib import DriverStation
 
 from commands.alignwithreefside import getSextantFromPosition, reef_centers
@@ -100,12 +100,12 @@ class MoveElevator(Command):
 
     @classmethod
     def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
-        cmd = SelectCommand(
-            {
-                not cls._is_algae_down(drivetrain): cls.toLevel3Algae(elevator),
-                cls._is_algae_down(drivetrain): cls.toLevel2Algae(elevator),
-            },
-            lambda: elevator.state,
+        cmd = ConditionalCommand(
+
+            cls.toLevel3Algae(elevator),
+            cls.toLevel2Algae(elevator),
+
+            lambda: cls._is_algae_down(drivetrain),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
@@ -113,7 +113,7 @@ class MoveElevator(Command):
         return cmd
 
     def __init__(
-        self, elevator: Elevator, end_position: FloatProperty, new_state: Elevator.State
+            self, elevator: Elevator, end_position: FloatProperty, new_state: Elevator.State
     ):
         super().__init__()
         self.end_position_getter = asCallable(end_position)

@@ -11,6 +11,7 @@ class LoadCoral(Command):
         super().__init__()
         self.claw = claw
         self.addRequirements(claw)
+        self.delay = load_coral_properties.delay
         self.timer = wpilib.Timer()
         self.speed_left = load_coral_properties.speed_left
         self.speed_right = load_coral_properties.speed_right

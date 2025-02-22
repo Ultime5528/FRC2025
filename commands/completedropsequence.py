@@ -1,4 +1,3 @@
-from idlelib.debugobj import SequenceTreeItem
 from typing import Literal
 
 from commands2 import ConditionalCommand, SequentialCommandGroup
