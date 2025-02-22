@@ -6,6 +6,7 @@ from commands2 import CommandScheduler
 from ntcore.util import ntproperty
 from wpilib import RobotController
 
+from commands.diagnostics.elevatordiagnostics import DiagnoseElevator
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -13,7 +14,10 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = []
+        self.elevator_diagnostic = DiagnoseElevator(hardware.elevator)
+        self.components_tests: List[commands2.Command] = [
+            self.elevator_diagnostic,
+        ]
 
         self._hardware = proxy(hardware)
         self._module_list = proxy(module_list)

@@ -58,7 +58,7 @@ class DIO:
 
 
 class PDP:
-    pass
+    current_elevator_motor = 1  # Not Yet Defined
 
 
 class Analog:
