@@ -1,7 +1,5 @@
 import commands2
 import wpilib
-from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.pathfinding import Pathfinding
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm

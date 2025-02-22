@@ -1,7 +1,6 @@
 import wpilib
 from commands2 import SelectCommand
-from wpilib import DriverStation, RobotBase
-from wpimath.geometry import Pose2d
+from wpilib import DriverStation
 
 from commands.alignwithreefside import getSextantFromPosition, reef_centers
 from subsystems.arm import Arm

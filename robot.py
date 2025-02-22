@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import wpilib
-from pathplannerlib.pathfinding import Pathfinding
 
 from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
