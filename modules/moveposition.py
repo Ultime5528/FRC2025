@@ -9,7 +9,7 @@ class MovePositionPrinterModule(Module):
         super().__init__()
         self.claw = claw
         self.printer = printer
-        self.cmd = MovePrinter.toRight(self.printer)
+        self.cmd = MovePrinter.toMiddleRight(self.printer)
 
     def robotPeriodic(self) -> None:
         if self.claw.has_coral:
