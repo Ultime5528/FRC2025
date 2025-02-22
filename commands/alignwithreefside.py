@@ -71,7 +71,7 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    pose_offset = autoproperty(0.0)
+    pose_offset = autoproperty(Drivetrain.length/2)
 
     def __init__(self, hardware: HardwareModule):
         super().__init__(
@@ -96,7 +96,16 @@ class AlignWithReefSide(DeferredCommand):
 
     @staticmethod
     def offsetTagPositions(tag_pos: Pose2d, offset_from_center: float):
-        tag_vector: Transform2d = (tag_pos - reef_centers[DriverStation.getAlliance()])
-        offset_vector: Translation2d = Translation2d(offset_from_center, tag_vector.rotation())
-        offset_tag = tag_vector.translation() + offset_vector + reef_centers[DriverStation.getAlliance()].translation()
-        return Pose2d(offset_tag, tag_vector.rotation())
+        # Get vector from reef center to tag position
+        tag_vector: Translation2d = (tag_pos - reef_centers[DriverStation.getAlliance()]).translation()
+
+        # Convert to unit vector by dividing by magnitude
+        vector_magnitude = math.sqrt(tag_vector.X() ** 2 + tag_vector.Y() ** 2)
+        unit_vector = Transform2d(tag_vector.X() / vector_magnitude, tag_vector.Y() / vector_magnitude, 0)
+
+        # Scale unit vector by (original magnitude + offset)
+        end_vector = unit_vector * (vector_magnitude + offset_from_center)
+        reef_center = reef_centers[DriverStation.getAlliance()]
+        return Pose2d(end_vector.X() + reef_center.X(),
+                      end_vector.Y() + reef_center.Y(),
+                      tag_vector.angle().rotateBy(Rotation2d.fromDegrees(180)))
