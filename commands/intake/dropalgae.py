@@ -10,11 +10,15 @@ from ultime.command import ignore_requirements
 @ignore_requirements(["intake"])
 class DropAlgae(SequentialCommandGroup):
     def __init__(self, intake: Intake):
-        super().__init__(_DropAlgae(intake), MoveIntake.toRetracted(intake))
+        super().__init__(
+            MoveIntake.toDrop(intake),
+            _DropAlgae(intake),
+            MoveIntake.toRetracted(intake),
+        )
 
 
 class _DropAlgae(Command):
-    delay = autoproperty(3.0, subtable=DropAlgae.__name__)
+    delay = autoproperty(1.0, subtable=DropAlgae.__name__)
 
     def __init__(self, intake: Intake):
         super().__init__()

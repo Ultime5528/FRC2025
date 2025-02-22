@@ -144,7 +144,7 @@ def test_movePrinter_toLoading(robot_controller: RobotTestController, robot: Rob
 
     assert robot.hardware.printer._motor.get() == approx(0.0)
     assert robot.hardware.printer.getPosition() == approx(
-        move_printer_properties.position_loading, rel=0.05
+        move_printer_properties.position_loading, abs=0.02
     )
 
 

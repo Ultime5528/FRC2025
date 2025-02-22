@@ -12,7 +12,6 @@ from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
-from modules.vision import VisionModule
 from ultime.modulerobot import ModuleRobot
 
 
@@ -33,7 +32,7 @@ class Robot(ModuleRobot):
         self.property_save_checker = PropertySaveCheckerModule()
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
-        self.vision = VisionModule()
+        # self.vision = VisionModule()
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
@@ -46,7 +45,7 @@ class Robot(ModuleRobot):
             self.diagnostics,
             self.logging,
             self.property_save_checker,
-            self.vision,
+            # self.vision,
             self.arm_collision,
             self.coral_retraction,
             # self.battery_sim,  # Current becomes so low, robot stops working

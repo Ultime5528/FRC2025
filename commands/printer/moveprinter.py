@@ -1,10 +1,11 @@
 import wpilib
-from commands2.cmd import sequence
+from commands2 import WaitUntilCommand
+from commands2.cmd import sequence, race
 
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
-from ultime.command import Command
+from ultime.command import Command, WaitCommand
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
@@ -132,27 +133,41 @@ class _MovePrinterSetpoint(Command):
 class _MovePrinterWithSensor(Command):
     @staticmethod
     def left(printer: Printer):
-        cmd = ManualMovePrinter.left(printer).until(lambda: printer.seesReef())
+        cmd = race(
+            sequence(
+                WaitUntilCommand(lambda: printer.seesReef()),
+                WaitCommand(lambda: move_printer_properties.delay_reef),
+            ),
+            ManualMovePrinter.left(printer),
+        )
         return cmd
 
     @staticmethod
     def right(printer: Printer):
-        cmd = ManualMovePrinter.right(printer).until(lambda: printer.seesReef())
+        cmd = race(
+            sequence(
+                WaitUntilCommand(lambda: printer.seesReef()),
+                WaitCommand(lambda: move_printer_properties.delay_reef),
+            ),
+            ManualMovePrinter.right(printer),
+        )
         return cmd
 
 
 class _ClassProperties:
     position_left = autoproperty(0.4, subtable=MovePrinter.__name__)
-    position_middle = autoproperty(0.2, subtable=MovePrinter.__name__)
+    position_middle = autoproperty(0.24, subtable=MovePrinter.__name__)
     position_right = autoproperty(0.0, subtable=MovePrinter.__name__)
-    position_loading = autoproperty(0.05, subtable=MovePrinter.__name__)
+    position_loading = autoproperty(0.0, subtable=MovePrinter.__name__)
 
-    position_middle_left = autoproperty(0.3, subtable=MovePrinter.__name__)
-    position_middle_right = autoproperty(0.2, subtable=MovePrinter.__name__)
+    position_middle_left = autoproperty(0.22, subtable=MovePrinter.__name__)
+    position_middle_right = autoproperty(0.18, subtable=MovePrinter.__name__)
 
     speed_min = autoproperty(0.2, subtable=MovePrinter.__name__)
-    speed_max = autoproperty(0.4, subtable=MovePrinter.__name__)
-    accel = autoproperty(0.01, subtable=MovePrinter.__name__)
+    speed_max = autoproperty(1.0, subtable=MovePrinter.__name__)
+    accel = autoproperty(6.5, subtable=MovePrinter.__name__)
+
+    delay_reef = autoproperty(0.5, subtable=MovePrinter.__name__)
 
 
 move_printer_properties = _ClassProperties()

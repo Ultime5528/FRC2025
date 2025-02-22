@@ -28,13 +28,13 @@ class Printer(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.5)
-    left = autoproperty(0.42)
+    speed = autoproperty(0.2)
+    left = autoproperty(0.4)
     right = autoproperty(-0.01)
-    middle_zone_left = autoproperty(0.3)
-    middle_zone_right = autoproperty(0.1)
+    middle_zone_left = autoproperty(0.37)
+    middle_zone_right = autoproperty(0.15)
 
-    position_conversion_factor = autoproperty(0.002)
+    position_conversion_factor = autoproperty(0.0042)
 
     def __init__(self):
         super().__init__()

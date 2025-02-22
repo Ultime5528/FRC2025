@@ -27,7 +27,7 @@ def test_settings(robot: Robot):
     assert (
         climber._motor.configAccessor.getIdleMode() == SparkBaseConfig.IdleMode.kBrake
     )
-    assert climber._motor.configAccessor.getSmartCurrentLimit() == 30
+    assert climber._motor.configAccessor.getSmartCurrentLimit() == 40
 
 
 def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
@@ -37,13 +37,13 @@ def test_climber_ready(robot_controller: RobotTestController, robot: Robot):
     cmd = ReadyClimber(climber)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
+    robot_controller.wait(0.05)
 
     assert climber._motor.get() > 0.0
 
-    robot_controller.wait_until(lambda: climber.state == Climber.State.Ready, 4.0)
+    robot_controller.wait_until(lambda: climber.state == Climber.State.Ready, 10.0)
 
-    assert climber.getPosition() == approx(45.0, abs=1.0)
+    assert climber.getPosition() == approx(cmd.position, abs=1.0)
     assert climber.state == Climber.State.Ready
     assert climber._motor.get() == 0.0
 

@@ -7,7 +7,7 @@ from wpilib.simulation import SimDeviceSim
 from wpimath.geometry import Rotation2d
 from wpiutil import Sendable, SendableBuilder
 
-from ultime.autoproperty import defaultSetter, autoproperty
+from ultime.autoproperty import autoproperty
 
 
 class AbstractSendableMetaclass(type(ABC), type(Sendable)):
@@ -45,10 +45,10 @@ class Gyro(AbstractSendable):
     def getRotation2d(self):
         return Rotation2d.fromDegrees(self.getAngle())
 
-    def initSendable(self, builder: SendableBuilder) -> None:
-        super().initSendable(builder)
-        builder.addDoubleProperty("angle", self.getAngle, defaultSetter)
-        builder.addDoubleProperty("pitch", self.getPitch, defaultSetter)
+    # def initSendable(self, builder: SendableBuilder) -> None:
+    #     super().initSendable(builder)
+    #     builder.addDoubleProperty("angle", self.getAngle, defaultSetter)
+    #     builder.addDoubleProperty("pitch", self.getPitch, defaultSetter)
 
 
 class NavX(Gyro):
@@ -99,7 +99,11 @@ class ADIS16470(Gyro):
     pitch_offset = autoproperty(4.1)
 
     def __init__(self):
-        self.gyro = wpilib.ADIS16470_IMU()
+        self.gyro = wpilib.ADIS16470_IMU(
+            wpilib.ADIS16470_IMU.IMUAxis.kY,
+            wpilib.ADIS16470_IMU.IMUAxis.kZ,
+            wpilib.ADIS16470_IMU.IMUAxis.kX,
+        )
         super().__init__()
         gyro_sim_device = SimDeviceSim("Gyro:ADIS16470[0]")
         self._gyro_sim_angle = gyro_sim_device.getDouble("gyro_angle_z")
@@ -124,6 +128,24 @@ class ADIS16470(Gyro):
     def calibrate(self):
         if wpilib.RobotBase.isReal():
             self.gyro.calibrate()
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def noop(_):
+            pass
+
+        builder.addFloatProperty(
+            "yaw", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw), noop
+        )
+        builder.addFloatProperty(
+            "pitch",
+            lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch),
+            noop,
+        )
+        builder.addFloatProperty(
+            "roll", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll), noop
+        )
 
 
 class ADXRS(Gyro):

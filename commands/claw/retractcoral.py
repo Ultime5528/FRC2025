@@ -6,9 +6,9 @@ from ultime.command import Command
 
 
 class RetractCoral(Command):
-    speed_left = autoproperty(0.25)
-    speed_right = autoproperty(-0.25)
-    delay = autoproperty(0.2)
+    speed_left = autoproperty(0.5)
+    speed_right = autoproperty(-0.5)
+    delay = autoproperty(0.25)
 
     def __init__(self, claw: Claw):
         super().__init__()
