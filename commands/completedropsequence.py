@@ -58,7 +58,7 @@ class CompleteDropSequence(SequentialCommandGroup):
             ),
             ConditionalCommand(
                 SequentialCommandGroup(
-                    MoveElevator.toAlgae(elevator, arm, drivetrain),
+                    # MoveElevator.toAlgae(elevator, arm, drivetrain),
                     DriveToPoses.back(drivetrain, 1),
                     RetractArm(arm),
                     PrepareLoading(elevator, arm, printer),

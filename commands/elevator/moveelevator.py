@@ -96,17 +96,17 @@ class MoveElevator(Command):
         cmd.setName(cmd.getName() + ".toLoading")
         return cmd
 
-    @classmethod
-    def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
-        cmd = ConditionalCommand(
-            cls.toLevel3Algae(elevator),
-            cls.toLevel2Algae(elevator),
-            lambda: cls._is_algae_down(drivetrain),
-        )
-
-        cmd.setName(cmd.getName() + ".toAlgae")
-
-        return cmd
+    # @classmethod
+    # def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
+    #     cmd = ConditionalCommand(
+    #         cls.toLevel3Algae(elevator),
+    #         cls.toLevel2Algae(elevator),
+    #         lambda: cls._is_algae_down(drivetrain) == True,
+    #     )
+    #
+    #     cmd.setName(cmd.getName() + ".toAlgae")
+    #
+    #     return cmd
 
     def __init__(
         self, elevator: Elevator, end_position: FloatProperty, new_state: Elevator.State
