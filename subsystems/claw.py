@@ -16,6 +16,7 @@ class Claw(Subsystem):
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
         self._load_command = LoadCoral(self)
         self.has_coral = False
+        self.is_at_loading = False
         self.is_coral_retracted = False
 
     def stop(self):
@@ -32,7 +33,7 @@ class Claw(Subsystem):
         return self._sensor.isPressed()
 
     def periodic(self) -> None:
-        if self.seesObject() and not self.has_coral:
+        if self.seesObject() and not self.has_coral and self.is_at_loading:
             self._load_command.schedule()
 
     def initSendable(self, builder: SendableBuilder) -> None:
@@ -45,6 +46,7 @@ class Claw(Subsystem):
         builder.addFloatProperty("motor_right", self._motor_right.get, noop)
         builder.addBooleanProperty("sees_object", self.seesObject, noop)
         builder.addBooleanProperty("has_coral", lambda: self.has_coral, noop)
+        builder.addBooleanProperty("is_at_loading", lambda: self.has_coral, noop)
         builder.addBooleanProperty(
             "is_coral_retracted", lambda: self.is_coral_retracted, noop
         )
