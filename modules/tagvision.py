@@ -6,7 +6,7 @@ from ultime.vision import AbsoluteVision, VisionMode
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
 robot_to_camera_offset = wpimath.geometry.Transform3d(
-    wpimath.geometry.Translation3d(0.0, 0.0, 0.0),
+    wpimath.geometry.Translation3d(0.35, -0.098, 0.236),
     wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
 )
 
