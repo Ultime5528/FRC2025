@@ -7,7 +7,7 @@ from ultime.autoproperty import autoproperty
 
 
 class DiagnoseElevator(Command):
-    time_window = autoproperty(2.0)
+    time_window = autoproperty(1.0)
 
     def __init__(self, elevator: Elevator):
         super().__init__()
