@@ -121,7 +121,7 @@ class DashboardModule(Module):
 
 
 def putCommandOnDashboard(
-        sub_table: str, cmd: commands2.Command, name: str = None, suffix: str = " commands"
+    sub_table: str, cmd: commands2.Command, name: str = None, suffix: str = " commands"
 ) -> commands2.Command:
     if not isinstance(sub_table, str):
         raise ValueError(

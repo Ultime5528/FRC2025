@@ -36,14 +36,10 @@ class AutonomousModule(Module):
 
         self.hardware = hardware
 
-        self.tag_field = AprilTagFieldLayout(r"C:\Users\First\Desktop\clone\FRC2025\2025-reefscape-andymark.json")
-
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
-
-
 
     def autonomousInit(self):
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
