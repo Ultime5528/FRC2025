@@ -12,7 +12,6 @@ from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetection
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
-from modules.vision import VisionModule
 from ultime.modulerobot import ModuleRobot
 
 
@@ -48,7 +47,7 @@ class Robot(ModuleRobot):
             self.diagnostics,
             self.logging,
             self.property_save_checker,
-            #self.vision,
+            # self.vision,
             self.arm_collision,
             self.coral_retraction,
             self.loading_detection,
