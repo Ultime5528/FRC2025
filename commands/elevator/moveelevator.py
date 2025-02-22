@@ -1,7 +1,10 @@
 import wpilib
 from commands2 import SelectCommand
+from wpilib import DriverStation
 
+from commands.alignwithreefside import getSextantFromPosition, reef_centers
 from subsystems.arm import Arm
+from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 from ultime.command import Command, with_timeout
@@ -10,6 +13,21 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 @with_timeout(10.0)
 class MoveElevator(Command):
+    def _is_algae_down(drivetrain: Drivetrain):
+        alliance = DriverStation.Alliance.kRed
+        sextant = getSextantFromPosition(
+            drivetrain.getPose(), reef_centers[alliance]
+        )
+        if sextant == 0 or sextant == 2 or sextant == 4:
+            algae_is_down_blue = True
+        else:
+            algae_is_down_blue = False
+
+        if alliance == alliance.kBlue:
+            return algae_is_down_blue
+        else:
+            return not algae_is_down_blue
+
     @classmethod
     def toLevel1(cls, elevator: Elevator):
         cmd = cls(
@@ -81,11 +99,11 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def toAlgae(cls, elevator: Elevator, arm: Arm):
+    def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
-                Elevator.State.Level4: cls.toLevel3Algae(elevator),
-                Elevator.State.Level3: cls.toLevel2Algae(elevator),
+                not cls._is_algae_down(drivetrain): cls.toLevel3Algae(elevator),
+                cls._is_algae_down(drivetrain): cls.toLevel2Algae(elevator),
             },
             lambda: elevator.state,
         )
