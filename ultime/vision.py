@@ -1,12 +1,11 @@
 from enum import Enum, auto
 from typing import List
 from typing import Optional
-
 from photonlibpy import PhotonPoseEstimator, PoseStrategy
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
-from wpimath.geometry import Transform3d
+from wpimath.geometry import Transform3d, Pose3d, Pose2d
 
 from ultime.module import Module
 
@@ -73,7 +72,7 @@ class AbsoluteVision(Vision):
         else:
             return None
 
-    def getEstimatedPose2D(self):
+    def getEstimatedPose2D(self) -> Pose2d:
         if self.estimated_pose:
             return self.estimated_pose.estimatedPose.toPose2d()
         else:
@@ -95,5 +94,11 @@ class AbsoluteVision(Vision):
         def noop(x):
             pass
 
+        def _pose():
+            if self.getEstimatedPose2D() is not None:
+                return [self.getEstimatedPose2D().X(), self.getEstimatedPose2D().Y(), self.getEstimatedPose2D().rotation().degrees()]
+            else:
+                return [0.0]
+
+        builder.addFloatArrayProperty("estimatedPose", lambda: _pose(), noop)
         builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
-        # builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
