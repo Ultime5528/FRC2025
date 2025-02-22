@@ -3,7 +3,6 @@ from typing import List
 
 import commands2
 from commands2 import CommandScheduler
-from ntcore.util import ntproperty
 from wpilib import RobotController
 
 from commands.diagnostics.elevatordiagnostics import DiagnoseElevator
@@ -23,9 +22,6 @@ class DiagnosticsModule(Module):
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
-
-    def robotInit(self) -> None:
-        ntproperty("/Diagnostics/Ready", True)
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
@@ -57,5 +53,6 @@ class DiagnosticsModule(Module):
             else:
                 return []
 
+        builder.addBooleanProperty("Ready", lambda: True, noop)
         builder.addStringArrayProperty("Components", getComponentsNames, noop)
-        builder.addFloatArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
+        builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
