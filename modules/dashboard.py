@@ -1,6 +1,7 @@
 import commands2
 import wpilib
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -33,6 +34,8 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
+
         """
         Elevator
         """
@@ -47,7 +50,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard(
-            "Elevator", MoveElevator.toAlgae(hardware.elevator, hardware.arm)
+            "Elevator",
+            MoveElevator.toAlgae(hardware.elevator, hardware.arm, hardware.drivetrain),
         )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 

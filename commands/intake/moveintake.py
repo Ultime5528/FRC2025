@@ -27,6 +27,16 @@ class MoveIntake(Command):
         cmd.setName(cmd.getName() + ".toRetracted")
         return cmd
 
+    @classmethod
+    def toDrop(cls, intake: Intake):
+        cmd = cls(
+            intake,
+            lambda: move_intake_properties.position_drop,
+            Intake.State.Drop,
+        )
+        cmd.setName(cmd.getName() + ".toDrop")
+        return cmd
+
     def __init__(
         self, intake: Intake, end_position: FloatProperty, new_state: Intake.State
     ):
@@ -71,8 +81,9 @@ class MoveIntake(Command):
 
 
 class _ClassProperties:
-    position_extended = autoproperty(75.0, subtable=MoveIntake.__name__)
+    position_extended = autoproperty(85.0, subtable=MoveIntake.__name__)
     position_retracted = autoproperty(0.0, subtable=MoveIntake.__name__)
+    position_drop = autoproperty(30.0, subtable=MoveIntake.__name__)
 
     speed_min = autoproperty(0.4, subtable=MoveIntake.__name__)
     speed_max = autoproperty(1.0, subtable=MoveIntake.__name__)

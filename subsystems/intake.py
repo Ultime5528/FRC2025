@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 import wpilib
 from wpilib import VictorSP, RobotBase
-from wpilib.simulation import PWMSim, EncoderSim, AnalogInputSim
+from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
@@ -17,6 +17,7 @@ class Intake(Subsystem):
         Moving = auto()
         Extended = auto()
         Retracted = auto()
+        Drop = auto()
 
     speed_pivot = autoproperty(0.3)
     speed_grab = autoproperty(0.8)
@@ -40,7 +41,9 @@ class Intake(Subsystem):
         )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
-        self._grab_sensor = wpilib.AnalogInput(ports.Analog.intake_grab_sensor)
+        self._grab_switch = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.intake_switch_grab
+        )
 
         self.addChild("pivot_motor", self._pivot_motor)
         self.addChild("grab_motor", self._grab_motor)
@@ -56,7 +59,6 @@ class Intake(Subsystem):
             self._sim_encoder = EncoderSim(self._pivot_encoder)
             self._sim_pos_initial = 0.3
             self._sim_pos = self._sim_pos_initial
-            self._sim_grab_sensor = AnalogInputSim(self._grab_sensor)
 
     def periodic(self) -> None:
         if not self.hasReset():
@@ -116,7 +118,7 @@ class Intake(Subsystem):
         return self._pivot_switch.isPressed()
 
     def hasAlgae(self):
-        return self._grab_sensor.getVoltage() >= self.threshold_grab
+        return self._grab_switch.isPressed()
 
     def getPivotMotorInput(self):
         return self._pivot_motor.get()
@@ -144,9 +146,5 @@ class Intake(Subsystem):
         builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("hasAlgae", self.hasAlgae, noop)
-        builder.addFloatProperty("grab_voltage", self._grab_sensor.getVoltage, noop)
-        builder.addFloatProperty(
-            "grab_voltage_average", self._grab_sensor.getAverageVoltage, noop
-        )
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)
