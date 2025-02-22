@@ -158,7 +158,7 @@ class _ClassProperties:
     position_left = autoproperty(0.4, subtable=MovePrinter.__name__)
     position_middle = autoproperty(0.24, subtable=MovePrinter.__name__)
     position_right = autoproperty(0.0, subtable=MovePrinter.__name__)
-    position_loading = autoproperty(0.05, subtable=MovePrinter.__name__)
+    position_loading = autoproperty(0.0, subtable=MovePrinter.__name__)
 
     position_middle_left = autoproperty(0.22, subtable=MovePrinter.__name__)
     position_middle_right = autoproperty(0.18, subtable=MovePrinter.__name__)
