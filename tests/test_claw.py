@@ -1,4 +1,3 @@
-import pytest
 from _pytest.python_api import approx
 from commands2 import Command
 
@@ -11,7 +10,6 @@ from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.elevator import Elevator
-from subsystems.printer import Printer
 from ultime.tests import RobotTestController
 
 
@@ -28,9 +26,7 @@ def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
     cmd = Drop.atLevel1(robot.hardware.claw)
 
     motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
-    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
-        0.0
-    )
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(0.0)
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
     assert robot.hardware.claw._motor_left.get() == approx(0.0)
@@ -139,40 +135,6 @@ def _testDropLevelCommon(
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
 
-
-def testLoadCoral(
-    robot_controller: RobotTestController,
-    robot: Robot,
-):
-    robot_controller.startTeleop()
-    claw = robot.hardware.claw
-
-    claw._sensor.setSimUnpressed()
-
-    assert not claw.has_coral
-
-    claw._sensor.setSimPressed()
-    robot_controller.wait(1.0)
-    assert claw._load_command.isScheduled()
-
-    robot_controller.wait(1.0)
-    claw._sensor.setSimUnpressed()
-
-    robot_controller.wait_until(lambda: not claw._load_command.isScheduled(), 5.0)
-
-    assert claw.has_coral
-    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
-    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
-
-    cmd = LoadCoral(claw)
-    cmd.schedule()
-
-    robot_controller.wait(1.0)
-
-    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
-    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
-
-
 def common_test_autodrop(
     robot_controller: RobotTestController,
     robot: Robot,
@@ -249,7 +211,6 @@ def test_AutoDrop_Level4(robot_controller, robot):
         drop_properties.speed_level_4_left,
         drop_properties.speed_level_4_right,
     )
-@pytest.mark.specific
 def testLoadingDetection(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
     claw = robot.hardware.claw
@@ -290,4 +251,13 @@ def testLoadingDetection(robot_controller: RobotTestController, robot: Robot):
     assert claw.is_at_loading
     assert claw._motor_right.get() == approx(load_coral_properties.speed_right, rel=0.1)
     assert claw._motor_left.get() == approx(load_coral_properties.speed_left, rel=0.1)
+
+    claw._sensor.setSimUnpressed()
+
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+
+    assert claw.is_at_loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert claw.has_coral
 
