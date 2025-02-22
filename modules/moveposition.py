@@ -12,5 +12,5 @@ class MovePositionPrinterModule(Module):
         self.cmd = MovePrinter.toMiddleRight(self.printer)
 
     def robotPeriodic(self) -> None:
-        if self.claw.has_coral:
+        if self.claw.has_coral and self.printer.state != self.printer.State.MiddleRight:
             self.cmd.schedule()
