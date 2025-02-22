@@ -33,9 +33,9 @@ class Elevator(Subsystem):
     speed_down = autoproperty(-0.1)
     speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
-    height_max = autoproperty(2.0)
-    height_maintain = autoproperty(0.1)
-    height_lower_zone = autoproperty(0.4)
+    height_max = autoproperty(1.37)
+    height_maintain = autoproperty(0.0)
+    height_lower_zone = autoproperty(0.12)
 
     position_conversion_factor = autoproperty(0.00623)
 
@@ -45,7 +45,6 @@ class Elevator(Subsystem):
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(30)
         self._config.inverted(False)
-        self._config.encoder.positionConversionFactor(self.position_conversion_factor)
 
         self._switch = Switch(Switch.Type.NormallyClosed, ports.DIO.elevator_switch)
         self._motor = SparkMax(ports.CAN.elevator_motor, SparkMax.MotorType.kBrushless)
@@ -84,7 +83,9 @@ class Elevator(Subsystem):
         distance = (self._motor.get() - gravity) * 0.051
 
         self._sim_height += distance
-        self._sim_encoder.setPosition(self._sim_encoder.getPosition() + distance)
+        self._sim_encoder.setPosition(
+            self._sim_encoder.getPosition() + distance / self.position_conversion_factor
+        )
 
         if self._sim_height <= self.height_min:
             self._switch.setSimPressed()
@@ -102,18 +103,16 @@ class Elevator(Subsystem):
         self.setSpeed(self.speed_down)
 
     def setSpeed(self, speed: float):
-        assert -1.0 <= speed <= 1.0
-
         if (
             self.movement_state == Elevator.MovementState.AvoidLowerZone
             and self.isInLowerZone()
             and speed < 0
         ):
-            speed = 0.0
+            speed = self.speed_maintain
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
         elif self.isUp():
-            speed = speed if speed <= 0.0 else 0.0
+            speed = speed if speed <= 0.0 else self.speed_maintain
 
         self._motor.set(speed)
 
@@ -133,7 +132,9 @@ class Elevator(Subsystem):
         self._offset = reset_value - self._encoder.getPosition()
 
     def getHeight(self):
-        return self._encoder.getPosition() + self._offset
+        return self.position_conversion_factor * (
+            self._encoder.getPosition() + self._offset
+        )
 
     def isInLowerZone(self) -> bool:
         return self.getHeight() <= self.height_lower_zone

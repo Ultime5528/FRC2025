@@ -13,17 +13,17 @@ Order port numbers, ex:
 
 
 class CAN(Immutable):
-    drivetrain_motor_turning_br = 7
-    drivetrain_motor_driving_br = 8
+    drivetrain_motor_turning_br = 6
+    drivetrain_motor_driving_br = 5
 
-    drivetrain_motor_turning_bl = 6
-    drivetrain_motor_driving_bl = 5
+    drivetrain_motor_turning_bl = 1
+    drivetrain_motor_driving_bl = 2
 
-    drivetrain_motor_turning_fl = 1
-    drivetrain_motor_driving_fl = 2
+    drivetrain_motor_turning_fl = 3
+    drivetrain_motor_driving_fl = 4
 
-    drivetrain_motor_turning_fr = 4
-    drivetrain_motor_driving_fr = 3
+    drivetrain_motor_turning_fr = 7
+    drivetrain_motor_driving_fr = 8
 
     elevator_motor = 10
     climber_motor = 9
@@ -53,13 +53,10 @@ class DIO:
     intake_encoder_a = 7
     intake_encoder_b = 8
     intake_switch_pivot = 10
+    intake_switch_grab = 12
 
     climber_switch = 9
 
 
 class PDP:
     pass
-
-
-class Analog:
-    intake_grab_sensor = 0
