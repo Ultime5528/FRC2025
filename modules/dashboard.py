@@ -134,13 +134,21 @@ class DashboardModule(Module):
         putCommandOnDashboard(
             "Group",
             CompleteDropSequence.toLeft(
-                hardware.printer, hardware.arm, hardware.elevator, hardware.drivetrain, hardware.claw
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
             ),
         )
         putCommandOnDashboard(
             "Group",
             CompleteDropSequence.toRight(
-                hardware.printer, hardware.arm, hardware.elevator, hardware.drivetrain, hardware.claw
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
             ),
         )
 

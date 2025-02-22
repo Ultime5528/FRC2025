@@ -15,9 +15,7 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 class MoveElevator(Command):
     def _is_algae_down(drivetrain: Drivetrain):
         alliance = DriverStation.Alliance.kRed
-        sextant = getSextantFromPosition(
-            drivetrain.getPose(), reef_centers[alliance]
-        )
+        sextant = getSextantFromPosition(drivetrain.getPose(), reef_centers[alliance])
         if sextant == 0 or sextant == 2 or sextant == 4:
             algae_is_down_blue = True
         else:
@@ -101,10 +99,8 @@ class MoveElevator(Command):
     @classmethod
     def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
         cmd = ConditionalCommand(
-
             cls.toLevel3Algae(elevator),
             cls.toLevel2Algae(elevator),
-
             lambda: cls._is_algae_down(drivetrain),
         )
 
@@ -113,7 +109,7 @@ class MoveElevator(Command):
         return cmd
 
     def __init__(
-            self, elevator: Elevator, end_position: FloatProperty, new_state: Elevator.State
+        self, elevator: Elevator, end_position: FloatProperty, new_state: Elevator.State
     ):
         super().__init__()
         self.end_position_getter = asCallable(end_position)

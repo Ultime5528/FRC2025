@@ -50,21 +50,42 @@ class ControlModule(Module):
 
         # Coral Drop and Load
         self.hardware.panel_1.button(1).onTrue(
-            CompleteDropSequence.toLeft(self.hardware.printer, self.hardware.arm, self.hardware.elevator,
-                                     self.hardware.drivetrain, self.hardware.claw))
+            CompleteDropSequence.toLeft(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
         AxisTrigger(self.hardware.panel_2, 1, "down").onTrue(
-            CompleteDropSequence.toRight(self.hardware.printer, self.hardware.arm, self.hardware.elevator,
-                                         self.hardware.drivetrain, self.hardware.claw))
+            CompleteDropSequence.toRight(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
         AxisTrigger(self.hardware.panel_2, 0, "up").onTrue(
-            PrepareLoading(self.hardware.elevator, self.hardware.arm, self.hardware.printer))
+            PrepareLoading(
+                self.hardware.elevator, self.hardware.arm, self.hardware.printer
+            )
+        )
 
         # Algae Manipulator
-        AxisTrigger(self.hardware.panel_2, 1, "up").onTrue(GrabAlgae(self.hardware.intake))
+        AxisTrigger(self.hardware.panel_2, 1, "up").onTrue(
+            GrabAlgae(self.hardware.intake)
+        )
         self.hardware.panel_2.button(3).onTrue(DropAlgae(self.hardware.intake))
-        self.hardware.panel_2.button(1).onTrue(MoveIntake.toRetracted(self.hardware.intake))
+        self.hardware.panel_2.button(1).onTrue(
+            MoveIntake.toRetracted(self.hardware.intake)
+        )
 
         # Arm
-        AxisTrigger(self.hardware.panel_2, 0, "down").onTrue(RetractArm(self.hardware.arm))
+        AxisTrigger(self.hardware.panel_2, 0, "down").onTrue(
+            RetractArm(self.hardware.arm)
+        )
         self.hardware.panel_1.button(2).onTrue(ExtendArm(self.hardware.arm))
 
         # Climber
@@ -75,6 +96,12 @@ class ControlModule(Module):
 
         # Extra buttons
         self.hardware.panel_1.button(3).onTrue(
-            ResetAll(self.hardware.elevator, self.hardware.printer, self.hardware.arm, self.hardware.intake,
-                     self.hardware.climber))
+            ResetAll(
+                self.hardware.elevator,
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.intake,
+                self.hardware.climber,
+            )
+        )
         # self.hardware.panel_2.button(1).onTrue()

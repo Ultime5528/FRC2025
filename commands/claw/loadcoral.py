@@ -39,6 +39,7 @@ class LoadCoral(Command):
         if not interrupted:
             self.claw.has_coral = True
 
+
 class _ClassProperties:
     # Claw Properties #
     delay = autoproperty(0.0, subtable=LoadCoral.__name__)

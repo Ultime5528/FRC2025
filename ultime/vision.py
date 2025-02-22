@@ -96,7 +96,11 @@ class AbsoluteVision(Vision):
 
         def _pose():
             if self.getEstimatedPose2D() is not None:
-                return [self.getEstimatedPose2D().X(), self.getEstimatedPose2D().Y(), self.getEstimatedPose2D().rotation().degrees()]
+                return [
+                    self.getEstimatedPose2D().X(),
+                    self.getEstimatedPose2D().Y(),
+                    self.getEstimatedPose2D().rotation().degrees(),
+                ]
             else:
                 return [0.0]
 

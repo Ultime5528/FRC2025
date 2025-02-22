@@ -11,6 +11,7 @@ from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetection
 from modules.logging import LoggingModule
+from modules.moveposition import MovePositionPrinterModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
 from ultime.modulerobot import ModuleRobot
@@ -34,11 +35,14 @@ class Robot(ModuleRobot):
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
         self.loading_detection = LoadingDetection(self.hardware)
-        #self.vision = VisionModule()
+        # self.vision = VisionModule()
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
         self.vision = TagVisionModule(self.hardware.drivetrain)
+        self.moving_position = MovePositionPrinterModule(
+            self.hardware.claw, self.hardware.printer
+        )
 
         self.addModules(
             self.hardware,
@@ -52,5 +56,6 @@ class Robot(ModuleRobot):
             self.arm_collision,
             self.coral_retraction,
             self.loading_detection,
+            self.moving_position,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )

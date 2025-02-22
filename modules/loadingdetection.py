@@ -13,4 +13,7 @@ class LoadingDetection(Module):
         self.printer = hardware.printer
 
     def robotPeriodic(self) -> None:
-        self.claw.is_at_loading = self.printer.state == self.printer.State.Loading and self.elevator.state == self.elevator.State.Loading
+        self.claw.is_at_loading = (
+            self.printer.state == self.printer.State.Loading
+            and self.elevator.state == self.elevator.State.Loading
+        )
