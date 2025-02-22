@@ -11,39 +11,31 @@ from subsystems.printer import Printer
 from ultime.command import ignore_requirements
 
 
-@ignore_requirements(["printer", "claw"])
+@ignore_requirements(["printer", "claw", "elevator"])
 class MoveAndDrop(ConditionalCommand):
     @staticmethod
     def toLeft(printer: Printer, claw: Claw, elevator: Elevator):
-        cmd = MoveAndDrop(
-            printer,
-            claw,
-            elevator,
-            "left"
-        )
+        cmd = MoveAndDrop(printer, claw, elevator, "left")
         cmd.setName(MoveAndDrop.__name__ + ".toLeft")
         return cmd
 
     @staticmethod
     def toRight(printer: Printer, claw: Claw, elevator: Elevator):
-        cmd = MoveAndDrop(
-            printer,
-            claw,
-            elevator,
-            "right"
-        )
+        cmd = MoveAndDrop(printer, claw, elevator, "right")
         cmd.setName(MoveAndDrop.__name__ + ".toRight")
         return cmd
 
-    def __init__(self, printer: Printer, claw: Claw, elevator: Elevator, side: Literal["right", "left"]):
+    def __init__(
+        self,
+        printer: Printer,
+        claw: Claw,
+        elevator: Elevator,
+        side: Literal["right", "left"],
+    ):
         super().__init__(
             SequentialCommandGroup(
-                ScanPrinter.right(printer),
-                AutoDrop(claw, elevator)
+                ScanPrinter.right(printer), AutoDrop(claw, elevator)
             ),
-            SequentialCommandGroup(
-                ScanPrinter.left(printer),
-                AutoDrop(claw, elevator)
-            ),
-            lambda: side == "right"
+            SequentialCommandGroup(ScanPrinter.left(printer), AutoDrop(claw, elevator)),
+            lambda: side == "right",
         )
