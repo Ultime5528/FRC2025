@@ -40,7 +40,7 @@ class ManualMovePrinter(Command):
 
 
 class _ClassProperties:
-    speed = autoproperty(0.4, subtable=ManualMovePrinter.__name__)
+    speed = autoproperty(0.2, subtable=ManualMovePrinter.__name__)
 
 
 manual_move_properties = _ClassProperties()
