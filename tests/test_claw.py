@@ -217,7 +217,6 @@ def test_AutoDrop_Level4(robot_controller, robot):
     )
 
 
-@pytest.mark.specific
 def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
     claw = robot.hardware.claw
