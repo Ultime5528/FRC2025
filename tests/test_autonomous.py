@@ -1,10 +1,8 @@
 from _pytest.python_api import approx
-from commands2 import Command
-from pathplannerlib.auto import AutoBuilder, PathPlannerAuto
+from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 
-from commands.claw.drop import Drop, drop_properties
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator

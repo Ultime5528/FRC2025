@@ -7,7 +7,7 @@ from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
-from pathplannerlib.trajectory import PathPlannerTrajectory, PathPlannerTrajectoryState
+from pathplannerlib.trajectory import PathPlannerTrajectoryState
 from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase, DriverStation
