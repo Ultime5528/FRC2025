@@ -1,10 +1,7 @@
 from commands.arm.extendarm import ExtendArm
-from commands.arm.retractarm import RetractArm
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
-from commands.elevator.resetelevator import ResetElevator
 from commands.printer.moveprinter import MovePrinter
-from commands.printer.resetprinter import ResetPrinterRight
 from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.arm import Arm
@@ -31,14 +28,16 @@ def commun_test_drop_prepare_load(
 
     robot_controller.startTeleop()
 
-    cmd_reset_all = ResetAll(elevator,printer,arm,intake,climber)
+    cmd_reset_all = ResetAll(elevator, printer, arm, intake, climber)
     cmd_reset_all.schedule()
     robot_controller.wait_until(lambda: not cmd_reset_all.isScheduled(), 10.0)
 
     assert move_elevator_properties.position_level2 > elevator.height_lower_zone
     cmd_move_elevator_for_arm = MoveElevator.toLevel2(elevator)
     cmd_move_elevator_for_arm.schedule()
-    robot_controller.wait_until(lambda: not cmd_move_elevator_for_arm.isScheduled(), 10.0)
+    robot_controller.wait_until(
+        lambda: not cmd_move_elevator_for_arm.isScheduled(), 10.0
+    )
 
     if extended:
         cmd_extend_arm = ExtendArm(arm)
@@ -66,7 +65,9 @@ def commun_test_drop_prepare_load(
     cmd_move_printer.schedule()
     robot_controller.wait_until(lambda: not cmd_move_printer.isScheduled(), 10.0)
 
-    cmd_drop_prepare_loading = DropPrepareLoading.left(arm, claw, drivetrain, elevator, printer)
+    cmd_drop_prepare_loading = DropPrepareLoading.left(
+        arm, claw, drivetrain, elevator, printer
+    )
 
     assert not cmd_drop_prepare_loading.isScheduled()
 
@@ -74,13 +75,16 @@ def commun_test_drop_prepare_load(
 
     assert cmd_drop_prepare_loading.isScheduled()
 
-    robot_controller.wait_until(lambda: not cmd_drop_prepare_loading.isScheduled(), 10.0)
+    robot_controller.wait_until(
+        lambda: not cmd_drop_prepare_loading.isScheduled(), 10.0
+    )
 
     assert arm.state == Arm.State.Retracted
     assert printer.state == Printer.State.Loading
     assert elevator.state == Elevator.State.Loading
     assert claw._motor_right.get() == 0.0
     assert claw._motor_left.get() == 0.0
+
 
 def test_left_extended_4(robot_controller: RobotTestController, robot: Robot):
     list_level = [2, 3, 4]
