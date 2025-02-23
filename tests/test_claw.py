@@ -4,7 +4,7 @@ from commands2 import Command
 
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop, drop_properties
-from commands.claw.loadcoral import LoadCoral, load_coral_properties
+from commands.claw.loadcoral import load_coral_properties
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
@@ -27,7 +27,9 @@ def testDropLevel1(robot_controller: RobotTestController, robot: Robot):
     cmd = Drop.atLevel1(robot.hardware.claw)
 
     motor_left_started = not robot.hardware.claw._motor_left.getVoltage() == approx(0.0)
-    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(0.0)
+    motor_right_started = not robot.hardware.claw._motor_right.getVoltage() == approx(
+        0.0
+    )
     no_motor_started = not motor_left_started and not motor_right_started
     assert no_motor_started
     assert robot.hardware.claw._motor_left.get() == approx(0.0)
@@ -136,6 +138,7 @@ def _testDropLevelCommon(
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
     assert not cmd.isScheduled()
 
+
 def common_test_autodrop(
     robot_controller: RobotTestController,
     robot: Robot,
@@ -213,6 +216,7 @@ def test_AutoDrop_Level4(robot_controller, robot):
         drop_properties.speed_level_4_right,
     )
 
+
 @pytest.mark.specific
 def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
@@ -270,7 +274,9 @@ def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     # We are now at loading and the coral is not in the robot yet
     robot_controller.wait_until(lambda: not cmd_prepare_loading.isScheduled(), 10.0)
     assert not cmd_prepare_loading.isScheduled()
-    assert not claw.is_at_loading # The LoadingDetection Module has not been run yet, so we are still not at loading
+    assert (
+        not claw.is_at_loading
+    )  # The LoadingDetection Module has not been run yet, so we are still not at loading
     assert claw._motor_right.get() == approx(0.0, rel=0.1)
     assert claw._motor_left.get() == approx(0.0, rel=0.1)
     assert not claw.has_coral
@@ -304,4 +310,3 @@ def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     assert claw._motor_right.get() == approx(0.0, rel=0.1)
     assert claw._motor_left.get() == approx(0.0, rel=0.1)
     assert claw.has_coral
-
