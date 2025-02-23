@@ -1,8 +1,10 @@
 from abc import abstractmethod
 
+from commands2 import Command
+
 from subsystems.climber import Climber
 from ultime.autoproperty import autoproperty
-from ultime.command import Command, with_timeout
+from ultime.command import with_timeout
 
 
 class MoveClimber(Command):

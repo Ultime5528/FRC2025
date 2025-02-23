@@ -5,8 +5,8 @@ from commands2.cmd import sequence, race
 from commands.printer.manualmoveprinter import ManualMovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
-from ultime.command import Command, WaitCommand
 from ultime.command import Command, with_timeout
+from ultime.command import WaitCommand
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
