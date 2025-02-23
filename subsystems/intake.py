@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 import wpilib
 from wpilib import VictorSP, RobotBase
-from wpilib.simulation import PWMSim, EncoderSim, AnalogInputSim
+from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
@@ -17,11 +17,13 @@ class Intake(Subsystem):
         Moving = auto()
         Extended = auto()
         Retracted = auto()
+        Drop = auto()
 
-    grab_speed = autoproperty(0.3)
+    speed_pivot = autoproperty(0.3)
+    speed_grab = autoproperty(0.8)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
-    position_conversion_factor = autoproperty(0.18)
+    position_conversion_factor = autoproperty(0.445)
 
     def __init__(self):
         super().__init__()
@@ -31,16 +33,17 @@ class Intake(Subsystem):
         self._pivot_encoder = wpilib.Encoder(
             ports.DIO.intake_encoder_a,
             ports.DIO.intake_encoder_b,
-            reverseDirection=False,
+            reverseDirection=True,
         )
 
-        self._pivot_encoder.setDistancePerPulse(self.position_conversion_factor)
         self._pivot_switch = Switch(
             Switch.Type.NormallyClosed, ports.DIO.intake_switch_pivot
         )
 
         self._grab_motor = VictorSP(ports.PWM.intake_motor_grab)
-        self._grab_sensor = wpilib.AnalogInput(ports.Analog.intake_grab_sensor)
+        self._grab_switch = Switch(
+            Switch.Type.NormallyClosed, ports.DIO.intake_switch_grab
+        )
 
         self.addChild("pivot_motor", self._pivot_motor)
         self.addChild("grab_motor", self._grab_motor)
@@ -56,13 +59,13 @@ class Intake(Subsystem):
             self._sim_encoder = EncoderSim(self._pivot_encoder)
             self._sim_pos_initial = 0.3
             self._sim_pos = self._sim_pos_initial
-            self._sim_grab_sensor = AnalogInputSim(self._grab_sensor)
 
     def periodic(self) -> None:
-        if self._prev_is_retracted and not self.isRetracted():
-            self._offset = self.pivot_position_min - self._pivot_encoder.get()
-            self._has_reset = True
-        self._prev_is_retracted = self.isRetracted()
+        if not self.hasReset():
+            if self._prev_is_retracted and not self.isRetracted():
+                self._offset = self.pivot_position_min - self._pivot_encoder.get()
+                self._has_reset = True
+            self._prev_is_retracted = self.isRetracted()
 
     def simulationPeriodic(self) -> None:
         distance = self._pivot_motor.get() * 3
@@ -88,11 +91,17 @@ class Intake(Subsystem):
             speed = 0.0
         self._pivot_motor.set(speed)
 
+    def retract(self):
+        self.setPivotSpeed(-self.speed_pivot)
+
+    def extend(self):
+        self.setPivotSpeed(self.speed_pivot)
+
     def grab(self):
-        self._grab_motor.set(self.grab_speed)
+        self._grab_motor.set(self.speed_grab)
 
     def drop(self):
-        self._grab_motor.set(-1 * self.grab_speed)
+        self._grab_motor.set(-1 * self.speed_grab)
 
     def stopGrab(self):
         self._grab_motor.stopMotor()
@@ -109,7 +118,7 @@ class Intake(Subsystem):
         return self._pivot_switch.isPressed()
 
     def hasAlgae(self):
-        return self._grab_sensor.getVoltage() >= self.threshold_grab
+        return self._grab_switch.isPressed()
 
     def getPivotMotorInput(self):
         return self._pivot_motor.get()
@@ -137,9 +146,5 @@ class Intake(Subsystem):
         builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
         builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
         builder.addBooleanProperty("hasAlgae", self.hasAlgae, noop)
-        builder.addFloatProperty("grab_voltage", self._grab_sensor.getVoltage, noop)
-        builder.addFloatProperty(
-            "grab_voltage_average", self._grab_sensor.getAverageVoltage, noop
-        )
         builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
         builder.addBooleanProperty("isRetracted", self.isRetracted, noop)

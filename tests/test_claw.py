@@ -5,7 +5,7 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop, drop_properties
 from commands.claw.loadcoral import LoadCoral
 from commands.elevator.moveelevator import MoveElevator
-from commands.elevator.resetelevator import ResetElevator
+from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.elevator import Elevator
 from ultime.tests import RobotTestController
@@ -145,22 +145,25 @@ def testLoadCoral(
 
     claw._sensor.setSimUnpressed()
 
-    assert not claw.hasCoralInLoader()
+    assert not claw.has_coral
 
     claw._sensor.setSimPressed()
-    assert claw.hasCoralInLoader()
+    robot_controller.wait(1.0)
+    assert claw._load_command.isScheduled()
 
-    robot_controller.wait(0.1)
+    robot_controller.wait(1.0)
+    claw._sensor.setSimUnpressed()
+
+    robot_controller.wait_until(lambda: not claw._load_command.isScheduled(), 5.0)
+
+    assert claw.has_coral
+    assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
 
     cmd = LoadCoral(claw)
+    cmd.schedule()
 
-    assert robot.hardware.claw._motor_left.get() == approx(cmd.speed_left, rel=0.1)
-    assert robot.hardware.claw._motor_right.get() == approx(cmd.speed_right, rel=0.1)
-
-    claw._sensor.setSimUnpressed()
-    assert not claw.hasCoralInLoader()
-
-    robot_controller.wait(0.05 + cmd.delay)
+    robot_controller.wait(1.0)
 
     assert robot.hardware.claw._motor_left.get() == approx(0.0, rel=0.1)
     assert robot.hardware.claw._motor_right.get() == approx(0.0, rel=0.1)
@@ -177,10 +180,15 @@ def common_test_autodrop(
 
     robot_controller.startTeleop()
 
-    ResetElevator(robot.hardware.elevator).schedule()
-    robot_controller.wait(10)
-
-    assert robot.hardware.elevator.hasReset()
+    reset_all = ResetAll(
+        robot.hardware.elevator,
+        robot.hardware.printer,
+        robot.hardware.arm,
+        robot.hardware.intake,
+        robot.hardware.climber,
+    )
+    reset_all.schedule()
+    robot_controller.wait_until(lambda: not reset_all.schedule(), 30.0)
 
     CreateMoveElevator(robot.hardware.elevator).schedule()
     robot_controller.wait(10)
