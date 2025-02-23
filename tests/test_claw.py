@@ -5,7 +5,7 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop, drop_properties
 from commands.claw.loadcoral import LoadCoral
 from commands.elevator.moveelevator import MoveElevator
-from commands.elevator.resetelevator import ResetElevator
+from commands.resetall import ResetAll
 from robot import Robot
 from subsystems.elevator import Elevator
 from ultime.tests import RobotTestController
@@ -180,10 +180,15 @@ def common_test_autodrop(
 
     robot_controller.startTeleop()
 
-    ResetElevator(robot.hardware.elevator).schedule()
-    robot_controller.wait(10)
-
-    assert robot.hardware.elevator.hasReset()
+    reset_all = ResetAll(
+        robot.hardware.elevator,
+        robot.hardware.printer,
+        robot.hardware.arm,
+        robot.hardware.intake,
+        robot.hardware.climber,
+    )
+    reset_all.schedule()
+    robot_controller.wait_until(lambda: not reset_all.schedule(), 30.0)
 
     CreateMoveElevator(robot.hardware.elevator).schedule()
     robot_controller.wait(10)

@@ -26,11 +26,13 @@ class ResetAll(SequentialCommandGroup):
         climber: Climber,
     ):
         super().__init__(
-            ManualMoveElevator.up(elevator).withTimeout(0.5),
+            parallel(
+                ManualMoveElevator.up(elevator).withTimeout(1.5),
+                ResetPrinterRight(printer),
+            ),
             RetractArm(arm),
             parallel(
                 ResetElevator(elevator),
-                ResetPrinterRight(printer),
                 ResetIntake(intake),
                 ResetClimber(climber),
             ),
