@@ -30,7 +30,7 @@ class LoadCoral(Command):
             self.timer.reset()
 
     def isFinished(self) -> bool:
-        return not self.claw.seesObject() and self.timer.get() >= self.delay
+        return not self.claw.seesObject() and self.timer.get() >= load_coral_properties.delay
 
     def end(self, interrupted: bool):
         self.claw.stop()

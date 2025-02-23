@@ -1,3 +1,4 @@
+import pytest
 from _pytest.python_api import approx
 from commands2 import Command
 
@@ -211,7 +212,9 @@ def test_AutoDrop_Level4(robot_controller, robot):
         drop_properties.speed_level_4_left,
         drop_properties.speed_level_4_right,
     )
-def testLoadingDetection(robot_controller: RobotTestController, robot: Robot):
+
+@pytest.mark.specific
+def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
     claw = robot.hardware.claw
     climber = robot.hardware.climber
@@ -223,39 +226,80 @@ def testLoadingDetection(robot_controller: RobotTestController, robot: Robot):
 
     cmd = ResetAll(elevator, printer, arm, intake, climber)
     cmd.schedule()
-
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
     cmd = MoveElevator.toLevel4(elevator)
     cmd.schedule()
-
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
     cmd = MovePrinter.toMiddleRight(printer)
     cmd.schedule()
-
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
+    # Test that even if the sensors sees something, it won't consider having a coral if it is not at loading
     claw._sensor.setSimPressed()
-
+    assert not claw._load_command.isScheduled()
     assert not claw.is_at_loading
     assert claw._motor_right.get() == approx(0.0, rel=0.1)
     assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert not claw.has_coral
 
-    cmd = PrepareLoading(elevator, arm, printer)
-    cmd.schedule()
+    # Going to loading
+    cmd_prepare_loading = PrepareLoading(elevator, arm, printer)
+    cmd_prepare_loading.schedule()
 
-    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
-    robot_controller.wait(1.0)
+    # Not at loading yet, so even if sensor sees something, it won't consider having a coral if it is not at loading
+    robot_controller.wait(0.02)
+    assert cmd_prepare_loading.isScheduled()
+    assert not claw._load_command.isScheduled()
+    assert not claw.is_at_loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert not claw.has_coral
 
+    # We are going to loading, and at some point the sensor doesn't detect anything
+    robot_controller.wait(0.02)
+    claw._sensor.setSimUnpressed()
+    assert cmd_prepare_loading.isScheduled()
+    assert not claw._load_command.isScheduled()
+    assert not claw.is_at_loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert not claw.has_coral
+
+    # We are now at loading and the coral is not in the robot yet
+    robot_controller.wait_until(lambda: not cmd_prepare_loading.isScheduled(), 10.0)
+    assert not cmd_prepare_loading.isScheduled()
+    assert not claw.is_at_loading # The LoadingDetection Module has not been run yet, so we are still not at loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert not claw.has_coral
+
+    # We are now at loading and a coral is put in the robot
+    # The sensor detects it
+    robot_controller.wait(0.02)
+    claw._sensor.setSimPressed()
+    assert not cmd_prepare_loading.isScheduled()
+    assert not claw._load_command.isScheduled()
+    assert claw.is_at_loading
+    assert claw._motor_right.get() == approx(0.0, rel=0.1)
+    assert claw._motor_left.get() == approx(0.0, rel=0.1)
+    assert not claw.has_coral
+
+    # We are at loading and the sensor stops seeing the coral after the wheels have moved the coral forward
+    robot_controller.wait(0.02)
+    claw._sensor.setSimUnpressed()
+    assert not cmd_prepare_loading.isScheduled()
+    assert claw._load_command.isScheduled()
     assert claw.is_at_loading
     assert claw._motor_right.get() == approx(load_coral_properties.speed_right, rel=0.1)
     assert claw._motor_left.get() == approx(load_coral_properties.speed_left, rel=0.1)
+    assert not claw.has_coral
 
-    claw._sensor.setSimUnpressed()
-
-    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
-
+    # The motors are stopped
+    robot_controller.wait(load_coral_properties.delay + 0.02)
+    assert not cmd_prepare_loading.isScheduled()
+    assert not claw._load_command.isScheduled()
     assert claw.is_at_loading
     assert claw._motor_right.get() == approx(0.0, rel=0.1)
     assert claw._motor_left.get() == approx(0.0, rel=0.1)
