@@ -69,7 +69,7 @@
 | tests/test\_climber.py                  |       90 |        0 |        0 |        0 |    100% |           |
 | tests/test\_common.py                   |        1 |        0 |        0 |        0 |    100% |           |
 | tests/test\_drivetrain.py               |       10 |        0 |        0 |        0 |    100% |           |
-| tests/test\_elevator.py                 |      152 |        0 |        0 |        0 |    100% |           |
+| tests/test\_elevator.py                 |      155 |        0 |        0 |        0 |    100% |           |
 | tests/test\_intake.py                   |       91 |        0 |        0 |        0 |    100% |           |
 | tests/test\_printer.py                  |      147 |        5 |        8 |        3 |     95% |54, 216-217, 256-257 |
 | tests/test\_resetall.py                 |       19 |        0 |        0 |        0 |    100% |           |
@@ -100,7 +100,7 @@
 | ultime/tests/utils.py                   |       60 |       12 |       10 |        0 |     83% |25-26, 37-41, 51-55 |
 | ultime/trapezoidalmotion.py             |      104 |       28 |       42 |        5 |     66% |20, 22, 40-44, 59->exit, 73-91, 110-111, 199-200, 203 |
 | ultime/vision.py                        |       63 |       19 |       18 |        3 |     58% |29-31, 34-40, 43-46, 67->exit, 72, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **4053** |  **557** |  **500** |   **82** | **83%** |           |
+|                               **TOTAL** | **4056** |  **557** |  **500** |   **82** | **83%** |           |
 
 
 ## Setup coverage badge
