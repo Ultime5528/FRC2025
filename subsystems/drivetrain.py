@@ -1,6 +1,7 @@
 import math
 
 import wpilib
+import wpimath
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
@@ -9,6 +10,7 @@ from wpimath.kinematics import (
     ChassisSpeeds,
     SwerveDrive4Kinematics,
     SwerveModuleState,
+    SwerveDrive4Odometry,
 )
 from wpiutil import SendableBuilder
 
@@ -22,7 +24,7 @@ from ultime.swerveconfig import SwerveConstants
 
 class Drivetrain(Subsystem):
     width = 0.597
-    length = 0.597
+    length = 0.673
     max_angular_speed = autoproperty(25.0)
 
     angular_offset_fl = autoproperty(-1.57)
@@ -78,6 +80,17 @@ class Drivetrain(Subsystem):
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
         )
+        self.swerve_odometry = SwerveDrive4Odometry(
+            self.swervedrive_kinematics,
+            self._gyro.getRotation2d(),
+            (
+                self.swerve_module_fl.getPosition(),
+                self.swerve_module_fr.getPosition(),
+                self.swerve_module_bl.getPosition(),
+                self.swerve_module_br.getPosition(),
+            ),
+            Pose2d(0, 0, 0),
+        )
 
         self.swerve_estimator = SwerveDrive4PoseEstimator(
             self.swervedrive_kinematics,
@@ -91,6 +104,8 @@ class Drivetrain(Subsystem):
             Pose2d(0, 0, 0),
         )
         self.cam = PhotonCamera("mainCamera")
+        self.vision_pose = self._field.getObject("Vision Pose")
+        self.odometry_pose = self._field.getObject("Odometry Pose")
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
@@ -197,6 +212,17 @@ class Drivetrain(Subsystem):
             ),
         )
 
+        self.swerve_odometry.update(
+            self._gyro.getRotation2d(),
+            (
+                self.swerve_module_fl.getPosition(),
+                self.swerve_module_fr.getPosition(),
+                self.swerve_module_bl.getPosition(),
+                self.swerve_module_br.getPosition(),
+            ),
+        )
+
+        self.odometry_pose.setPose(self.swerve_odometry.getPose())
         self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
 
     def simulationPeriodic(self):
@@ -241,6 +267,10 @@ class Drivetrain(Subsystem):
             ),
             pose,
         )
+
+    def addVisionMeasurement(self, pose: wpimath.geometry.Pose3d, timestamp: float):
+        self.swerve_estimator.addVisionMeasurement(pose, timestamp)
+        self.vision_pose.setPose(pose.toPose2d())
 
     def getCurrentDrawAmps(self):
         return 0.0
