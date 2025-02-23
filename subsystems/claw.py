@@ -2,7 +2,6 @@ from wpilib import VictorSP
 from wpiutil import SendableBuilder
 
 import ports
-from commands.claw.loadcoral import LoadCoral
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
 

@@ -8,8 +8,8 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
-from commands.drivetrain.resetgyro import ResetGyro
 from commands.drivetrain.drivetoposes import DriveToPoses
+from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
@@ -115,10 +115,6 @@ class DashboardModule(Module):
         Groups
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
-
-        """
-        Groups
-        """
         putCommandOnDashboard(
             "Group",
             ResetAll(
