@@ -20,7 +20,10 @@ class ArmCollision(Module):
         if self.elevator.isInLowerZone() and self.arm.state == Arm.State.Retracted:
             self.arm.movement_state = Arm.MovementState.DoNotMove
 
-        if self.printer.isInMiddleZone() and not self.arm.state == Arm.State.Moving:
+        if self.printer.isInMiddleZone() and self.arm.state not in (
+            Arm.State.Moving,
+            Arm.State.Unknown,
+        ):
             self.arm.movement_state = Arm.MovementState.DoNotMove
 
         if self.arm.state == Arm.State.Unknown:
