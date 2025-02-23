@@ -149,20 +149,6 @@ class DashboardModule(Module):
                 hardware.printer,
             ),
         )
-
-        """
-        Groups
-        """
-        putCommandOnDashboard(
-            "Group",
-            ResetAll(
-                hardware.elevator,
-                hardware.printer,
-                hardware.arm,
-                hardware.intake,
-                hardware.climber,
-            ),
-        )
         putCommandOnDashboard(
             "Group", PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
         )
