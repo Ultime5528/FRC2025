@@ -25,7 +25,7 @@ class Robot(ModuleRobot):
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
 
-        self.hardware = HardwareModule()
+        self.hardware = HardwareModule(self)
         self.control = ControlModule(self.hardware)
         self.autonomous = AutonomousModule()
         self.dashboard = DashboardModule(self.hardware, self.modules)

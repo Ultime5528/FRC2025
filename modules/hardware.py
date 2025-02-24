@@ -8,13 +8,14 @@ from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.intake import Intake
+from subsystems.led import LEDController
 from subsystems.printer import Printer
 from ultime.module import Module
 from ultime.subsystem import Subsystem
 
 
 class HardwareModule(Module):
-    def __init__(self):
+    def __init__(self, robot):
         super().__init__()
         self.controller = commands2.button.CommandXboxController(0)
 
@@ -34,6 +35,8 @@ class HardwareModule(Module):
 
         self.climber = Climber()
 
+        self.led = LEDController(robot)
+
         self.subsystems: list[Subsystem] = [
             self.drivetrain,
             self.elevator,
@@ -42,4 +45,5 @@ class HardwareModule(Module):
             self.printer,
             self.climber,
             self.intake,
+            self.led
         ]

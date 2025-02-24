@@ -36,7 +36,7 @@ class LEDController(Subsystem):
 
     def __init__(self, robot):
         super().__init__()
-        self.led_strip = AddressableLED(ports.DIO.led_strip)
+        self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(self.led_number)]
         self.led_strip.setLength(len(self.buffer))
         self.led_strip.start()
