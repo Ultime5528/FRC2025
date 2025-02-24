@@ -1,6 +1,7 @@
 import math
 
 import wpilib
+import wpimath
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig, PIDConstants
@@ -9,7 +10,6 @@ from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectoryState
 from pathplannerlib.util import DriveFeedforwards
-import wpimath
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase, DriverStation
 from wpimath._controls._controls.trajectory import Trajectory

@@ -57,7 +57,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard(
             "Elevator",
-            MoveElevator.toAlgae(hardware.elevator, hardware.arm, hardware.drivetrain),
+            MoveElevator.toAlgae(hardware.elevator, hardware.drivetrain),
         )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
