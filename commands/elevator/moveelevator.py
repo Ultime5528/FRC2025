@@ -131,8 +131,9 @@ class MoveElevator(Command):
         super().__init__()
         self.end_position_getter = asCallable(end_position)
         self.elevator = elevator
-        self.addRequirements(elevator)
         self.new_state = new_state
+        self.addRequirements(elevator)
+        self.AlgaePosition = self.AlgaePosition.Unknown
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
