@@ -3,6 +3,7 @@ from enum import Enum, auto
 import wpilib
 from commands2 import SelectCommand
 from wpilib import DriverStation
+from wpiutil import SendableBuilder
 
 from commands.alignwithreefside import getSextantFromPosition, reef_centers
 from subsystems.arm import Arm
@@ -20,8 +21,9 @@ class MoveElevator(Command):
         Up = auto()
         Down = auto()
 
-    def _is_algae_down(drivetrain: Drivetrain):
-        alliance = DriverStation.Alliance.kRed
+    @staticmethod
+    def _getAlgaeLevelPosition(drivetrain: Drivetrain):
+        alliance = DriverStation.getAlliance()
         sextant = getSextantFromPosition(drivetrain.getPose(), reef_centers[alliance])
 
         if alliance == alliance.kBlue:
@@ -34,6 +36,10 @@ class MoveElevator(Command):
                 MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Up
             else:
                 MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Down
+        else:
+            MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Unknown
+
+        return MoveElevator.AlgaePosition
 
     @classmethod
     def toLevel1(cls, elevator: Elevator):
@@ -106,13 +112,13 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def toAlgae(cls, elevator: Elevator):
+    def toAlgae(cls, elevator: Elevator, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
                 MoveElevator.AlgaePosition.Up: cls.toLevel3Algae(elevator),
                 MoveElevator.AlgaePosition.Down: cls.toLevel2Algae(elevator),
             },
-            lambda: MoveElevator.AlgaePosition,
+            lambda: cls._getAlgaeLevelPosition(drivetrain),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
@@ -160,6 +166,19 @@ class MoveElevator(Command):
         else:
             self.elevator.state = self.new_state
 
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def setOffset(value: float):
+            self._offset = value
+
+        def noop(x):
+            pass
+
+        def setHasReset(value: bool):
+            self._has_reset = value
+
+        builder.addStringProperty("algae_state", lambda: self.AlgaePosition.name, noop)
 
 class _ClassProperties:
     position_level1 = autoproperty(0.12, subtable=MoveElevator.__name__)
