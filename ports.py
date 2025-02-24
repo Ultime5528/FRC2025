@@ -43,6 +43,7 @@ class DIO:
     printer_encoder_b = 1
     printer_switch_left = 2
     printer_switch_right = 3
+    led_strip = 8
 
     printer_photocell = 4
 
