@@ -1,3 +1,4 @@
+from commands.completedropsequence import CompleteDropSequence
 from commands.moveanddrop import MoveAndDrop
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
@@ -46,13 +47,15 @@ class ControlModule(Module):
 
         # Coral Drop and Load
         self.hardware.panel_1.button(0).onTrue(
-            MoveAndDrop.toLeft(
-                self.hardware.printer, self.hardware.claw, self.hardware.elevator
+            CompleteDropSequence.toLeft(
+                self.hardware.printer, self.hardware.arm, self.hardware.elevator, self.hardware.drivetrain,
+                self.hardware.claw
             )
         )
         AxisTrigger(self.hardware.panel_2, 1, "down").onTrue(
-            MoveAndDrop.toRight(
-                self.hardware.printer, self.hardware.claw, self.hardware.elevator
+            CompleteDropSequence.toRight(
+                self.hardware.printer, self.hardware.arm, self.hardware.elevator, self.hardware.drivetrain,
+                self.hardware.claw
             )
         )
         AxisTrigger(self.hardware.panel_2, 0, "up").onTrue(

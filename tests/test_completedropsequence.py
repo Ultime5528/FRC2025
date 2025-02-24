@@ -15,11 +15,10 @@ def test_completedropsequence(robot_controller: RobotTestController, robot: Robo
     drivetrain = robot.hardware.drivetrain
     claw = robot.hardware.claw
 
-
     elevator.state = Elevator.State.Level3
     arm.state = Arm.State.Extended
 
-    cmd = CompleteDropSequence.toLeft(elevator, printer, arm, drivetrain, claw)
+    cmd = CompleteDropSequence.toLeft(printer, arm, elevator, drivetrain, claw)
     cmd.schedule()
 
     robot_controller.wait(1.0)
@@ -29,4 +28,3 @@ def test_completedropsequence(robot_controller: RobotTestController, robot: Robo
     assert elevator.state == Elevator.State.Loading
     assert printer.state == Printer.State.Loading
     assert arm.state == arm.State.Retracted
-    
