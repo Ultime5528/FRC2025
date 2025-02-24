@@ -2,13 +2,11 @@ from commands2 import SequentialCommandGroup
 from commands2.cmd import parallel
 
 from commands.arm.retractarm import RetractArm
-from commands.climber.resetclimber import ResetClimber
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from commands.intake.resetintake import ResetIntake
 from commands.printer.resetprinter import ResetPrinterRight
 from subsystems.arm import Arm
-from subsystems.climber import Climber
 from subsystems.elevator import Elevator
 from subsystems.intake import Intake
 from subsystems.printer import Printer

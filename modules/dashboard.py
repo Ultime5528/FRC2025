@@ -126,7 +126,7 @@ class DashboardModule(Module):
                 hardware.printer,
                 hardware.arm,
                 hardware.intake,
-            )
+            ),
         )
         putCommandOnDashboard(
             "Group", PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
