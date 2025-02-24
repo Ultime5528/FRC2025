@@ -36,7 +36,6 @@ def test_reset_all_but_climber(robot_controller: RobotTestController, robot: Rob
     cmd = ResetAllButClimber(elevator, printer, arm, intake)
     cmd.schedule()
 
-    robot_controller.wait(0.5)
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
     assert elevator.hasReset()
