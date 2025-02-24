@@ -1,3 +1,5 @@
+from enum import Enum, auto
+
 import wpilib
 from commands2 import SelectCommand
 from wpilib import DriverStation
@@ -13,18 +15,25 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 @with_timeout(10.0)
 class MoveElevator(Command):
+    class AlgaePosition(Enum):
+        Unknown = auto()
+        Up = auto()
+        Down = auto()
+
     def _is_algae_down(drivetrain: Drivetrain):
         alliance = DriverStation.Alliance.kRed
         sextant = getSextantFromPosition(drivetrain.getPose(), reef_centers[alliance])
-        if sextant == 0 or sextant == 2 or sextant == 4:
-            algae_is_down_blue = True
-        else:
-            algae_is_down_blue = False
 
         if alliance == alliance.kBlue:
-            return algae_is_down_blue
-        else:
-            return not algae_is_down_blue
+            if sextant == 0 or sextant == 2 or sextant == 4:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Down
+            else:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Up
+        elif alliance.kRed:
+            if sextant == 0 or sextant == 2 or sextant == 4:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Up
+            else:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Down
 
     @classmethod
     def toLevel1(cls, elevator: Elevator):
@@ -97,13 +106,13 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def toAlgae(cls, elevator: Elevator, arm: Arm, drivetrain: Drivetrain):
+    def toAlgae(cls, elevator: Elevator):
         cmd = SelectCommand(
             {
-                not cls._is_algae_down(drivetrain): cls.toLevel3Algae(elevator),
-                cls._is_algae_down(drivetrain): cls.toLevel2Algae(elevator),
+                MoveElevator.AlgaePosition.Up: cls.toLevel3Algae(elevator),
+                MoveElevator.AlgaePosition.Down: cls.toLevel2Algae(elevator),
             },
-            lambda: elevator.state,
+            lambda: MoveElevator.AlgaePosition,
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
