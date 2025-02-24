@@ -20,7 +20,6 @@ class LoadingDetection(Module):
         if (
             self.claw.seesObject()
             and not self.claw.has_coral
-            and self.printer.state == self.printer.State.Loading
-            and self.elevator.state == self.elevator.State.Loading
+            and self.claw.is_at_loading
         ):
             self._load_command.schedule()
