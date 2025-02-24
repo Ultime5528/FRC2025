@@ -20,14 +20,13 @@ class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def __init__(self):
         super().__init__()
-
         wpilib.LiveWindow.enableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule(self)
         self.control = ControlModule(self.hardware)
-        self.autonomous = AutonomousModule()
+        self.autonomous = AutonomousModule(self.hardware)
         self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()

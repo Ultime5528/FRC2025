@@ -1,6 +1,11 @@
+import math
+
 import commands2
 import wpilib
+from commands2 import DeferredCommand
+from wpimath.geometry import Pose2d, Transform2d, Translation2d, Rotation2d
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -8,6 +13,8 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.completedropsequence import CompleteDropSequence
+from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
@@ -33,6 +40,8 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
+
         """
         Elevator
         """
@@ -47,7 +56,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard(
-            "Elevator", MoveElevator.toAlgae(hardware.elevator, hardware.arm)
+            "Elevator",
+            MoveElevator.toAlgae(hardware.elevator, hardware.arm, hardware.drivetrain),
         )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
@@ -120,6 +130,26 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group", PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
+        )
+        putCommandOnDashboard(
+            "Group",
+            CompleteDropSequence.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            CompleteDropSequence.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+            ),
         )
 
     def robotInit(self) -> None:
