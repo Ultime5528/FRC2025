@@ -42,7 +42,7 @@ class HardwareModule(Module):
         self.led = LEDController(robot)
 
         self.subsystems: list[Subsystem] = [
-            # self.drivetrain,
+            self.drivetrain,
             self.elevator,
             self.claw,
             self.arm,
