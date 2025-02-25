@@ -7,20 +7,31 @@ from subsystems.printer import Printer
 from ultime.autoproperty import FloatProperty, autoproperty, asCallable
 from ultime.command import Command
 
-
 class ScanPrinter(Command):
+    @staticmethod
+    def right(printer: Printer):
+        cmd = SequentialCommandGroup(MovePrinter.toMiddleRight(printer), _ScanPrinter.right(printer))
+        cmd.setName(ScanPrinter.__name__ + ".right")
+        return cmd
+
+    @staticmethod
+    def left(printer: Printer):
+        cmd = SequentialCommandGroup(MovePrinter.toMiddleLeft(printer), _ScanPrinter.left(printer))
+        cmd.setName(ScanPrinter.__name__ + ".left")
+        return cmd
+
+
+class _ScanPrinter(Command):
     @classmethod
     def right(cls, printer: Printer):
-        cmd = SequentialCommandGroup(MovePrinter.toMiddleRight(printer),
-                                     cls(printer, lambda: -scan_printer_properties.speed))
-        cmd.setName(ScanPrinter.__name__ + ".right")
+        cmd = cls(printer, lambda: -scan_printer_properties.speed)
+        cmd.setName(_ScanPrinter.__name__ + ".right")
         return cmd
 
     @classmethod
     def left(cls, printer: Printer):
-        cmd = SequentialCommandGroup(MovePrinter.toMiddleLeft(printer),
-                                     cls(printer, lambda: scan_printer_properties.speed))
-        cmd.setName(ScanPrinter.__name__ + ".left")
+        cmd = cls(printer, lambda: scan_printer_properties.speed)
+        cmd.setName(_ScanPrinter.__name__ + ".left")
         return cmd
 
     def __init__(self, printer: Printer, speed: FloatProperty):

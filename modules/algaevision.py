@@ -6,7 +6,7 @@ from ultime.vision import RelativeVision, VisionMode
 
 class AlgaeVisionModule(RelativeVision):
     def __init__(self):
-        super().__init__(camera_name="Algae Camera")
+        super().__init__(camera_name="AlgaeCamera")
         self.mode = VisionMode.Relative
 
     def getTargetDistance(self, target: PhotonTrackedTarget):

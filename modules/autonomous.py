@@ -10,6 +10,7 @@ from pathplannerlib.pathfinding import Pathfinding
 from wpimath.geometry import Pose2d
 
 from commands.arm.retractarm import RetractArm
+from commands.climber.resetclimber import ResetClimber
 from commands.elevator.moveelevator import MoveElevator
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
@@ -53,6 +54,7 @@ class AutonomousModule(Module):
         )
 
     def autonomousInit(self):
+        ResetClimber(self.hardware.climber).schedule()
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:
             self.auto_command.schedule()

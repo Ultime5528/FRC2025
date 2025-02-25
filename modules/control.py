@@ -1,3 +1,4 @@
+from commands.resetallbutclimber import ResetAllButClimber
 from commands.vision.alignwithalgae import AlignWithAlgae
 from modules.algaevision import AlgaeVisionModule
 from commands.completedropsequence import CompleteDropSequence
@@ -102,12 +103,11 @@ class ControlModule(Module):
 
         # Extra buttons
         self.hardware.panel_1.button(3).onTrue(
-            ResetAll(
+            ResetAllButClimber(
                 self.hardware.elevator,
                 self.hardware.printer,
                 self.hardware.arm,
                 self.hardware.intake,
-                self.hardware.climber,
             )
         )
         # self.hardware.panel_2.button(1).onTrue()
