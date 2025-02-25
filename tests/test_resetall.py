@@ -1,9 +1,8 @@
-import pytest
-
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from robot import Robot
 from ultime.tests import RobotTestController
+
 
 def test_reset_all(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
