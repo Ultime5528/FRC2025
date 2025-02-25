@@ -1,8 +1,6 @@
-import robot
 from commands.vision.alignwithalgae import AlignWithAlgae
 from modules.algaevision import AlgaeVisionModule
 from commands.completedropsequence import CompleteDropSequence
-from commands.moveanddrop import MoveAndDrop
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
@@ -14,7 +12,6 @@ from commands.intake.moveintake import MoveIntake
 from commands.prepareloading import PrepareLoading
 from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
-from robot import Robot
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
 
@@ -26,7 +23,6 @@ class ControlModule(Module):
         self.algae_vision = vision_algae
 
         self.setupButtons()
-        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(hardware.drivetrain, self.algae_vision, hardware.controller))
         # self.hardware.controller.button(1).onTrue(Command())
 
     def setupButtons(self):
@@ -37,6 +33,11 @@ class ControlModule(Module):
         # self.hardware.controller.leftTrigger().whileTrue(
         #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
         # )
+        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
+
+        # Pilot buttons
+
+
 
         # Copilot's panel
         # Elevator Levels
