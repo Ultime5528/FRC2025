@@ -181,6 +181,7 @@ class MoveElevator(Command):
 
         # builder.addStringProperty("algae_state", lambda: self.AlgaePosition.name, noop)
 
+
 class _ClassProperties:
     position_level1 = autoproperty(0.12, subtable=MoveElevator.__name__)
     position_level2 = autoproperty(0.35, subtable=MoveElevator.__name__)

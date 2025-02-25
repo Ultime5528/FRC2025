@@ -42,7 +42,15 @@ class AutonomousModule(Module):
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
-        registerNamedCommand(ResetAll(self.hardware.elevator, self.hardware.printer, self.hardware.arm, self.hardware.intake, self.hardware.climber))
+        registerNamedCommand(
+            ResetAll(
+                self.hardware.elevator,
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.intake,
+                self.hardware.climber,
+            )
+        )
 
     def autonomousInit(self):
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()

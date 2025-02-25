@@ -57,14 +57,20 @@ class ControlModule(Module):
         # Coral Drop and Load
         self.hardware.panel_1.button(1).onTrue(
             CompleteDropSequence.toLeft(
-                self.hardware.printer, self.hardware.arm, self.hardware.elevator, self.hardware.drivetrain,
-                self.hardware.claw
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
             )
         )
         AxisTrigger(self.hardware.panel_2, 1, "down").onTrue(
             CompleteDropSequence.toRight(
-                self.hardware.printer, self.hardware.arm, self.hardware.elevator, self.hardware.drivetrain,
-                self.hardware.claw
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
             )
         )
         AxisTrigger(self.hardware.panel_2, 0, "up").onTrue(
@@ -96,6 +102,12 @@ class ControlModule(Module):
 
         # Extra buttons
         self.hardware.panel_1.button(3).onTrue(
-            ResetAll(self.hardware.elevator, self.hardware.printer, self.hardware.arm, self.hardware.intake,
-                     self.hardware.climber))
+            ResetAll(
+                self.hardware.elevator,
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.intake,
+                self.hardware.climber,
+            )
+        )
         # self.hardware.panel_2.button(1).onTrue()
