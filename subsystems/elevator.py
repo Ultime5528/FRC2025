@@ -9,6 +9,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
+from ultime.timethis import timethis as tt
 
 
 class Elevator(Subsystem):
@@ -163,17 +164,21 @@ class Elevator(Subsystem):
         def setHasReset(value: bool):
             self._has_reset = value
 
-        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty("state", tt(lambda: self.state.name), noop)
         builder.addStringProperty(
-            "state_movement", lambda: self.movement_state.name, noop
+            "state_movement", tt(lambda: self.movement_state.name), noop
         )
-        builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
-        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("height", self.getHeight, noop)
-        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("switch_down", self._switch.isPressed, noop)
-        builder.addBooleanProperty("isUp", self.isUp, noop)
-        builder.addBooleanProperty("isDown", self.isDown, noop)
-        builder.addBooleanProperty("shouldMaintain", self.shouldMaintain, noop)
-        builder.addBooleanProperty("isInLowerZone", self.isInLowerZone, noop)
+        builder.addFloatProperty("motor_input", tt(self._motor.get), noop)
+        builder.addFloatProperty("encoder", tt(self._encoder.getPosition), noop)
+        builder.addFloatProperty(
+            "offset", tt(lambda: self._offset), lambda x: setOffset(x)
+        )
+        builder.addFloatProperty("height", tt(self.getHeight), noop)
+        builder.addBooleanProperty(
+            "has_reset", tt(lambda: self._has_reset), setHasReset
+        )
+        builder.addBooleanProperty("switch_down", tt(self._switch.isPressed), noop)
+        builder.addBooleanProperty("isUp", tt(self.isUp), noop)
+        builder.addBooleanProperty("isDown", tt(self.isDown), noop)
+        builder.addBooleanProperty("shouldMaintain", tt(self.shouldMaintain), noop)
+        builder.addBooleanProperty("isInLowerZone", tt(self.isInLowerZone), noop)
