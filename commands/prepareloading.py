@@ -1,5 +1,5 @@
-from commands2 import ParallelCommandGroup, SequentialCommandGroup
-from commands2.cmd import parallel
+from commands2 import ParallelCommandGroup
+from commands2.cmd import either, none
 
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
@@ -14,6 +14,11 @@ from ultime.command import ignore_requirements
 class PrepareLoading(SequentialCommandGroup):
     def __init__(self, elevator: Elevator, arm: Arm, printer: Printer):
         super().__init__(
-            parallel(MoveElevator.toLoading(elevator), RetractArm(arm)),
+            MoveElevator.toLoading(elevator),
+            either(
+                none(),
+                RetractArm(arm),
+                lambda: arm.state == Arm.State.Retracted,
+            ),
             MovePrinter.toLoading(printer),
         )
