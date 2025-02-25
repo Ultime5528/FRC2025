@@ -437,13 +437,13 @@ class FollowPathplannerPath(Command):
             self.drivetrain.drive(
                 math.copysign(
                     self.sampled_trajectory[self.current_goal].linearVelocity,
-                    position_error.X()
+                    position_error.X(),
                 ),
                 math.copysign(
                     self.sampled_trajectory[self.current_goal].linearVelocity,
-                    position_error.Y()
+                    position_error.Y(),
                 ),
-                rotation_error.radians()
+                rotation_error.radians(),
             )
             # self.drivetrain.drive(
             #     math.copysign(

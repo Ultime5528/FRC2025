@@ -39,7 +39,6 @@ class PWM(Immutable):
     led_strip = 6
 
 
-
 class DIO:
     printer_encoder_a = 0
     printer_encoder_b = 1

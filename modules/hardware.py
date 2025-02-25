@@ -49,5 +49,5 @@ class HardwareModule(Module):
             self.printer,
             self.climber,
             self.intake,
-            self.led
+            self.led,
         ]
