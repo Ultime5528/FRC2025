@@ -8,7 +8,7 @@ from typing import Literal
 
 import wpilib
 
-timethis_enabled = True
+timethis_enabled = False
 register: dict[str, list[float]] = defaultdict(list)
 timer = wpilib.Timer()
 
