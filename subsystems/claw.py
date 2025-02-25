@@ -1,6 +1,7 @@
 from wpilib import VictorSP
 from wpiutil import SendableBuilder
-
+from commands.printer.moveprinter import MovePrinter
+from commands2.cmd import sequence
 import ports
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
