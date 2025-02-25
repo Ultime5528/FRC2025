@@ -14,7 +14,9 @@ class Claw(Subsystem):
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
-        self._load_command = LoadCoral(self)
+        self._load = LoadCoral(self.claw)
+        self._move = MovePrinter.toMiddleRight(self.printer)
+        self._load_command = sequence(self._load, self._move)
         self.has_coral = False
         self.is_at_loading = False
         self.is_coral_retracted = False

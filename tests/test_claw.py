@@ -301,7 +301,7 @@ def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     assert not claw.has_coral
 
     # The motors are stopped
-    robot_controller.wait(load_coral_properties.delay + 5.0)
+    robot_controller.wait(load_coral_properties.delay + 10.0)
     assert not cmd_prepare_loading.isScheduled()
     assert not claw._load_command.isScheduled()
     assert not claw.is_at_loading
