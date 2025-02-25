@@ -1,3 +1,5 @@
+__all__ = ["timethis_enabled", "timethis", "print_stats", "print_stats_every"]
+
 import functools
 import inspect
 import statistics
@@ -7,7 +9,7 @@ from typing import Literal
 import wpilib
 
 timethis_enabled = True
-register: dict[str, list[float]] = defaultdict(lambda: list())
+register: dict[str, list[float]] = defaultdict(list)
 timer = wpilib.Timer()
 
 
@@ -69,7 +71,8 @@ def print_stats(unit: Literal["s", "ms", "ns"] = "ms"):
     mean_total = sum(stats.mean for stats in all_stats.values())
 
     for key, stats in all_stats.items():
-        proportion = stats.mean / mean_total
+        # Prevent division by zero
+        proportion = stats.mean / mean_total if mean_total else 0.0
 
         msg += (
             f"{key: <{max_length}}"
