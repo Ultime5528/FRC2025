@@ -1,3 +1,6 @@
+import robot
+from commands.vision.alignwithalgae import AlignWithAlgae
+from modules.algaevision import AlgaeVisionModule
 from commands.completedropsequence import CompleteDropSequence
 from commands.moveanddrop import MoveAndDrop
 from commands.arm.extendarm import ExtendArm
@@ -11,16 +14,20 @@ from commands.intake.moveintake import MoveIntake
 from commands.prepareloading import PrepareLoading
 from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
+from robot import Robot
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
 
 
 class ControlModule(Module):
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, vision_algae: AlgaeVisionModule):
         super().__init__()
         self.hardware = hardware
+        self.algae_vision = vision_algae
 
         self.setupButtons()
+        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(hardware.drivetrain, self.algae_vision, hardware.controller))
+        # self.hardware.controller.button(1).onTrue(Command())
 
     def setupButtons(self):
         """

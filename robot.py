@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import wpilib
 
+from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
 from modules.batterysim import BatterySimModule
@@ -25,7 +26,8 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule(self)
-        self.control = ControlModule(self.hardware)
+        self.vision_algae = AlgaeVisionModule()
+        self.control = ControlModule(self.hardware, self.vision_algae)
         self.autonomous = AutonomousModule(self.hardware)
         self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
@@ -37,7 +39,7 @@ class Robot(ModuleRobot):
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
-        self.vision = TagVisionModule(self.hardware.drivetrain)
+        self.vision_tag = TagVisionModule(self.hardware.drivetrain)
 
         self.addModules(
             self.hardware,
@@ -47,9 +49,10 @@ class Robot(ModuleRobot):
             self.diagnostics,
             self.logging,
             self.property_save_checker,
-            self.vision,
+            self.vision_tag,
             self.arm_collision,
             self.coral_retraction,
             self.loading_detection,
+            self.vision_algae
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
