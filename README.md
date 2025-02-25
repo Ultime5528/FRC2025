@@ -40,6 +40,7 @@
 | commands/printer/resetprinter.py        |       21 |        0 |        2 |        0 |    100% |           |
 | commands/printer/scanprinter.py         |       50 |       22 |       14 |        0 |     44% |28-31, 34-45, 48-62, 68-69 |
 | commands/resetall.py                    |       18 |        0 |        0 |        0 |    100% |           |
+| commands/resetallbutclimber.py          |       16 |        0 |        0 |        0 |    100% |           |
 | conftest.py                             |        1 |        0 |        0 |        0 |    100% |           |
 | modules/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
 | modules/armcollision.py                 |       26 |        0 |       10 |        0 |    100% |           |
@@ -47,7 +48,7 @@
 | modules/batterysim.py                   |       11 |        2 |        0 |        0 |     82% |     14-15 |
 | modules/control.py                      |        6 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py              |       13 |        1 |        2 |        1 |     87% |        20 |
-| modules/dashboard.py                    |      109 |        1 |       12 |        2 |     98% |173, 177->180 |
+| modules/dashboard.py                    |      111 |        1 |       12 |        2 |     98% |183, 187->190 |
 | modules/diagnostics.py                  |       38 |        8 |        4 |        1 |     74% |27-30, 33-34, 38, 48 |
 | modules/hardware.py                     |       27 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py             |       14 |        0 |        2 |        0 |    100% |           |
@@ -76,7 +77,7 @@
 | tests/test\_elevator.py                 |      155 |        0 |        0 |        0 |    100% |           |
 | tests/test\_intake.py                   |       91 |        0 |        0 |        0 |    100% |           |
 | tests/test\_printer.py                  |      147 |        5 |        8 |        3 |     95% |54, 216-217, 256-257 |
-| tests/test\_resetall.py                 |       19 |        0 |        0 |        0 |    100% |           |
+| tests/test\_resetall.py                 |       35 |        0 |        0 |        0 |    100% |           |
 | ultime/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
 | ultime/affinecontroller.py              |       77 |       77 |        2 |        0 |      0% |     1-122 |
 | ultime/alert.py                         |       74 |        6 |       12 |        3 |     90% |42, 70, 83, 87, 98, 101, 106->105 |
@@ -104,7 +105,7 @@
 | ultime/tests/utils.py                   |       60 |        7 |       10 |        0 |     90% |25-26, 37-41 |
 | ultime/trapezoidalmotion.py             |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                        |       63 |       19 |       18 |        3 |     58% |29-31, 34-40, 43-46, 67->exit, 72, 77-80, 83-84, 88, 96 |
-|                               **TOTAL** | **4374** |  **525** |  **534** |   **82** | **85%** |           |
+|                               **TOTAL** | **4408** |  **525** |  **534** |   **82** | **85%** |           |
 
 
 ## Setup coverage badge
