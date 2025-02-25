@@ -20,7 +20,7 @@ class Climber(Subsystem):
         Climbed = auto()
 
     height_max = autoproperty(90.0)
-    position_conversion_factor = autoproperty(0.1965)
+    position_conversion_factor = autoproperty(0.184)
     speed = autoproperty(1.0)
 
     def __init__(self):
