@@ -1,7 +1,8 @@
 from commands.claw.loadcoral import LoadCoral
 from modules.hardware import HardwareModule
 from ultime.module import Module
-
+from commands.printer import MovePrinter
+from commands2.cmd import sequence
 
 class LoadingDetection(Module):
     def __init__(self, hardware: HardwareModule):
@@ -10,6 +11,7 @@ class LoadingDetection(Module):
         self.elevator = hardware.elevator
         self.printer = hardware.printer
         self._load_command = LoadCoral(self.claw)
+        self.move_command = MovePrinter.toMiddleRight(self.printer)
 
     def robotPeriodic(self) -> None:
         self.claw.is_at_loading = (
@@ -22,4 +24,5 @@ class LoadingDetection(Module):
             and not self.claw.has_coral
             and self.claw.is_at_loading
         ):
-            self._load_command.schedule()
+            cmd = sequence(self._load_command, self.move_command)
+            cmd.schedule()
