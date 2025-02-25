@@ -30,14 +30,14 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
 
-    led_number = autoproperty(190)
+    led_number = autoproperty(190.0)
 
-    brightness_value = autoproperty(20)
+    brightness_value = autoproperty(20.0)
 
     def __init__(self, robot):
         super().__init__()
         self.led_strip = AddressableLED(ports.PWM.led_strip)
-        self.buffer = [AddressableLED.LEDData() for _ in range(self.led_number)]
+        self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
         self.led_strip.setLength(len(self.buffer))
         self.led_strip.start()
 
@@ -134,10 +134,10 @@ class LEDController(Subsystem):
         )
 
         if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
-            for i in range(self.led_number):
+            for i in range(int(self.led_number)):
                 self.buffer[i].setRGB(pixel_value, 0, 0)
         else:
-            for i in range(self.led_number):
+            for i in range(int(self.led_number)):
                 self.buffer[i].setRGB(0, 0, pixel_value)
 
     def modeNotConnected(self):
@@ -154,11 +154,11 @@ class LEDController(Subsystem):
             g = 0
             b = abs(pixel_value)
 
-        for i in range(self.led_number):
+        for i in range(int(self.led_number)):
             self.buffer[i].setRGB(r, g, b)
 
     def rainbow(self):
-        for i in range(self.led_number):
+        for i in range(int(self.led_number)):
             hue = (self.time + int(i * 180 / self.led_number)) % 180
             self.buffer[i].setHSV(
                 hue,

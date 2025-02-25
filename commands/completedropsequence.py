@@ -66,7 +66,7 @@ class CompleteDropSequence(SequentialCommandGroup):
                     # Check if elevator is level 4 and arm extended (remove algae) if not, prepareloading
                     ConditionalCommand(
                         SequentialCommandGroup(
-                            MoveElevator.toAlgae(elevator, arm, drivetrain),
+                            MoveElevator.toAlgae(elevator, drivetrain),
                             DriveToPoses.back(drivetrain, self.distance_remove_algae),
                         ),
                         InstantCommand(lambda: None, None),

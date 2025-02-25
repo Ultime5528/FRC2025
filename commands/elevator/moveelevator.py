@@ -178,7 +178,7 @@ class MoveElevator(Command):
         def setHasReset(value: bool):
             self._has_reset = value
 
-        builder.addStringProperty("algae_state", lambda: self.AlgaePosition.name, noop)
+        # builder.addStringProperty("algae_state", lambda: self.AlgaePosition.name, noop)
 
 class _ClassProperties:
     position_level1 = autoproperty(0.12, subtable=MoveElevator.__name__)

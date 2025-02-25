@@ -28,7 +28,7 @@ class Climber(Subsystem):
         self._config = SparkMaxConfig()
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(40)
-        self._config.inverted(False)
+        self._config.inverted(True)
 
         self._motor = SparkMax(ports.CAN.climber_motor, SparkMax.MotorType.kBrushless)
         self._encoder = self._motor.getEncoder()
