@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import ultime.cache as cache
 from ultime.cache import cache_every_loop
 
@@ -42,8 +44,11 @@ def test_cache_every_loop():
         assert demo.b_calls == 2
 
 
-# @pytest.mark.specific
 def test_cache_different_intervals():
+    # Reset cached value list for deterministic results
+    # Robot is always created and adds values in the cache, if used
+    cache.cached_values = defaultdict(list)
+
     class Demo:
         def __init__(self):
             self.loop_1_1_calls = 0
