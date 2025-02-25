@@ -1,7 +1,6 @@
 from wpilib import VictorSP
 from wpiutil import SendableBuilder
-from commands.printer.moveprinter import MovePrinter
-from commands2.cmd import sequence
+
 import ports
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
@@ -15,9 +14,7 @@ class Claw(Subsystem):
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
-        self._load = LoadCoral(self.claw)
-        self._move = MovePrinter.toMiddleRight(self.printer)
-        self._load_command = sequence(self._load, self._move)
+        self._load_command = LoadCoral(self)
         self.has_coral = False
         self.is_at_loading = False
         self.is_coral_retracted = False
@@ -36,8 +33,7 @@ class Claw(Subsystem):
         return self._sensor.isPressed()
 
     def periodic(self) -> None:
-        if self.seesObject() and not self.has_coral and self.is_at_loading:
-            self._load_command.schedule()
+        pass
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
