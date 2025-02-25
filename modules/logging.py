@@ -4,6 +4,7 @@ from wpilib import DataLogManager, DriverStation
 
 import ports
 from ultime.module import Module
+from ultime.timethis import print_stats_every
 
 
 class LoggingModule(Module):
@@ -28,3 +29,6 @@ class LoggingModule(Module):
 
         DataLogManager.start()
         DriverStation.startDataLog(DataLogManager.getLog())
+
+    def robotPeriodic(self) -> None:
+        print_stats_every(5.0, "ns")
