@@ -33,8 +33,7 @@ class Claw(Subsystem):
         return self._sensor.isPressed()
 
     def periodic(self) -> None:
-        if self.seesObject() and not self.has_coral and self.is_at_loading:
-            self._load_command.schedule()
+        pass
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
