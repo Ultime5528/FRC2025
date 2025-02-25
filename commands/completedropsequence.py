@@ -76,5 +76,6 @@ class CompleteDropSequence(SequentialCommandGroup):
                 ),
                 lambda: elevator.state == Elevator.State.Level1,
             ),
+            DriveToPoses.back(drivetrain, 0.1),
             PrepareLoading(elevator, arm, printer),
         )
