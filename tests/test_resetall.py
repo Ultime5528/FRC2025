@@ -27,7 +27,6 @@ def test_reset_all(robot_controller: RobotTestController, robot: Robot):
     assert climber._has_reset
 
 
-@pytest.mark.felix
 def test_reset_all_but_climber(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
     elevator = robot.hardware.elevator
