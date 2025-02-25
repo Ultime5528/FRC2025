@@ -116,6 +116,11 @@ class _MovePrinterSetpoint(Command):
         self.printer.setSpeed(self.motion.getSpeed())
 
     def isFinished(self) -> bool:
+        if self.motion.getSpeed() > 0.0 and self.printer.isLeft():
+            return True
+        if self.motion.getSpeed() < 0.0 and self.printer.isRight():
+            return True
+
         return self.motion.isFinished() or not self.printer.hasReset()
 
     def end(self, interrupted: bool) -> None:
