@@ -1,7 +1,7 @@
 from commands.claw.loadcoral import LoadCoral
 from modules.hardware import HardwareModule
 from ultime.module import Module
-from commands.printer import MovePrinter
+from commands.printer.moveprinter import MovePrinter
 from commands2.cmd import sequence
 
 class LoadingDetection(Module):
