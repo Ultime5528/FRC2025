@@ -70,7 +70,7 @@ class ScanPrinter(Command):
 
 
 class _ClassProperties:
-    speed = autoproperty(0.6, subtable=ScanPrinter.__name__)
+    speed = autoproperty(0.3, subtable=ScanPrinter.__name__)
 
 
 scan_printer_properties = _ClassProperties()

@@ -13,6 +13,7 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.completedropsequence import CompleteDropSequence
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading

@@ -11,7 +11,7 @@ from ultime.command import ignore_requirements
 
 
 @ignore_requirements(["elevator", "arm", "printer"])
-class PrepareLoading(SequentialCommandGroup):
+class PrepareLoading(ParallelCommandGroup):
     def __init__(self, elevator: Elevator, arm: Arm, printer: Printer):
         super().__init__(
             MoveElevator.toLoading(elevator),
