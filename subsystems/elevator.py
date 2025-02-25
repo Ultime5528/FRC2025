@@ -68,9 +68,12 @@ class Elevator(Subsystem):
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
             self._sim_height = 0.1
 
+    def getRawEncoderPosition(self):
+        return self._encoder.getPosition()
+
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
-            self._offset = self.height_min - self._encoder.getPosition()
+            self._offset = self.height_min - self.getRawEncoderPosition()
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
 
@@ -130,11 +133,11 @@ class Elevator(Subsystem):
         self._motor.stopMotor()
 
     def setHeight(self, reset_value):
-        self._offset = reset_value - self._encoder.getPosition()
+        self._offset = reset_value - self.getRawEncoderPosition()
 
     def getHeight(self):
         return self.position_conversion_factor * (
-            self._encoder.getPosition() + self._offset
+            self.getRawEncoderPosition() + self._offset
         )
 
     def isInLowerZone(self) -> bool:
@@ -169,7 +172,7 @@ class Elevator(Subsystem):
             "state_movement", tt(lambda: self.movement_state.name), noop
         )
         builder.addFloatProperty("motor_input", tt(self._motor.get), noop)
-        builder.addFloatProperty("encoder", tt(self._encoder.getPosition), noop)
+        builder.addFloatProperty("encoder", tt(self.getRawEncoderPosition), noop)
         builder.addFloatProperty(
             "offset", tt(lambda: self._offset), lambda x: setOffset(x)
         )

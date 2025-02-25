@@ -55,6 +55,9 @@ class Stats:
 
 
 def print_stats(unit: Literal["s", "ms", "ns"] = "ms"):
+    if not timethis_enabled:
+        return
+
     msg = f"--------------------------\n{timethis.__name__} report\n\n"
 
     if unit == "s":

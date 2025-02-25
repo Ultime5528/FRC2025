@@ -9,6 +9,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
+from ultime.timethis import timethis as tt
 
 
 class Printer(Subsystem):
@@ -72,7 +73,7 @@ class Printer(Subsystem):
 
     def periodic(self) -> None:
         if self._prev_is_right and not self._switch_right.isPressed():
-            self._offset = self.right - self._encoder.get()
+            self._offset = self.right - self.getRawEncoderPosition()
             self._has_reset = True
         self._prev_is_right = self._switch_right.isPressed()
 
@@ -142,10 +143,15 @@ class Printer(Subsystem):
         self._motor.stopMotor()
 
     def setPosition(self, reset_value):
-        self._offset = reset_value - self._encoder.get()
+        self._offset = reset_value - self.getRawEncoderPosition()
 
     def getPosition(self):
-        return (self._encoder.get() + self._offset) * self.position_conversion_factor
+        return (
+            self.getRawEncoderPosition() + self._offset
+        ) * self.position_conversion_factor
+
+    def getRawEncoderPosition(self):
+        return self._encoder.get()
 
     def getMotorInput(self):
         return self._motor.get()
@@ -168,18 +174,20 @@ class Printer(Subsystem):
         def setHasReset(value: bool):
             self._has_reset = value
 
-        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addStringProperty("state", tt(lambda: self.state.name), noop)
         builder.addStringProperty(
-            "state_movement", lambda: self.movement_state.name, noop
+            "state_movement", tt(lambda: self.movement_state.name), noop
         )
-        builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addFloatProperty("encoder", self._encoder.get, noop)
-        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("position", self.getPosition, noop)
-        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("switch_right", self._switch_right.isPressed, noop)
-        builder.addBooleanProperty("switch_left", self._switch_left.isPressed, noop)
-        builder.addBooleanProperty("isRight", self.isRight, noop)
-        builder.addBooleanProperty("isLeft", self.isLeft, noop)
-        builder.addBooleanProperty("seesReef", self.seesReef, noop)
-        builder.addBooleanProperty("isInMiddleZone", self.isInMiddleZone, noop)
+        builder.addFloatProperty("motor_input", tt(self.getMotorInput), noop)
+        builder.addFloatProperty("encoder", tt(self.getRawEncoderPosition), noop)
+        builder.addFloatProperty(
+            "offset", tt(lambda: self._offset), lambda x: setOffset(x)
+        )
+        builder.addFloatProperty("position", tt(self.getPosition), noop)
+        builder.addBooleanProperty(
+            "has_reset", tt(lambda: self._has_reset), setHasReset
+        )
+        builder.addBooleanProperty("isRight", tt(self.isRight), noop)
+        builder.addBooleanProperty("isLeft", tt(self.isLeft), noop)
+        builder.addBooleanProperty("seesReef", tt(self.seesReef), noop)
+        builder.addBooleanProperty("isInMiddleZone", tt(self.isInMiddleZone), noop)
