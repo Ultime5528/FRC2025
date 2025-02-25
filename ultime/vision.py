@@ -28,7 +28,7 @@ class RelativeVision(Vision):
     def __init__(self, camera_name: str):
         super().__init__(camera_name=camera_name)
 
-        self.targets: List[PhotonTrackedTarget] = []
+        self._targets: List[PhotonTrackedTarget] = []
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()

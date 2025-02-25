@@ -15,8 +15,6 @@ class AlgaeVisionModule(RelativeVision):
     def getBestAlgae(self):
         bestAlgae = None
         for target in self._targets:
-            if bestAlgae is None or self.getTargetDistance(
-                target
-            ) < self.getTargetDistance(bestAlgae):
+            if bestAlgae is None or self.getTargetDistance(target) < self.getTargetDistance(bestAlgae):
                 bestAlgae = target
         return bestAlgae

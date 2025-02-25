@@ -11,9 +11,7 @@ class LoadingDetection(Module):
         self.claw = hardware.claw
         self.elevator = hardware.elevator
         self.printer = hardware.printer
-        self._load = LoadCoral(self.claw)
-        self._move = MovePrinter.toMiddleRight(self.printer)
-        self._load_command = SequentialCommandGroup(self._load, self._move)
+        self._load_command = LoadCoral(self.claw)
 
     def robotPeriodic(self) -> None:
         self.claw.is_at_loading = (
