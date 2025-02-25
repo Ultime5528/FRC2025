@@ -9,6 +9,7 @@ from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
+from modules.loadingdetection import LoadingDetection
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
@@ -32,6 +33,7 @@ class Robot(ModuleRobot):
         self.property_save_checker = PropertySaveCheckerModule()
         self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
+        self.loading_detection = LoadingDetection(self.hardware)
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
@@ -48,5 +50,6 @@ class Robot(ModuleRobot):
             self.vision,
             self.arm_collision,
             self.coral_retraction,
+            self.loading_detection,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
