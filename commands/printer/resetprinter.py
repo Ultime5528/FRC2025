@@ -1,7 +1,8 @@
 from subsystems.printer import Printer
-from ultime.command import Command
+from ultime.command import Command, with_timeout
 
 
+@with_timeout(5.0)
 class ResetPrinterRight(Command):
     def __init__(self, printer: Printer):
         super().__init__()
