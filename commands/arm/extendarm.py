@@ -6,22 +6,37 @@ from ultime.autoproperty import autoproperty
 
 
 class ExtendArm(Command):
-    delay = autoproperty(3.0)
+    delay = autoproperty(1.0)
 
     def __init__(self, arm: Arm):
         super().__init__()
         self.arm = arm
         self.timer = wpilib.Timer()
         self.addRequirements(arm)
+        self.has_moved = False
 
     def initialize(self):
-        self.timer.restart()
+        self.timer.stop()
+        self.timer.reset()
+        self.has_moved = False
 
     def execute(self):
-        self.arm.extend()
+        if self.arm.movement_state == Arm.MovementState.DoNotMove:
+            self.arm.stop()
+            self.timer.reset()
+        else:
+            self.timer.start()
+            self.arm.extend()
+            self.has_moved = True
 
     def isFinished(self) -> bool:
-        return self.timer.get() >= self.delay
+        return self.timer.hasElapsed(self.delay)
 
     def end(self, interrupted: bool):
         self.arm.stop()
+
+        if self.has_moved:
+            if interrupted:
+                self.arm.state = Arm.State.Unknown
+            else:
+                self.arm.state = Arm.State.Extended

@@ -77,19 +77,21 @@ class Drop(Command):
 
     def end(self, interrupted: bool):
         self.claw.stop()
+        self.claw.is_coral_retracted = False
+        self.claw.has_coral = False
 
 
 class _ClassProperties:
     # Claw Properties #
-    speed_level_1_left = autoproperty(0.5)
-    speed_level_1_right = autoproperty(0.0)
-    speed_level_2_left = autoproperty(0.5)
-    speed_level_2_right = autoproperty(-0.5)
-    speed_level_3_left = autoproperty(0.5)
-    speed_level_3_right = autoproperty(-0.5)
-    speed_level_4_left = autoproperty(0.5)
-    speed_level_4_right = autoproperty(-0.5)
-    delay = autoproperty(2.0)
+    speed_level_1_left = autoproperty(-0.5, subtable=Drop.__name__)
+    speed_level_1_right = autoproperty(0.0, subtable=Drop.__name__)
+    speed_level_2_left = autoproperty(-0.2, subtable=Drop.__name__)
+    speed_level_2_right = autoproperty(0.2, subtable=Drop.__name__)
+    speed_level_3_left = autoproperty(-0.2, subtable=Drop.__name__)
+    speed_level_3_right = autoproperty(0.2, subtable=Drop.__name__)
+    speed_level_4_left = autoproperty(-0.2, subtable=Drop.__name__)
+    speed_level_4_right = autoproperty(0.2, subtable=Drop.__name__)
+    delay = autoproperty(1.0, subtable=Drop.__name__)
 
 
 drop_properties = _ClassProperties()

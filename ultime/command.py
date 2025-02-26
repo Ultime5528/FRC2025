@@ -1,8 +1,11 @@
+from functools import wraps
 from typing import Type
 
 import wpilib
 from commands2 import Command
 from wpilib import Timer, DataLogManager
+
+from ultime.autoproperty import FloatProperty, asCallable
 
 
 def ignore_requirements(reqs: list[str]):
@@ -15,6 +18,7 @@ def ignore_requirements(reqs: list[str]):
 
 def with_timeout(seconds: float):
     def add_timeout(CommandClass):
+        @wraps(CommandClass, updated=())
         class CommandWithTimeout(CommandClass):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
@@ -37,6 +41,21 @@ def with_timeout(seconds: float):
                     wpilib.reportError(msg)
                     DataLogManager.log(msg)
 
+        setattr(CommandWithTimeout, "__wrapped_class", CommandClass)
+
         return CommandWithTimeout
 
     return add_timeout
+
+
+class WaitCommand(Command):
+    def __init__(self, seconds: FloatProperty):
+        super().__init__()
+        self.get_seconds = asCallable(seconds)
+        self.timer = wpilib.Timer()
+
+    def initialize(self):
+        self.timer.restart()
+
+    def isFinished(self) -> bool:
+        return self.timer.hasElapsed(self.get_seconds())

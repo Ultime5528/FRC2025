@@ -1,4 +1,3 @@
-import wpilib
 from commands2 import Command, SequentialCommandGroup
 from wpilib import Timer
 
@@ -15,7 +14,7 @@ class GrabAlgae(SequentialCommandGroup):
 
 
 class _GrabAlgae(Command):
-    delay = autoproperty(1.0)
+    delay = autoproperty(1.0, subtable=GrabAlgae.__name__)
 
     def __init__(self, intake: Intake):
         super().__init__()
