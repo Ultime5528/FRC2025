@@ -2,16 +2,10 @@ import math
 
 import wpilib
 import wpimath
-from commands2 import Command
-from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
-from pathplannerlib.telemetry import PPLibTelemetry
-from pathplannerlib.trajectory import PathPlannerTrajectoryState
 from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
-from wpilib import RobotBase, DriverStation
-from wpimath._controls._controls.trajectory import Trajectory
+from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -24,6 +18,7 @@ from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
+from ultime.followpathplannerpath import FollowPathplannerPath
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule
@@ -117,9 +112,6 @@ class Drivetrain(Subsystem):
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
-
-    def getCommandFromPathplannerPath(self, path: PathPlannerPath):
-        return FollowPathplannerPath(path, self)
 
     def drive(
         self,
