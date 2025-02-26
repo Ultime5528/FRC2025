@@ -23,6 +23,7 @@ from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule
 from ultime.swerveconfig import SwerveConstants
+from ultime.timethis import timethis as tt
 
 
 class Drivetrain(Subsystem):
@@ -314,4 +315,4 @@ class Drivetrain(Subsystem):
         def noop(_):
             pass
 
-        builder.addFloatProperty("angle", self.getAngle, noop)
+        builder.addFloatProperty("angle", tt(self.getAngle), noop)
