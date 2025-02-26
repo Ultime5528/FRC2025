@@ -17,6 +17,7 @@ from ultime.command import ignore_requirements
 @ignore_requirements(["elevator", "printer", "arm", "intake"])
 class ResetAllButClimber(SequentialCommandGroup):
     timeout_elevator = autoproperty(1.5)
+
     def __init__(
         self,
         elevator: Elevator,
