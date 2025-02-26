@@ -1,20 +1,29 @@
 import math
-from typing import Union, Callable, Optional
+from _weakref import proxy
 
-from commands2.button import CommandXboxController
-from photonlibpy.targeting import PhotonTrackedTarget
-from robotpy_apriltag import AprilTagFieldLayout
-from wpilib import DriverStation
-from wpilib.interfaces import GenericHID
-from wpimath.filter import SlewRateLimiter
-from wpimath.geometry import Pose2d, Transform3d
+from commands2 import Command, ScheduleCommand, DeferredCommand, SequentialCommandGroup
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.commands import PathfindingCommand
+from pathplannerlib.path import PathConstraints
+from pathplannerlib.pathfinders import Pathfinder
+from pathplannerlib.pathfinding import Pathfinding
+from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
+from wpilib import DriverStation, SmartDashboard
+from wpimath._controls._controls.trajectory import Trajectory
+from wpimath.geometry import Pose2d, Rotation2d, Pose3d, Translation2d, Transform2d
+from wpimath.units import degreesToRadians
 
-from commands.drivetrain.drive import apply_center_distance_deadzone, properties
+from modules.autonomous import AutonomousModule
+from modules.hardware import HardwareModule
 from subsystems.drivetrain import Drivetrain
-from ultime.vision import RelativeVision
 from ultime.autoproperty import autoproperty
-from ultime.command import Command
+from commands.drivetrain.drivetoposes import DriveToPoses
 
+# Links the sextants to the corresponding AprilTag ID for each reef
+tag_id = {
+    DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
+    DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
+}
 
 
 def getSextantFromPosition(robot_position: Pose2d, reef_position: Pose2d) -> int:
@@ -44,50 +53,53 @@ reef_centers = {
     DriverStation.Alliance.kRed: Pose2d(13.04, 4.03, 0),
 }
 
-# Links the sextants to the corresponding AprilTag ID for each reef
-tag_id = {
-    DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
-    DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
-}
 
 def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
     return tag_id[alliance][sextant]
 
 
+class AlignWithReefSideVision(DeferredCommand):
+    pose_offset = autoproperty(Drivetrain.length / 2)
 
-class AlignWithReefSideVision(Command):
-    locating_rotation_speed = autoproperty(0.3)
+    def __init__(self, hardware: HardwareModule, ):
+        super().__init__(
+            lambda: DriveToPoses(hardware.drivetrain, self.getTagPoseToAlign()),
+            hardware.drivetrain,
+        )
+        self.hardware = proxy(hardware)
+        self.tag_field = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeAndyMark)
 
-    def __init__(
-        self,
-        drivetrain: Drivetrain,
-        vision: RelativeVision,
-        xbox_remote: Optional[CommandXboxController] = None,
-    ):
-        super().__init__()
-        self.addRequirements(drivetrain)
-        self.drivetrain = drivetrain
-        self.vision = vision
-        self.vel_rot = 0
-        self.target: PhotonTrackedTarget = None
-        self.m_xspeedLimiter = SlewRateLimiter(3)
-        self.m_yspeedLimiter = SlewRateLimiter(3)
-        self.tag_field = AprilTagFieldLayout("2025-reefscape-andymark.json")
+    def getTagPoseToAlign(self) -> Pose2d:
+        pose = self.tag_field.getTagPose(
+            getTagID(
+                DriverStation.getAlliance(),
+                getSextantFromPosition(
+                    self.hardware.drivetrain.getPose(),
+                    reef_centers[DriverStation.getAlliance()],
+                ),
+            )
+        ).toPose2d()
 
-    def execute(self):
-        target_tag_id = getTagID(DriverStation.getAlliance(), getSextantFromPosition(self.drivetrain.getPose(), reef_centers[DriverStation.getAlliance()]))
-        self.target: PhotonTrackedTarget = self.vision.getTargetWithID(target_tag_id)
-        #
-        # if self.target is not None:
-        #     self.vel_rot = self.p * (self.horizontal_offset - self.target.getYaw())
-        #     self.drivetrain.drive(
-        #         x_speed, y_speed, self.vel_rot, is_field_relative=True
-        #     )
-        # else:
-        robot_to_tag = self.tag_field.getTagPose(target_tag_id) - self.drivetrain.getPose()
-        rotation_error = robot_to_tag.rotation().toRotation2d() - self.drivetrain.getPose().rotation()
-        self.drivetrain.drive(0,0, math.copysign(self.locating_rotation_speed, rotation_error))
+        return self.offsetTagPositions(pose, self.pose_offset)
 
+    @staticmethod
+    def offsetTagPositions(tag_pos: Pose2d, offset_from_center: float):
+        # Get vector from reef center to tag position
+        tag_vector: Translation2d = (
+            tag_pos - reef_centers[DriverStation.getAlliance()]
+        ).translation()
 
-    def end(self, interrupted: bool):
-        self.drivetrain.stop()
+        # Convert to unit vector by dividing by magnitude
+        vector_magnitude = math.sqrt(tag_vector.X() ** 2 + tag_vector.Y() ** 2)
+        unit_vector = Transform2d(
+            tag_vector.X() / vector_magnitude, tag_vector.Y() / vector_magnitude, 0
+        )
+
+        # Scale unit vector by (original magnitude + offset)
+        end_vector = unit_vector * (vector_magnitude + offset_from_center)
+        reef_center = reef_centers[DriverStation.getAlliance()]
+        return Pose2d(
+            end_vector.X() + reef_center.X(),
+            end_vector.Y() + reef_center.Y(),
+            tag_vector.angle().rotateBy(Rotation2d.fromDegrees(180)),
+        )
