@@ -28,10 +28,10 @@ class ResetAll(SequentialCommandGroup):
         super().__init__(
             parallel(
                 ManualMoveElevator.up(elevator).withTimeout(1.5),
-                ResetPrinterRight(printer),
             ),
             RetractArm(arm),
             parallel(
+                ResetPrinterRight(printer),
                 ResetElevator(elevator),
                 ResetIntake(intake),
                 ResetClimber(climber),
