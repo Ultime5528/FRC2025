@@ -60,7 +60,7 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
 class AlignWithReefSide(DeferredCommand):
     pose_offset = autoproperty(Drivetrain.length / 2)
 
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware: HardwareModule, ):
         super().__init__(
             lambda: AutoBuilder.pathfindToPose(
                 self.getTagPoseToAlign(),
