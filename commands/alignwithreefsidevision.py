@@ -59,11 +59,11 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
 
 
 class AlignWithReefSideVision(DeferredCommand):
-    pose_offset = autoproperty(Drivetrain.length / 2)
+    pose_offset = autoproperty(0.5)
 
-    def __init__(self, hardware: HardwareModule, ):
+    def __init__(self, hardware: HardwareModule):
         super().__init__(
-            lambda: DriveToPoses(hardware.drivetrain, self.getTagPoseToAlign()),
+            lambda: DriveToPoses(hardware.drivetrain, [self.getTagPoseToAlign()]),
             hardware.drivetrain,
         )
         self.hardware = proxy(hardware)

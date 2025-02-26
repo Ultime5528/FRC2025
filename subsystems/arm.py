@@ -21,7 +21,7 @@ class Arm(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(-0.3)
+    speed = autoproperty(-0.6)
 
     def __init__(self):
         super().__init__()

@@ -1,3 +1,7 @@
+from wpimath.geometry import Pose2d
+
+from commands.alignwithreefsidevision import AlignWithReefSideVision
+from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.vision.alignwithalgae import AlignWithAlgae
 from modules.algaevision import AlgaeVisionModule
@@ -15,14 +19,15 @@ from commands.resetall import ResetAll
 from modules.hardware import HardwareModule
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
+from ultime.vision import RelativeVision
 
 
 class ControlModule(Module):
-    def __init__(self, hardware: HardwareModule, vision_algae: AlgaeVisionModule):
+    def __init__(self, hardware: HardwareModule, vision_algae: AlgaeVisionModule, tag_vision: RelativeVision):
         super().__init__()
         self.hardware = hardware
         self.algae_vision = vision_algae
-
+        self.tag_vision = tag_vision
         self.setupButtons()
         # self.hardware.controller.button(1).onTrue(Command())
 
@@ -34,11 +39,12 @@ class ControlModule(Module):
         # self.hardware.controller.leftTrigger().whileTrue(
         #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
         # )
-        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
 
         # Pilot buttons
+        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
+        self.hardware.controller.leftTrigger().whileTrue(AlignWithReefSideVision(self.hardware))
 
-
+        # self.hardware.controller.button(1).whileTrue(DriveToPoses(self.hardware.drivetrain, [Pose2d()]))
 
         # Copilot's panel
         # Elevator Levels
