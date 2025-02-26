@@ -1,5 +1,6 @@
 from _weakref import proxy
-from typing import Optional, Callable
+import math
+from typing import Optional, Callable, Callable
 
 import commands2
 import wpilib
@@ -9,7 +10,9 @@ from pathplannerlib.config import PIDConstants, RobotConfig
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathConstraints, PathPlannerPath
 from pathplannerlib.pathfinding import Pathfinding
-from wpimath.geometry import Pose2d
+from robotpy_apriltag import AprilTagFieldLayout
+from wpilib import DriverStation
+from wpimath.geometry import Pose2d, Rotation2d
 
 from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
@@ -26,9 +29,6 @@ def registerNamedCommand(command: Command):
 
 
 class AutonomousModule(Module):
-    def robotInit(self) -> None:
-        Pathfinding.ensureInitialized()
-
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.hardware = proxy(hardware)
@@ -65,6 +65,8 @@ class AutonomousModule(Module):
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
+
+        self.hardware = hardware
 
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(RetractArm(self.hardware.arm))

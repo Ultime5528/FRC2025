@@ -42,16 +42,7 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
-        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
-
-        """
-        Drivetrain
-        """
-        putCommandOnDashboard(
-            "Drivetrain",
-            DriveToPoses.back(hardware.drivetrain, 1),
-            name="DriveToPoses.back(1)",
-        )
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware))
 
         """
         Elevator
