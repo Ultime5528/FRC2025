@@ -1,14 +1,17 @@
+import math
 from typing import Union, Callable, Optional
 
 from commands2.button import CommandXboxController
 from photonlibpy.targeting import PhotonTrackedTarget
+from robotpy_apriltag import AprilTagFieldLayout
 from wpilib import DriverStation
 from wpilib.interfaces import GenericHID
 from wpimath.filter import SlewRateLimiter
+from wpimath.geometry import Pose2d, Transform3d
 
 from commands.drivetrain.drive import apply_center_distance_deadzone, properties
 from subsystems.drivetrain import Drivetrain
-from modules.relativetagvision import RelativeTagVisionModule
+from ultime.vision import RelativeVision
 from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
@@ -41,6 +44,11 @@ reef_centers = {
     DriverStation.Alliance.kRed: Pose2d(13.04, 4.03, 0),
 }
 
+# Links the sextants to the corresponding AprilTag ID for each reef
+tag_id = {
+    DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
+    DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
+}
 
 def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
     return tag_id[alliance][sextant]
@@ -48,56 +56,38 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
 
 
 class AlignWithReefSideVision(Command):
-    p = autoproperty(0.025)
-    horizontal_offset = autoproperty(0.0)
+    locating_rotation_speed = autoproperty(0.3)
 
     def __init__(
         self,
         drivetrain: Drivetrain,
-        vision: RelativeTagVisionModule,
+        vision: RelativeVision,
         xbox_remote: Optional[CommandXboxController] = None,
     ):
         super().__init__()
         self.addRequirements(drivetrain)
         self.drivetrain = drivetrain
         self.vision = vision
-        self.xbox_remote = xbox_remote
-        self.hid = xbox_remote.getHID() if xbox_remote else None
         self.vel_rot = 0
-        self.target:PhotonTrackedTarget = None
+        self.target: PhotonTrackedTarget = None
         self.m_xspeedLimiter = SlewRateLimiter(3)
         self.m_yspeedLimiter = SlewRateLimiter(3)
+        self.tag_field = AprilTagFieldLayout("2025-reefscape-andymark.json")
 
     def execute(self):
-        self.target = self.vision.getTagFromID(getTagID(DriverStation.getAlliance(), getSextantFromPosition(self.drivetrain.getPose(), reef_centers[DriverStation.getAlliance()])))
+        target_tag_id = getTagID(DriverStation.getAlliance(), getSextantFromPosition(self.drivetrain.getPose(), reef_centers[DriverStation.getAlliance()]))
+        self.target: PhotonTrackedTarget = self.vision.getTargetWithID(target_tag_id)
+        #
+        # if self.target is not None:
+        #     self.vel_rot = self.p * (self.horizontal_offset - self.target.getYaw())
+        #     self.drivetrain.drive(
+        #         x_speed, y_speed, self.vel_rot, is_field_relative=True
+        #     )
+        # else:
+        robot_to_tag = self.tag_field.getTagPose(target_tag_id) - self.drivetrain.getPose()
+        rotation_error = robot_to_tag.rotation().toRotation2d() - self.drivetrain.getPose().rotation()
+        self.drivetrain.drive(0,0, math.copysign(self.locating_rotation_speed, rotation_error))
 
-        if self.xbox_remote:
-            x_speed, y_speed, _ = apply_center_distance_deadzone(
-                self.xbox_remote.getLeftY() * -1,
-                self.xbox_remote.getLeftX() * -1,
-                properties.moving_deadzone,
-            )
-            x_speed = self.m_xspeedLimiter.calculate(x_speed)
-            y_speed = self.m_yspeedLimiter.calculate(y_speed)
-
-            if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
-                x_speed *= -1
-                y_speed *= -1
-
-        else:
-            x_speed = 0.0
-            y_speed = 0.0
-
-        if self.target is not None:
-            self.vel_rot = self.p * (self.horizontal_offset - self.target.getYaw())
-            self.drivetrain.drive(
-                x_speed, y_speed, self.vel_rot, is_field_relative=True
-            )
-        elif self.hid:
-            self.drivetrain.drive(x_speed, y_speed, 0, is_field_relative=True)
-            self.hid.setRumble(GenericHID.RumbleType.kBothRumble, 1.0)
 
     def end(self, interrupted: bool):
         self.drivetrain.stop()
-        if self.hid:
-            self.hid.setRumble(GenericHID.RumbleType.kBothRumble, 0)

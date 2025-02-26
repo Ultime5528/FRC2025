@@ -14,7 +14,7 @@ robot_to_camera_offset = wpimath.geometry.Transform3d(
 class TagVisionModule(AbsoluteVision):
     def __init__(self, drivetrain: Drivetrain):
         super().__init__(
-            camera_name="Main Camera", camera_offset=robot_to_camera_offset
+            camera_name="PositionEstimator", camera_offset=robot_to_camera_offset
         )
         self.mode = VisionMode.Absolute
         self.drivetrain = drivetrain
