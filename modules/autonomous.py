@@ -13,6 +13,7 @@ from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
 from commands.printer.moveprinter import MovePrinter
 from modules.hardware import HardwareModule
+from ultime.followpathplannerpath import FollowPathplannerPath, should_flip_path
 from ultime.module import Module
 
 
@@ -27,6 +28,30 @@ class AutonomousModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.hardware = proxy(hardware)
+
+        # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
+        # Must test which AutoBuilder works best
+        # AutoBuilder.configure(
+        #     self.getPose,
+        #     self.resetToPose,
+        #     self.getRobotRelativeChassisSpeeds,
+        #     self.driveFromChassisSpeeds,
+        #     PPHolonomicDriveController(
+        #         PIDConstants(5, 0, 0),
+        #         PIDConstants(5, 0, 0),
+        #     ),
+        #     RobotConfig.fromGUISettings(),
+        #     should_flip_path,
+        #     self,
+        # )
+
+        # Flipping must be done by the command because the AutoBuilder uses custom code
+        AutoBuilder.configureCustom(
+            lambda path: FollowPathplannerPath(path, self.hardware.drivetrain),
+            self.hardware.drivetrain.resetToPose,
+            True,
+            should_flip_path,
+        )
 
         self.setupCommandsOnPathPlanner()
 
