@@ -58,7 +58,7 @@ def getTagID(alliance: DriverStation.Alliance, sextant: int) -> int:
     return tag_id[alliance][sextant]
 
 
-class AlignWithReefSide(DeferredCommand):
+class AlignWithReefSideVision(DeferredCommand):
     pose_offset = autoproperty(Drivetrain.length / 2)
 
     def __init__(self, hardware: HardwareModule, ):
