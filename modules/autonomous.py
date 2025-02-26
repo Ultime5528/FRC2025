@@ -13,7 +13,7 @@ from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
 from commands.printer.moveprinter import MovePrinter
 from modules.hardware import HardwareModule
-from ultime.followpathplannerpath import FollowPathplannerPath, should_flip_path
+from ultime.followpathplannerpath import FollowPathplannerPath, shouldFlipPath
 from ultime.module import Module
 
 
@@ -50,7 +50,7 @@ class AutonomousModule(Module):
             lambda path: FollowPathplannerPath(path, self.hardware.drivetrain),
             self.hardware.drivetrain.resetToPose,
             True,
-            should_flip_path,
+            shouldFlipPath,
         )
 
         self.setupCommandsOnPathPlanner()

@@ -13,7 +13,7 @@ from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 
 
-def should_flip_path():
+def shouldFlipPath():
     # Boolean supplier that controls when the path will be mirrored for the red alliance
     # This will flip the path being followed to the red side of the field.
     # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
@@ -40,7 +40,7 @@ class FollowPathplannerPath(Command):
         self.sampled_trajectory = []
 
         pathplanner_path = (
-            self.flipped_path if should_flip_path() else self.pathplanner_path_base
+            self.flipped_path if shouldFlipPath() else self.pathplanner_path_base
         )
         PPLibTelemetry.setCurrentPath(pathplanner_path)
         trajectory = pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings())
