@@ -4,6 +4,7 @@ import wpilib
 from wpiutil import SendableBuilder
 
 from ports import PWM
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 
@@ -27,6 +28,13 @@ class Arm(Subsystem):
         self._motor = wpilib.VictorSP(PWM.arm_motor)
         self.state = Arm.State.Unknown
         self.movement_state = Arm.MovementState.Unknown
+        self.alert_should_not_move = self.createAlert(
+            "Arm Motor is moving when State is 'DoNotMove'", AlertType.Error
+        )
+
+    def periodic(self) -> None:
+        if not self._motor.get() == 0 and self.MovementState.DoNotMove:
+            self.alert_should_not_move.set(True)
 
     def extend(self):
         if self.movement_state == Arm.MovementState.DoNotMove:
