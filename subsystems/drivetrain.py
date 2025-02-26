@@ -18,7 +18,6 @@ from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
-from ultime.followpathplannerpath import FollowPathplannerPath
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule

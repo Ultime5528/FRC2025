@@ -5,6 +5,8 @@ import commands2
 import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.config import PIDConstants, RobotConfig
+from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathConstraints, PathPlannerPath
 from pathplannerlib.pathfinding import Pathfinding
 from wpimath.geometry import Pose2d
@@ -33,27 +35,27 @@ class AutonomousModule(Module):
 
         # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
         # Must test which AutoBuilder works best
-        # AutoBuilder.configure(
-        #     self.getPose,
-        #     self.resetToPose,
-        #     self.getRobotRelativeChassisSpeeds,
-        #     self.driveFromChassisSpeeds,
-        #     PPHolonomicDriveController(
-        #         PIDConstants(5, 0, 0),
-        #         PIDConstants(5, 0, 0),
-        #     ),
-        #     RobotConfig.fromGUISettings(),
-        #     should_flip_path,
-        #     self,
-        # )
+        AutoBuilder.configure(
+            self.hardware.drivetrain.getPose,
+            self.hardware.drivetrain.resetToPose,
+            self.hardware.drivetrain.getRobotRelativeChassisSpeeds,
+            self.hardware.drivetrain.driveFromChassisSpeeds,
+            PPHolonomicDriveController(
+                PIDConstants(5, 0, 0),
+                PIDConstants(5, 0, 0),
+            ),
+            RobotConfig.fromGUISettings(),
+            shouldFlipPath,
+            self.hardware.drivetrain,
+        )
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
-        AutoBuilder.configureCustom(
-            lambda path: FollowPathplannerPath(path, self.hardware.drivetrain),
-            self.hardware.drivetrain.resetToPose,
-            True,
-            shouldFlipPath,
-        )
+        # AutoBuilder.configureCustom(
+        #     lambda path: FollowPathplannerPath(path, self.hardware.drivetrain),
+        #     self.hardware.drivetrain.resetToPose,
+        #     True,
+        #     shouldFlipPath,
+        # )
 
         self.setupCommandsOnPathPlanner()
 
