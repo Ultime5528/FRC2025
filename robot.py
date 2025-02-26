@@ -55,6 +55,6 @@ class Robot(ModuleRobot):
             self.arm_collision,
             self.coral_retraction,
             self.loading_detection,
-            self.vision_algae
+            self.vision_algae,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )

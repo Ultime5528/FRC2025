@@ -67,7 +67,9 @@ class AlignWithReefSideVision(DeferredCommand):
             hardware.drivetrain,
         )
         self.hardware = proxy(hardware)
-        self.tag_field = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeAndyMark)
+        self.tag_field = AprilTagFieldLayout.loadField(
+            AprilTagField.k2025ReefscapeAndyMark
+        )
 
     def getTagPoseToAlign(self) -> Pose2d:
         pose = self.tag_field.getTagPose(

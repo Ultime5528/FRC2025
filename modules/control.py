@@ -44,7 +44,7 @@ class ControlModule(Module):
         self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
         self.hardware.controller.leftTrigger().whileTrue(AlignWithReefSideVision(self.hardware))
 
-        # self.hardware.controller.button(1).whileTrue(DriveToPoses(self.hardware.drivetrain, [Pose2d()]))
+
 
         # Copilot's panel
         # Elevator Levels
