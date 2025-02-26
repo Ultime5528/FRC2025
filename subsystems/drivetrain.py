@@ -4,7 +4,8 @@ import wpilib
 import wpimath
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.config import RobotConfig
+from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectoryState
@@ -330,9 +331,9 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose3d, timestamp: float):
+    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float):
         self.swerve_estimator.addVisionMeasurement(pose, timestamp)
-        self.vision_pose.setPose(pose.toPose2d())
+        self.vision_pose.setPose(pose)
 
     def getCurrentDrawAmps(self):
         return 0.0
@@ -354,8 +355,8 @@ def should_flip_path():
 
 
 class FollowPathplannerPath(Command):
-    delta_t = autoproperty(0.08)
-    pos_tolerance = autoproperty(0.3)
+    delta_t = autoproperty(0.03)
+    pos_tolerance = autoproperty(0.5)
     rot_tolerance = autoproperty(0.5)
 
     def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
@@ -435,28 +436,39 @@ class FollowPathplannerPath(Command):
             )
             self.drivetrain.drive(
                 math.copysign(
-                    min(
-                        self.sampled_trajectory[self.current_goal].linearVelocity,
-                        abs(
-                            position_error.X()
-                            * self.sampled_trajectory[self.current_goal].linearVelocity
-                        ),
-                    ),
+                    self.sampled_trajectory[self.current_goal].linearVelocity,
                     position_error.X(),
                 ),
                 math.copysign(
-                    min(
-                        self.sampled_trajectory[self.current_goal].linearVelocity,
-                        abs(
-                            position_error.Y()
-                            * self.sampled_trajectory[self.current_goal].linearVelocity
-                        ),
-                    ),
+                    self.sampled_trajectory[self.current_goal].linearVelocity,
                     position_error.Y(),
                 ),
                 rotation_error.radians(),
-                True,
             )
+            # self.drivetrain.drive(
+            #     math.copysign(
+            #         min(
+            #             self.sampled_trajectory[self.current_goal].linearVelocity,
+            #             abs(
+            #                 position_error.X()
+            #                 * self.sampled_trajectory[self.current_goal].linearVelocity
+            #             ),
+            #         ),
+            #         position_error.X(),
+            #     ),
+            #     math.copysign(
+            #         min(
+            #             self.sampled_trajectory[self.current_goal].linearVelocity,
+            #             abs(
+            #                 position_error.Y()
+            #                 * self.sampled_trajectory[self.current_goal].linearVelocity
+            #             ),
+            #         ),
+            #         position_error.Y(),
+            #     ),
+            #     rotation_error.radians(),
+            #     True,
+            # )
 
     def isFinished(self) -> bool:
         return self.current_goal >= len(self.sampled_trajectory)

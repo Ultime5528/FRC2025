@@ -36,6 +36,7 @@ class PWM(Immutable):
     printer_motor = 2
     intake_motor_grab = 5
     intake_motor_pivot = 4
+    led_strip = 6
 
 
 class DIO:

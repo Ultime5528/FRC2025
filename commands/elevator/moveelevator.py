@@ -1,7 +1,13 @@
+from enum import Enum, auto
+
 import wpilib
 from commands2 import SelectCommand
+from wpilib import DriverStation
+from wpiutil import SendableBuilder
 
+from commands.alignwithreefside import getSextantFromPosition, reef_centers
 from subsystems.arm import Arm
+from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 from ultime.command import Command, with_timeout
@@ -10,6 +16,31 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 @with_timeout(10.0)
 class MoveElevator(Command):
+    class AlgaePosition(Enum):
+        Unknown = auto()
+        Up = auto()
+        Down = auto()
+
+    @staticmethod
+    def _getAlgaeLevelPosition(drivetrain: Drivetrain):
+        alliance = DriverStation.getAlliance()
+        sextant = getSextantFromPosition(drivetrain.getPose(), reef_centers[alliance])
+
+        if alliance == alliance.kBlue:
+            if sextant == 0 or sextant == 2 or sextant == 4:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Down
+            else:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Up
+        elif alliance.kRed:
+            if sextant == 0 or sextant == 2 or sextant == 4:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Up
+            else:
+                MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Down
+        else:
+            MoveElevator.AlgaePosition = MoveElevator.AlgaePosition.Unknown
+
+        return MoveElevator.AlgaePosition
+
     @classmethod
     def toLevel1(cls, elevator: Elevator):
         cmd = cls(
@@ -81,13 +112,13 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def toAlgae(cls, elevator: Elevator, arm: Arm):
+    def toAlgae(cls, elevator: Elevator, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
-                Elevator.State.Level4: cls.toLevel3Algae(elevator),
-                Elevator.State.Level3: cls.toLevel2Algae(elevator),
+                MoveElevator.AlgaePosition.Up: cls.toLevel3Algae(elevator),
+                MoveElevator.AlgaePosition.Down: cls.toLevel2Algae(elevator),
             },
-            lambda: elevator.state,
+            lambda: cls._getAlgaeLevelPosition(drivetrain),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
@@ -134,6 +165,20 @@ class MoveElevator(Command):
             self.elevator.state = Elevator.State.Unknown
         else:
             self.elevator.state = self.new_state
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+
+        def setOffset(value: float):
+            self._offset = value
+
+        def noop(x):
+            pass
+
+        def setHasReset(value: bool):
+            self._has_reset = value
+
+        # builder.addStringProperty("algae_state", lambda: self.AlgaePosition.name, noop)
 
 
 class _ClassProperties:
