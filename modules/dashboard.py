@@ -1,6 +1,13 @@
 import commands2
 import wpilib
+from commands2 import DeferredCommand
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.path import PathConstraints
+from pathplannerlib.pathfinding import Pathfinding
+from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.units import degreesToRadians
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -36,14 +43,7 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
-        """
-        Drivetrain
-        """
-        putCommandOnDashboard(
-            "Drivetrain",
-            DriveToPoses.back(hardware.drivetrain, 1),
-            name="DriveToPoses.back(1)",
-        )
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware))
 
         """
         Elevator

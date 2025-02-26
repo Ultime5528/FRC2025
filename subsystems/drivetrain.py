@@ -12,6 +12,8 @@ from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase, DriverStation
 from wpimath._controls._controls.trajectory import Trajectory
+from wpilib import RobotBase, DriverStation
+from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -31,8 +33,8 @@ from ultime.swerveconfig import SwerveConstants
 
 
 class Drivetrain(Subsystem):
-    width = 0.597
-    length = 0.673
+    width = 0.762
+    length = 0.685
     max_angular_speed = autoproperty(25.0)
 
     angular_offset_fl = autoproperty(-1.57)
@@ -153,6 +155,23 @@ class Drivetrain(Subsystem):
         y_speed = y_speed_input * SwerveConstants.max_speed_per_second
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
+
+    def driveFromChassisSpeeds(
+        self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
+    ) -> None:
+        corrected_chassis_speed = self.correctForDynamics(speeds)
+
+        swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
+            corrected_chassis_speed
+        )
+
+        SwerveDrive4Kinematics.desaturateWheelSpeeds(
+            swerve_module_states, SwerveConstants.max_speed_per_second
+        )
+        self.swerve_module_fl.setDesiredState(swerve_module_states[0])
+        self.swerve_module_fr.setDesiredState(swerve_module_states[1])
+        self.swerve_module_bl.setDesiredState(swerve_module_states[2])
+        self.swerve_module_br.setDesiredState(swerve_module_states[3])
 
     def driveFromChassisSpeeds(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
