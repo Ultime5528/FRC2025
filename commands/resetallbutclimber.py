@@ -10,14 +10,11 @@ from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from subsystems.intake import Intake
 from subsystems.printer import Printer
-from ultime.autoproperty import autoproperty
 from ultime.command import ignore_requirements
 
 
 @ignore_requirements(["elevator", "printer", "arm", "intake"])
 class ResetAllButClimber(SequentialCommandGroup):
-    elevator_up_timeout = autoproperty(1.5)
-
     def __init__(
         self,
         elevator: Elevator,
@@ -26,7 +23,9 @@ class ResetAllButClimber(SequentialCommandGroup):
         intake: Intake,
     ):
         super().__init__(
-            ManualMoveElevator.up(elevator).withTimeout(self.elevator_up_timeout),
+            parallel(
+                ManualMoveElevator.up(elevator).withTimeout(1.5),
+            ),
             RetractArm(arm),
             parallel(
                 ResetPrinterRight(printer),
