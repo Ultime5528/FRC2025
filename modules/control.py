@@ -34,11 +34,13 @@ class ControlModule(Module):
         # self.hardware.controller.leftTrigger().whileTrue(
         #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
         # )
-        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
+        self.hardware.controller.rightTrigger().whileTrue(
+            AlignWithAlgae(
+                self.hardware.drivetrain, self.algae_vision, self.hardware.controller
+            )
+        )
 
         # Pilot buttons
-
-
 
         # Copilot's panel
         # Elevator Levels

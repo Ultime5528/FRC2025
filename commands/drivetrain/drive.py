@@ -84,6 +84,9 @@ class DriveField(Command):
             y_speed *= self.speed_rate
             rot_speed *= self.speed_rate
 
+        if self.xbox_remote.leftBumper():
+            rot_speed *= -1
+
         self.drivetrain.drive(x_speed, y_speed, rot_speed, True)
 
     def end(self, interrupted: bool) -> None:

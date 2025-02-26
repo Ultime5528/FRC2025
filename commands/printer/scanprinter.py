@@ -7,16 +7,21 @@ from subsystems.printer import Printer
 from ultime.autoproperty import FloatProperty, autoproperty, asCallable
 from ultime.command import Command
 
+
 class ScanPrinter(Command):
     @staticmethod
     def right(printer: Printer):
-        cmd = SequentialCommandGroup(MovePrinter.toMiddleRight(printer), _ScanPrinter.right(printer))
+        cmd = SequentialCommandGroup(
+            MovePrinter.toMiddleRight(printer), _ScanPrinter.right(printer)
+        )
         cmd.setName(ScanPrinter.__name__ + ".right")
         return cmd
 
     @staticmethod
     def left(printer: Printer):
-        cmd = SequentialCommandGroup(MovePrinter.toMiddleLeft(printer), _ScanPrinter.left(printer))
+        cmd = SequentialCommandGroup(
+            MovePrinter.toMiddleLeft(printer), _ScanPrinter.left(printer)
+        )
         cmd.setName(ScanPrinter.__name__ + ".left")
         return cmd
 
@@ -64,7 +69,7 @@ class _ScanPrinter(Command):
 
     def isFinished(self) -> bool:
         if (self.get_speed() > 0 and self.printer.isLeft()) or (
-                self.get_speed() < 0 and self.printer.isRight()
+            self.get_speed() < 0 and self.printer.isRight()
         ):
             return True
 
@@ -73,13 +78,13 @@ class _ScanPrinter(Command):
 
         if self.get_speed() > 0:
             return (
-                    self.printer.getPosition() <= self.needed_position
-                    or self.printer.isRight()
+                self.printer.getPosition() <= self.needed_position
+                or self.printer.isRight()
             )
         else:
             return (
-                    self.printer.getPosition() >= self.needed_position
-                    or self.printer.isLeft()
+                self.printer.getPosition() >= self.needed_position
+                or self.printer.isLeft()
             )
 
     def end(self, interrupted: bool):
