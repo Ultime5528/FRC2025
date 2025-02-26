@@ -1,8 +1,9 @@
+import pytest
+
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from robot import Robot
 from ultime.tests import RobotTestController
-
 
 def test_reset_all(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTeleop()
@@ -36,7 +37,7 @@ def test_reset_all_but_climber(robot_controller: RobotTestController, robot: Rob
 
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
+    assert elevator.hasReset()
     assert printer.hasReset()
     assert arm.state == arm.State.Retracted
     assert intake.hasReset()
-    assert elevator.hasReset()
