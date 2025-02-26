@@ -92,6 +92,9 @@ class Elevator(Subsystem):
         else:
             self._switch.setSimUnpressed()
 
+        if self._prev_is_down and not self._switch.isPressed():
+            self._has_reset = True
+
         assert not (
             self.isUp() and self.isDown()
         ), "Both switches are on at the same time which doesn't make any sense"

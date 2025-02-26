@@ -15,8 +15,6 @@ def test_reset_all(robot_controller: RobotTestController, robot: Robot):
     cmd = ResetAll(elevator, printer, arm, intake, climber)
     cmd.schedule()
 
-    robot_controller.wait(1.0)
-
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
     assert elevator.hasReset()
@@ -36,11 +34,9 @@ def test_reset_all_but_climber(robot_controller: RobotTestController, robot: Rob
     cmd = ResetAllButClimber(elevator, printer, arm, intake)
     cmd.schedule()
 
-    robot_controller.wait(1.0)
-    elevator._switch.setSimPressed()
     robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
 
+    assert elevator.hasReset()
     assert printer.hasReset()
     assert arm.state == arm.State.Retracted
     assert intake.hasReset()
-    assert elevator.hasReset()
