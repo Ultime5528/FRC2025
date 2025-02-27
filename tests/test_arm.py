@@ -2,7 +2,7 @@ from _pytest.python_api import approx
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.elevator.moveelevator import MoveElevator
+from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from robot import Robot
@@ -302,25 +302,14 @@ def _genericTest(robot_controller: RobotTestController, robot: Robot, parameters
     robot_controller.wait_until(lambda: not reset_all_cmd.isScheduled(), 30.0)
 
     if parameters.initial_arm_state == Arm.State.Extended:
-        clear_elevator_cmd = MoveElevator.toLevel1(elevator)
+        assert move_elevator_properties.position_level2 > elevator.height_lower_zone
+        clear_elevator_cmd = MoveElevator.toLevel2(elevator)
         clear_elevator_cmd.schedule()
         robot_controller.wait_until(lambda: not clear_elevator_cmd.isScheduled(), 10.0)
 
         extend_arm_cmd = ExtendArm(arm)
         extend_arm_cmd.schedule()
         robot_controller.wait_until(lambda: not extend_arm_cmd.isScheduled(), 10.0)
-
-    # cmd_reset_elevator = ResetElevator(elevator)
-    # cmd_reset_elevator.schedule()
-    # robot_controller.wait_until(lambda: not cmd_reset_elevator.isScheduled(), mega_delay)
-    #
-    # cmd_move_elevator = parameters.initial_move_elevator_cmd(elevator)
-    # cmd_move_elevator.schedule()
-    # robot_controller.wait_until(lambda: not cmd_move_elevator.isScheduled(), mega_delay)
-    #
-    # cmd_reset_printer = ResetPrinterRight(printer)
-    # cmd_reset_printer.schedule()
-    # robot_controller.wait_until(lambda: not cmd_reset_printer.isScheduled(), mega_delay)
 
     cmd_move_printer = parameters.initial_move_printer_cmd(printer)
     cmd_move_printer.schedule()

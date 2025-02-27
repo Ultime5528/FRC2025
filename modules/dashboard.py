@@ -8,7 +8,9 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
+from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -23,6 +25,7 @@ from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
 from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
+from commands.resetallbutclimber import ResetAllButClimber
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -32,6 +35,15 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+
+        """
+        Drivetrain
+        """
+        putCommandOnDashboard(
+            "Drivetrain",
+            DriveToPoses.back(hardware.drivetrain, 1),
+            name="DriveToPoses.back(1)",
+        )
 
         """
         Elevator
@@ -104,10 +116,6 @@ class DashboardModule(Module):
         Groups
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
-
-        """
-        Groups
-        """
         putCommandOnDashboard(
             "Group",
             ResetAll(
@@ -116,6 +124,35 @@ class DashboardModule(Module):
                 hardware.arm,
                 hardware.intake,
                 hardware.climber,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.left(
+                hardware.arm,
+                hardware.claw,
+                hardware.drivetrain,
+                hardware.elevator,
+                hardware.printer,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.right(
+                hardware.arm,
+                hardware.claw,
+                hardware.drivetrain,
+                hardware.elevator,
+                hardware.printer,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            ResetAllButClimber(
+                hardware.elevator,
+                hardware.printer,
+                hardware.arm,
+                hardware.intake,
             ),
         )
         putCommandOnDashboard(
