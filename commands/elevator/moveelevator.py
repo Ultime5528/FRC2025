@@ -6,7 +6,6 @@ from wpilib import DriverStation
 from wpiutil import SendableBuilder
 
 from commands.alignwithreefside import getSextantFromPosition, reef_centers
-from subsystems.arm import Arm
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable

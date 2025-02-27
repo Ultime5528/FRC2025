@@ -1,5 +1,5 @@
+import math
 import weakref
-from asyncio import wait_for
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
@@ -9,8 +9,6 @@ from wpiutil import SendableBuilder
 import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
-import math
-from subsystems.elevator import Elevator
 
 
 def interpolate(t, color1, color2):
@@ -185,7 +183,7 @@ class LEDController(Subsystem):
 
                 if (
                     self.claw.seesObject()
-                    #and self.elevator.state == self.elevator.State.Loading
+                    # and self.elevator.state == self.elevator.State.Loading
                     and self.timer.get() <= 3
                 ):
                     self.timer.start()

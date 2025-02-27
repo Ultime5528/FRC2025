@@ -4,7 +4,6 @@ from commands2 import ConditionalCommand, SequentialCommandGroup
 
 from commands.claw.autodrop import AutoDrop
 from commands.printer.scanprinter import ScanPrinter
-from modules.hardware import HardwareModule
 from subsystems.claw import Claw
 from subsystems.elevator import Elevator
 from subsystems.printer import Printer

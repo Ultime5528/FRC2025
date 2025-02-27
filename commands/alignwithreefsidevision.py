@@ -1,14 +1,13 @@
 import math
-from _weakref import proxy
 
-from commands2 import Command, ScheduleCommand, DeferredCommand, SequentialCommandGroup
+from commands2 import DeferredCommand
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
-from wpilib import DriverStation, SmartDashboard
-from wpimath.geometry import Pose2d, Rotation2d, Pose3d, Translation2d, Transform2d
+from wpilib import DriverStation
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 
+from commands.drivetrain.drivetoposes import DriveToPoses
 from modules.hardware import HardwareModule
 from ultime.autoproperty import autoproperty
-from commands.drivetrain.drivetoposes import DriveToPoses
 
 # Links the sextants to the corresponding AprilTag ID for each reef
 tag_id = {

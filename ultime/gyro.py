@@ -107,8 +107,12 @@ class ADIS16470(Gyro):
         super().__init__()
         self.gyro.getPitchAxis()
         gyro_sim_device = SimDeviceSim("Gyro:ADIS16470[0]")
-        self._gyro_sim_angle = gyro_sim_device.getDouble("gyro_angle_" + self.gyro.getYawAxis().name[-1].lower())
-        self._gyro_sim_pitch = gyro_sim_device.getDouble("gyro_angle_" + self.gyro.getPitchAxis().name[-1].lower())
+        self._gyro_sim_angle = gyro_sim_device.getDouble(
+            "gyro_angle_" + self.gyro.getYawAxis().name[-1].lower()
+        )
+        self._gyro_sim_pitch = gyro_sim_device.getDouble(
+            "gyro_angle_" + self.gyro.getPitchAxis().name[-1].lower()
+        )
 
     def getAngle(self):
         return math.remainder(

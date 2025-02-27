@@ -84,7 +84,7 @@ class Drivetrain(Subsystem):
             self.swerve_module_fr,
             self.swerve_module_bl,
             self.swerve_module_br,
-            lambda: self._gyro.getRotation2d().radians()
+            lambda: self._gyro.getRotation2d().radians(),
         )
         wpilib.SmartDashboard.putData("SwerveDrive", swerve_drive_sendable)
 

@@ -1,9 +1,5 @@
-import math
-
 import commands2
 import wpilib
-from commands2 import DeferredCommand
-from wpimath.geometry import Pose2d, Transform2d, Translation2d, Rotation2d
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -14,7 +10,6 @@ from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
 from commands.completedropsequence import CompleteDropSequence
-from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator

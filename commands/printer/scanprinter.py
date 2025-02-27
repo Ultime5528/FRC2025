@@ -1,5 +1,3 @@
-from typing import Literal
-
 from commands2 import SequentialCommandGroup
 
 from commands.printer.moveprinter import MovePrinter
