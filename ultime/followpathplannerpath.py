@@ -1,14 +1,17 @@
 import math
 
-from commands2 import Command
+from commands2 import Command, DeferredCommand, SequentialCommandGroup, InstantCommand
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectoryState
+from robotpy_installer.cli_installer import Installer
 from wpilib import DriverStation
 from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.geometry import Rotation2d, Pose2d
 
+from commands.drivetrain.drivetoposes import DriveToPoses
+from commands.drivetrain.resetpose import ResetPose
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 
@@ -20,7 +23,35 @@ def shouldFlipPath():
     return DriverStation.getAlliance() == DriverStation.Alliance.kRed
 
 
-class FollowPathplannerPath(Command):
+class FollowPathPlannerPath(SequentialCommandGroup):
+    def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
+        super().__init__(
+            InstantCommand(lambda: drivetrain.resetToPose(pathplanner_path.getStartingHolonomicPose())),
+            DeferredCommand(lambda: DriveToPoses(drivetrain, [Pose2d(state.pose.translation(), state.heading) for state in self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()]),
+            drivetrain)
+        )
+        self.drivetrain = drivetrain
+        self.addRequirements(drivetrain)
+        self.pathplanner_path_base = pathplanner_path
+        self.flipped_path = pathplanner_path.flipPath()
+        self.pathplanner_path = (
+            self.flipped_path if shouldFlipPath() else self.pathplanner_path_base
+        )
+
+
+    def pathplannerPathToPoses(self) -> list[Pose2d]:
+        states = self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()
+        poses = []
+        for state in states:
+            poses.append(state.pose)
+        return poses
+
+
+
+
+
+
+class _FollowPathplannerPath(Command):
     delta_t = autoproperty(0.08)
     pos_tolerance = autoproperty(0.3)
     rot_tolerance = autoproperty(0.5)
