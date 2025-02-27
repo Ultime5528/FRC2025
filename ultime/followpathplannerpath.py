@@ -5,13 +5,11 @@ from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectoryState
-from robotpy_installer.cli_installer import Installer
 from wpilib import DriverStation
 from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.geometry import Rotation2d, Pose2d
 
 from commands.drivetrain.drivetoposes import DriveToPoses
-from commands.drivetrain.resetpose import ResetPose
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 
