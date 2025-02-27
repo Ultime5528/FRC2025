@@ -100,7 +100,7 @@ class ADIS16470(Gyro):
 
     def __init__(self):
         self.gyro = wpilib.ADIS16470_IMU(
-            wpilib.ADIS16470_IMU.IMUAxis.kY,  # kZ, kX, and kY
+            wpilib.ADIS16470_IMU.IMUAxis.kY,  # kZ
             wpilib.ADIS16470_IMU.IMUAxis.kZ,  # kX
             wpilib.ADIS16470_IMU.IMUAxis.kX,  # kY
         )

@@ -2,13 +2,9 @@ import math
 
 import wpilib
 import wpimath
-from execnet.gateway_base import serve
-from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase
-from wpilib import RobotBase, DriverStation
-from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
