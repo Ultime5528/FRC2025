@@ -25,7 +25,8 @@ from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from modules.hardware import HardwareModule
-from ultime.followpathplannerpath import _FollowPathplannerPath, shouldFlipPath
+
+from ultime.followpath import FollowPath
 from ultime.module import Module
 
 
@@ -56,10 +57,10 @@ class AutonomousModule(Module):
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
         AutoBuilder.configureCustom(
-            lambda path: _FollowPathplannerPath(path, self.hardware.drivetrain),
-            self.hardware.drivetrain.resetToPose,
+            lambda path: FollowPath(path, self.hardware.drivetrain),
+            lambda _: None,  # Disable resetOdometry
             True,
-            shouldFlipPath,
+            lambda: False,  # Disable flipping, will be done by the command
         )
 
         self.setupCommandsOnPathPlanner()

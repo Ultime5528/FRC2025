@@ -1,3 +1,5 @@
+__all__ = ["FollowPath"]
+
 import math
 
 from commands2 import Command, DeferredCommand, SequentialCommandGroup, InstantCommand
@@ -21,46 +23,31 @@ def shouldFlipPath():
     return DriverStation.getAlliance() == DriverStation.Alliance.kRed
 
 
-class FollowPathPlannerPath(SequentialCommandGroup):
-    def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
+def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
+    states = path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()
+    poses = []
+    for state in states:
+        poses.append(state.pose)
+    return poses
+
+
+class FollowPathWithDriveToPoses(DeferredCommand):
+    def __init__(self, path: PathPlannerPath, drivetrain: Drivetrain):
         super().__init__(
-            InstantCommand(
-                lambda: drivetrain.resetToPose(
-                    pathplanner_path.getStartingHolonomicPose()
-                )
-            ),
-            DeferredCommand(
-                lambda: DriveToPoses(
-                    drivetrain,
-                    [
-                        Pose2d(state.pose.translation(), state.heading)
-                        for state in self.pathplanner_path.getIdealTrajectory(
-                            RobotConfig.fromGUISettings()
-                        ).getStates()
-                    ],
-                ),
+            lambda: DriveToPoses(
                 drivetrain,
+                self.getPoses(),
             ),
+            drivetrain,
         )
-        self.drivetrain = drivetrain
-        self.addRequirements(drivetrain)
-        self.pathplanner_path_base = pathplanner_path
-        self.flipped_path = pathplanner_path.flipPath()
-        self.pathplanner_path = (
-            self.flipped_path if shouldFlipPath() else self.pathplanner_path_base
-        )
+        self.poses = pathToPoses(path)
+        self.flipped_poses = pathToPoses(path.flipPath())
 
-    def pathplannerPathToPoses(self) -> list[Pose2d]:
-        states = self.pathplanner_path.getIdealTrajectory(
-            RobotConfig.fromGUISettings()
-        ).getStates()
-        poses = []
-        for state in states:
-            poses.append(state.pose)
-        return poses
+    def getPoses(self) -> list[Pose2d]:
+        return self.flipped_poses if shouldFlipPath() else self.poses
 
 
-class _FollowPathplannerPath(Command):
+class FollowPathCustom(Command):
     delta_t = autoproperty(0.08)
     pos_tolerance = autoproperty(0.3)
     rot_tolerance = autoproperty(0.5)
@@ -174,3 +161,13 @@ class _FollowPathplannerPath(Command):
         if interrupted:
             self.current_goal = 0
             self.sampled_trajectory = []
+
+
+# This is the final command that should be used in the robot code
+class FollowPath(FollowPathWithDriveToPoses):
+    pass
+
+
+# Alternative
+# class FollowPath(FollowPathCustom):
+#     pass
