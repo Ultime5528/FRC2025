@@ -1,4 +1,5 @@
 import weakref
+from asyncio import wait_for
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
@@ -9,6 +10,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 import math
+from subsystems.elevator import Elevator
 
 
 def interpolate(t, color1, color2):
@@ -25,6 +27,7 @@ Color = Union[np.ndarray, Tuple[int, int, int], List[int]]
 
 
 class LEDController(Subsystem):
+    green_rgb = np.array([0, 255, 0])
     red_rgb = np.array([255, 0, 0])
     blue_rgb = np.array([0, 0, 255])
     black = np.array([0, 0, 0])
@@ -34,17 +37,20 @@ class LEDController(Subsystem):
 
     brightness_value = autoproperty(20.0)
 
-    def __init__(self, robot):
+    def __init__(self, hardware):
         super().__init__()
         self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
         self.led_strip.setLength(len(self.buffer))
         self.led_strip.start()
+        self.claw = hardware.claw
+        self.elevator = hardware.elevator
+        self.printer = hardware.printer
 
         self.time = 0
         self.timer = Timer()
 
-        self.robot = weakref.proxy(robot)
+        self.hardware = weakref.proxy(hardware)
 
     @property
     def brightness(self) -> float:
@@ -111,8 +117,8 @@ class LEDController(Subsystem):
     def modePickUp(self):
         self.commonTeleop(self.getAllianceColor(), self.white, 3.0)
 
-    def modeNoteLoaded(self):
-        self.commonTeleop(self.white, self.getAllianceColor(), 1.0)
+    def modeCoralLoaded(self):
+        self.commonTeleop(self.green_rgb, self.black, 1.0)
 
     def commonTeleop(self, color1, color2, speed):
         color1 = (self.brightness * color1).astype(int)
@@ -175,16 +181,19 @@ class LEDController(Subsystem):
         elif DriverStation.isAutonomousEnabled():  # auto
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
-            if DriverStation.getMatchTime() > 20:
-                if self.robot.shooter.isShooting():
-                    # actions the robot will perform and the LED's reaction
-                    """if self.robot.shooter.isShooting():
-                        self.modeShoot()
-                    elif self.robot.intake.hasNote():
-                        self.modeNoteLoaded()
-                    elif isinstance(self.robot.intake.getCurrentCommand(), PickUp):
-                        self.modePickUp()"""
+            if DriverStation.getMatchTime() > 15:
 
+                if (
+                    self.claw.seesObject()
+                    #and self.elevator.state == self.elevator.State.Loading
+                    and self.timer.get() <= 3
+                ):
+                    self.timer.start()
+                    self.modeCoralLoaded()
+                elif self.elevator.state == self.elevator.State.Moving:
+                    self.modePickUp()
+                    self.timer.stop()
+                    self.timer.reset()
                 else:
                     self.modeTeleop()
                     self.timer.stop()
