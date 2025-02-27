@@ -24,9 +24,23 @@ def shouldFlipPath():
 class FollowPathPlannerPath(SequentialCommandGroup):
     def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
         super().__init__(
-            InstantCommand(lambda: drivetrain.resetToPose(pathplanner_path.getStartingHolonomicPose())),
-            DeferredCommand(lambda: DriveToPoses(drivetrain, [Pose2d(state.pose.translation(), state.heading) for state in self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()]),
-            drivetrain)
+            InstantCommand(
+                lambda: drivetrain.resetToPose(
+                    pathplanner_path.getStartingHolonomicPose()
+                )
+            ),
+            DeferredCommand(
+                lambda: DriveToPoses(
+                    drivetrain,
+                    [
+                        Pose2d(state.pose.translation(), state.heading)
+                        for state in self.pathplanner_path.getIdealTrajectory(
+                            RobotConfig.fromGUISettings()
+                        ).getStates()
+                    ],
+                ),
+                drivetrain,
+            ),
         )
         self.drivetrain = drivetrain
         self.addRequirements(drivetrain)
@@ -36,17 +50,14 @@ class FollowPathPlannerPath(SequentialCommandGroup):
             self.flipped_path if shouldFlipPath() else self.pathplanner_path_base
         )
 
-
     def pathplannerPathToPoses(self) -> list[Pose2d]:
-        states = self.pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()
+        states = self.pathplanner_path.getIdealTrajectory(
+            RobotConfig.fromGUISettings()
+        ).getStates()
         poses = []
         for state in states:
             poses.append(state.pose)
         return poses
-
-
-
-
 
 
 class _FollowPathplannerPath(Command):

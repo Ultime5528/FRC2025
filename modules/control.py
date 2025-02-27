@@ -23,7 +23,12 @@ from ultime.vision import RelativeVision
 
 
 class ControlModule(Module):
-    def __init__(self, hardware: HardwareModule, vision_algae: AlgaeVisionModule, tag_vision: RelativeVision):
+    def __init__(
+        self,
+        hardware: HardwareModule,
+        vision_algae: AlgaeVisionModule,
+        tag_vision: RelativeVision,
+    ):
         super().__init__()
         self.hardware = hardware
         self.algae_vision = vision_algae
@@ -41,10 +46,14 @@ class ControlModule(Module):
         # )
 
         # Pilot buttons
-        self.hardware.controller.rightTrigger().whileTrue(AlignWithAlgae(self.hardware.drivetrain, self.algae_vision, self.hardware.controller))
-        self.hardware.controller.leftTrigger().whileTrue(AlignWithReefSideVision(self.hardware))
-
-
+        self.hardware.controller.rightTrigger().whileTrue(
+            AlignWithAlgae(
+                self.hardware.drivetrain, self.algae_vision, self.hardware.controller
+            )
+        )
+        self.hardware.controller.leftTrigger().whileTrue(
+            AlignWithReefSideVision(self.hardware)
+        )
 
         # Copilot's panel
         # Elevator Levels
