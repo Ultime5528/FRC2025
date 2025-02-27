@@ -5,13 +5,32 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "begin to reef #22"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignWithReefSideVision"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 4.0
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -27,19 +46,19 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "MoveElevator.toLevel1"
+                        "name": "MoveElevator.toLevel2"
                       }
                     }
                   ]
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CompleteDropSequence.toRight"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CompleteDropSequence.toRight"
           }
         }
       ]

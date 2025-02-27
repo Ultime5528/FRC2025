@@ -14,6 +14,7 @@ from robotpy_apriltag import AprilTagFieldLayout
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d
 
+from commands.alignwithreefsidevision import AlignWithReefSideVision
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
@@ -73,11 +74,13 @@ class AutonomousModule(Module):
         self.hardware = hardware
 
     def setupCommandsOnPathPlanner(self):
+        registerNamedCommand(AlignWithReefSideVision(self.hardware))
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
         registerNamedCommand(MoveElevator.toLevel4(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
+        registerNamedCommand(MoveElevator.toLevel2(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
         registerNamedCommand(
             ResetAll(
