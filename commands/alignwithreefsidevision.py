@@ -2,20 +2,11 @@ import math
 from _weakref import proxy
 
 from commands2 import Command, ScheduleCommand, DeferredCommand, SequentialCommandGroup
-from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.commands import PathfindingCommand
-from pathplannerlib.path import PathConstraints
-from pathplannerlib.pathfinders import Pathfinder
-from pathplannerlib.pathfinding import Pathfinding
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpilib import DriverStation, SmartDashboard
-from wpimath._controls._controls.trajectory import Trajectory
 from wpimath.geometry import Pose2d, Rotation2d, Pose3d, Translation2d, Transform2d
-from wpimath.units import degreesToRadians
 
-from modules.autonomous import AutonomousModule
 from modules.hardware import HardwareModule
-from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from commands.drivetrain.drivetoposes import DriveToPoses
 
@@ -66,7 +57,7 @@ class AlignWithReefSideVision(DeferredCommand):
             lambda: DriveToPoses(hardware.drivetrain, [self.getTagPoseToAlign()]),
             hardware.drivetrain,
         )
-        self.hardware = proxy(hardware)
+        self.hardware = hardware
         self.tag_field = AprilTagFieldLayout.loadField(
             AprilTagField.k2025ReefscapeAndyMark
         )

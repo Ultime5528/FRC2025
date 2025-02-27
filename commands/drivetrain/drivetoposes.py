@@ -31,7 +31,7 @@ class DriveToPoses(Command):
     xy_accel = autoproperty(7.0)
     xy_speed_end = autoproperty(0.2)
     xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.06)
+    xy_tol_pos_last = autoproperty(0.01)
     xy_speed_max = autoproperty(20.0)
 
     rot_accel = autoproperty(0.2)
@@ -123,6 +123,7 @@ class DriveToPoses(Command):
         return self.currGoal == len(self.goals)
 
     def isWithinLastTolerances(self) -> bool:
+        print(self.goals[self.currGoal].translation())
         return (
             self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos_last
             and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos_last

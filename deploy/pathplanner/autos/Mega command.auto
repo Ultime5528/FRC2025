@@ -95,14 +95,14 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CompleteDropSequence.toRight"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CompleteDropSequence.toRight"
           }
         }
       ]
