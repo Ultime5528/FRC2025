@@ -1,5 +1,6 @@
 import commands2
 
+import ports
 from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm
@@ -39,7 +40,7 @@ class HardwareModule(Module):
 
         self.controller = commands2.button.CommandXboxController(0)
 
-        self.led = LEDController(robot)
+        self.led = LEDController(self)
 
         self.subsystems: list[Subsystem] = [
             self.drivetrain,

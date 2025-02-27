@@ -7,6 +7,7 @@ from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator
 from commands.moveanddrop import MoveAndDrop
 from commands.prepareloading import PrepareLoading
+from commands.printer.moveprinter import MovePrinter
 from subsystems.arm import Arm
 from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
@@ -55,7 +56,10 @@ class CompleteDropSequence(SequentialCommandGroup):
     ):
         super().__init__(
             ConditionalCommand(
-                AutoDrop(claw, elevator),
+                SequentialCommandGroup(
+                    MovePrinter.toMiddle(printer),
+                    AutoDrop(claw, elevator),
+                ),
                 SequentialCommandGroup(
                     # Check side
                     ConditionalCommand(
