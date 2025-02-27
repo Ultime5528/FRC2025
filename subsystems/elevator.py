@@ -62,6 +62,10 @@ class Elevator(Subsystem):
         self.state = Elevator.State.Unknown
         self.movement_state = Elevator.MovementState.Unknown
 
+        self.alert_retracts_while_arm = self.createAlert(
+            "Elevator had a downwards motion in LowerZone while Arm was extended"
+        )
+
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
@@ -72,6 +76,13 @@ class Elevator(Subsystem):
             self._offset = self.height_min - self._encoder.getPosition()
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
+
+        if (
+            self.movement_state == self.MovementState.AvoidLowerZone
+            and self.isInLowerZone()
+            and self._motor.get() > 0
+        ):
+            self.alert_retracts_while_arm.set(True)
 
     def simulationPeriodic(self) -> None:
         # On applique la gravité si l'élévateur est plus haut que 0
