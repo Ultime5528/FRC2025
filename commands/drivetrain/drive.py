@@ -69,6 +69,9 @@ class DriveField(Command):
             if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
                 self.rot = Rotation2d.fromDegrees(180 + self.rot.degrees())
 
+        if self.xbox_remote.leftBumper():
+            self.rot = Rotation2d.fromDegrees(180 + self.rot.degrees())
+
         rot_speed = (
             (self.rot - self.drivetrain.getPose().rotation()).degrees()
             * self.rotate_speed

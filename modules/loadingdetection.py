@@ -5,6 +5,7 @@ from modules.hardware import HardwareModule
 from ultime.module import Module
 from commands.printer.moveprinter import MovePrinter
 
+
 class LoadingDetection(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()

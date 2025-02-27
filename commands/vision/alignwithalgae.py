@@ -30,7 +30,7 @@ class AlignWithAlgae(Command):
         self.xbox_remote = xbox_remote
         self.hid = xbox_remote.getHID() if xbox_remote else None
         self.vel_rot = 0
-        self.target:PhotonTrackedTarget = None
+        self.target: PhotonTrackedTarget = None
         self.m_xspeedLimiter = SlewRateLimiter(3)
         self.m_yspeedLimiter = SlewRateLimiter(3)
 
