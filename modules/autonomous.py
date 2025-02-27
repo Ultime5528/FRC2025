@@ -14,11 +14,15 @@ from robotpy_apriltag import AprilTagFieldLayout
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d
 
+from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
+from commands.completedropsequence import CompleteDropSequence
 from commands.elevator.moveelevator import MoveElevator
+from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
+from commands.resetallbutclimber import ResetAllButClimber
 from modules.hardware import HardwareModule
 from ultime.followpathplannerpath import FollowPathplannerPath, shouldFlipPath
 from ultime.module import Module
@@ -70,6 +74,9 @@ class AutonomousModule(Module):
 
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(RetractArm(self.hardware.arm))
+        registerNamedCommand(ExtendArm(self.hardware.arm))
+        registerNamedCommand(ResetClimber(self.hardware.climber))
+        registerNamedCommand(MoveElevator.toLevel4(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
         registerNamedCommand(
@@ -81,9 +88,34 @@ class AutonomousModule(Module):
                 self.hardware.climber,
             )
         )
+        registerNamedCommand(
+            ResetAllButClimber(
+                self.hardware.elevator,
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.intake,
+            )
+        )
+        registerNamedCommand(
+            CompleteDropSequence.toRight(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
+        registerNamedCommand(
+            CompleteDropSequence.toLeft(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
 
     def autonomousInit(self):
-        ResetClimber(self.hardware.climber).schedule()
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:
             self.auto_command.schedule()
