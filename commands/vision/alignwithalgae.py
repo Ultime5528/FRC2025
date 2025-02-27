@@ -14,8 +14,8 @@ from ultime.command import Command
 
 
 class AlignWithAlgae(Command):
-    p = autoproperty(0.015)
-    horizontal_offset = autoproperty(2.0)
+    p = autoproperty(0.025)
+    horizontal_offset = autoproperty(0.0)
 
     def __init__(
         self,

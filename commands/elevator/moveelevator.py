@@ -183,7 +183,7 @@ class MoveElevator(Command):
 
 
 class _ClassProperties:
-    position_level1 = autoproperty(0.12, subtable=MoveElevator.__name__)
+    position_level1 = autoproperty(0.14, subtable=MoveElevator.__name__)
     position_level2 = autoproperty(0.35, subtable=MoveElevator.__name__)
     position_level2_algae = autoproperty(0.8, subtable=MoveElevator.__name__)
     position_level3 = autoproperty(0.75, subtable=MoveElevator.__name__)
