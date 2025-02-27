@@ -24,7 +24,7 @@ from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from modules.hardware import HardwareModule
-from ultime.followpathplannerpath import FollowPathplannerPath, shouldFlipPath
+from ultime.followpathplannerpath import _FollowPathplannerPath, shouldFlipPath
 from ultime.module import Module
 
 
@@ -39,27 +39,27 @@ class AutonomousModule(Module):
 
         # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
         # Must test which AutoBuilder works best
-        AutoBuilder.configure(
-            self.hardware.drivetrain.getPose,
-            self.hardware.drivetrain.resetToPose,
-            self.hardware.drivetrain.getRobotRelativeChassisSpeeds,
-            self.hardware.drivetrain.driveFromChassisSpeeds,
-            PPHolonomicDriveController(
-                PIDConstants(5, 0, 0),
-                PIDConstants(5, 0, 0),
-            ),
-            RobotConfig.fromGUISettings(),
-            shouldFlipPath,
-            self.hardware.drivetrain,
-        )
+        # AutoBuilder.configure(
+        #     self.hardware.drivetrain.getPose,
+        #     self.hardware.drivetrain.resetToPose,
+        #     self.hardware.drivetrain.getRobotRelativeChassisSpeeds,
+        #     self.hardware.drivetrain.driveFromChassisSpeeds,
+        #     PPHolonomicDriveController(
+        #         PIDConstants(5, 0, 0),
+        #         PIDConstants(5, 0, 0),
+        #     ),
+        #     RobotConfig.fromGUISettings(),
+        #     shouldFlipPath,
+        #     self.hardware.drivetrain,
+        # )
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
-        # AutoBuilder.configureCustom(
-        #     lambda path: FollowPathplannerPath(path, self.hardware.drivetrain),
-        #     self.hardware.drivetrain.resetToPose,
-        #     True,
-        #     shouldFlipPath,
-        # )
+        AutoBuilder.configureCustom(
+            lambda path: _FollowPathplannerPath(path, self.hardware.drivetrain),
+            self.hardware.drivetrain.resetToPose,
+            True,
+            shouldFlipPath,
+        )
 
         self.setupCommandsOnPathPlanner()
 

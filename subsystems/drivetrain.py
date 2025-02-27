@@ -28,8 +28,8 @@ from ultime.timethis import timethis as tt
 
 
 class Drivetrain(Subsystem):
-    width = 0.762
-    length = 0.685
+    width = 0.597
+    length = 0.673
     max_angular_speed = autoproperty(25.0)
 
     angular_offset_fl = autoproperty(-1.57)
