@@ -100,14 +100,15 @@ class ADIS16470(Gyro):
 
     def __init__(self):
         self.gyro = wpilib.ADIS16470_IMU(
-            wpilib.ADIS16470_IMU.IMUAxis.kY,
-            wpilib.ADIS16470_IMU.IMUAxis.kZ,
-            wpilib.ADIS16470_IMU.IMUAxis.kX,
+            wpilib.ADIS16470_IMU.IMUAxis.kY,  # kZ, kX, and kY
+            wpilib.ADIS16470_IMU.IMUAxis.kZ,  # kX
+            wpilib.ADIS16470_IMU.IMUAxis.kX,  # kY
         )
         super().__init__()
+        self.gyro.getPitchAxis()
         gyro_sim_device = SimDeviceSim("Gyro:ADIS16470[0]")
-        self._gyro_sim_angle = gyro_sim_device.getDouble("gyro_angle_z")
-        self._gyro_sim_pitch = gyro_sim_device.getDouble("gyro_angle_y")
+        self._gyro_sim_angle = gyro_sim_device.getDouble("gyro_angle_" + self.gyro.getYawAxis().name[-1].lower())
+        self._gyro_sim_pitch = gyro_sim_device.getDouble("gyro_angle_" + self.gyro.getPitchAxis().name[-1].lower())
 
     def getAngle(self):
         return math.remainder(
