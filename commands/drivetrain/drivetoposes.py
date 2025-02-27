@@ -93,10 +93,19 @@ class DriveToPoses(Command):
         )
 
         xy_mag = abs(self.trap_motion_xy.calculate(translation_error.norm()))
-        vel_xy: Translation2d = translation_error * xy_mag / translation_error.norm()
+        translation_error_norm = translation_error.norm()
+
+        # Prevent division by zero
+        if translation_error_norm < 0.001:
+            vel_xy = Translation2d()
+        else:
+            vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
+
         vel_rot = self.trap_motion_rot.calculate(
             (current_pos.rotation() - self.start_rotation).degrees()
         )
+
+        print(vel_xy.X(), vel_xy.Y(), vel_rot)
 
         self.drivetrain.driveRaw(
             vel_xy.X(),
@@ -123,7 +132,6 @@ class DriveToPoses(Command):
         return self.currGoal == len(self.goals)
 
     def isWithinLastTolerances(self) -> bool:
-        print(self.goals[self.currGoal].translation())
         return (
             self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos_last
             and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos_last
