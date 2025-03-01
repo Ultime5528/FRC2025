@@ -9,6 +9,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
+from ultime.timethis import timethis as tt
 
 
 class Climber(Subsystem):
@@ -20,7 +21,7 @@ class Climber(Subsystem):
         Climbed = auto()
 
     height_max = autoproperty(90.0)
-    position_conversion_factor = autoproperty(0.1965)
+    position_conversion_factor = autoproperty(0.205)
     speed = autoproperty(1.0)
 
     def __init__(self):
@@ -28,7 +29,7 @@ class Climber(Subsystem):
         self._config = SparkMaxConfig()
         self._config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
         self._config.smartCurrentLimit(40)
-        self._config.inverted(False)
+        self._config.inverted(True)
 
         self._motor = SparkMax(ports.CAN.climber_motor, SparkMax.MotorType.kBrushless)
         self._encoder = self._motor.getEncoder()
@@ -54,7 +55,7 @@ class Climber(Subsystem):
         if self._prev_is_down and not self._switch.isPressed():
             self._offset = (
                 self.height_max / self.position_conversion_factor
-                - self._encoder.getPosition()
+                - self.getRawEncoderPosition()
             )
             self._has_reset = True
         self._prev_is_down = self._switch.isPressed()
@@ -86,14 +87,20 @@ class Climber(Subsystem):
 
     def getPosition(self):
         return self.position_conversion_factor * (
-            self._encoder.getPosition() + self._offset
+            self.getRawEncoderPosition() + self._offset
         )
+
+    def getRawEncoderPosition(self):
+        return self._encoder.getPosition()
 
     def pull(self):
         self.setSpeed(self.speed)
 
     def release(self):
         self.setSpeed(-self.speed)
+
+    def getMotorInput(self):
+        return self._motor.get()
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
@@ -107,10 +114,14 @@ class Climber(Subsystem):
         def noop(x):
             pass
 
-        builder.addStringProperty("state", lambda: self.state.name, noop)
-        builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addFloatProperty("encoder", self._encoder.getPosition, noop)
-        builder.addFloatProperty("position", self.getPosition, noop)
-        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addBooleanProperty("isClimbed", self.isClimbed, noop)
-        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
+        builder.addStringProperty("state", tt(lambda: self.state.name), noop)
+        builder.addFloatProperty("motor_input", tt(self.getMotorInput), noop)
+        builder.addFloatProperty("encoder", tt(self.getRawEncoderPosition), noop)
+        builder.addFloatProperty("position", tt(self.getPosition), noop)
+        builder.addFloatProperty(
+            "offset", tt(lambda: self._offset), lambda x: setOffset(x)
+        )
+        builder.addBooleanProperty("isClimbed", tt(self.isClimbed), noop)
+        builder.addBooleanProperty(
+            "has_reset", tt(lambda: self._has_reset), setHasReset
+        )

@@ -1,11 +1,11 @@
 from typing import List, Callable
 
+from commands2 import Command
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 
 from subsystems.drivetrain import Drivetrain
 from ultime.auto import eitherRedBlue
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
-from ultime.command import Command
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
@@ -16,8 +16,9 @@ def pose(x: float, y: float, deg: float) -> Pose2d:
 class DriveToPoses(Command):
     @classmethod
     def back(cls, drivetrain: Drivetrain, distance: FloatProperty):
+        get_distance = asCallable(distance)
+
         def get_poses():
-            get_distance = asCallable(distance)
             current_pose = drivetrain.getPose()
             needed_pose = current_pose.transformBy(
                 Transform2d(-get_distance(), 0.0, 0.0)
@@ -31,7 +32,7 @@ class DriveToPoses(Command):
     xy_accel = autoproperty(7.0)
     xy_speed_end = autoproperty(0.2)
     xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.06)
+    xy_tol_pos_last = autoproperty(0.01)
     xy_speed_max = autoproperty(20.0)
 
     rot_accel = autoproperty(0.2)
