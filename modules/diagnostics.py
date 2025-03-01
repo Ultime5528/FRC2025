@@ -17,7 +17,7 @@ class DiagnosticsModule(Module):
         super().__init__()
         self.components_tests: List[commands2.Command] = [
             DiagnoseIntake(hardware.intake),
-            DiagnoseClaw(hardware.claw)
+            DiagnoseClaw(hardware.claw),
         ]
 
         self._hardware: HardwareModule = proxy(hardware)

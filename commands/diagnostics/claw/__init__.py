@@ -10,7 +10,5 @@ class DiagnoseClaw(SequentialCommandGroup):
     def __init__(self, claw: Claw):
         self.addRequirements(claw)
         super().__init__(
-            DiagnoseHasCoral(claw),
-            DiagnoseLoad(claw),
-            DiagnoseDropLevel4(claw)
+            DiagnoseHasCoral(claw), DiagnoseLoad(claw), DiagnoseDropLevel4(claw)
         )
