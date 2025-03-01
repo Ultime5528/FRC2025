@@ -11,7 +11,9 @@ class Module(Sendable):
         super().__init__()
         self.redefines_init_sendable = False
         self._registered_alerts = []
-        self._alert_running_test = self.createAlert("Module is running test...", AlertType.Info)
+        self._alert_running_test = self.createAlert(
+            "Module is running test...", AlertType.Info
+        )
 
     def setIsRunningTest(self, is_running: bool) -> None:
         self._alert_running_test.set(is_running)

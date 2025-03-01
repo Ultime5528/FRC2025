@@ -1,7 +1,6 @@
 from commands2 import SequentialCommandGroup
 
 from commands.claw.drop import Drop
-from commands.claw.loadcoral import LoadCoral
 from subsystems.claw import Claw
 from ultime.command import ignore_requirements
 

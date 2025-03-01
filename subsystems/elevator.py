@@ -65,7 +65,8 @@ class Elevator(Subsystem):
         self.movement_state = Elevator.MovementState.Unknown
 
         self.alert_retracts_while_arm = self.createAlert(
-            "Elevator had a downwards motion in LowerZone while Arm was extended", AlertType.Error
+            "Elevator had a downwards motion in LowerZone while Arm was extended",
+            AlertType.Error,
         )
 
         self.alert_switch_port_error = self.createAlert(
@@ -82,13 +83,6 @@ class Elevator(Subsystem):
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
             self._sim_height = 0.1
 
-    def getRawEncoderPosition(self):
-        return self._encoder.getPosition()
-
-        self._switch_port_error = self.createAlert(
-            "DIO elevator switch cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
         self._motor_port_error = self.createAlert(
             "CAN elevator motor cable is disconnected. Please check connections",
             AlertType.Error,
@@ -97,6 +91,9 @@ class Elevator(Subsystem):
         self._alert_is_down_failed = self.createAlert(
             "Elevator didn't return correct value in isDown. Is the limit switch on the bottom of the elevator pressed?"
         )
+
+    def getRawEncoderPosition(self):
+        return self._encoder.getPosition()
 
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():

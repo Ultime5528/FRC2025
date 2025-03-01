@@ -6,9 +6,9 @@ from commands2 import CommandScheduler
 from wpilib import RobotController
 
 from commands.diagnostics.claw import DiagnoseClaw
+from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.elevator import DiagnoseElevator
 from commands.diagnostics.intake import DiagnoseIntake
-from commands.diagnostics.diagnoseall import DiagnoseAll
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 

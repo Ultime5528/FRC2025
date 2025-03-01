@@ -1,9 +1,6 @@
 from commands2 import Command
 
 from subsystems.elevator import Elevator
-from commands.elevator.moveelevator import MoveElevator
-from ultime.alert import AlertType
-from ultime.autoproperty import autoproperty
 
 
 class DiagnoseElevator(Command):
@@ -13,12 +10,8 @@ class DiagnoseElevator(Command):
         self.elevator = elevator
 
     def initialize(self):
-
-
-    def execute(self):
-
+        if self.elevator.isDown():
+            self.elevator._alert_is_down_failed.set(True)
 
     def isFinished(self) -> bool:
-
-
-    def end(self, interrupted: bool):
+        return True
