@@ -3,7 +3,7 @@ from functools import wraps
 from typing import Type
 
 import wpilib
-from commands2 import Command, CommandScheduler, PrintCommand, Subsystem
+from commands2 import Command, CommandScheduler, PrintCommand
 from wpilib import Timer, DataLogManager
 from wpiutil import SendableBuilder
 

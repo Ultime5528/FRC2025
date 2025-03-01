@@ -4,7 +4,6 @@ import wpilib
 from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
-from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule

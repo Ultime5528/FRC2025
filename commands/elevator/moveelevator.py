@@ -108,12 +108,10 @@ class MoveElevator(Command):
     def toAlgae(cls, elevator: Elevator, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
-                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose())
-                == "Level3": cls.toLevel3Algae(elevator),
-                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose())
-                == "Level2": cls.toLevel2Algae(elevator),
+                "Level3": cls.toLevel3Algae(elevator),
+                "Level2": cls.toLevel2Algae(elevator),
             },
-            lambda: cls._getAlgaeLevelPosition(drivetrain.getPose()),
+            lambda: MoveElevator._getAlgaeLevelPosition(drivetrain.getPose()),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
