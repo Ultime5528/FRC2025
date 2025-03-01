@@ -25,7 +25,7 @@ class Claw(Subsystem):
             AlertType.Error,
         )
         self.alert_has_coral = self.createAlert(
-            "Claw didn't return the correct value after loading. Is there a coral in the loader? Execution will halt until a coral is placed",
+            "Claw didn't return the correct value after loading. Is there a coral in the loader? Test execution will halt until a coral is placed.",
             AlertType.Warning,
         )
         self.alert_load_failed = self.createAlert(
