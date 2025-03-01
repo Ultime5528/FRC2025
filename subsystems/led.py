@@ -8,7 +8,6 @@ from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
-from modules.hardware import HardwareModule
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 
@@ -37,8 +36,11 @@ class LEDController(Subsystem):
 
     brightness_value = autoproperty(20.0)
 
-    def __init__(self, hardware: HardwareModule):
+    def __init__(self, hardware):
         super().__init__()
+        from modules.hardware import HardwareModule
+        hardware: HardwareModule = hardware
+
         self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
         self.led_strip.setLength(len(self.buffer))
