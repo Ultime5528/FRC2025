@@ -61,6 +61,11 @@ class Intake(Subsystem):
             self._sim_pos_initial = 0.3
             self._sim_pos = self._sim_pos_initial
 
+        self.alert_has_algae_failed = self.createAlert("Intake didn't return correct value in hasAlgae. Is there an actual algae in the robot?", AlertType.Error)
+        self.alert_retract_failed = self.createAlert("Intake didn't retract in time.", AlertType.Error)
+        self.alert_extend_failed = self.createAlert("Intake didn't extend in time.", AlertType.Error)
+        self.alert_is_retracted_failed = self.createAlert("Intake didn't return correct value in isRetracted. Is the sensor properly connected?", AlertType.Error)
+
     def periodic(self) -> None:
         if not self.hasReset():
             if self._prev_is_retracted and not self.isRetracted():

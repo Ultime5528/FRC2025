@@ -2,11 +2,11 @@ from _weakref import proxy
 from typing import List
 
 import commands2
-from commands2 import CommandScheduler, SequentialCommandGroup
+from commands2 import CommandScheduler
 from wpilib import RobotController
 
 from commands.diagnostics.intake import DiagnoseIntake
-from commands.resetall import ResetAll
+from commands.diagnostics.diagnoseall import DiagnoseAll
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -23,14 +23,17 @@ class DiagnosticsModule(Module):
         self._battery_voltage: List[float] = []
         self._is_test = False
 
+        self._run_all_command = DiagnoseAll(self._hardware, self.components_tests)
+
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
         self._battery_voltage = self._battery_voltage[-100:]
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().enable()
-        SequentialCommandGroup(ResetAll(self._hardware.elevator, self._hardware.printer, self._hardware.arm, self._hardware.intake,
-                 self._hardware.climber), SequentialCommandGroup(*self.components_tests)).schedule()
+        for component in self._hardware.subsystems + self._module_list.modules:
+            component.clearAlerts()
+        self._run_all_command.schedule()
         self._is_test = True
 
     def testExit(self) -> None:
