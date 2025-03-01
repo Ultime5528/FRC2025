@@ -19,7 +19,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
-from ultime.swerve import SwerveModule
+from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
 from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import timethis as tt
 
@@ -78,6 +78,15 @@ class Drivetrain(Subsystem):
 
         self._field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("Field", self._field)
+
+        swerve_drive_sendable = SwerveDriveElasticSendable(
+            self.swerve_module_fl,
+            self.swerve_module_fr,
+            self.swerve_module_bl,
+            self.swerve_module_br,
+            lambda: self._gyro.getRotation2d().radians(),
+        )
+        wpilib.SmartDashboard.putData("SwerveDrive", swerve_drive_sendable)
 
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
@@ -212,44 +221,21 @@ class Drivetrain(Subsystem):
         return updated_speeds
 
     def periodic(self):
-        self.swerve_estimator.update(
-            self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+        rotation = self._gyro.getRotation2d()
+        swerve_positions = (
+            self.swerve_module_fl.getPosition(),
+            self.swerve_module_fr.getPosition(),
+            self.swerve_module_bl.getPosition(),
+            self.swerve_module_br.getPosition(),
         )
 
-        self.swerve_odometry.update(
-            self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
-        )
+        self.swerve_estimator.update(rotation, swerve_positions)
+        self.swerve_odometry.update(rotation, swerve_positions)
 
         self.odometry_pose.setPose(self.swerve_odometry.getPose())
         self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
 
     def simulationPeriodic(self):
-        wpilib.SmartDashboard.putNumberArray(
-            "SwerveStates",
-            [
-                self.swerve_module_fl.getState().angle.degrees(),
-                self.swerve_module_fl.getState().speed,
-                self.swerve_module_fr.getState().angle.degrees(),
-                self.swerve_module_fr.getState().speed,
-                self.swerve_module_bl.getState().angle.degrees(),
-                self.swerve_module_bl.getState().speed,
-                self.swerve_module_br.getState().angle.degrees(),
-                self.swerve_module_br.getState().speed,
-            ],
-        )
-
         self.swerve_module_fl.simulationUpdate(self.period_seconds)
         self.swerve_module_fr.simulationUpdate(self.period_seconds)
         self.swerve_module_bl.simulationUpdate(self.period_seconds)

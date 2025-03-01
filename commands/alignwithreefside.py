@@ -70,7 +70,7 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    pose_offset = autoproperty(0.5)
+    pose_offset = autoproperty(0.55)
 
     def __init__(self, hardware: HardwareModule):
         super().__init__(

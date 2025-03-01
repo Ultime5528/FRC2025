@@ -32,7 +32,7 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
 
-    led_number = autoproperty(300)
+    led_number = autoproperty(300.0)
 
     brightness_value = autoproperty(20.0)
 
