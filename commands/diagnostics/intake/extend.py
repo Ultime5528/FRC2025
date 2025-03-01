@@ -6,7 +6,7 @@ from subsystems.intake import Intake
 from ultime.command import ignore_requirements
 
 
-@ignore_requirements(["drivetrain"])
+@ignore_requirements(["intake"])
 class DiagnoseExtend(SequentialCommandGroup):
     def __init__(self, intake: Intake):
         super().__init__(ResetIntake(intake), MoveIntake.toExtended(intake))
