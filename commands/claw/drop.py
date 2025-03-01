@@ -84,7 +84,7 @@ class Drop(Command):
 class _ClassProperties:
     # Claw Properties #
     speed_level_1_left = autoproperty(-1.0, subtable=Drop.__name__)
-    speed_level_1_right = autoproperty(0.0, subtable=Drop.__name__)
+    speed_level_1_right = autoproperty(0.5, subtable=Drop.__name__)
     speed_level_2_left = autoproperty(-1.0, subtable=Drop.__name__)
     speed_level_2_right = autoproperty(1.0, subtable=Drop.__name__)
     speed_level_3_left = autoproperty(-1.0, subtable=Drop.__name__)
