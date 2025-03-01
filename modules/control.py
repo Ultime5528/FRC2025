@@ -21,105 +21,82 @@ class ControlModule(Module):
     def __init__(
         self,
         hardware: HardwareModule,
-        vision_algae: AlgaeVisionModule,
+        algae_vision: AlgaeVisionModule,
     ):
         super().__init__()
-        self.hardware = hardware
-        self.algae_vision = vision_algae
-        self.setupButtons()
-        # self.hardware.controller.button(1).onTrue(Command())
 
-    def setupButtons(self):
         """
-        Bind commands to buttons on controllers and joysticks
+        Pilot's buttons
         """
-        # Example code for xbox_controller
-        # self.hardware.controller.leftTrigger().whileTrue(
-        #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
-        # )
-        self.hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(
-                self.hardware.drivetrain, self.algae_vision, self.hardware.controller
-            )
+        hardware.controller.rightTrigger().whileTrue(
+            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
         )
 
-        # Pilot buttons
-        self.hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(
-                self.hardware.drivetrain, self.algae_vision, self.hardware.controller
-            )
-        )
-        self.hardware.controller.leftTrigger().whileTrue(
-            AlignWithReefSide(self.hardware)
+        hardware.controller.leftTrigger().whileTrue(
+            AlignWithReefSide(hardware.drivetrain)
         )
 
-        # Copilot's panel
+        """
+        Copilot's panel
+        """
         # Elevator Levels
-        AxisTrigger(self.hardware.panel_1, 1, "up").onTrue(
-            MoveElevator.toLevel1(self.hardware.elevator)
+        AxisTrigger(hardware.panel_1, 1, "up").onTrue(
+            MoveElevator.toLevel1(hardware.elevator)
         )
-        AxisTrigger(self.hardware.panel_1, 0, "up").onTrue(
-            MoveElevator.toLevel2(self.hardware.elevator)
+        AxisTrigger(hardware.panel_1, 0, "up").onTrue(
+            MoveElevator.toLevel2(hardware.elevator)
         )
-        AxisTrigger(self.hardware.panel_1, 1, "down").onTrue(
-            MoveElevator.toLevel3(self.hardware.elevator)
+        AxisTrigger(hardware.panel_1, 1, "down").onTrue(
+            MoveElevator.toLevel3(hardware.elevator)
         )
-        AxisTrigger(self.hardware.panel_1, 0, "down").onTrue(
-            MoveElevator.toLevel4(self.hardware.elevator)
+        AxisTrigger(hardware.panel_1, 0, "down").onTrue(
+            MoveElevator.toLevel4(hardware.elevator)
         )
 
         # Coral Drop and Load
-        self.hardware.panel_1.button(1).onTrue(
+        hardware.panel_1.button(1).onTrue(
             DropPrepareLoading.toLeft(
-                self.hardware.printer,
-                self.hardware.arm,
-                self.hardware.elevator,
-                self.hardware.drivetrain,
-                self.hardware.claw,
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
             )
         )
-        AxisTrigger(self.hardware.panel_2, 1, "down").onTrue(
+        AxisTrigger(hardware.panel_2, 1, "down").onTrue(
             DropPrepareLoading.toRight(
-                self.hardware.printer,
-                self.hardware.arm,
-                self.hardware.elevator,
-                self.hardware.drivetrain,
-                self.hardware.claw,
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
             )
         )
-        AxisTrigger(self.hardware.panel_2, 0, "up").onTrue(
-            PrepareLoading(
-                self.hardware.elevator, self.hardware.arm, self.hardware.printer
-            )
+        AxisTrigger(hardware.panel_2, 0, "up").onTrue(
+            PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
         )
 
         # Algae Manipulator
-        AxisTrigger(self.hardware.panel_2, 1, "up").onTrue(
-            GrabAlgae(self.hardware.intake)
-        )
-        self.hardware.panel_2.button(3).onTrue(DropAlgae(self.hardware.intake))
-        self.hardware.panel_2.button(1).onTrue(
-            MoveIntake.toRetracted(self.hardware.intake)
-        )
+        AxisTrigger(hardware.panel_2, 1, "up").onTrue(GrabAlgae(hardware.intake))
+        hardware.panel_2.button(3).onTrue(DropAlgae(hardware.intake))
+        hardware.panel_2.button(1).onTrue(MoveIntake.toRetracted(hardware.intake))
 
         # Arm
-        AxisTrigger(self.hardware.panel_2, 0, "down").onTrue(
-            RetractArm(self.hardware.arm)
-        )
-        self.hardware.panel_1.button(2).onTrue(ExtendArm(self.hardware.arm))
+        AxisTrigger(hardware.panel_2, 0, "down").onTrue(RetractArm(hardware.arm))
+        hardware.panel_1.button(2).onTrue(ExtendArm(hardware.arm))
 
         # Climber
-        self.hardware.panel_2.button(7).onTrue(ResetClimber(self.hardware.climber))
-        self.hardware.panel_2.button(4).onTrue(ReadyClimber(self.hardware.climber))
-        self.hardware.panel_2.button(5).onTrue(Climb(self.hardware.climber))
-        self.hardware.panel_2.button(6).onTrue(ReleaseClimber(self.hardware.climber))
+        hardware.panel_2.button(7).onTrue(ResetClimber(hardware.climber))
+        hardware.panel_2.button(4).onTrue(ReadyClimber(hardware.climber))
+        hardware.panel_2.button(5).onTrue(Climb(hardware.climber))
+        hardware.panel_2.button(6).onTrue(ReleaseClimber(hardware.climber))
 
         # Extra buttons
-        self.hardware.panel_1.button(3).onTrue(
+        hardware.panel_1.button(3).onTrue(
             ResetAllButClimber(
-                self.hardware.elevator,
-                self.hardware.printer,
-                self.hardware.arm,
-                self.hardware.intake,
+                hardware.elevator,
+                hardware.printer,
+                hardware.arm,
+                hardware.intake,
             )
         )

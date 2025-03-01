@@ -11,9 +11,7 @@ from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.command import DeferredCommand
 
-tag_field = AprilTagFieldLayout.loadField(
-    AprilTagField.k2025ReefscapeAndyMark
-)
+tag_field = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeAndyMark)
 
 
 # Links the sextants to the corresponding AprilTag ID for each reef
@@ -30,7 +28,8 @@ alliance_to_reef_center = {
 
 
 tag_poses = {
-    tag_id: tag_field.getTagPose(tag_id).toPose2d() for tag_id in [6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22]
+    tag_id: tag_field.getTagPose(tag_id).toPose2d()
+    for tag_id in [6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22]
 }
 
 

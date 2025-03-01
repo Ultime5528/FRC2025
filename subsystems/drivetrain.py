@@ -124,7 +124,7 @@ class Drivetrain(Subsystem):
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
-    def _setState(self, speed: ChassisSpeeds):
+    def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
         corrected_chassis_speed = self.correctForDynamics(speed)
 
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
@@ -139,10 +139,10 @@ class Drivetrain(Subsystem):
         self.swerve_module_bl.setDesiredState(swerve_module_states[2])
         self.swerve_module_br.setDesiredState(swerve_module_states[3])
 
-    def driveFromChassisSpeeds(
+    def driveFromChassisSpeedsFF(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
     ) -> None:
-        self._setState(speeds)
+        self.driveFromChassisSpeeds(speeds)
 
     def driveRaw(
         self,
@@ -158,7 +158,7 @@ class Drivetrain(Subsystem):
         else:
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
-        self._setState(base_chassis_speed)
+        self.driveFromChassisSpeeds(base_chassis_speed)
 
     def getAngle(self):
         """

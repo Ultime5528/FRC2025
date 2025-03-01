@@ -4,10 +4,11 @@ from typing import Union, Tuple, List, Callable
 
 import numpy as np
 import wpilib
-from wpilib import AddressableLED, Timer, DriverStation, SmartDashboard, getTime
+from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
+from modules.hardware import HardwareModule
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 
@@ -36,7 +37,7 @@ class LEDController(Subsystem):
 
     brightness_value = autoproperty(20.0)
 
-    def __init__(self, hardware):
+    def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
@@ -176,7 +177,6 @@ class LEDController(Subsystem):
     def periodic(self) -> None:
         start_time = getTime()
         self.time += 1
-
 
         if DriverStation.isEStopped():
             self.e_stopped()

@@ -37,17 +37,15 @@ class HardwareModule(Module):
 
         self.climber = Climber()
 
-        self.controller = commands2.button.CommandXboxController(0)
-
         self.led = LEDController(self)
 
         self.subsystems: list[Subsystem] = [
             self.drivetrain,
             self.elevator,
+            self.intake,
             self.claw,
             self.arm,
             self.printer,
             self.climber,
-            self.intake,
             self.led,
         ]

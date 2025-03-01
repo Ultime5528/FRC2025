@@ -4,7 +4,6 @@ import wpilib
 from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
-from modules.batterysim import BatterySimModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule
@@ -27,10 +26,10 @@ class Robot(ModuleRobot):
 
         self.hardware = HardwareModule()
 
-        self.vision_tag = TagVisionModule(self.hardware.drivetrain)
-        self.vision_algae = AlgaeVisionModule()
+        self.tag_vision = TagVisionModule(self.hardware.drivetrain)
+        self.algae_vision = AlgaeVisionModule()
 
-        self.control = ControlModule(self.hardware, self.vision_algae)
+        self.control = ControlModule(self.hardware, self.algae_vision)
 
         self.arm_collision = ArmCollision(self.hardware)
         self.loading_detection = LoadingDetection(self.hardware)
@@ -48,8 +47,8 @@ class Robot(ModuleRobot):
 
         self.addModules(
             self.hardware,
-            self.vision_tag,
-            self.vision_algae,
+            self.tag_vision,
+            self.algae_vision,
             self.control,
             self.arm_collision,
             self.loading_detection,

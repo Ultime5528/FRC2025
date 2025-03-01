@@ -21,7 +21,7 @@ def test_settings(robot: Robot):
 
     assert climber._switch.getType() == Switch.Type.NormallyClosed
 
-    #assert climber._motor.getInverted()
+    # assert climber._motor.getInverted()
     assert climber._motor.getMotorType() == SparkBase.MotorType.kBrushless
     assert climber._motor.configAccessor.getInverted()
     assert (

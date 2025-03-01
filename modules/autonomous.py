@@ -1,13 +1,10 @@
 from _weakref import proxy
-from typing import Optional, Callable
+from typing import Optional
 
 import commands2
 import wpilib
 from commands2 import Command
-from commands2.cmd import none
 from pathplannerlib.auto import AutoBuilder, NamedCommands
-from pathplannerlib.path import PathConstraints, PathPlannerPath
-from wpimath.geometry import Pose2d
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -19,7 +16,7 @@ from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from modules.hardware import HardwareModule
-from ultime.followpathplannerpath import _FollowPathplannerPath, shouldFlipPath
+from ultime.followpathplannerpath import _FollowPathplannerPath
 from ultime.module import Module
 
 
@@ -49,7 +46,9 @@ class AutonomousModule(Module):
         # )
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
-        self.createFollowPathCommand = lambda path: _FollowPathplannerPath(path, self.hardware.drivetrain)
+        self.createFollowPathCommand = lambda path: _FollowPathplannerPath(
+            path, self.hardware.drivetrain
+        )
 
         AutoBuilder.configureCustom(
             proxy(self.createFollowPathCommand),
