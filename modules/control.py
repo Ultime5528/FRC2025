@@ -3,6 +3,7 @@ from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
@@ -50,6 +51,7 @@ class ControlModule(Module):
 
         # Copilot's panel
         # Elevator Levels
+        self.hardware.panel_2.button(2).onTrue(ResetGyro(self.hardware.drivetrain))
         AxisTrigger(self.hardware.panel_1, 1, "up").onTrue(
             MoveElevator.toLevel1(self.hardware.elevator)
         )
