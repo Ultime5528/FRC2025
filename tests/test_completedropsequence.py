@@ -1,4 +1,4 @@
-from commands.completedropsequence import CompleteDropSequence
+from commands.dropprepareloading import DropPrepareLoading
 from modules.armcollision import ArmCollision
 from robot import Robot
 from subsystems.elevator import Elevator
@@ -18,7 +18,7 @@ def test_completedropsequence(robot_controller: RobotTestController, robot: Robo
     elevator.state = Elevator.State.Level3
     arm.state = Arm.State.Extended
 
-    cmd = CompleteDropSequence.toLeft(printer, arm, elevator, drivetrain, claw)
+    cmd = DropPrepareLoading.toLeft(printer, arm, elevator, drivetrain, claw)
     cmd.schedule()
 
     robot_controller.wait(1.0)

@@ -127,10 +127,8 @@ class Drivetrain(Subsystem):
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
-    def driveFromChassisSpeeds(
-        self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
-    ) -> None:
-        corrected_chassis_speed = self.correctForDynamics(speeds)
+    def _setState(self, speed: ChassisSpeeds):
+        corrected_chassis_speed = self.correctForDynamics(speed)
 
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
@@ -147,19 +145,7 @@ class Drivetrain(Subsystem):
     def driveFromChassisSpeeds(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
     ) -> None:
-        corrected_chassis_speed = self.correctForDynamics(speeds)
-
-        swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
-            corrected_chassis_speed
-        )
-
-        SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, SwerveConstants.max_speed_per_second
-        )
-        self.swerve_module_fl.setDesiredState(swerve_module_states[0])
-        self.swerve_module_fr.setDesiredState(swerve_module_states[1])
-        self.swerve_module_bl.setDesiredState(swerve_module_states[2])
-        self.swerve_module_br.setDesiredState(swerve_module_states[3])
+        self._setState(speeds)
 
     def driveRaw(
         self,
@@ -175,19 +161,7 @@ class Drivetrain(Subsystem):
         else:
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
-        corrected_chassis_speed = self.correctForDynamics(base_chassis_speed)
-
-        swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
-            corrected_chassis_speed
-        )
-
-        SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, SwerveConstants.max_speed_per_second
-        )
-        self.swerve_module_fl.setDesiredState(swerve_module_states[0])
-        self.swerve_module_fr.setDesiredState(swerve_module_states[1])
-        self.swerve_module_bl.setDesiredState(swerve_module_states[2])
-        self.swerve_module_br.setDesiredState(swerve_module_states[3])
+        self._setState(base_chassis_speed)
 
     def getAngle(self):
         """

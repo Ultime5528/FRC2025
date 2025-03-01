@@ -5,7 +5,6 @@ import wpilib
 from commands2 import DeferredCommand
 from wpimath.geometry import Pose2d, Transform2d, Translation2d, Rotation2d
 
-from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -13,10 +12,9 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
-from commands.completedropsequence import CompleteDropSequence
+from commands.dropprepareloading import DropPrepareLoading
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
-from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -41,8 +39,6 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
-
-        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware))
 
         """
         Elevator
@@ -128,26 +124,6 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group",
-            DropPrepareLoading.left(
-                hardware.arm,
-                hardware.claw,
-                hardware.drivetrain,
-                hardware.elevator,
-                hardware.printer,
-            ),
-        )
-        putCommandOnDashboard(
-            "Group",
-            DropPrepareLoading.right(
-                hardware.arm,
-                hardware.claw,
-                hardware.drivetrain,
-                hardware.elevator,
-                hardware.printer,
-            ),
-        )
-        putCommandOnDashboard(
-            "Group",
             ResetAllButClimber(
                 hardware.elevator,
                 hardware.printer,
@@ -160,7 +136,7 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group",
-            CompleteDropSequence.toLeft(
+            DropPrepareLoading.toLeft(
                 hardware.printer,
                 hardware.arm,
                 hardware.elevator,
@@ -170,7 +146,7 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group",
-            CompleteDropSequence.toRight(
+            DropPrepareLoading.toRight(
                 hardware.printer,
                 hardware.arm,
                 hardware.elevator,

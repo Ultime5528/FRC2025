@@ -123,7 +123,6 @@ class DriveToPoses(Command):
         return self.currGoal == len(self.goals)
 
     def isWithinLastTolerances(self) -> bool:
-        print(self.goals[self.currGoal].translation())
         return (
             self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos_last
             and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos_last

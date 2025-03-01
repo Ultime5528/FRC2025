@@ -14,11 +14,11 @@ from robotpy_apriltag import AprilTagFieldLayout
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d
 
-from commands.alignwithreefsidevision import AlignWithReefSideVision
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
-from commands.completedropsequence import CompleteDropSequence
+from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
@@ -71,10 +71,8 @@ class AutonomousModule(Module):
 
         self.auto_chooser.setDefaultOption("Nothing", None)
 
-        self.hardware = hardware
-
     def setupCommandsOnPathPlanner(self):
-        registerNamedCommand(AlignWithReefSideVision(self.hardware))
+        registerNamedCommand(AlignWithReefSide(self.hardware))
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
@@ -100,7 +98,7 @@ class AutonomousModule(Module):
             )
         )
         registerNamedCommand(
-            CompleteDropSequence.toRight(
+            DropPrepareLoading.toRight(
                 self.hardware.printer,
                 self.hardware.arm,
                 self.hardware.elevator,
@@ -109,7 +107,7 @@ class AutonomousModule(Module):
             )
         )
         registerNamedCommand(
-            CompleteDropSequence.toLeft(
+            DropPrepareLoading.toLeft(
                 self.hardware.printer,
                 self.hardware.arm,
                 self.hardware.elevator,
