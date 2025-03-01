@@ -7,10 +7,9 @@ from subsystems.intake import Intake
 
 class DiagnoseRetract(SequentialCommandGroup):
     def __init__(self, intake: Intake):
-        self.addRequirements(intake)
-        self.intake = intake
+        super().__init__(ResetIntake(intake), MoveIntake.toRetracted(intake))
 
-        super().__init__(ResetIntake(self.intake), MoveIntake.toRetracted(self.intake))
+        self.intake = intake
 
     def end(self, interrupted: bool):
         super().end(interrupted)
