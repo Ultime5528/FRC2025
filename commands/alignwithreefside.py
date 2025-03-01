@@ -9,7 +9,7 @@ from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 from commands.drivetrain.drivetoposes import DriveToPoses
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
-from ultime.command import DeferredCommand
+from ultime.command import DeferredCommand, ignore_requirements
 
 tag_field = AprilTagFieldLayout.loadField(
     AprilTagField.k2025ReefscapeAndyMark
@@ -65,13 +65,12 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
     alliance = DriverStation.getAlliance()
     return alliance_to_sextant_to_tag_id[alliance][sextant]
 
-
-
+@ignore_requirements(["drivetrain"])
 class AlignWithReefSide(DeferredCommand):
     pose_offset = autoproperty(0.5)
 
     def __init__(self, drivetrain: Drivetrain):
-        super().__init__(drivetrain)
+        super().__init__()
         self.drivetrain = drivetrain
 
     def createCommand(self) -> Command:
