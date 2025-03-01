@@ -10,18 +10,17 @@ class DiagnoseRetract(SequentialCommandGroup):
         self.addRequirements(intake)
         self.intake = intake
 
-        super().__init__(
-            ResetIntake(self.intake),
-            MoveIntake.toRetracted(self.intake)
-        )
+        super().__init__(ResetIntake(self.intake), MoveIntake.toRetracted(self.intake))
 
     def end(self, interrupted: bool):
         super().end(interrupted)
         if self.intake.isRetracted() and self.intake.state == Intake.State.Retracted:
             self.intake.alert_retract_failed.set(False)
         else:
-            if not self.intake.isRetracted() and self.intake.state == Intake.State.Retracted:
+            if (
+                not self.intake.isRetracted()
+                and self.intake.state == Intake.State.Retracted
+            ):
                 self.intake.alert_is_retracted_failed.set(True)
             else:
                 self.intake.alert_retract_failed.set(True)
-

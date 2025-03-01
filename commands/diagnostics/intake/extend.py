@@ -10,10 +10,7 @@ class DiagnoseExtend(SequentialCommandGroup):
         self.addRequirements(intake)
         self.intake = intake
 
-        super().__init__(
-            ResetIntake(self.intake),
-            MoveIntake.toExtended(self.intake)
-        )
+        super().__init__(ResetIntake(self.intake), MoveIntake.toExtended(self.intake))
 
     def end(self, interrupted: bool):
         super().end(interrupted)
@@ -25,4 +22,3 @@ class DiagnoseExtend(SequentialCommandGroup):
                 self.intake.alert_is_retracted_failed.set(True)
             else:
                 self.intake.alert_extend_failed.set(True)
-

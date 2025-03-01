@@ -10,7 +10,5 @@ class DiagnoseIntake(SequentialCommandGroup):
     def __init__(self, intake: Intake):
         self.addRequirements(intake)
         super().__init__(
-            DiagnoseHasAlgae(intake),
-            DiagnoseExtend(intake),
-            DiagnoseRetract(intake)
+            DiagnoseHasAlgae(intake), DiagnoseExtend(intake), DiagnoseRetract(intake)
         )
