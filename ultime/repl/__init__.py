@@ -4,32 +4,43 @@ import time
 from contextlib import redirect_stdout, redirect_stderr
 
 import ntcore
+from ntcore import EventFlags
 
 
 class RemoteREPL:
-    def __init__(self, robot, **kwargs):
-        ntcore.NetworkTableInstance.get
-        self.table = networktables.NetworkTables.getTable('RemoteREPL')
+    def __init__(self, robot):
+        inst = ntcore.NetworkTableInstance.getDefault()
+        self.stdout_entry = inst.getEntry("RemoteREPL/stdout")
+        self.stdin_entry = inst.getEntry("RemoteREPL/stdin")
         self.interpreter = code.InteractiveInterpreter(locals={"robot": robot, "r": robot})
-        self.table.putString("stdin", "")
-        self.table.putString("stdout", "")
 
-        def ep(entry, *args, **kwargs):
-            stdout = io.StringIO()
-            with redirect_stdout(stdout):
-                stderr = io.StringIO()
-                with redirect_stderr(stderr):
-                    self.interpreter.runsource(entry.value.getRaw()[:-22])
+        self.stdin_entry.setString("")
+        self.stdout_entry.setString("")
 
-            out = stdout.getvalue()
+        inst.addListener(self.stdin_entry.getTopic(), EventFlags., self.on_new_stdin)
 
-            if not out.strip():
-                out = "\n"
+    def on_new_stdin(self, event):
+        print("Event")
+        print(event)
 
-            out += stderr.getvalue()
+        stdout = io.StringIO()
 
-            out += f" T{time.time_ns():<20}"
+        with redirect_stdout(stdout):
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
+                value = self.stdin_entry.getRaw(None)
+                if value:
+                    self.interpreter.runsource(value[:-22])
+                else:
+                    print("(received empty stdin)")
 
-            self.table.putString("stdout", out)
+        out = stdout.getvalue()
 
-        self.table.getEntry("stdin").addListener(ep, networktables.NetworkTablesInstance.NotifyFlags.UPDATE | networktables.NetworkTablesInstance.NotifyFlags.NEW)
+        if not out.strip():
+            out = "\n"
+
+        out += stderr.getvalue()
+
+        out += f" T{time.time_ns():<20}"
+
+        self.stdout_entry.setString(out)

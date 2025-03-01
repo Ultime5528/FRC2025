@@ -14,6 +14,7 @@ from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
 from ultime.modulerobot import ModuleRobot
+from ultime.repl import RemoteREPL
 
 
 class Robot(ModuleRobot):
@@ -38,6 +39,7 @@ class Robot(ModuleRobot):
             self.hardware.elevator, self.hardware.claw
         )
         self.vision = TagVisionModule(self.hardware.drivetrain)
+        self.repl = RemoteREPL(self)
 
         self.addModules(
             self.hardware,

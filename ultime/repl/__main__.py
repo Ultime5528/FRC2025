@@ -3,7 +3,7 @@ import ipaddress
 import time
 import socket
 
-from ntcore import NetworkTableInstance
+from ntcore import NetworkTableInstance, EventFlags
 
 
 def is_valid_ip(ip):
@@ -51,37 +51,34 @@ def start():
     connections = nt_inst.getConnections()
     print(connections)
     server_ip = connections[0].remote_ip
-    # server_ip = nt_inst. g.getRemoteAddress()
-    #
 
-
-    print("---------------------------")
-    print("---------------------------")
     if server_ip == '127.0.0.1':
-        print("Connected to SIMULATOR")
+        print("Connected to simulation")
     else:
-        print("Connected to ROBOT")
-    print("---------------------------")
+        print("Connected to robot")
+
+    print(server_ip)
+
     print("You are now in a pseudo python shell within the robot.")
     print("Your robot is located at 'robot' or at 'r'.")
     print("Ex. 'r.hardware' is the HardwareModule instance of your robot.")
-    print("---------------------------")
-    print("---------------------------")
 
-    table = NetworkTables.getTable("RemoteREPL")
+    stdin_entry = nt_inst.getEntry("RemoteREPL/stdin")
 
     def r():
         user_input = input(">>> ")
         if user_input == "exit()":
             exit()
         user_input += f" T{time.time_ns():<20}"
-        table.putString("stdin", user_input)
+        stdin_entry.setString(user_input)
 
-    def pr(entry, *args, **kwargs):
-        print(entry.value.getRaw()[:-22])
+    def pr(event):
+        # print(entry.value.getRaw()[:-22])
+        print("Event")
+        print(event)
         r()
 
-    table.getEntry("stdout").addListener(pr, networktables.NetworkTablesInstance.NotifyFlags.UPDATE)
+    nt_inst.addListener(nt_inst.getRawTopic("RemoteREPL/stdout"), EventFlags.kImmediate, pr)
 
     r()
 
