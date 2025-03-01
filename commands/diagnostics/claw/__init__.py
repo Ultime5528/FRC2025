@@ -1,8 +1,8 @@
 from commands2 import SequentialCommandGroup
 
+from commands.claw.loadcoral import LoadCoral
 from commands.diagnostics.claw.droplevel4 import DiagnoseDropLevel4
 from commands.diagnostics.claw.hascoral import DiagnoseHasCoral
-from commands.diagnostics.claw.load import DiagnoseLoad
 from subsystems.claw import Claw
 from ultime.command import ignore_requirements
 
@@ -11,5 +11,5 @@ from ultime.command import ignore_requirements
 class DiagnoseClaw(SequentialCommandGroup):
     def __init__(self, claw: Claw):
         super().__init__(
-            DiagnoseHasCoral(claw), DiagnoseLoad(claw), DiagnoseDropLevel4(claw)
+            DiagnoseHasCoral(claw), LoadCoral(claw), DiagnoseDropLevel4(claw)
         )

@@ -9,7 +9,7 @@ class DiagnoseHasCoral(Command):
         self.addRequirements(claw)
         self.claw = claw
 
-    def initialize(self):
+    def execute(self):
         if not self.claw.seesObject():
             self.claw.alert_no_coral.set(True)
 
