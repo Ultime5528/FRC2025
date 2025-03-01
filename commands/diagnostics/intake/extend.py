@@ -14,11 +14,8 @@ class DiagnoseExtend(SequentialCommandGroup):
 
     def end(self, interrupted: bool):
         super().end(interrupted)
-        if not self.intake.isRetracted() and self.intake.state == Intake.State.Extended:
-            self.intake.alert_is_retracted_failed.set(False)
-            self.intake.alert_extend_failed.set(False)
-        else:
+        if self.intake.isRetracted() or self.intake.state != Intake.State.Extended:
+            self.intake.alert_extend_failed.set(True)
+
             if self.intake.isRetracted() and self.intake.state == Intake.State.Extended:
                 self.intake.alert_is_retracted_failed.set(True)
-            else:
-                self.intake.alert_extend_failed.set(True)

@@ -14,13 +14,11 @@ class DiagnoseRetract(SequentialCommandGroup):
 
     def end(self, interrupted: bool):
         super().end(interrupted)
-        if self.intake.isRetracted() and self.intake.state == Intake.State.Retracted:
-            self.intake.alert_retract_failed.set(False)
-        else:
+        if not self.intake.isRetracted() or self.intake.state != Intake.State.Retracted:
+            self.intake.alert_retract_failed.set(True)
+
             if (
                 not self.intake.isRetracted()
                 and self.intake.state == Intake.State.Retracted
             ):
                 self.intake.alert_is_retracted_failed.set(True)
-            else:
-                self.intake.alert_retract_failed.set(True)

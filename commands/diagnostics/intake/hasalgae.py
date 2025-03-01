@@ -11,8 +11,6 @@ class DiagnoseHasAlgae(Command):
     def initialize(self):
         if self.intake.hasAlgae():
             self.intake.alert_has_algae_failed.set(True)
-        else:
-            self.intake.alert_has_algae_failed.set(False)
 
     def isFinished(self) -> bool:
         return True

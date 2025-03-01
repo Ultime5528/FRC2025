@@ -63,16 +63,16 @@ class Intake(Subsystem):
 
         self.alert_has_algae_failed = self.createAlert(
             "Intake didn't return correct value in hasAlgae. Is there an actual algae in the robot?",
-            AlertType.Error,
+            AlertType.Warning,
         )
         self.alert_retract_failed = self.createAlert(
-            "Intake didn't retract in time.", AlertType.Error
+            "Intake didn't retract correctly. Check connections", AlertType.Error
         )
         self.alert_extend_failed = self.createAlert(
-            "Intake didn't extend in time.", AlertType.Error
+            "Intake didn't extend correctly. Check connections", AlertType.Error
         )
         self.alert_is_retracted_failed = self.createAlert(
-            "Intake didn't return correct value in isRetracted. Is the sensor properly connected?",
+            "Intake didn't return correct value in isRetracted. Is the sensor properly connected? Check connections.",
             AlertType.Error,
         )
 
