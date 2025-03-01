@@ -21,13 +21,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "ResetAllButClimber"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MoveElevator.toLevel1"
+                        "name": "MoveElevator.toLevel2"
                       }
                     }
                   ]
@@ -64,7 +58,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 2.0
           }
         },
         {
@@ -108,7 +102,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

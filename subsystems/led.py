@@ -3,7 +3,8 @@ import weakref
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
-from wpilib import AddressableLED, Timer, DriverStation, SmartDashboard, getTime
+import wpilib
+from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
@@ -31,7 +32,7 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
 
-    led_number = autoproperty(190.0)
+    led_number = autoproperty(300.0)
 
     brightness_value = autoproperty(20.0)
 
@@ -46,7 +47,9 @@ class LEDController(Subsystem):
         self.printer = hardware.printer
 
         self.time = 0
-        self.timer = Timer()
+        self.has_seen_coral = False
+        self.timer = wpilib.Timer()
+        self.timer.reset()
 
         self.hardware = weakref.proxy(hardware)
 
@@ -180,22 +183,29 @@ class LEDController(Subsystem):
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
+                #
+                # if (
+                #     self.claw.has_coral()
+                #     and not self.has_seen_coral
+                #     and self.timer <= 2
+                # ):
+                #     self.modeCoralLoaded()
+                #     self.timer.start()
+                #
+                # elif self.timer >= 2:
+                #     self.has_seen_coral = True
+                #
+                # elif not self.claw.has_coral():
+                #     self.has_seen_coral = False
+                #     self.timer.stop()
+                #     self.timer.reset()
 
-                if (
-                    self.claw.seesObject()
-                    # and self.elevator.state == self.elevator.State.Loading
-                    and self.timer.get() <= 3
-                ):
-                    self.timer.start()
-                    self.modeCoralLoaded()
-                elif self.elevator.state == self.elevator.State.Moving:
+                if self.elevator.state == self.elevator.State.Moving:
                     self.modePickUp()
-                    self.timer.stop()
-                    self.timer.reset()
+
                 else:
                     self.modeTeleop()
-                    self.timer.stop()
-                    self.timer.reset()
+
             elif DriverStation.getMatchTime() == -1.0:
                 self.rainbow()
             else:

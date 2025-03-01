@@ -1,9 +1,9 @@
-from commands.alignwithreefsidevision import AlignWithReefSideVision
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
-from commands.completedropsequence import CompleteDropSequence
+from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
 from commands.intake.grabalgae import GrabAlgae
@@ -15,7 +15,6 @@ from modules.algaevision import AlgaeVisionModule
 from modules.hardware import HardwareModule
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
-from ultime.vision import RelativeVision
 
 
 class ControlModule(Module):
@@ -23,12 +22,10 @@ class ControlModule(Module):
         self,
         hardware: HardwareModule,
         vision_algae: AlgaeVisionModule,
-        tag_vision: RelativeVision,
     ):
         super().__init__()
         self.hardware = hardware
         self.algae_vision = vision_algae
-        self.tag_vision = tag_vision
         self.setupButtons()
         # self.hardware.controller.button(1).onTrue(Command())
 
@@ -53,7 +50,7 @@ class ControlModule(Module):
             )
         )
         self.hardware.controller.leftTrigger().whileTrue(
-            AlignWithReefSideVision(self.hardware)
+            AlignWithReefSide(self.hardware)
         )
 
         # Copilot's panel
@@ -73,7 +70,7 @@ class ControlModule(Module):
 
         # Coral Drop and Load
         self.hardware.panel_1.button(1).onTrue(
-            CompleteDropSequence.toLeft(
+            DropPrepareLoading.toLeft(
                 self.hardware.printer,
                 self.hardware.arm,
                 self.hardware.elevator,
@@ -82,7 +79,7 @@ class ControlModule(Module):
             )
         )
         AxisTrigger(self.hardware.panel_2, 1, "down").onTrue(
-            CompleteDropSequence.toRight(
+            DropPrepareLoading.toRight(
                 self.hardware.printer,
                 self.hardware.arm,
                 self.hardware.elevator,
@@ -126,4 +123,3 @@ class ControlModule(Module):
                 self.hardware.intake,
             )
         )
-        # self.hardware.panel_2.button(1).onTrue()

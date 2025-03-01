@@ -28,10 +28,10 @@ class DriveToPoses(Command):
         cmd.setName(cmd.getName() + ".back")
         return cmd
 
-    xy_accel = autoproperty(7.0)
+    xy_accel = autoproperty(5.0)
     xy_speed_end = autoproperty(0.2)
     xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.01)
+    xy_tol_pos_last = autoproperty(0.05)
     xy_speed_max = autoproperty(20.0)
 
     rot_accel = autoproperty(0.2)

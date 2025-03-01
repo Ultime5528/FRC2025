@@ -15,7 +15,7 @@ from ultime.subsystem import Subsystem
 
 
 class HardwareModule(Module):
-    def __init__(self, robot):
+    def __init__(self):
         super().__init__()
         self.controller = commands2.button.CommandXboxController(0)
         self.panel_1 = commands2.button.CommandJoystick(1)
