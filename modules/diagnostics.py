@@ -6,6 +6,7 @@ from commands2 import CommandScheduler
 from wpilib import RobotController
 
 from commands.diagnostics.claw import DiagnoseClaw
+from commands.diagnostics.elevator import DiagnoseElevator
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
 from modules.hardware import HardwareModule
@@ -18,6 +19,7 @@ class DiagnosticsModule(Module):
         self.components_tests: List[commands2.Command] = [
             DiagnoseIntake(hardware.intake),
             DiagnoseClaw(hardware.claw),
+            DiagnoseElevator(hardware.elevator),
         ]
 
         self._hardware: HardwareModule = proxy(hardware)

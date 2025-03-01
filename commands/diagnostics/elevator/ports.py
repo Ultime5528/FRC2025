@@ -1,12 +1,11 @@
-import wpilib
 from commands2 import Command
+import wpilib
 
 from subsystems.elevator import Elevator
-from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 
 
-class DiagnoseElevator(Command):
+class DiagnosePorts(Command):
     time_window = autoproperty(1.0)
 
     def __init__(self, elevator: Elevator):
@@ -15,20 +14,9 @@ class DiagnoseElevator(Command):
         self.elevator = elevator
         self.timer = wpilib.Timer()
 
-        self._switch_port_error = self.elevator.createAlert(
-            "DIO elevator switch cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
-        self._motor_port_error = self.elevator.createAlert(
-            "CAN elevator motor cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
-
     def initialize(self):
         self.timer.restart()
         self.first_current = self.elevator.getCurrentDrawAmps()
-        self._switch_port_error.set(False)
-        self._motor_port_error.set(False)
 
     def execute(self):
         if self.timer.get() <= self.time_window / 2:
@@ -41,7 +29,7 @@ class DiagnoseElevator(Command):
 
     def end(self, interrupted: bool):
         if self.elevator.getCurrentDrawAmps() <= self.first_current:
-            self._motor_port_error.set(True)
+            self.elevator.alert_motor_port_error.set(True)
         if not self.elevator.isDown():
-            self._switch_port_error.set(True)
+            self.elevator.alert_switch_port_error.set(True)
         self.elevator.stop()

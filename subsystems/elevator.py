@@ -6,6 +6,7 @@ from wpimath._controls._controls.plant import DCMotor
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
@@ -63,7 +64,16 @@ class Elevator(Subsystem):
         self.movement_state = Elevator.MovementState.Unknown
 
         self.alert_retracts_while_arm = self.createAlert(
-            "Elevator had a downwards motion in LowerZone while Arm was extended"
+            "Elevator had a downwards motion in LowerZone while Arm was extended", AlertType.Error
+        )
+
+        self.alert_switch_port_error = self.createAlert(
+            "DIO elevator switch cable is disconnected. Please check connections",
+            AlertType.Error,
+        )
+        self.alert_motor_port_error = self.createAlert(
+            "CAN elevator motor cable is disconnected. Please check connections",
+            AlertType.Error,
         )
 
         if RobotBase.isSimulation():
@@ -80,7 +90,7 @@ class Elevator(Subsystem):
         if (
             self.movement_state == self.MovementState.AvoidLowerZone
             and self.isInLowerZone()
-            and self._motor.get() > 0
+            and self._motor.get() < 0
         ):
             self.alert_retracts_while_arm.set(True)
 
