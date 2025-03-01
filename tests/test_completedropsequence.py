@@ -1,9 +1,8 @@
 from commands.dropprepareloading import DropPrepareLoading
-from modules.armcollision import ArmCollision
 from robot import Robot
+from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from subsystems.printer import Printer
-from subsystems.arm import Arm
 from ultime.tests import RobotTestController
 
 

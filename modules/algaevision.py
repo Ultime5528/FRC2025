@@ -1,6 +1,5 @@
 from photonlibpy.targeting import PhotonTrackedTarget
 
-from subsystems.drivetrain import Drivetrain
 from ultime.vision import RelativeVision, VisionMode
 
 

@@ -1,25 +1,20 @@
-from wpimath.geometry import Pose2d
-
 from commands.alignwithreefside import AlignWithReefSide
-from commands.drivetrain.drivetoposes import DriveToPoses
-from commands.resetallbutclimber import ResetAllButClimber
-from commands.vision.alignwithalgae import AlignWithAlgae
-from modules.algaevision import AlgaeVisionModule
-from commands.dropprepareloading import DropPrepareLoading
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
 from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import MoveIntake
 from commands.prepareloading import PrepareLoading
-from commands.resetall import ResetAll
+from commands.resetallbutclimber import ResetAllButClimber
+from commands.vision.alignwithalgae import AlignWithAlgae
+from modules.algaevision import AlgaeVisionModule
 from modules.hardware import HardwareModule
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
-from ultime.vision import RelativeVision
 
 
 class ControlModule(Module):

@@ -71,7 +71,7 @@ class DriveField(Command):
                 self.rot = Rotation2d.fromDegrees(180 + self.rot.degrees())
 
         if self.xbox_remote.leftBumper():
-             self.actual_rot = self.rot + Rotation2d.fromDegrees(180.0)
+            self.actual_rot = self.rot + Rotation2d.fromDegrees(180.0)
         else:
             self.actual_rot = self.rot
 

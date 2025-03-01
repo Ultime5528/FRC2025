@@ -1,6 +1,5 @@
 import commands2
 
-import ports
 from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
 from subsystems.arm import Arm

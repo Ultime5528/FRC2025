@@ -1,4 +1,4 @@
-from typing import Union, Callable, Optional
+from typing import Optional
 
 from commands2.button import CommandXboxController
 from photonlibpy.targeting import PhotonTrackedTarget
@@ -7,8 +7,8 @@ from wpilib.interfaces import GenericHID
 from wpimath.filter import SlewRateLimiter
 
 from commands.drivetrain.drive import apply_center_distance_deadzone, properties
-from subsystems.drivetrain import Drivetrain
 from modules.algaevision import AlgaeVisionModule
+from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.command import Command
 

@@ -1,15 +1,14 @@
 import math
-from _weakref import proxy
+from typing import Optional
 
-from commands2 import Command, ScheduleCommand, DeferredCommand, SequentialCommandGroup
+from commands2 import DeferredCommand
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
-from wpilib import DriverStation, SmartDashboard
-from wpimath.geometry import Pose2d, Rotation2d, Pose3d, Translation2d, Transform2d
+from wpilib import DriverStation
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
-from modules.diagnostics import DiagnosticsModule
+from commands.drivetrain.drivetoposes import DriveToPoses
 from modules.hardware import HardwareModule
 from ultime.autoproperty import autoproperty
-from commands.drivetrain.drivetoposes import DriveToPoses
 
 # Links the sextants to the corresponding AprilTag ID for each reef
 tag_id = {
@@ -34,10 +33,11 @@ tag_pose = {
     19: Pose2d(Translation2d(x=4.073906, y=4.740402), Rotation2d(2.094395)),
     20: Pose2d(Translation2d(x=4.904740, y=4.740402), Rotation2d(1.047198)),
     21: Pose2d(Translation2d(x=5.321046, y=4.020820), Rotation2d(0.000000)),
-    22: Pose2d(Translation2d(x=4.904740, y=3.301238), Rotation2d(-1.047198))
+    22: Pose2d(Translation2d(x=4.904740, y=3.301238), Rotation2d(-1.047198)),
 }
 
-def getCurrentSextant(robot_position: Pose2d) -> int:
+
+def getCurrentSextant(robot_position: Pose2d) -> Optional[int]:
     """
     Determines which sextant (0-5) of a hexagon contains a robot's position.
     The hexagon is oriented with a flat side on the right.
@@ -46,6 +46,8 @@ def getCurrentSextant(robot_position: Pose2d) -> int:
     Returns:
     int: Sextant number (0-5)
     """
+    if DriverStation.getAlliance() is None:
+        return None
     reef_position = reef_centers[DriverStation.getAlliance()]
 
     dx = robot_position.X() - reef_position.X()
@@ -60,6 +62,7 @@ def getCurrentSextant(robot_position: Pose2d) -> int:
     sextant = int(angle / (math.pi / 3))
     return sextant
 
+
 def getClosestReefTagID(robot_position: Pose2d) -> int:
     sextant = getCurrentSextant(robot_position)
     alliance = DriverStation.getAlliance()
@@ -71,7 +74,10 @@ class AlignWithReefSide(DeferredCommand):
 
     def __init__(self, hardware: HardwareModule):
         super().__init__(
-            lambda: DriveToPoses(hardware.drivetrain, [self.getTagPoseToAlign(hardware.drivetrain.getPose())]),
+            lambda: DriveToPoses(
+                hardware.drivetrain,
+                [self.getTagPoseToAlign(hardware.drivetrain.getPose())],
+            ),
             hardware.drivetrain,
         )
         self.hardware = hardware
@@ -97,5 +103,5 @@ class AlignWithReefSide(DeferredCommand):
 
         return Pose2d(
             reef_center + end_vector,
-            center_to_tag   .angle() + Rotation2d.fromDegrees(180),
+            center_to_tag.angle() + Rotation2d.fromDegrees(180),
         )

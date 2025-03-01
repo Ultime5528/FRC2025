@@ -6,9 +6,9 @@ from commands2.cmd import sequence, either, none
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator
-from commands.printer.scanprinter import ScanPrinter
 from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
+from commands.printer.scanprinter import ScanPrinter
 from subsystems.arm import Arm
 from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
@@ -64,14 +64,19 @@ class DropPrepareLoading(SequentialCommandGroup):
                 ),
                 sequence(
                     # Check side
-                    ScanPrinter.right(printer) if side == "right" else
-                    ScanPrinter.left(printer),
+                    (
+                        ScanPrinter.right(printer)
+                        if side == "right"
+                        else ScanPrinter.left(printer)
+                    ),
                     AutoDrop(claw, elevator),
                     # Check if elevator is level 4 and arm extended (remove algae) if not, prepare loading
                     either(
                         sequence(
                             MoveElevator.toAlgae(elevator, drivetrain),
-                            DriveToPoses.back(drivetrain, lambda: self.distance_remove_algae),
+                            DriveToPoses.back(
+                                drivetrain, lambda: self.distance_remove_algae
+                            ),
                         ),
                         none(),
                         lambda: elevator.state == Elevator.State.Level4

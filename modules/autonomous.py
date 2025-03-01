@@ -1,18 +1,12 @@
 from _weakref import proxy
-import math
-from typing import Optional, Callable, Callable
+from typing import Optional, Callable
 
 import commands2
 import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
-from pathplannerlib.config import PIDConstants, RobotConfig
-from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathConstraints, PathPlannerPath
-from pathplannerlib.pathfinding import Pathfinding
-from robotpy_apriltag import AprilTagFieldLayout
-from wpilib import DriverStation
-from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.geometry import Pose2d
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -20,7 +14,6 @@ from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
-from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber

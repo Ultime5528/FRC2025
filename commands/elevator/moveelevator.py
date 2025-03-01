@@ -1,14 +1,11 @@
-from enum import Enum, auto
-from typing import Literal, Optional
+from typing import Literal
 
 import wpilib
 from commands2 import SelectCommand
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d
-from wpiutil import SendableBuilder
 
-from commands.alignwithreefside import getCurrentSextant, reef_centers
-from subsystems.arm import Arm
+from commands.alignwithreefside import getCurrentSextant
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
@@ -23,17 +20,17 @@ class MoveElevator(Command):
     def _getAlgaeLevelPosition(pose: Pose2d) -> Literal["None", "Level2", "Level3"]:
         alliance = DriverStation.getAlliance()
         sextant = getCurrentSextant(pose)
-
-        if alliance == alliance.kBlue:
-            if sextant in {0, 2, 4}:
-                return "Level2"
-            else:
-                return "Level3"
-        elif alliance.kRed:
-            if sextant in {0, 2, 4}:
-                return "Level3"
-            else:
-                return "Level2"
+        if alliance is not None:
+            if alliance == alliance.kBlue:
+                if sextant in {0, 2, 4}:
+                    return "Level2"
+                else:
+                    return "Level3"
+            elif alliance.kRed:
+                if sextant in {0, 2, 4}:
+                    return "Level3"
+                else:
+                    return "Level2"
         else:
             return "None"
 
@@ -111,8 +108,10 @@ class MoveElevator(Command):
     def toAlgae(cls, elevator: Elevator, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
-                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose()) == "Level3": cls.toLevel3Algae(elevator),
-                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose())== "Level2": cls.toLevel2Algae(elevator)
+                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose())
+                == "Level3": cls.toLevel3Algae(elevator),
+                MoveElevator._getAlgaeLevelPosition(drivetrain.getPose())
+                == "Level2": cls.toLevel2Algae(elevator),
             },
             lambda: cls._getAlgaeLevelPosition(drivetrain.getPose()),
         )
@@ -161,6 +160,7 @@ class MoveElevator(Command):
             self.elevator.state = Elevator.State.Unknown
         else:
             self.elevator.state = self.new_state
+
 
 class _ClassProperties:
     position_level1 = autoproperty(0.14, subtable=MoveElevator.__name__)
