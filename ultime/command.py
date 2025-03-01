@@ -73,16 +73,13 @@ class DeferredCommand(Command):
     preallocated set of commands, use :class:`commands2.SelectCommand`.
     """
 
-    def __init__(self, *requirements: Subsystem):
+    def __init__(self):
         """
 
         Creates a new DeferredCommand that directly runs the supplied command when initialized, and
         ends when it ends. Useful for lazily creating commands when the DeferredCommand is initialized,
-        such as if the supplied command depends on runtime state. The Supplier will be called
-        each time this command is initialized. The Supplier *must* create a new Command each call.
-
-        :param supplier:     The command supplier
-        :param requirements: The command requirements.
+        such as if the supplied command depends on runtime state. The method `createCommand` will be called
+        everytime the command is initialized, so it should return a new Command each time.
         """
         super().__init__()
 
@@ -90,7 +87,6 @@ class DeferredCommand(Command):
             f"[DeferredCommand] Supplied command was None!"
         )
         self._command = self._null_command
-        self.addRequirements(*requirements)
 
     @abstractmethod
     def createCommand(self) -> Command:
