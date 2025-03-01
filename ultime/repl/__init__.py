@@ -17,7 +17,7 @@ class RemoteREPL:
         self.stdin_entry.setString("")
         self.stdout_entry.setString("")
 
-        inst.addListener(self.stdin_entry.getTopic(), EventFlags., self.on_new_stdin)
+        inst.addListener(self.stdin_entry.getTopic(), EventFlags.kValueAll, self.on_new_stdin)
 
     def on_new_stdin(self, event):
         print("Event")
