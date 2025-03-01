@@ -7,8 +7,18 @@ from ultime.alert import AlertType, Alert
 
 
 class Subsystem(commands2.Subsystem):
+    def __init__(self):
+        super().__init__()
+        self._registered_alerts = []
+
     def createAlert(self, text: str, alert_type: AlertType) -> Alert:
-        return Alert(text, alert_type, self.getName() + "/Alerts")
+        alert = Alert(text, alert_type, self.getName() + "/Alerts")
+        self._registered_alerts.append(alert)
+        return alert
+
+    def clearAlerts(self) -> None:
+        for alert in self._registered_alerts:
+            alert.set(False)
 
     @abstractmethod
     def getCurrentDrawAmps(self) -> float:
