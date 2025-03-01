@@ -26,10 +26,9 @@ class Robot(ModuleRobot):
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
 
-        self.hardware = HardwareModule(self)
+        self.hardware = HardwareModule()
         self.vision_algae = AlgaeVisionModule()
-        self.tag_vision = RelativeVision("PositionEstimator")
-        self.control = ControlModule(self.hardware, self.vision_algae, self.tag_vision)
+        self.control = ControlModule(self.hardware, self.vision_algae)
         self.autonomous = AutonomousModule(self.hardware)
         self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
