@@ -8,9 +8,9 @@ from subsystems.drivetrain import Drivetrain
 
 _goals = [
 Pose2d(2.0, 4.0, Rotation2d.fromDegrees(0.0)),
-Pose2d(2.0, 3.0, Rotation2d.fromDegrees(0.0)),
-Pose2d(3.0, 3.0, Rotation2d.fromDegrees(0.0)),
-Pose2d(4.0, 3.0, Rotation2d.fromDegrees(0.0)),
+Pose2d(2.0, 2.0, Rotation2d.fromDegrees(0.0)),
+Pose2d(4.0, 2.0, Rotation2d.fromDegrees(0.0)),
+Pose2d(4.0, 0.75, Rotation2d.fromDegrees(0.0)),
 ]
 
 class DebugDriveToPoses(Command):
