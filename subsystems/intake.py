@@ -6,6 +6,7 @@ from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType, Alert
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
@@ -59,6 +60,21 @@ class Intake(Subsystem):
             self._sim_encoder = EncoderSim(self._pivot_encoder)
             self._sim_pos_initial = 0.3
             self._sim_pos = self._sim_pos_initial
+
+        self.alert_has_algae_failed = self.createAlert(
+            "Intake didn't return correct value in hasAlgae. Is there an actual algae in the robot?",
+            AlertType.Error,
+        )
+        self.alert_retract_failed = self.createAlert(
+            "Intake didn't retract in time.", AlertType.Error
+        )
+        self.alert_extend_failed = self.createAlert(
+            "Intake didn't extend in time.", AlertType.Error
+        )
+        self.alert_is_retracted_failed = self.createAlert(
+            "Intake didn't return correct value in isRetracted. Is the sensor properly connected?",
+            AlertType.Error,
+        )
 
     def periodic(self) -> None:
         if not self.hasReset():
