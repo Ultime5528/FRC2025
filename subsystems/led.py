@@ -46,7 +46,9 @@ class LEDController(Subsystem):
         self.printer = hardware.printer
 
         self.time = 0
-        self.timer = Timer()
+        self.has_seen_coral = False
+        self.timer = Timer
+        self.timer.reset()
 
         self.hardware = weakref.proxy(hardware)
 
@@ -174,6 +176,7 @@ class LEDController(Subsystem):
         start_time = getTime()
         self.time += 1
 
+
         if DriverStation.isEStopped():
             self.e_stopped()
         elif DriverStation.isAutonomousEnabled():  # auto
@@ -182,20 +185,27 @@ class LEDController(Subsystem):
             if DriverStation.getMatchTime() > 15:
 
                 if (
-                    self.claw.seesObject()
-                    # and self.elevator.state == self.elevator.State.Loading
-                    and self.timer.get() <= 3
+                    self.claw.has_coral()
+                    and not self.has_seen_coral
+                    and self.timer <= 2
                 ):
-                    self.timer.start()
                     self.modeCoralLoaded()
+                    self.timer.start()
+
+                elif self.timer >= 2:
+                    self.has_seen_coral = True
+
+                elif not self.claw.has_coral():
+                    self.has_seen_coral = False
+                    self.timer.stop()
+                    self.timer.reset()
+
                 elif self.elevator.state == self.elevator.State.Moving:
                     self.modePickUp()
-                    self.timer.stop()
-                    self.timer.reset()
+
                 else:
                     self.modeTeleop()
-                    self.timer.stop()
-                    self.timer.reset()
+
             elif DriverStation.getMatchTime() == -1.0:
                 self.rainbow()
             else:
