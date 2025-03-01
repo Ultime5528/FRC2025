@@ -13,7 +13,7 @@ class DiagnoseAll(SequentialCommandGroup):
                 hardware.printer,
                 hardware.arm,
                 hardware.intake,
-                hardware.climber
+                hardware.climber,
             ),
             *components_tests
         )
