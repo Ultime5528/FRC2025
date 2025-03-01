@@ -11,42 +11,49 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "begin to reef #22"
+                  "pathName": "StraightPath"
                 }
               },
               {
-                "type": "race",
+                "type": "parallel",
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "race",
                       "data": {
-                        "name": "AlignWithReefSideVision"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "AlignWithReefSide"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 6.0
+                            }
+                          }
+                        ]
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "sequential",
                       "data": {
-                        "waitTime": 4.0
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ResetAllButClimber"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MoveElevator.toLevel2"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MovePrinter.toLoading"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MoveElevator.toLevel2"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -58,7 +65,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CompleteDropSequence.toRight"
+            "name": "DropPrepareLoading.toRight"
           }
         }
       ]
