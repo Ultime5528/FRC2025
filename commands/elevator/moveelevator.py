@@ -110,7 +110,7 @@ class MoveElevator(Command):
                 "Level3": cls.toLevel3Algae(elevator),
                 "Level2": cls.toLevel2Algae(elevator),
             },
-            lambda: cls._getAlgaeLevelPosition(drivetrain.getPose()),
+            lambda: MoveElevator._getAlgaeLevelPosition(drivetrain.getPose()),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
