@@ -9,6 +9,7 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.resetclimber import ResetClimber
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
@@ -71,6 +72,7 @@ class AutonomousModule(Module):
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
+        registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(MoveElevator.toLevel4(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel2(self.hardware.elevator))
