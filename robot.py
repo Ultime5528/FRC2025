@@ -6,7 +6,6 @@ from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
-from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetection
@@ -25,12 +24,14 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-
-        self.tag_vision = TagVisionModule(self.hardware.drivetrain)
-        self.algae_vision = AlgaeVisionModule()
-
-        self.control = ControlModule(self.hardware, self.algae_vision)
-
+        self.vision_algae = AlgaeVisionModule()
+        self.control = ControlModule(self.hardware, self.vision_algae)
+        self.autonomous = AutonomousModule(self.hardware)
+        # self.dashboard = DashboardModule(self.hardware, self.modules)
+        self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
+        self.logging = LoggingModule()
+        self.property_save_checker = PropertySaveCheckerModule()
+        self.battery_sim = BatterySimModule(self.hardware)
         self.arm_collision = ArmCollision(self.hardware)
         self.loading_detection = LoadingDetection(self.hardware)
         self.coral_retraction = CoralRetractionModule(
@@ -54,7 +55,7 @@ class Robot(ModuleRobot):
             self.loading_detection,
             self.coral_retraction,
             self.autonomous,
-            self.dashboard,
+            # self.dashboard,
             self.diagnostics,
             self.logging,
             self.property_save_checker,

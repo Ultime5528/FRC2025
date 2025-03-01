@@ -28,9 +28,10 @@ class ControlModule(Module):
         """
         Pilot's buttons
         """
-        hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
-        )
+        # Example code for xbox_controller
+        # self.hardware.controller.leftTrigger().whileTrue(
+        #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
+        # )
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
