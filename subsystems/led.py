@@ -32,7 +32,7 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
 
-    led_number = autoproperty(190.0)
+    led_number = autoproperty(250.0)
 
     brightness_value = autoproperty(20.0)
 
@@ -177,29 +177,17 @@ class LEDController(Subsystem):
         start_time = getTime()
         self.time += 1
 
-
         if DriverStation.isEStopped():
             self.e_stopped()
         elif DriverStation.isAutonomousEnabled():  # auto
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
-            if DriverStation.getMatchTime() > 15:
+            if DriverStation.getMatchTime() > 3:
 
                 if (
                     self.claw.has_coral()
-                    and not self.has_seen_coral
-                    and self.timer <= 2
                 ):
                     self.modeCoralLoaded()
-                    self.timer.start()
-
-                elif self.timer >= 2:
-                    self.has_seen_coral = True
-
-                elif not self.claw.has_coral():
-                    self.has_seen_coral = False
-                    self.timer.stop()
-                    self.timer.reset()
 
                 elif self.elevator.state == self.elevator.State.Moving:
                     self.modePickUp()

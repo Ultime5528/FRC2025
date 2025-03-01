@@ -29,7 +29,7 @@ class Robot(ModuleRobot):
         self.vision_algae = AlgaeVisionModule()
         self.control = ControlModule(self.hardware, self.vision_algae)
         self.autonomous = AutonomousModule(self.hardware)
-        #self.dashboard = DashboardModule(self.hardware, self.modules)
+        # self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
@@ -45,7 +45,7 @@ class Robot(ModuleRobot):
             self.hardware,
             self.control,
             self.autonomous,
-            #self.dashboard,
+            # self.dashboard,
             self.diagnostics,
             self.logging,
             self.property_save_checker,
