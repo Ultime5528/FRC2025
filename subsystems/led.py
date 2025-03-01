@@ -3,6 +3,7 @@ import weakref
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
+import wpilib
 from wpilib import AddressableLED, Timer, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
@@ -47,7 +48,7 @@ class LEDController(Subsystem):
 
         self.time = 0
         self.has_seen_coral = False
-        self.timer = Timer
+        self.timer = wpilib.Timer()
         self.timer.reset()
 
         self.hardware = weakref.proxy(hardware)
