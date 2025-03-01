@@ -39,6 +39,7 @@ class LEDController(Subsystem):
     def __init__(self, hardware):
         super().__init__()
         from modules.hardware import HardwareModule
+
         hardware: HardwareModule = hardware
 
         self.led_strip = AddressableLED(ports.PWM.led_strip)
