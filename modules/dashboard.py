@@ -8,6 +8,7 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.debugdrivetoposes import DebugDriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
@@ -150,6 +151,14 @@ class DashboardModule(Module):
                 hardware.claw,
             ),
         )
+
+        """
+        Debug
+        """
+        putCommandOnDashboard("Drivetrain", DebugDriveToPoses.oneGoal())
+        putCommandOnDashboard("Drivetrain", DebugDriveToPoses.twoGoals())
+        putCommandOnDashboard("Drivetrain", DebugDriveToPoses.threeGoals())
+        putCommandOnDashboard("Drivetrain", DebugDriveToPoses.fourGoals())
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
