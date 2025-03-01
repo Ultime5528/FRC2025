@@ -10,9 +10,16 @@ class Module(Sendable):
     def __init__(self):
         super().__init__()
         self.redefines_init_sendable = False
+        self._registered_alerts = []
 
-    def createAlert(self, message: str, alert_type: AlertType) -> Alert:
-        return Alert(message, alert_type, self.getName() + "/Alerts")
+    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
+        alert = Alert(text, alert_type, self.getName() + "/Alerts")
+        self._registered_alerts.append(alert)
+        return alert
+
+    def clearAlerts(self) -> None:
+        for alert in self._registered_alerts:
+            alert.set(False)
 
     def getName(self) -> str:
         return self.__class__.__name__
