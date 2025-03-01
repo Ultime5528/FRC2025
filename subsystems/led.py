@@ -4,7 +4,7 @@ from typing import Union, Tuple, List, Callable
 
 import numpy as np
 import wpilib
-from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
+from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime, LEDPattern, Color
 from wpiutil import SendableBuilder
 
 import ports
@@ -22,7 +22,7 @@ def numpy_interpolation(t: np.ndarray, color1: np.ndarray, color2: np.ndarray):
     return ((1 - t)[:, np.newaxis] * color1 + t[:, np.newaxis] * color2).astype(int)
 
 
-Color = Union[np.ndarray, Tuple[int, int, int], List[int]]
+_Color = Union[np.ndarray, Tuple[int, int, int], List[int]]
 
 
 class LEDController(Subsystem):
@@ -32,7 +32,7 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
 
-    led_number = autoproperty(190.0)
+    led_number = autoproperty(250.0)
 
     brightness_value = autoproperty(20.0)
 
@@ -41,7 +41,9 @@ class LEDController(Subsystem):
         self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
         self.led_strip.setLength(len(self.buffer))
+        self.led_strip.setData(self.buffer)
         self.led_strip.start()
+
         self.claw = hardware.claw
         self.elevator = hardware.elevator
         self.printer = hardware.printer
@@ -57,121 +59,61 @@ class LEDController(Subsystem):
     def brightness(self) -> float:
         return max(min(100, self.brightness_value), 0) / 100
 
-    def setRGB(self, i: int, color: Color):
-        self.buffer[i].setRGB(*color)
-
-    def setAll(self, color_func: Callable[[int], Color]):
-        a = np.arange(len(self.buffer))
-        for i in np.nditer(a):
-            self.setRGB(i, color_func(i))
-
     def getAllianceColor(self):
         alliance = DriverStation.getAlliance()
         if alliance == DriverStation.Alliance.kBlue:  # blue team
-            color = self.blue_rgb
+            color = Color.kBlue
         elif alliance == DriverStation.Alliance.kRed:  # red team
-            color = self.red_rgb
+            color = Color.kRed
         else:
-            color = self.black
+            color = Color.kBlack
         return color
 
     def e_stopped(self):
-        interval = 10
-        flash_time = 20
-        state = round(self.time / flash_time) % 2
+        self.e_stopped_pattern = LEDPattern.solid(Color.kRed)
+        self.e_stopped_pattern = self.e_stopped_pattern.blink(1.0)
 
-        red = (self.brightness * self.red_rgb).astype(int)
-
-        def getColor(i: int):
-            is_color = state - round(i / interval) % 2
-            if is_color:
-                return red
-            else:
-                return self.black
-
-        self.setAll(getColor)
+        self.e_stopped_pattern.applyTo(self.buffer)
 
     def modeAuto(self):
-        color = (self.brightness * self.getAllianceColor()).astype(int)
-        white = (self.brightness * self.white).astype(int)
-        i_values = np.arange(self.led_number)
-        y_values = 0.5 * np.sin(2 * math.pi**2 * (i_values - 3 * self.time) / 200) + 0.5
+        color = self.getAllianceColor()
+        mode_auto_pattern = LEDPattern.gradient(LEDPattern.GradientType.kDiscontinuous, [Color.kBlack, color])
+        mode_auto_pattern = mode_auto_pattern.scrollAtRelativeSpeed(3.0)
+        mode_auto_pattern.applyTo(self.buffer)
 
-        pixel_value = numpy_interpolation(y_values, color, white)
-        for i, y in enumerate(pixel_value):
-            self.buffer[i].setRGB(*y)
 
     def modeTeleop(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 1.0)
+        color = self.getAllianceColor()
+        mode_teleop_pattern = LEDPattern.solid(color)
+        white_pattern = LEDPattern.solid(Color.kWhite)
+        white_pattern_mask = LEDPattern.steps([(0, Color.kWhite), (0.5, Color.kBlack)]).scrollAtRelativeSpeed(2.0)
+        white_pattern = white_pattern.mask(white_pattern_mask)
+        mode_teleop_pattern = white_pattern.overlayOn(mode_teleop_pattern)
+
+        mode_teleop_pattern.applyTo(self.buffer)
 
     def modeEndgame(self):
-        period = 15
-        color = (self.brightness * self.getAllianceColor()).astype(int)
-        white = (self.brightness * self.white).astype(int)
-        i_values = np.arange(self.led_number)
-        y_values = ((i_values - self.time * 1.5) / period) % 1.0
+        mode_end_game_pattern = LEDPattern.steps([(0, Color.kRed), (0.5, Color.kBlue)]).scrollAtRelativeSpeed(1.0)
 
-        pixel_value = numpy_interpolation(y_values, color, white)
-        for i, y in enumerate(pixel_value):
-            self.buffer[i].setRGB(*y)
-
-    def modePickUp(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 3.0)
-
-    def modeCoralLoaded(self):
-        self.commonTeleop(self.green_rgb, self.black, 1.0)
-
-    def commonTeleop(self, color1, color2, speed):
-        color1 = (self.brightness * color1).astype(int)
-        color2 = (self.brightness * color2).astype(int)
-
-        a = 3
-        i_values = np.arange(self.led_number)
-        y_values = np.maximum(
-            0, (a + 1) * np.cos((i_values - speed * self.time) / 5) - a
-        )
-
-        pixel_value = numpy_interpolation(y_values, color1, color2)
-        for i, y in enumerate(pixel_value):
-            self.buffer[i].setRGB(*y)
+        mode_end_game_pattern.applyTo(self.buffer)
 
     def modeConnected(self):
-        pixel_value = round(
-            abs(255 * self.brightness * (math.cos(self.time / (12 * math.pi))))
-        )
+        color = self.getAllianceColor()
+        mode_connected_pattern = LEDPattern.solid(color)
+        mode_connected_pattern = mode_connected_pattern.breathe(2.0)
 
-        if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
-            for i in range(int(self.led_number)):
-                self.buffer[i].setRGB(pixel_value, 0, 0)
-        else:
-            for i in range(int(self.led_number)):
-                self.buffer[i].setRGB(0, 0, pixel_value)
+        mode_connected_pattern.applyTo(self.buffer)
 
     def modeNotConnected(self):
-        pixel_value = round(
-            255 * self.brightness * math.cos(self.time / (18 * math.pi))
-        )
+        mode_not_connected_pattern = LEDPattern.steps([(0, Color.kRed), (0.5, Color.kBlue)])
+        mode_not_connected_pattern.breathe(2.0)
 
-        if pixel_value >= 0:
-            r = pixel_value
-            g = 0
-            b = 0
-        else:
-            r = 0
-            g = 0
-            b = abs(pixel_value)
-
-        for i in range(int(self.led_number)):
-            self.buffer[i].setRGB(r, g, b)
+        mode_not_connected_pattern.applyTo(self.buffer)
 
     def rainbow(self):
-        for i in range(int(self.led_number)):
-            hue = (self.time + int(i * 180 / self.led_number)) % 180
-            self.buffer[i].setHSV(
-                hue,
-                255,
-                round(255 * self.brightness),
-            )
+        rainbow_pattern = LEDPattern.rainbow(255, 128)
+
+        rainbow_pattern.applyTo(self.buffer)
 
     def periodic(self) -> None:
         start_time = getTime()
@@ -183,29 +125,7 @@ class LEDController(Subsystem):
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
-
-                if (
-                    self.claw.has_coral()
-                    and not self.has_seen_coral
-                    and self.timer <= 2
-                ):
-                    self.modeCoralLoaded()
-                    self.timer.start()
-
-                elif self.timer >= 2:
-                    self.has_seen_coral = True
-
-                elif not self.claw.has_coral():
-                    self.has_seen_coral = False
-                    self.timer.stop()
-                    self.timer.reset()
-
-                elif self.elevator.state == self.elevator.State.Moving:
-                    self.modePickUp()
-
-                else:
-                    self.modeTeleop()
-
+                self.modeTeleop()
             elif DriverStation.getMatchTime() == -1.0:
                 self.rainbow()
             else:
