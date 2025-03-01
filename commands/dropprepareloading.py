@@ -20,9 +20,6 @@ from ultime.command import ignore_requirements
 
 @ignore_requirements(["elevator", "printer", "arm", "intake", "claw", "drivetrain"])
 class DropPrepareLoading(SequentialCommandGroup):
-    distance_remove_algae = autoproperty(0.5)
-    distance_end = autoproperty(0.1)
-
     @staticmethod
     def toLeft(
         printer: Printer,
@@ -75,7 +72,7 @@ class DropPrepareLoading(SequentialCommandGroup):
                         sequence(
                             MoveElevator.toAlgae(elevator, drivetrain),
                             DriveToPoses.back(
-                                drivetrain, lambda: self.distance_remove_algae
+                                drivetrain, lambda: _properties.distance_remove_algae
                             ),
                         ),
                         none(),
@@ -85,6 +82,14 @@ class DropPrepareLoading(SequentialCommandGroup):
                 ),
                 lambda: elevator.state == Elevator.State.Level1,
             ),
-            DriveToPoses.back(drivetrain, lambda: self.distance_end),
+            DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
             PrepareLoading(elevator, arm, printer),
         )
+
+
+class _ClassProperties:
+    distance_remove_algae = autoproperty(0.5, subtable=DropPrepareLoading.__name__)
+    distance_end = autoproperty(0.1, subtable=DropPrepareLoading.__name__)
+
+
+_properties = _ClassProperties()

@@ -29,7 +29,7 @@ class FollowPathPlannerPath(SequentialCommandGroup):
                     pathplanner_path.getStartingHolonomicPose()
                 )
             ),
-            DeferredCommand(
+            DeferredCommand(  # TODO Utiliser la nouvelle implémentation de ultime.command.DeferredCommand
                 lambda: DriveToPoses(
                     drivetrain,
                     [
