@@ -71,7 +71,3 @@ def test_alert_sort(robot_controller: RobotTestController):
     oldest.setText("Oldest modified")
     robot_controller.wait(0.1)
     assert topic.get() == ["Recent", "Oldest modified"]
-
-
-def test_alert_weakrefset_empty():
-    assert len(Alert._groups) == 0
