@@ -11,6 +11,5 @@ class WaitUntilCoral(Command):
         super().__init__()
         self.claw = claw
 
-
     def isFinished(self) -> bool:
         return self.claw.has_coral
