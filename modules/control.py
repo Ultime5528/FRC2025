@@ -3,6 +3,7 @@ from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
@@ -28,10 +29,9 @@ class ControlModule(Module):
         """
         Pilot's buttons
         """
-        # Example code for xbox_controller
-        # self.hardware.controller.leftTrigger().whileTrue(
-        #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
-        # )
+        hardware.controller.rightTrigger().whileTrue(
+            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
+        )
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
@@ -41,6 +41,7 @@ class ControlModule(Module):
         Copilot's panel
         """
         # Elevator Levels
+        hardware.panel_2.button(2).onTrue(ResetGyro(hardware.drivetrain))
         AxisTrigger(hardware.panel_1, 1, "up").onTrue(
             MoveElevator.toLevel1(hardware.elevator)
         )

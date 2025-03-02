@@ -2,7 +2,7 @@ __all__ = ["FollowPath"]
 
 import math
 
-from commands2 import Command, DeferredCommand
+from commands2 import Command
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
@@ -14,6 +14,7 @@ from wpimath.geometry import Rotation2d, Pose2d
 from commands.drivetrain.drivetoposes import DriveToPoses
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
+from ultime.command import DeferredCommand
 
 
 def shouldFlipPath():
@@ -33,15 +34,14 @@ def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
 
 class FollowPathWithDriveToPoses(DeferredCommand):
     def __init__(self, path: PathPlannerPath, drivetrain: Drivetrain):
-        super().__init__(
-            lambda: DriveToPoses(
-                drivetrain,
-                self.getPoses(),
-            ),
-            drivetrain,
-        )
+        super().__init__()
+        self.drivetrain = drivetrain
         self.poses = pathToPoses(path)
         self.flipped_poses = pathToPoses(path.flipPath())
+        self.addRequirements(drivetrain)
+
+    def createCommand(self) -> Command:
+        return DriveToPoses(self.drivetrain, self.getPoses())
 
     def getPoses(self) -> list[Pose2d]:
         return self.flipped_poses if shouldFlipPath() else self.poses

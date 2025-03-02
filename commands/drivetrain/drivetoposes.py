@@ -127,6 +127,8 @@ class DriveToPoses(Command):
                 self.updateMotions()
 
     def end(self, interrupted):
+        self.currGoal = 0
+        self.goals: List[Pose2d] = None
         self.drivetrain.stop()
 
     def isFinished(self):

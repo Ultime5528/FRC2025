@@ -46,13 +46,12 @@ class AutonomousModule(Module):
         #     self.hardware.drivetrain,
         # )
 
-        # Flipping must be done by the command because the AutoBuilder uses custom code
-        self.createFollowPathCommand = lambda path: _FollowPathplannerPath(
+        self.createFollowPathCommand = lambda path: FollowPath(
             path, self.hardware.drivetrain
         )
 
         AutoBuilder.configureCustom(
-            lambda path: FollowPath(path, self.hardware.drivetrain),
+            proxy(self.createFollowPathCommand),
             lambda _: None,  # Disable resetOdometry
             True,
             lambda: False,  # Disable flipping, will be done by the command

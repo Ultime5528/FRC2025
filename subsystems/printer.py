@@ -29,7 +29,7 @@ class Printer(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(0.2)
+    speed = autoproperty(1.0)
     left = autoproperty(0.4)
     right = autoproperty(-0.01)
     middle_zone_left = autoproperty(0.37)
