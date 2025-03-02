@@ -30,9 +30,7 @@ class ControlModule(Module):
         Pilot's buttons
         """
         hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(
-                hardware.drivetrain, algae_vision, hardware.controller
-            )
+            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
         )
 
         hardware.controller.leftTrigger().whileTrue(

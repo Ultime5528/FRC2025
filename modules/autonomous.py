@@ -4,7 +4,6 @@ from typing import Optional
 import commands2
 import wpilib
 from commands2 import Command
-from commands2.cmd import none
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from commands.alignwithreefside import AlignWithReefSide
@@ -46,7 +45,9 @@ class AutonomousModule(Module):
         #     self.hardware.drivetrain,
         # )
 
-        self.createFollowPathCommand = lambda path: FollowPath(path, self.hardware.drivetrain)
+        self.createFollowPathCommand = lambda path: FollowPath(
+            path, self.hardware.drivetrain
+        )
 
         AutoBuilder.configureCustom(
             proxy(self.createFollowPathCommand),
