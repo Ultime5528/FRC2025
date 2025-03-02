@@ -26,20 +26,11 @@ class ControlModule(Module):
     ):
         super().__init__()
 
-        self.hardware = hardware
-        self.algae_vision = algae_vision
-
         """
         Pilot's buttons
         """
-        # Example code for xbox_controller
-        # self.hardware.controller.leftTrigger().whileTrue(
-        #     AlignedPickUp(self.drivetrain, self.intake, self.vision_pick_up)
-        # )
-        self.hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(
-                self.hardware.drivetrain, self.algae_vision, self.hardware.controller
-            )
+        hardware.controller.rightTrigger().whileTrue(
+            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
         )
 
         hardware.controller.leftTrigger().whileTrue(
@@ -50,9 +41,9 @@ class ControlModule(Module):
         Copilot's panel
         """
         # Elevator Levels
-        self.hardware.panel_2.button(2).onTrue(ResetGyro(self.hardware.drivetrain))
-        AxisTrigger(self.hardware.panel_1, 1, "up").onTrue(
-            MoveElevator.toLevel1(self.hardware.elevator)
+        hardware.panel_2.button(2).onTrue(ResetGyro(hardware.drivetrain))
+        AxisTrigger(hardware.panel_1, 1, "up").onTrue(
+            MoveElevator.toLevel1(hardware.elevator)
         )
         AxisTrigger(hardware.panel_1, 0, "up").onTrue(
             MoveElevator.toLevel2(hardware.elevator)
