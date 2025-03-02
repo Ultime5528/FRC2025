@@ -3,9 +3,11 @@ from commands2 import Command
 
 from subsystems.intake import Intake
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
+from ultime.command import with_timeout
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
+@with_timeout(5.0)
 class MoveIntake(Command):
     @classmethod
     def toExtended(cls, intake: Intake):
