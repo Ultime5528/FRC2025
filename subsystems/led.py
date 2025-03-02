@@ -203,7 +203,7 @@ class LEDController(Subsystem):
                     self.timer.stop()
                     self.timer.reset()
 
-                if self.elevator.state == self.elevator.State.Moving:
+                elif self.elevator.state == self.elevator.State.Moving:
                     self.modePickUp()
 
                 else:

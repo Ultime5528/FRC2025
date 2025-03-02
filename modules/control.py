@@ -26,6 +26,9 @@ class ControlModule(Module):
     ):
         super().__init__()
 
+        self.hardware = hardware
+        self.algae_vision = algae_vision
+
         """
         Pilot's buttons
         """

@@ -24,14 +24,14 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(True)
 
         self.hardware = HardwareModule()
-        self.vision_algae = AlgaeVisionModule()
-        self.control = ControlModule(self.hardware, self.vision_algae)
+        self.algae_vision = AlgaeVisionModule()
+        self.control = ControlModule(self.hardware, self.algae_vision)
         self.autonomous = AutonomousModule(self.hardware)
         # self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
-        self.battery_sim = BatterySimModule(self.hardware)
+        # self.battery_sim = BatterySimModule(self.hardware)
         self.tag_vision = TagVisionModule(self.hardware.drivetrain)
         self.arm_collision = ArmCollision(self.hardware)
         self.loading_detection = LoadingDetection(self.hardware)
@@ -41,7 +41,7 @@ class Robot(ModuleRobot):
 
         self.autonomous = AutonomousModule(self.hardware)
 
-        self.dashboard = DashboardModule(self.hardware, self.modules)
+        # self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
