@@ -1,12 +1,10 @@
 from _weakref import proxy
-from typing import Optional, Callable
+from typing import Optional
 
 import commands2
 import wpilib
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
-from pathplannerlib.path import PathConstraints, PathPlannerPath
-from wpimath.geometry import Pose2d
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -48,6 +46,10 @@ class AutonomousModule(Module):
         # )
 
         # Flipping must be done by the command because the AutoBuilder uses custom code
+        self.createFollowPathCommand = lambda path: _FollowPathplannerPath(
+            path, self.hardware.drivetrain
+        )
+
         AutoBuilder.configureCustom(
             lambda path: FollowPath(path, self.hardware.drivetrain),
             lambda _: None,  # Disable resetOdometry
@@ -65,7 +67,7 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
-        registerNamedCommand(AlignWithReefSide(self.hardware))
+        registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
@@ -121,20 +123,14 @@ class AutonomousModule(Module):
     def __del__(self):
         AutoBuilder._configured = False
 
-        AutoBuilder._pathFollowingCommandBuilder: Callable[
-            [PathPlannerPath], Command
-        ] = None
-        AutoBuilder._getPose: Callable[[], Pose2d] = None
-        AutoBuilder._resetPose: Callable[[Pose2d], None] = None
-        AutoBuilder._shouldFlipPath: Callable[[], bool] = None
-        AutoBuilder._isHolonomic: bool = False
+        AutoBuilder._pathFollowingCommandBuilder = None
+        AutoBuilder._getPose = None
+        AutoBuilder._resetPose = None
+        AutoBuilder._shouldFlipPath = None
+        AutoBuilder._isHolonomic = False
 
-        AutoBuilder._pathfindingConfigured: bool = False
-        AutoBuilder._pathfindToPoseCommandBuilder: Callable[
-            [Pose2d, PathConstraints, float], Command
-        ] = None
-        AutoBuilder._pathfindThenFollowPathCommandBuilder: Callable[
-            [PathPlannerPath, PathConstraints], Command
-        ] = None
+        AutoBuilder._pathfindingConfigured = False
+        AutoBuilder._pathfindToPoseCommandBuilder = None
+        AutoBuilder._pathfindThenFollowPathCommandBuilder = None
 
         NamedCommands._namedCommands = {}

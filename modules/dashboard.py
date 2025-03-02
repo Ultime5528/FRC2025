@@ -103,6 +103,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Intake", MoveIntake.toExtended(hardware.intake))
         putCommandOnDashboard("Intake", MoveIntake.toRetracted(hardware.intake))
         putCommandOnDashboard("Intake", ResetIntake(hardware.intake))
+
         """
         Groups
         """

@@ -15,7 +15,6 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 @with_timeout(10.0)
 class MoveElevator(Command):
-
     @staticmethod
     def _getAlgaeLevelPosition(pose: Pose2d) -> Literal["None", "Level2", "Level3"]:
         alliance = DriverStation.getAlliance()
@@ -111,7 +110,7 @@ class MoveElevator(Command):
                 "Level3": cls.toLevel3Algae(elevator),
                 "Level2": cls.toLevel2Algae(elevator),
             },
-            lambda: cls._getAlgaeLevelPosition(drivetrain.getPose()),
+            lambda: MoveElevator._getAlgaeLevelPosition(drivetrain.getPose()),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")

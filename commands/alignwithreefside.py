@@ -1,39 +1,35 @@
 import math
 from typing import Optional
 
-from commands2 import DeferredCommand
+from commands2 import Command
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
 from commands.drivetrain.drivetoposes import DriveToPoses
-from modules.hardware import HardwareModule
+from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
+from ultime.command import DeferredCommand
+
+tag_field = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeAndyMark)
+
 
 # Links the sextants to the corresponding AprilTag ID for each reef
-tag_id = {
+alliance_to_sextant_to_tag_id = {
     DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
     DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
 }
 
-reef_centers = {
+
+alliance_to_reef_center = {
     DriverStation.Alliance.kBlue: Translation2d(4.56, 4.03),
     DriverStation.Alliance.kRed: Translation2d(13.04, 4.03),
 }
 
-tag_pose = {
-    6: Pose2d(Translation2d(x=13.474446, y=3.301238), Rotation2d(-1.047198)),
-    7: Pose2d(Translation2d(x=13.890498, y=4.020820), Rotation2d(0.000000)),
-    8: Pose2d(Translation2d(x=13.474446, y=4.740402), Rotation2d(1.047198)),
-    9: Pose2d(Translation2d(x=12.643358, y=4.740402), Rotation2d(2.094395)),
-    10: Pose2d(Translation2d(x=12.227306, y=4.020820), Rotation2d(3.141593)),
-    11: Pose2d(Translation2d(x=12.643358, y=3.301238), Rotation2d(-2.094395)),
-    17: Pose2d(Translation2d(x=4.073906, y=3.301238), Rotation2d(-2.094395)),
-    18: Pose2d(Translation2d(x=3.657600, y=4.020820), Rotation2d(3.141593)),
-    19: Pose2d(Translation2d(x=4.073906, y=4.740402), Rotation2d(2.094395)),
-    20: Pose2d(Translation2d(x=4.904740, y=4.740402), Rotation2d(1.047198)),
-    21: Pose2d(Translation2d(x=5.321046, y=4.020820), Rotation2d(0.000000)),
-    22: Pose2d(Translation2d(x=4.904740, y=3.301238), Rotation2d(-1.047198)),
+
+tag_poses = {
+    tag_id: tag_field.getTagPose(tag_id).toPose2d()
+    for tag_id in [6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22]
 }
 
 
@@ -48,7 +44,7 @@ def getCurrentSextant(robot_position: Pose2d) -> Optional[int]:
     """
     if DriverStation.getAlliance() is None:
         return None
-    reef_position = reef_centers[DriverStation.getAlliance()]
+    reef_position = alliance_to_reef_center[DriverStation.getAlliance()]
 
     dx = robot_position.X() - reef_position.X()
     dy = robot_position.Y() - reef_position.Y()
@@ -66,34 +62,32 @@ def getCurrentSextant(robot_position: Pose2d) -> Optional[int]:
 def getClosestReefTagID(robot_position: Pose2d) -> int:
     sextant = getCurrentSextant(robot_position)
     alliance = DriverStation.getAlliance()
-    return tag_id[alliance][sextant]
+    return alliance_to_sextant_to_tag_id[alliance][sextant]
 
 
 class AlignWithReefSide(DeferredCommand):
     pose_offset = autoproperty(0.52)
 
-    def __init__(self, hardware: HardwareModule):
-        super().__init__(
-            lambda: DriveToPoses(
-                hardware.drivetrain,
-                [self.getTagPoseToAlign(hardware.drivetrain.getPose())],
-            ),
-            hardware.drivetrain,
-        )
-        self.hardware = hardware
-        self.tag_field = AprilTagFieldLayout.loadField(
-            AprilTagField.k2025ReefscapeAndyMark
+    def __init__(self, drivetrain: Drivetrain):
+        super().__init__()
+        self.drivetrain = drivetrain
+        self.addRequirements(drivetrain)
+
+    def createCommand(self) -> Command:
+        return DriveToPoses(
+            self.drivetrain,
+            [self.getTagPoseToAlign()],
         )
 
-    def getTagPoseToAlign(self, robot_position: Pose2d) -> Pose2d:
-        tag = getClosestReefTagID(robot_position)
-        pose = tag_pose[tag]
+    def getTagPoseToAlign(self) -> Pose2d:
+        tag = getClosestReefTagID(self.drivetrain.getPose())
+        pose = tag_poses[tag]
 
         return self.offsetTagPositions(pose, self.pose_offset)
 
     @staticmethod
     def offsetTagPositions(tag_pos: Pose2d, offset_from_center: float):
-        reef_center = reef_centers[DriverStation.getAlliance()]
+        reef_center = alliance_to_reef_center[DriverStation.getAlliance()]
 
         # Get vector from reef center to tag position
         center_to_tag = tag_pos.translation() - reef_center

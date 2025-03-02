@@ -4,7 +4,7 @@ from typing import Union, Tuple, List, Callable
 
 import numpy as np
 import wpilib
-from wpilib import AddressableLED, Timer, DriverStation, SmartDashboard, getTime
+from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
@@ -38,6 +38,10 @@ class LEDController(Subsystem):
 
     def __init__(self, hardware):
         super().__init__()
+        from modules.hardware import HardwareModule
+
+        hardware: HardwareModule = hardware
+
         self.led_strip = AddressableLED(ports.PWM.led_strip)
         self.buffer = [AddressableLED.LEDData() for _ in range(int(self.led_number))]
         self.led_strip.setLength(len(self.buffer))
@@ -176,7 +180,6 @@ class LEDController(Subsystem):
     def periodic(self) -> None:
         start_time = getTime()
         self.time += 1
-
 
         if DriverStation.isEStopped():
             self.e_stopped()
