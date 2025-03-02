@@ -31,6 +31,7 @@ class LEDController(Subsystem):
     blue_rgb = np.array([0, 0, 255])
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
+    purple = np.array([128, 0, 128])
 
     led_number = autoproperty(300.0)
 
@@ -45,6 +46,7 @@ class LEDController(Subsystem):
         self.claw = hardware.claw
         self.elevator = hardware.elevator
         self.printer = hardware.printer
+        self.climber = hardware.climber
 
         self.time = 0
         self.has_seen_coral = False
@@ -115,11 +117,20 @@ class LEDController(Subsystem):
         for i, y in enumerate(pixel_value):
             self.buffer[i].setRGB(*y)
 
-    def modePickUp(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 3.0)
+    def modeElevatorMove(self):
+        self.commonTeleop(self.getAllianceColor(), self.white, 4.0)
+
+    def modeClimberMove(self):
+        self.commonTeleop(self.purple, self.white, 3.0)
+
+    def modeClimberReady(self):
+        self.staticColor(self.purple)
 
     def modeCoralLoaded(self):
-        self.commonTeleop(self.green_rgb, self.black, 1.0)
+        self.commonTeleop(self.green_rgb, self.white, 5.0)
+
+    def staticColor(self, color):
+        self.setAll(color)
 
     def commonTeleop(self, color1, color2, speed):
         color1 = (self.brightness * color1).astype(int)
@@ -184,11 +195,8 @@ class LEDController(Subsystem):
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
-                if (
-                    self.claw.has_coral()
-                    and not self.has_seen_coral
-                    and self.timer <= 2
-                ):
+
+                if self.claw.has_coral() and not self.has_seen_coral and self.timer <= 2:
                     self.modeCoralLoaded()
                     self.timer.start()
 
@@ -201,7 +209,19 @@ class LEDController(Subsystem):
                     self.timer.reset()
 
                 if self.elevator.state == self.elevator.State.Moving:
-                    self.modePickUp()
+                    self.modeElevatorMove()
+
+                if self.claw.seesObject():
+                    self.modeCoralLoaded()
+
+                if self.printer.state == self.printer.State.Moving:
+                    self.modeCoralLoaded()
+
+                if self.climber.state == self.climber.State.Moving:
+                    self.modeClimberMove()
+
+                if self.climber.state == self.climber.State.Ready:
+                    self.modeClimberReady()
 
                 else:
                     self.modeTeleop()
