@@ -185,17 +185,17 @@ class LEDController(Subsystem):
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
                 if (
-                    self.claw.has_coral()
+                    self.claw.has_coral
                     and not self.has_seen_coral
-                    and self.timer <= 2
+                    and self.timer.get() <= 2
                 ):
                     self.modeCoralLoaded()
                     self.timer.start()
 
-                elif self.timer >= 2:
+                elif self.timer.get() >= 2:
                     self.has_seen_coral = True
 
-                elif not self.claw.has_coral():
+                elif not self.claw.has_coral:
                     self.has_seen_coral = False
                     self.timer.stop()
                     self.timer.reset()
