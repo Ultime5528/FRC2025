@@ -9,12 +9,6 @@
           "data": {
             "pathName": "AutoTestPath"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RetractArm"
-          }
         }
       ]
     }

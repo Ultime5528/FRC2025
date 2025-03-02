@@ -2,7 +2,8 @@ __all__ = ["FollowPath"]
 
 import math
 
-from commands2 import Command, DeferredCommand
+from commands2 import DeferredCommand
+from commands2 import Command
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.path import PathPlannerPath
 from pathplannerlib.telemetry import PPLibTelemetry
