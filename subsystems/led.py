@@ -31,6 +31,7 @@ class LEDController(Subsystem):
     blue_rgb = np.array([0, 0, 255])
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
+    purple = np.array([128, 0, 128])
 
     led_number = autoproperty(300.0)
 
@@ -49,11 +50,10 @@ class LEDController(Subsystem):
         self.claw = hardware.claw
         self.elevator = hardware.elevator
         self.printer = hardware.printer
+        self.climber = hardware.climber
 
         self.time = 0
         self.has_seen_coral = False
-        self.timer = wpilib.Timer()
-        self.timer.reset()
 
         self.hardware = weakref.proxy(hardware)
 
@@ -119,11 +119,20 @@ class LEDController(Subsystem):
         for i, y in enumerate(pixel_value):
             self.buffer[i].setRGB(*y)
 
-    def modePickUp(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 3.0)
+    def modeElevatorMove(self):
+        self.commonTeleop(self.getAllianceColor(), self.white, 4.0)
+
+    def modeClimberMove(self):
+        self.commonTeleop(self.purple, self.white, 3.0)
+
+    def modeClimberReady(self):
+        self.commonTeleop(self.purple, self.purple, 0)
+
+    def modeDrop(self):
+        self.commonTeleop(self.white, self.white, 0)
 
     def modeCoralLoaded(self):
-        self.commonTeleop(self.green_rgb, self.black, 1.0)
+        self.commonTeleop(self.green_rgb, self.green_rgb, 5.0)
 
     def commonTeleop(self, color1, color2, speed):
         color1 = (self.brightness * color1).astype(int)
@@ -187,26 +196,20 @@ class LEDController(Subsystem):
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
-                if (
-                    self.claw.has_coral
-                    and not self.has_seen_coral
-                    and self.timer.get() <= 2
-                ):
+
+                if self.claw.seesObject() and self.elevator.state == self.elevator.State.Loading:
                     self.modeCoralLoaded()
-                    self.timer.start()
-
-                elif self.timer.get() >= 2:
-                    self.has_seen_coral = True
-
-                elif not self.claw.has_coral:
-                    self.has_seen_coral = False
-                    self.timer.stop()
-                    self.timer.reset()
 
                 elif self.elevator.state == self.elevator.State.Moving:
-                    self.modePickUp()
+                    self.modeElevatorMove()
 
-                else:
+                elif self.climber.state == self.climber.State.Moving:
+                    self.modeClimberMove()
+
+                elif self.climber.state == self.climber.State.Ready:
+                    self.modeClimberReady()
+
+                elif DriverStation.isTeleopEnabled():
                     self.modeTeleop()
 
             elif DriverStation.getMatchTime() == -1.0:
