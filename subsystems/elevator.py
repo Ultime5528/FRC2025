@@ -30,6 +30,11 @@ class Elevator(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
+    class LoadingState(Enum):
+        FreeToMove = auto()
+        DoNotMoveWhileLoading = auto()
+        Unknown = auto()
+
     speed_up = autoproperty(0.1)
     speed_down = autoproperty(-0.1)
     speed_maintain = autoproperty(0.02)
@@ -62,6 +67,7 @@ class Elevator(Subsystem):
         self._prev_is_down = False
         self.state = Elevator.State.Unknown
         self.movement_state = Elevator.MovementState.Unknown
+        self.loading_state = Elevator.LoadingState.Unknown
 
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
@@ -113,8 +119,12 @@ class Elevator(Subsystem):
             and speed < 0
         ):
             speed = self.speed_maintain
+        elif self.loading_state == Elevator.LoadingState.DoNotMoveWhileLoading:
+            speed = self.speed_maintain
+
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
+
         elif self.isUp():
             speed = speed if speed <= 0.0 else self.speed_maintain
 
