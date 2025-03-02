@@ -6,7 +6,6 @@ from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
-from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetection
@@ -39,7 +38,7 @@ class Robot(ModuleRobot):
 
         self.autonomous = AutonomousModule(self.hardware)
 
-        self.dashboard = DashboardModule(self.hardware, self.modules)
+        # self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
@@ -54,7 +53,7 @@ class Robot(ModuleRobot):
             self.loading_detection,
             self.coral_retraction,
             self.autonomous,
-            self.dashboard,
+            # self.dashboard,
             self.diagnostics,
             self.logging,
             self.property_save_checker,
