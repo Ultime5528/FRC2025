@@ -208,20 +208,21 @@ class LEDController(Subsystem):
                     self.timer.stop()
                     self.timer.reset()
 
-                if self.elevator.state == self.elevator.State.Moving:
+                elif self.elevator.state == self.elevator.State.Moving:
                     self.modeElevatorMove()
 
-                if self.claw.seesObject():
-                    self.modeCoralLoaded()
-
-                if self.printer.state == self.printer.State.Moving:
-                    self.modeCoralLoaded()
-
-                if self.climber.state == self.climber.State.Moving:
+                elif self.climber.state == self.climber.State.Moving:
                     self.modeClimberMove()
 
-                if self.climber.state == self.climber.State.Ready:
+                elif self.climber.state == self.climber.State.Ready:
                     self.modeClimberReady()
+
+                elif self.claw.seesObject():
+                    self.modeCoralLoaded()
+
+                elif self.printer.state == self.printer.State.Moving:
+                    self.modeCoralLoaded()
+
 
                 else:
                     self.modeTeleop()
