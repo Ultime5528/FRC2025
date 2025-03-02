@@ -194,11 +194,8 @@ class LEDController(Subsystem):
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
 
-                if self.claw.seesObject() and not self.has_seen_coral:
+                if self.claw.seesObject() and self.elevator.state == self.elevator.State.Loading:
                     self.modeCoralLoaded()
-
-                elif not self.claw.has_coral and self.has_seen_coral:
-                    self.has_seen_coral = False
 
                 elif self.elevator.state == self.elevator.State.Moving:
                     self.modeElevatorMove()
@@ -208,6 +205,9 @@ class LEDController(Subsystem):
 
                 elif self.climber.state == self.climber.State.Ready:
                     self.modeClimberReady()
+
+                elif DriverStation.isTeleopEnabled():
+                    self.modeTeleop()
 
             elif DriverStation.getMatchTime() == -1.0:
                 self.rainbow()
