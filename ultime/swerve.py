@@ -1,4 +1,5 @@
 import math
+from typing import Callable
 
 from rev import SparkMax, SparkBase, SparkSim
 from wpilib import RobotBase
@@ -6,6 +7,7 @@ from wpilib.simulation import RoboRioSim
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.system.plant import DCMotor
+from wpiutil import Sendable, SendableBuilder
 
 from ultime import swerveconfig
 
@@ -135,3 +137,64 @@ class SwerveModule:
         normalized_pos = ((current_turn_pos + math.pi) % (2 * math.pi)) - math.pi
         self.sim_encoder_turn.setPosition(normalized_pos)
         self.sim_encoder_turn.setVelocity(self.sim_turning_motor.getVelocity())
+
+
+class SwerveDriveElasticSendable(Sendable):
+    def __init__(
+        self,
+        module_fl: SwerveModule,
+        module_fr: SwerveModule,
+        module_bl: SwerveModule,
+        module_br: SwerveModule,
+        get_robot_angle_radians: Callable[[], float],
+    ):
+        super().__init__()
+        self.module_fl = module_fl
+        self.module_fr = module_fr
+        self.module_bl = module_bl
+        self.module_br = module_br
+        self.get_robot_angle_radians = get_robot_angle_radians
+
+    def initSendable(self, builder: SendableBuilder):
+        def noop(_):
+            pass
+
+        builder.setSmartDashboardType("SwerveDrive")
+
+        builder.addDoubleProperty(
+            "Front Left Angle",
+            lambda: self.module_fl.getPosition().angle.radians(),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Left Velocity", self.module_fl.getVelocity, noop
+        )
+
+        builder.addDoubleProperty(
+            "Front Right Angle",
+            lambda: self.module_fr.getPosition().angle.radians(),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Right Velocity", self.module_fr.getVelocity, noop
+        )
+
+        builder.addDoubleProperty(
+            "Back Left Angle",
+            lambda: self.module_bl.getPosition().angle.radians(),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Left Velocity", self.module_bl.getVelocity, noop
+        )
+
+        builder.addDoubleProperty(
+            "Back Right Angle",
+            lambda: self.module_br.getPosition().angle.radians(),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Right Velocity", self.module_br.getVelocity, noop
+        )
+
+        builder.addDoubleProperty("Robot Angle", self.get_robot_angle_radians, noop)

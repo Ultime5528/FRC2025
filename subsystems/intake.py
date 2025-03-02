@@ -21,9 +21,10 @@ class Intake(Subsystem):
         Drop = auto()
 
     speed_pivot = autoproperty(0.3)
-    speed_grab = autoproperty(0.8)
+    speed_grab = autoproperty(0.6)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
+
     position_conversion_factor = autoproperty(0.445)
 
     def __init__(self):
