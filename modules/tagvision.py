@@ -32,17 +32,11 @@ class TagVisionModule(AbsoluteVision):
 
         if len(used_tags) == 1:
             used_tag = used_tags[0]
-            used_tag.getBestCameraToTarget()
-            tag_distance = (
-                used_tag.getBestCameraToTarget().x ** 2
-                + used_tag.getBestCameraToTarget().y ** 2
-            )
+            cam_to_target = used_tag.getBestCameraToTarget()
+            distance_sq = cam_to_target.x**2 + cam_to_target.y**2
             tag_area = used_tag.getArea()
 
-            if (
-                tag_distance < (self.max_distance_meters ** 2)
-                and tag_area > self.min_area
-            ):
+            if distance_sq < (self.max_distance_meters**2) and tag_area > self.min_area:
                 time_stamp = self.getEstimatedPoseTimeStamp()
                 self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
 
