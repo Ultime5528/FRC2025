@@ -22,9 +22,10 @@ class TagVisionModule(AbsoluteVision):
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
         estimated_pose = self.getEstimatedPose2D()
+        usedTags = self.getUsedTags()
 
-        if len(self.getUsedTags()) == 1:
-            if self.getUsedTags()[0].getPoseAmbiguity() < 2.0:
+        if len(usedTags) == 1:
+            if usedTags[0].getPoseAmbiguity() < 2.0:
                 time_stamp = self.getEstimatedPoseTimeStamp()
                 self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
 
