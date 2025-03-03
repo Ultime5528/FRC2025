@@ -28,9 +28,10 @@ class TagVisionModule(AbsoluteVision):
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
         estimated_pose = self.getEstimatedPose2D()
+        used_tags = self.getUsedTags()
 
-        if len(self.getUsedTags()) == 1:
-            used_tag = self.getUsedTags()[0]
+        if len(used_tags) == 1:
+            used_tag = used_tags[0]
             used_tag.getBestCameraToTarget()
             tag_distance = (
                 used_tag.getBestCameraToTarget().x ** 2
