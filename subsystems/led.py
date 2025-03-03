@@ -8,6 +8,7 @@ from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
+from commands.claw.autodrop import AutoDrop
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 
@@ -32,6 +33,7 @@ class LEDController(Subsystem):
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
     purple = np.array([128, 0, 128])
+    pink = np.array([255, 105, 180])
 
     led_number = autoproperty(300.0)
 
@@ -53,7 +55,6 @@ class LEDController(Subsystem):
         self.climber = hardware.climber
 
         self.time = 0
-        self.has_seen_coral = False
 
         self.hardware = weakref.proxy(hardware)
 
@@ -106,7 +107,7 @@ class LEDController(Subsystem):
             self.buffer[i].setRGB(*y)
 
     def modeTeleop(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 1.0)
+        self.commonTeleop(self.getAllianceColor(), self.white, 0.5)
 
     def modeEndgame(self):
         period = 15
@@ -119,8 +120,8 @@ class LEDController(Subsystem):
         for i, y in enumerate(pixel_value):
             self.buffer[i].setRGB(*y)
 
-    def modeElevatorMove(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 4.0)
+    def modePickUp(self):
+        self.commonTeleop(self.getAllianceColor(), self.white, 3.5)
 
     def modeClimberMove(self):
         self.commonTeleop(self.purple, self.white, 3.0)
@@ -133,6 +134,15 @@ class LEDController(Subsystem):
 
     def modeCoralLoaded(self):
         self.commonTeleop(self.green_rgb, self.green_rgb, 5.0)
+
+    def modeClimberReady(self):
+        self.commonTeleop(self.purple, self.purple, 0.0)
+
+    def modeClimberMoving(self):
+        self.commonTeleop(self.purple, self.white, 2.0)
+
+    def modeDropping(self):
+        self.commonTeleop(self.pink, self.white, 0.2)
 
     def commonTeleop(self, color1, color2, speed):
         color1 = (self.brightness * color1).astype(int)
@@ -196,26 +206,35 @@ class LEDController(Subsystem):
             self.modeAuto()
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
+                if (
+                    self.claw.seesObject()
+                    and self.elevator.state == self.elevator.State.Loading
+                ):
 
-                if self.claw.seesObject() and self.elevator.state == self.elevator.State.Loading:
                     self.modeCoralLoaded()
 
                 elif self.elevator.state == self.elevator.State.Moving:
-                    self.modeElevatorMove()
-
-                elif self.climber.state == self.climber.State.Moving:
-                    self.modeClimberMove()
+                    self.modePickUp()
 
                 elif self.climber.state == self.climber.State.Ready:
                     self.modeClimberReady()
 
-                elif DriverStation.isTeleopEnabled():
+                elif self.climber.state == self.climber.State.Moving:
+                    self.modeClimberMoving()
+                else:
                     self.modeTeleop()
 
             elif DriverStation.getMatchTime() == -1.0:
                 self.rainbow()
             else:
                 self.modeEndgame()
+
+            if self.climber.state == self.climber.State.Ready:
+                self.modeClimberReady()
+
+            elif self.climber.state == self.climber.State.Moving:
+                self.modeClimberMoving()
+
         elif DriverStation.isDSAttached():
             self.modeConnected()  # connected to driver station
         else:  # not connected to driver station
