@@ -2,6 +2,7 @@ from _weakref import proxy
 from typing import List
 
 import commands2
+import wpilib
 from commands2 import CommandScheduler
 from wpilib import RobotController
 
@@ -58,6 +59,6 @@ class DiagnosticsModule(Module):
             else:
                 return []
 
-        builder.addBooleanProperty("Ready", lambda: True, noop)
+        builder.publishConstBoolean("Ready", True)
         builder.addStringArrayProperty("Components", getComponentsNames, noop)
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)

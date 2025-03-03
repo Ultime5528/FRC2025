@@ -20,19 +20,12 @@ class Claw(Subsystem):
         self.is_at_loading = False
         self.is_coral_retracted = False
 
-        self.alert_is_at_loading = self.createAlert(
-            "Claw is not at loading. Make sure to also move elevator to loading",
-            AlertType.Error,
-        )
-        self.alert_no_coral = self.createAlert(
-            "Claw didn't return the correct value after loading. Is there a coral in the loader? Test execution will halt until a coral is placed.",
+        self.alert_sees_object = self.createAlert(
+            "Claw didn't return correct value in seesObject. Is there an actual coral in the loader?",
             AlertType.Warning,
         )
-        self.alert_load_failed = self.createAlert(
-            "Claw didn't succeed loading. Check sensor", AlertType.Error
-        )
-        self.alert_drop_failed = self.createAlert(
-            "Claw did not drop coral. Check motors", AlertType.Error
+        self.alert_left_motor = self.createAlert(
+            "Left motor didn't modify battery voltage. Is it connected to the roboRIO?", AlertType.Error
         )
 
     def stop(self):

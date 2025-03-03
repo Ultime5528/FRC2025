@@ -9,9 +9,9 @@ class DiagnoseHasCoral(Command):
         self.addRequirements(claw)
         self.claw = claw
 
-    def execute(self):
-        if not self.claw.seesObject():
-            self.claw.alert_no_coral.set(True)
+    def initialize(self):
+        if self.claw.seesObject():
+            self.claw.alert_sees_object.set(True)
 
     def isFinished(self) -> bool:
-        return self.claw.seesObject()
+        return True
