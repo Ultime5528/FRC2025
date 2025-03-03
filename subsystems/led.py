@@ -28,6 +28,7 @@ Color = Union[np.ndarray, Tuple[int, int, int], List[int]]
 
 class LEDController(Subsystem):
     green_rgb = np.array([0, 255, 0])
+    dark_green_rgb = np.array([3, 53, 0])
     red_rgb = np.array([255, 0, 0])
     blue_rgb = np.array([0, 0, 255])
     black = np.array([0, 0, 0])
@@ -120,20 +121,17 @@ class LEDController(Subsystem):
         for i, y in enumerate(pixel_value):
             self.buffer[i].setRGB(*y)
 
-    def modePickUp(self):
+    def modeElevatorMove(self):
         self.commonTeleop(self.getAllianceColor(), self.white, 3.5)
 
     def modeClimberMove(self):
         self.commonTeleop(self.purple, self.white, 3.0)
 
-    def modeClimberReady(self):
-        self.commonTeleop(self.purple, self.purple, 0)
-
     def modeDrop(self):
         self.commonTeleop(self.white, self.white, 0)
 
     def modeCoralLoaded(self):
-        self.commonTeleop(self.green_rgb, self.green_rgb, 5.0)
+        self.commonTeleop(self.green_rgb, self.dark_green_rgb, 3.0)
 
     def modeClimberReady(self):
         self.commonTeleop(self.purple, self.purple, 0.0)
@@ -214,7 +212,7 @@ class LEDController(Subsystem):
                     self.modeCoralLoaded()
 
                 elif self.elevator.state == self.elevator.State.Moving:
-                    self.modePickUp()
+                    self.modeElevatorMove()
 
                 elif self.climber.state == self.climber.State.Ready:
                     self.modeClimberReady()
