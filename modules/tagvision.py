@@ -15,7 +15,7 @@ robot_to_camera_offset = wpimath.geometry.Transform3d(
 
 
 class TagVisionModule(AbsoluteVision):
-    distance_meters_to_stop = autoproperty(5.0)
+    max_distance_meters = autoproperty(5.0)
     min_area = autoproperty(10.0)
 
     def __init__(self, drivetrain: Drivetrain):
@@ -40,7 +40,7 @@ class TagVisionModule(AbsoluteVision):
             tag_area = used_tag.getArea()
 
             if (
-                tag_distance < (self.distance_meters_to_stop**2)
+                tag_distance < (self.max_distance_meters ** 2)
                 and tag_area > self.min_area
             ):
                 time_stamp = self.getEstimatedPoseTimeStamp()
