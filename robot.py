@@ -35,7 +35,7 @@ class Robot(ModuleRobot):
 
         self.arm_collision = ArmCollision(self.hardware)
         self.loading_detection = LoadingDetection(self.hardware)
-        self.block_elevator_until_coral = BlockElevatorUntilCoral(self.hardware.arm, self.hardware.elevator)
+        self.block_elevator_until_coral = BlockElevatorUntilCoral(self.hardware)
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
