@@ -1,7 +1,10 @@
+import math
+
 import wpimath
 from wpimath.geometry import Transform3d
 
 from subsystems.drivetrain import Drivetrain
+from ultime.autoproperty import autoproperty
 from ultime.vision import AbsoluteVision, VisionMode
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
@@ -12,6 +15,8 @@ robot_to_camera_offset = wpimath.geometry.Transform3d(
 
 
 class TagVisionModule(AbsoluteVision):
+    distance_meters_to_stop = autoproperty(5.0)
+
     def __init__(self, drivetrain: Drivetrain):
         super().__init__(
             camera_name="PositionEstimator", camera_offset=robot_to_camera_offset
@@ -22,6 +27,41 @@ class TagVisionModule(AbsoluteVision):
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
         estimated_pose = self.getEstimatedPose2D()
-        if estimated_pose is not None:
+
+        if len(self.getUsedTags()) == 1:
+            used_tag = self.getUsedTags()[0]
+            used_tag.getBestCameraToTarget()
+            tag_distance = (
+                used_tag.getBestCameraToTarget().x ** 2
+                + used_tag.getBestCameraToTarget().y ** 2
+            )
+
+            if tag_distance < (self.distance_meters_to_stop**2):
+                time_stamp = self.getEstimatedPoseTimeStamp()
+                self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
+
+        elif estimated_pose is not None:
             time_stamp = self.getEstimatedPoseTimeStamp()
             self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
+
+    def initSendable(self, builder):
+        super().initSendable(builder)
+
+        def noop(x):
+            pass
+
+        def getNumberTagUsed() -> int:
+            return len(self.getUsedTags())
+
+        def getDistance() -> float:
+            if len(self.getUsedTags()) == 1:
+                used_tag = self.getUsedTags()[0]
+                return math.sqrt(
+                    used_tag.getBestCameraToTarget().x ** 2
+                    + used_tag.getBestCameraToTarget().y ** 2
+                )
+            else:
+                return 0.0
+
+        builder.addIntegerProperty("NumberOfTagUsed", getNumberTagUsed, noop)
+        builder.addFloatProperty("DistanceOfTheTag", getDistance, noop)
