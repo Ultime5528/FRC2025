@@ -1,5 +1,5 @@
 from commands2 import SequentialCommandGroup
-from commands2.cmd import parallel
+from commands2.cmd import parallel, either, none
 
 from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
@@ -30,7 +30,11 @@ class ResetAll(SequentialCommandGroup):
                 ManualMoveElevator.up(elevator).withTimeout(1.5),
                 ResetPrinterRight(printer),
             ),
-            RetractArm(arm),
+            either(
+                none(),
+                RetractArm(arm),
+                lambda: arm.state == Arm.State.Retracted,
+            ),
             parallel(
                 ResetElevator(elevator),
                 ResetIntake(intake),
