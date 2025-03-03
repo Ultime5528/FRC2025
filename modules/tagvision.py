@@ -1,7 +1,9 @@
 import wpimath
+from wpilib import SmartDashboard
 from wpimath.geometry import Transform3d
 
 from subsystems.drivetrain import Drivetrain
+from ultime.autoproperty import autoproperty
 from ultime.vision import AbsoluteVision, VisionMode
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
@@ -12,6 +14,8 @@ robot_to_camera_offset = wpimath.geometry.Transform3d(
 
 
 class TagVisionModule(AbsoluteVision):
+    ambiguity_threshold = autoproperty(0.2)
+
     def __init__(self, drivetrain: Drivetrain):
         super().__init__(
             camera_name="PositionEstimator", camera_offset=robot_to_camera_offset
@@ -25,7 +29,7 @@ class TagVisionModule(AbsoluteVision):
         used_tags = self.getUsedTags()
 
         if len(used_tags) == 1:
-            if used_tags[0].getPoseAmbiguity() < 2.0:
+            if used_tags[0].getPoseAmbiguity() < self.ambiguity_threshold:
                 time_stamp = self.getEstimatedPoseTimeStamp()
                 self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
 
@@ -33,18 +37,20 @@ class TagVisionModule(AbsoluteVision):
             time_stamp = self.getEstimatedPoseTimeStamp()
             self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
 
-    def initSendable(self, builder):
-        super().initSendable(builder)
+        SmartDashboard.putNumber("NumberOfTagUsed", self.getNumberTagUsed())
+        SmartDashboard.putNumber("AmbiguityOfTheTag", self.getAmbiguity())
 
-        def noop(x):
-            pass
+    def getNumberTagUsed(self) -> int:
+        return len(self.getUsedTags())
 
-        def getNumberTagUsed() -> int:
-            return len(self.getUsedTags())
+    def getAmbiguity(self) -> float:
+        if len(self.getUsedTags()) == 1:
+            return self.getUsedTags()[0].getPoseAmbiguity()
+        return 5528
 
-        def getAmbiguity() -> float:
-            if len(self.getUsedTags()) == 1:
-                return self.getUsedTags()[0].getPoseAmbiguity()
-
-        builder.addIntegerProperty("NumberOfTagUsed", getNumberTagUsed, noop)
-        builder.addFloatProperty("AmbiguityOfTheTag", getAmbiguity, noop)
+    # def initSendable(self, builder):
+    #     super().initSendable(builder)
+    #
+    #     def noop(x):
+    #         pass
+    #
