@@ -22,6 +22,28 @@ class TagVisionModule(AbsoluteVision):
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
         estimated_pose = self.getEstimatedPose2D()
-        if estimated_pose is not None:
+
+        if len(self.getUsedTags()) == 1:
+            if self.getUsedTags()[0].getPoseAmbiguity() < 2.0:
+                time_stamp = self.getEstimatedPoseTimeStamp()
+                self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
+
+        elif estimated_pose is not None:
             time_stamp = self.getEstimatedPoseTimeStamp()
             self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
+
+    def initSendable(self, builder):
+        super().initSendable(builder)
+
+        def noop(x):
+            pass
+
+        def getNumberTagUsed() -> int:
+            return len(self.getUsedTags())
+
+        def getAmbiguity() -> float:
+            if len(self.getUsedTags()) == 1:
+                return self.getUsedTags()[0].getPoseAmbiguity()
+
+        builder.addIntegerProperty("NumberOfTagUsed", getNumberTagUsed, noop)
+        builder.addFloatProperty("AmbiguityOfTheTag", getAmbiguity, noop)
