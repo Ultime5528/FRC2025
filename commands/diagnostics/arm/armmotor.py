@@ -1,4 +1,4 @@
-from commands2 import SequentialCommandGroup, ParallelCommandGroup, FunctionalCommand, WaitCommand
+from commands2 import SequentialCommandGroup, ParallelCommandGroup, FunctionalCommand
 from wpilib import RobotController
 
 from commands.arm.extendarm import ExtendArm
@@ -8,8 +8,10 @@ from commands.elevator.moveelevator import MoveElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty
+from ultime.command import ignore_requirements, WaitCommand
 
 
+@ignore_requirements(["arm", "elevator"])
 class DiagnoseArmMotor(SequentialCommandGroup):
     voltage_change_threshold = autoproperty(0.5)
 
@@ -21,11 +23,16 @@ class DiagnoseArmMotor(SequentialCommandGroup):
                 ExtendArm(arm),
                 SequentialCommandGroup(
                     WaitCommand(0.1),
-                    FunctionalCommand(lambda: None, self.while_extending, lambda interrupted: None, lambda: arm.state == arm.State.Extended)
-                )
+                    FunctionalCommand(
+                        lambda: None,
+                        self.while_extending,
+                        lambda interrupted: None,
+                        lambda: arm.state == arm.State.Extended,
+                    ),
+                ),
             ),
             WaitCommand(0.1),
-            RetractArm(arm)
+            RetractArm(arm),
         )
         self.arm = arm
         self.voltage_before = None

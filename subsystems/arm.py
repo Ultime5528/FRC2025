@@ -29,7 +29,10 @@ class Arm(Subsystem):
         self._motor = wpilib.VictorSP(PWM.arm_motor)
         self.state = Arm.State.Unknown
         self.movement_state = Arm.MovementState.Unknown
-        self.alert_motor = self.createAlert("Arm motor didn't affect battery voltage during test. Is it connected to the roboRIO?", AlertType.Error)
+        self.alert_motor = self.createAlert(
+            "Arm motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            AlertType.Error,
+        )
 
     def extend(self):
         if self.movement_state == Arm.MovementState.DoNotMove:
