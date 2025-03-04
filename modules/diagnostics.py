@@ -3,6 +3,7 @@ from typing import List
 
 import commands2
 from commands2 import CommandScheduler
+from commands2.cmd import sequence
 from wpilib import RobotController
 
 from commands.diagnostics.claw import DiagnoseClaw
@@ -25,19 +26,22 @@ class DiagnosticsModule(Module):
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
-subsystems = [next(iter(component.getRequirements())) for component in components]
+        subsystems = [
+            next(iter(component.getRequirements()))
+            for component in self.components_tests
+        ]
 
-self._run_all_command = DiagnoseAll(
-    self._hardware,
-    [
-        sequence(
-            SetRunningTest(subsystem, True),
-            component,
-            SetRunningTest(subsystem, False)
+        self._run_all_command = DiagnoseAll(
+            self._hardware,
+            [
+                sequence(
+                    SetRunningTest(subsystem, True),
+                    component,
+                    SetRunningTest(subsystem, False),
+                )
+                for subsystem, component in zip(subsystems, self.components_tests)
+            ],
         )
-        for subsytem, component in zip(subsystem, self.components_tests)
-    ],
-)
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
