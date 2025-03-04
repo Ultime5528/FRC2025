@@ -69,28 +69,10 @@ class Elevator(Subsystem):
             AlertType.Error,
         )
 
-        self.alert_switch_port_error = self.createAlert(
-            "DIO elevator switch cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
-        self.alert_motor_port_error = self.createAlert(
-            "CAN elevator motor cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
-
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
             self._sim_height = 0.1
-
-        self._motor_port_error = self.createAlert(
-            "CAN elevator motor cable is disconnected. Please check connections",
-            AlertType.Error,
-        )
-
-        self._alert_is_down_failed = self.createAlert(
-            "Elevator didn't return correct value in isDown. Is the limit switch on the bottom of the elevator pressed?"
-        )
 
     def getRawEncoderPosition(self):
         return self._encoder.getPosition()
