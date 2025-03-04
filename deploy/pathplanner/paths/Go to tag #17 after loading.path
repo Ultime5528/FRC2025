@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1860136869118905,
-        "y": 0.9623823781009401
+        "x": 1.3211291702309667,
+        "y": 1.0074208725406322
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0041248051554867,
-        "y": 0.878734255661798
+        "x": 3.1392402884745625,
+        "y": 0.9237727501014901
       },
       "isLocked": false,
       "linkedName": "CoralStation #12"
@@ -32,24 +32,19 @@
     },
     {
       "anchor": {
-        "x": 5.134388366124893,
-        "y": 2.9140504704875956
+        "x": 5.239478186484174,
+        "y": 2.733896492728828
       },
       "prevControl": {
-        "x": 5.404619332763045,
-        "y": 2.49369118905047
+        "x": 5.509709153122326,
+        "y": 2.3135372112917025
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 123.6900675259798
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

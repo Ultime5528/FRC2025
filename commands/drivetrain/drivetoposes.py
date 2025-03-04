@@ -30,16 +30,16 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(10.0)
+    xy_speed_end = autoproperty(12.0)
     xy_tol_pos = autoproperty(0.3)
     xy_tol_pos_last = autoproperty(0.1)
-    xy_speed_max = autoproperty(10.0)
+    xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(6.0)
+    rot_speed_end = autoproperty(8.0)
     rot_tol_pos = autoproperty(50)
     rot_tol_pos_last = autoproperty(10.0)
-    rot_speed_max = autoproperty(6.0)
+    rot_speed_max = autoproperty(8.0)
 
     def __init__(
         self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
