@@ -26,11 +26,13 @@ class Claw(Subsystem):
             AlertType.Warning,
         )
         self.alert_left_motor = self.createAlert(
-            "Left motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            "Left motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM: "
+            + str(ports.PWM.claw_motor_left),
             AlertType.Error,
         )
         self.alert_right_motor = self.createAlert(
-            "Right motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            "Right motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM: "
+            + str(ports.PWM.claw_motor_right),
             AlertType.Error,
         )
 
