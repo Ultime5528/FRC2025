@@ -3,7 +3,6 @@ import weakref
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
-import wpilib
 from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
