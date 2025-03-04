@@ -2,13 +2,13 @@ from _weakref import proxy
 from typing import List
 
 import commands2
-import wpilib
 from commands2 import CommandScheduler
 from wpilib import RobotController
 
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
+from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -26,7 +26,15 @@ class DiagnosticsModule(Module):
         self._battery_voltage: List[float] = []
         self._is_test = False
 
-        self._run_all_command = DiagnoseAll(self._hardware, self.components_tests)
+        self._run_all_command = DiagnoseAll(
+            self._hardware,
+            [
+                SetRunningTest(next(iter(component.getRequirements())), True)
+                .andThen(component)
+                .andThen(SetRunningTest(next(iter(component.getRequirements())), False))
+                for component in self.components_tests
+            ]
+        )
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())

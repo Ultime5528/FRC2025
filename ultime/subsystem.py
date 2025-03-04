@@ -10,6 +10,7 @@ class Subsystem(commands2.Subsystem):
     def __init__(self):
         super().__init__()
         self._registered_alerts = []
+        self.running_test = self.createAlert("Diagnosing subsystem...", AlertType.Info)
 
     def createAlert(self, text: str, alert_type: AlertType) -> Alert:
         alert = Alert(text, alert_type, self.getName() + "/Alerts")
