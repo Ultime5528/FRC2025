@@ -25,16 +25,19 @@ class DiagnosticsModule(Module):
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
+subsystems = [next(iter(component.getRequirements())) for component in components]
 
-        self._run_all_command = DiagnoseAll(
-            self._hardware,
-            [
-                SetRunningTest(next(iter(component.getRequirements())), True)
-                .andThen(component)
-                .andThen(SetRunningTest(next(iter(component.getRequirements())), False))
-                for component in self.components_tests
-            ],
+self._run_all_command = DiagnoseAll(
+    self._hardware,
+    [
+        sequence(
+            SetRunningTest(subsystem, True),
+            component,
+            SetRunningTest(subsystem, False)
         )
+        for subsytem, component in zip(subsystem, self.components_tests)
+    ],
+)
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
