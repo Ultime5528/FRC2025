@@ -9,4 +9,6 @@ from ultime.command import ignore_requirements
 @ignore_requirements(["arm", "elevator"])
 class DiagnoseArm(SequentialCommandGroup):
     def __init__(self, arm: Arm, elevator: Elevator):
-        super().__init__(DiagnoseArmMotor(arm, elevator))
+        super().__init__(
+            DiagnoseArmMotor(arm, elevator),
+        )

@@ -1,14 +1,20 @@
-from commands2 import SequentialCommandGroup, ParallelCommandGroup, FunctionalCommand
+from weakref import WeakMethod
+
+from commands2 import (
+    SequentialCommandGroup,
+    WaitCommand,
+    FunctionalCommand,
+)
+from commands2.cmd import runOnce, parallel, sequence
 from wpilib import RobotController
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.diagnostics.utils.runonce import RunOnce
 from commands.elevator.moveelevator import MoveElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty
-from ultime.command import ignore_requirements, WaitCommand
+from ultime.command import ignore_requirements
 
 
 @ignore_requirements(["arm", "elevator"])
@@ -17,17 +23,17 @@ class DiagnoseArmMotor(SequentialCommandGroup):
 
     def __init__(self, arm: Arm, elevator: Elevator):
         super().__init__(
-            RunOnce(self.before_command),
+            runOnce(WeakMethod(self.before_command)),
             MoveElevator.toLevel1(elevator),
-            ParallelCommandGroup(
+            parallel(
                 ExtendArm(arm),
-                SequentialCommandGroup(
+                sequence(
                     WaitCommand(0.1),
                     FunctionalCommand(
                         lambda: None,
-                        self.while_extending,
-                        lambda interrupted: None,
-                        lambda: arm.state == arm.State.Extended,
+                        WeakMethod(self.while_extending),
+                        lambda _: None,
+                        WeakMethod(self.is_arm_extended),
                     ),
                 ),
             ),
@@ -47,6 +53,9 @@ class DiagnoseArmMotor(SequentialCommandGroup):
     def while_extending(self):
         print("while_extending")
         self.voltage_during = RobotController.getBatteryVoltage()
+
+    def is_arm_extended(self):
+        return self.arm.state == Arm.State.Extended
 
     def end(self, interrupted: bool):
         super().end(interrupted)

@@ -7,8 +7,8 @@ from wpilib import RobotController
 
 from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
-from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
+from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
@@ -17,7 +17,7 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = [
+        components_tests: List[commands2.Command] = [
             DiagnoseIntake(hardware.intake),
             DiagnoseClaw(hardware.claw),
             DiagnoseArm(hardware.arm, hardware.elevator),
@@ -34,7 +34,7 @@ class DiagnosticsModule(Module):
                 SetRunningTest(list(component.getRequirements())[0], True)
                 .andThen(component)
                 .andThen(SetRunningTest(list(component.getRequirements())[0], False))
-                for component in self.components_tests
+                for component in components_tests
             ],
         )
 
