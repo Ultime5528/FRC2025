@@ -2,8 +2,8 @@ import wpilib
 from commands2 import Command
 from wpilib import RobotController, DataLogManager
 
-from subsystems.claw import Claw
 from commands.claw.drop import drop_properties
+from subsystems.claw import Claw
 from ultime.autoproperty import autoproperty
 
 

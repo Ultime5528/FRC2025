@@ -3,8 +3,7 @@ from abc import abstractmethod
 import commands2
 from wpiutil import SendableBuilder
 
-from ultime.alert import AlertType, Alert
-from ultime.alertcreator import AlertCreator
+from ultime.alert import AlertCreator
 
 
 class Subsystem(AlertCreator, commands2.Subsystem):

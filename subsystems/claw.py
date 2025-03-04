@@ -22,17 +22,18 @@ class Claw(Subsystem):
         self.is_coral_retracted = False
 
         self.alert_sees_object = self.createAlert(
-            "Claw didn't return correct value in seesObject. Is there an actual coral in the loader?",
+            "Claw didn't return correct value in seesObject. "
+            + f"Is there an actual coral in the loader? DIO={ports.DIO.claw_photocell}",
             AlertType.Warning,
         )
         self.alert_left_motor = self.createAlert(
-            "Left motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM: "
-            + str(ports.PWM.claw_motor_left),
+            "Left motor didn't affect battery voltage during test. "
+            + f"Is it connected to the roboRIO? PWM={ports.PWM.claw_motor_left} DIO={ports.PDP.claw_motor_left}",
             AlertType.Error,
         )
         self.alert_right_motor = self.createAlert(
-            "Right motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM: "
-            + str(ports.PWM.claw_motor_right),
+            "Right motor didn't affect battery voltage during test. "
+            + f"Is it connected to the roboRIO? PWM={ports.PWM.claw_motor_right} DIO={ports.PDP.claw_motor_right}",
             AlertType.Error,
         )
 

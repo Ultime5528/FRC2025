@@ -54,6 +54,13 @@ class RobotTestController:
         DriverStationSim.notifyNewData()
         stepTiming(0.05)
 
+    def startTest(self):
+        DriverStationSim.setDsAttached(True)
+        DriverStationSim.setTest(True)
+        DriverStationSim.setEnabled(True)
+        DriverStationSim.notifyNewData()
+        stepTiming(0.05)
+
     def wait(self, seconds: float, delta: float = 0.02):
         assert seconds > 0
 
