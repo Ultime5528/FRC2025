@@ -5,6 +5,7 @@ import commands2
 from commands2 import CommandScheduler
 from wpilib import RobotController
 
+from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
@@ -19,6 +20,7 @@ class DiagnosticsModule(Module):
         self.components_tests: List[commands2.Command] = [
             DiagnoseIntake(hardware.intake),
             DiagnoseClaw(hardware.claw),
+            DiagnoseArm(hardware.arm, hardware.elevator),
         ]
 
         self._hardware = proxy(hardware)
@@ -29,9 +31,9 @@ class DiagnosticsModule(Module):
         self._run_all_command = DiagnoseAll(
             self._hardware,
             [
-                SetRunningTest(next(iter(component.getRequirements())), True)
+                SetRunningTest(list(component.getRequirements())[0], True)
                 .andThen(component)
-                .andThen(SetRunningTest(next(iter(component.getRequirements())), False))
+                .andThen(SetRunningTest(list(component.getRequirements())[0], False))
                 for component in self.components_tests
             ]
         )
