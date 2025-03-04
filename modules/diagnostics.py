@@ -21,7 +21,7 @@ class DiagnosticsModule(Module):
             DiagnoseClaw(hardware.claw),
         ]
 
-        self._hardware: HardwareModule = proxy(hardware)
+        self._hardware = proxy(hardware)
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False

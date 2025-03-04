@@ -25,7 +25,12 @@ class Claw(Subsystem):
             AlertType.Warning,
         )
         self.alert_left_motor = self.createAlert(
-            "Left motor didn't modify battery voltage. Is it connected to the roboRIO?", AlertType.Error
+            "Left motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            AlertType.Error,
+        )
+        self.alert_right_motor = self.createAlert(
+            "Right motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            AlertType.Error,
         )
 
     def stop(self):

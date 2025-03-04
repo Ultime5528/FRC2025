@@ -46,4 +46,6 @@ class DiagnoseRightMotor(Command):
         print("Voltage delta before:", voltage_delta_before)
         print("Voltage delta after:", voltage_delta_after)
         if voltage_delta_before < self.voltage_change_threshold:
-            self.claw.alert_left_motor.set(True)
+            self.claw.alert_right_motor.set(True)
+        elif voltage_delta_after < self.voltage_change_threshold:
+            self.claw.alert_right_motor.set(True)
