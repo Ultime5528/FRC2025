@@ -4,6 +4,7 @@ import wpilib
 from wpiutil import SendableBuilder
 
 from ports import PWM
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.timethis import timethis as tt
@@ -28,6 +29,11 @@ class Arm(Subsystem):
         self._motor = wpilib.VictorSP(PWM.arm_motor)
         self.state = Arm.State.Unknown
         self.movement_state = Arm.MovementState.Unknown
+        self.alert_motor = self.createAlert(
+            "Arm motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM: "
+            + str(PWM.arm_motor),
+            AlertType.Error,
+        )
 
     def extend(self):
         if self.movement_state == Arm.MovementState.DoNotMove:

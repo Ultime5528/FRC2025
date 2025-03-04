@@ -6,6 +6,7 @@ from commands2 import CommandScheduler
 from commands2.cmd import sequence
 from wpilib import RobotController
 
+from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
@@ -17,29 +18,25 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = [
-            DiagnoseIntake(hardware.intake),
-            DiagnoseClaw(hardware.claw),
-        ]
+        self.components_tests = {
+            hardware.intake: DiagnoseIntake(hardware.intake),
+            hardware.claw: DiagnoseClaw(hardware.claw),
+            hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
+        }
 
         self._hardware = proxy(hardware)
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
-        subsystems = [
-            next(iter(component.getRequirements()))
-            for component in self.components_tests
-        ]
-
         self._run_all_command = DiagnoseAll(
             self._hardware,
             [
                 sequence(
-                    SetRunningTest(subsystem, True),
-                    component,
-                    SetRunningTest(subsystem, False),
+                    SetRunningTest(component, True),
+                    test,
+                    SetRunningTest(component, False),
                 )
-                for subsystem, component in zip(subsystems, self.components_tests)
+                for component, test in self.components_tests.items()
             ],
         )
 
@@ -75,5 +72,5 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
-        builder.addStringArrayProperty("Components", getComponentsNames, noop)
+        builder.publishConstStringArray("Components", getComponentsNames())
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
