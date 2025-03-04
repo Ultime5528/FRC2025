@@ -70,5 +70,5 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
-        builder.addStringArrayProperty("Components", getComponentsNames, noop)
+        builder.publishConstStringArray("Components", getComponentsNames())
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)

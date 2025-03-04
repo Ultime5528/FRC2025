@@ -46,12 +46,10 @@ class DiagnoseArmMotor(SequentialCommandGroup):
         self.voltage_after = None
 
     def before_command(self):
-        print("before_command")
         self.voltage_before = RobotController.getBatteryVoltage()
         self.arm.stop()
 
     def while_extending(self):
-        print("while_extending")
         self.voltage_during = RobotController.getBatteryVoltage()
 
     def is_arm_extended(self):

@@ -11,6 +11,7 @@ class Module(Sendable):
         super().__init__()
         self.redefines_init_sendable = False
         self._registered_alerts = []
+        self.running_test = self.createAlert("Diagnosing module...", AlertType.Info)
 
     def createAlert(self, text: str, alert_type: AlertType) -> Alert:
         alert = Alert(text, alert_type, self.getName() + "/Alerts")
