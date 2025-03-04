@@ -4,23 +4,10 @@ import commands2
 from wpiutil import SendableBuilder
 
 from ultime.alert import AlertType, Alert
+from ultime.alertcreator import AlertCreator
 
 
-class Subsystem(commands2.Subsystem):
-    def __init__(self):
-        super().__init__()
-        self._registered_alerts = []
-        self.running_test = self.createAlert("Diagnosing subsystem...", AlertType.Info)
-
-    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
-        alert = Alert(text, alert_type, self.getName() + "/Alerts")
-        self._registered_alerts.append(alert)
-        return alert
-
-    def clearAlerts(self) -> None:
-        for alert in self._registered_alerts:
-            alert.set(False)
-
+class Subsystem(AlertCreator, commands2.Subsystem):
     @abstractmethod
     def getCurrentDrawAmps(self) -> float:
         raise NotImplementedError(
