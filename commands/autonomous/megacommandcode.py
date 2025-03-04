@@ -40,14 +40,14 @@ class MegaCommandCode(SequentialCommandGroup):
                     MoveElevator.toLevel2(elevator),
                 ),
             ),
-            DropPrepareLoading.toRight(),
+            DropPrepareLoading.toRight(printer, arm, elevator, drivetrain, claw),
             parallel(
                 DriveToPoses.fromRedBluePoints(
                     drivetrain,
                     [pose(16.0406, 7.23474, 146.0)],
                     [pose(1.508, 0.797, -34.0)],
                 ),
-                ResetClimber(),
+                ResetClimber(climber),
             ),
             WaitUntilCoral(claw),
             parallel(
@@ -59,5 +59,5 @@ class MegaCommandCode(SequentialCommandGroup):
                 MoveElevator.toLevel4(elevator),
                 ExtendArm(arm),
             ),
-            DropPrepareLoading.toRight(),
+            DropPrepareLoading.toRight(printer, arm, elevator, drivetrain, claw),
         )

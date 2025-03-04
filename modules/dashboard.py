@@ -3,6 +3,7 @@ import wpilib
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.autonomous.megacommandcode import MegaCommandCode
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
@@ -34,6 +35,8 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+
+        putCommandOnDashboard("Drivetrain", MegaCommandCode(hardware.drivetrain, hardware.arm, hardware.claw, hardware.elevator, hardware.climber, hardware.printer, hardware.intake))
 
         """
         Elevator
