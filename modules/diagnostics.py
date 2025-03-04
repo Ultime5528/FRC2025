@@ -5,6 +5,10 @@ import commands2
 from commands2 import CommandScheduler
 from wpilib import RobotController
 
+from commands.diagnostics.claw import DiagnoseClaw
+from commands.diagnostics.intake import DiagnoseIntake
+from commands.diagnostics.diagnoseall import DiagnoseAll
+from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -12,12 +16,25 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = []
+        self.components_tests: List[commands2.Command] = [
+            DiagnoseIntake(hardware.intake),
+            DiagnoseClaw(hardware.claw),
+        ]
 
         self._hardware = proxy(hardware)
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
+
+        self._run_all_command = DiagnoseAll(
+            self._hardware,
+            [
+                SetRunningTest(next(iter(component.getRequirements())), True)
+                .andThen(component)
+                .andThen(SetRunningTest(next(iter(component.getRequirements())), False))
+                for component in self.components_tests
+            ]
+        )
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
@@ -25,8 +42,9 @@ class DiagnosticsModule(Module):
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().enable()
-        for component_test in self.components_tests:
-            component_test.schedule()
+        for component in self._hardware.subsystems + self._module_list.modules:
+            component.clearAlerts()
+        self._run_all_command.schedule()
         self._is_test = True
 
     def testExit(self) -> None:
@@ -49,6 +67,6 @@ class DiagnosticsModule(Module):
             else:
                 return []
 
-        builder.addBooleanProperty("Ready", lambda: True, noop)
+        builder.publishConstBoolean("Ready", True)
         builder.addStringArrayProperty("Components", getComponentsNames, noop)
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)

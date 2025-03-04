@@ -2,6 +2,7 @@ from wpilib import VictorSP
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
 
@@ -18,6 +19,19 @@ class Claw(Subsystem):
         self.has_coral = False
         self.is_at_loading = False
         self.is_coral_retracted = False
+
+        self.alert_sees_object = self.createAlert(
+            "Claw didn't return correct value in seesObject. Is there an actual coral in the loader?",
+            AlertType.Warning,
+        )
+        self.alert_left_motor = self.createAlert(
+            "Left motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            AlertType.Error,
+        )
+        self.alert_right_motor = self.createAlert(
+            "Right motor didn't affect battery voltage during test. Is it connected to the roboRIO?",
+            AlertType.Error,
+        )
 
     def stop(self):
         self._motor_right.stopMotor()
