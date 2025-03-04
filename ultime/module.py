@@ -3,14 +3,16 @@ from functools import wraps
 
 from wpiutil import Sendable
 
-from ultime.alert import Alert, AlertType
-from ultime.alertcreator import AlertCreator
+from ultime.alert import AlertCreator
 
 
 class Module(AlertCreator, Sendable):
     def __init__(self):
         super().__init__()
         self.redefines_init_sendable = False
+
+    def getName(self) -> str:
+        return self.__class__.__name__
 
     def initSendable(self, builder):
         pass
@@ -81,6 +83,9 @@ class ModuleList(Module):
         super().__init__()
         self.modules = list(modules)
         self._setup()
+
+    def getName(self) -> str:
+        return "ModuleList"
 
     def addModules(self, *modules):
         self.modules = self.modules + list(modules)
