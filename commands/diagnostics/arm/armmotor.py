@@ -1,5 +1,3 @@
-from weakref import WeakMethod
-
 from commands2 import (
     SequentialCommandGroup,
     WaitCommand,
@@ -15,6 +13,7 @@ from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty
 from ultime.command import ignore_requirements
+from ultime.proxy import proxy
 
 
 @ignore_requirements(["arm", "elevator"])
@@ -23,7 +22,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
 
     def __init__(self, arm: Arm, elevator: Elevator):
         super().__init__(
-            runOnce(WeakMethod(self.before_command)),
+            runOnce(proxy(self.before_command)),
             MoveElevator.toLevel1(elevator),
             parallel(
                 ExtendArm(arm),
@@ -31,9 +30,9 @@ class DiagnoseArmMotor(SequentialCommandGroup):
                     WaitCommand(0.1),
                     FunctionalCommand(
                         lambda: None,
-                        WeakMethod(self.while_extending),
+                        proxy(self.while_extending),
                         lambda _: None,
-                        WeakMethod(self.is_arm_extended),
+                        proxy(self.is_arm_extended),
                     ),
                 ),
             ),
