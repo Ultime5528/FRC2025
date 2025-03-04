@@ -9,9 +9,16 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "begin to reef #22"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "MoveElevator.toLevel2"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -19,15 +26,9 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "path",
                       "data": {
-                        "name": "ResetAllButClimber"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MoveElevator.toLevel1"
+                        "pathName": "StraightPath"
                       }
                     }
                   ]
@@ -39,7 +40,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CompleteDropSequence.toRight"
+            "name": "DropPrepareLoading.toRight"
           }
         },
         {
@@ -64,7 +65,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.5
+            "waitTime": 2.0
           }
         },
         {
@@ -102,7 +103,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CompleteDropSequence.toRight"
+            "name": "DropPrepareLoading.toLeft"
           }
         }
       ]

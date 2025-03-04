@@ -10,8 +10,8 @@ class DiagnoseHasCoral(Command):
         self.claw = claw
 
     def initialize(self):
-        if not self.claw.seesObject():
-            self.claw.alert_no_coral.set(True)
+        if self.claw.seesObject():
+            self.claw.alert_sees_object.set(True)
 
     def isFinished(self) -> bool:
-        return self.claw.seesObject()
+        return True

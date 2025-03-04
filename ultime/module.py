@@ -3,32 +3,13 @@ from functools import wraps
 
 from wpiutil import Sendable
 
-from ultime.alert import Alert, AlertType
+from ultime.alert import AlertCreator
 
 
-class Module(Sendable):
+class Module(AlertCreator, Sendable):
     def __init__(self):
         super().__init__()
         self.redefines_init_sendable = False
-        self._registered_alerts = []
-        self._alert_running_test = self.createAlert(
-            "Module is running test...", AlertType.Info
-        )
-
-    def setIsRunningTest(self, is_running: bool) -> None:
-        self._alert_running_test.set(is_running)
-
-    def isRunningTest(self) -> bool:
-        return self._alert_running_test.get()
-
-    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
-        alert = Alert(text, alert_type, self.getName() + "/Alerts")
-        self._registered_alerts.append(alert)
-        return alert
-
-    def clearAlerts(self) -> None:
-        for alert in self._registered_alerts:
-            alert.set(False)
 
     def getName(self) -> str:
         return self.__class__.__name__
@@ -102,6 +83,9 @@ class ModuleList(Module):
         super().__init__()
         self.modules = list(modules)
         self._setup()
+
+    def getName(self) -> str:
+        return "ModuleList"
 
     def addModules(self, *modules):
         self.modules = self.modules + list(modules)

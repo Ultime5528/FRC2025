@@ -39,7 +39,7 @@ class PWM(Immutable):
     led_strip = 6
 
 
-class DIO:
+class DIO(Immutable):
     printer_encoder_a = 0
     printer_encoder_b = 1
     printer_switch_left = 2
@@ -59,5 +59,7 @@ class DIO:
     climber_switch = 9
 
 
-class PDP:
-    current_elevator_motor = 1  # Not Yet Defined
+class PDP(Immutable):
+    arm_motor = 12
+    claw_motor_left = "?"
+    claw_motor_right = "?"
