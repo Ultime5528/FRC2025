@@ -61,8 +61,9 @@ class DiagnosticsModule(Module):
 
         def getComponentsNames() -> List[str]:
             return [
-                subsystem.getName()
-                for subsystem in self._hardware.subsystems + self._module_list.modules
+                component.getName()
+                for component in self._hardware.subsystems + self._module_list.modules
+                if len(component.registered_alerts) > 1
             ]
 
         def getBatteryVoltage() -> List[float]:
