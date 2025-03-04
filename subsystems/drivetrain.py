@@ -16,6 +16,7 @@ from wpimath.kinematics import (
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
@@ -33,6 +34,8 @@ class Drivetrain(Subsystem):
     angular_offset_fr = autoproperty(0.0)
     angular_offset_bl = autoproperty(3.14)
     angular_offset_br = autoproperty(1.57)
+
+    swerve_temperature_threshold = autoproperty(55.0)
 
     def __init__(self) -> None:
         super().__init__()
@@ -117,6 +120,16 @@ class Drivetrain(Subsystem):
         self.cam = PhotonCamera("mainCamera")
         self.vision_pose = self._field.getObject("Vision Pose")
         self.odometry_pose = self._field.getObject("Odometry Pose")
+
+        self.alert_fl_hot = self.createAlert("FL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning)
+        self.alert_fr_hot = self.createAlert("FR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning)
+        self.alert_bl_hot = self.createAlert("BL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning)
+        self.alert_br_hot = self.createAlert("BR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning)
+
+        self.alert_fl_faults = self.createAlert("FL Swerve has active faults. Check for faults on REV Hardware Client.", AlertType.Warning)
+        self.alert_fr_faults = self.createAlert("FR Swerve has active faults. Check for faults on REV Hardware Client.", AlertType.Warning)
+        self.alert_bl_faults = self.createAlert("BL Swerve has active faults. Check for faults on REV Hardware Client.", AlertType.Warning)
+        self.alert_br_faults = self.createAlert("BR Swerve has active faults. Check for faults on REV Hardware Client.", AlertType.Warning)
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
@@ -234,6 +247,41 @@ class Drivetrain(Subsystem):
 
         self.odometry_pose.setPose(self.swerve_odometry.getPose())
         self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
+
+        if self.swerve_module_fl._driving_motor.getMotorTemperature() > self.swerve_temperature_threshold or self.swerve_module_fl._turning_motor.getMotorTemperature() > self.swerve_temperature_threshold:
+            self.alert_fl_hot.set(True)
+        else:
+            self.alert_fl_hot.set(False)
+        if self.swerve_module_fr._driving_motor.getMotorTemperature() > self.swerve_temperature_threshold or self.swerve_module_fr._turning_motor.getMotorTemperature() > self.swerve_temperature_threshold:
+            self.alert_fr_hot.set(True)
+        else:
+            self.alert_fr_hot.set(False)
+        if self.swerve_module_bl._driving_motor.getMotorTemperature() > self.swerve_temperature_threshold or self.swerve_module_bl._turning_motor.getMotorTemperature() > self.swerve_temperature_threshold:
+            self.alert_bl_hot.set(True)
+        else:
+            self.alert_bl_hot.set(False)
+        if self.swerve_module_br._driving_motor.getMotorTemperature() > self.swerve_temperature_threshold or self.swerve_module_br._turning_motor.getMotorTemperature() > self.swerve_temperature_threshold:
+            self.alert_br_hot.set(True)
+        else:
+            self.alert_br_hot.set(False)
+
+        if self.swerve_module_fl._driving_motor.hasActiveFault() or self.swerve_module_fl._turning_motor.hasActiveFault():
+            self.alert_fl_faults.set(True)
+        else:
+            self.alert_fl_faults.set(False)
+        if self.swerve_module_fr._driving_motor.hasActiveFault() or self.swerve_module_fr._turning_motor.hasActiveFault():
+            self.alert_fr_faults.set(True)
+        else:
+            self.alert_fr_faults.set(False)
+        if self.swerve_module_bl._driving_motor.hasActiveFault() or self.swerve_module_bl._turning_motor.hasActiveFault():
+            self.alert_bl_faults.set(True)
+        else:
+            self.alert_bl_faults.set(False)
+        if self.swerve_module_br._driving_motor.hasActiveFault() or self.swerve_module_br._turning_motor.hasActiveFault():
+            self.alert_br_faults.set(True)
+        else:
+            self.alert_br_faults.set(False)
+
 
     def simulationPeriodic(self):
         self.swerve_module_fl.simulationUpdate(self.period_seconds)

@@ -71,5 +71,6 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
+        builder.publishConstInteger("ComponentCount", len(self.components))
         builder.publishConstStringArray("Components", getComponentsNames())
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
