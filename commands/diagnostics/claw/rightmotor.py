@@ -1,6 +1,6 @@
 import wpilib
 from commands2 import Command
-from wpilib import RobotController
+from wpilib import RobotController, DataLogManager
 
 from subsystems.claw import Claw
 from commands.claw.drop import drop_properties
@@ -43,9 +43,16 @@ class DiagnoseRightMotor(Command):
         self.claw.stop()
         voltage_delta_before = self.voltage_before - self.voltage_during
         voltage_delta_after = self.voltage_after - self.voltage_during
-        print("Voltage delta before:", voltage_delta_before)
-        print("Voltage delta after:", voltage_delta_after)
-        if voltage_delta_before < self.voltage_change_threshold:
-            self.claw.alert_right_motor.set(True)
-        elif voltage_delta_after < self.voltage_change_threshold:
+        DataLogManager.log(
+            "Claw diagnostics: Right motor voltage delta before:"
+            + str(voltage_delta_before)
+        )
+        DataLogManager.log(
+            "Claw diagnostics: Right motor voltage delta after:"
+            + str(voltage_delta_after)
+        )
+        if (
+            voltage_delta_before < self.voltage_change_threshold
+            or voltage_delta_after < self.voltage_change_threshold
+        ):
             self.claw.alert_right_motor.set(True)

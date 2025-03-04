@@ -3,12 +3,12 @@ from typing import List
 
 import commands2
 from commands2 import CommandScheduler
+from commands2.cmd import sequence
 from wpilib import RobotController
 
-from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
-from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.intake import DiagnoseIntake
+from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
@@ -17,24 +17,29 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        components_tests: List[commands2.Command] = [
+        self.components_tests: List[commands2.Command] = [
             DiagnoseIntake(hardware.intake),
             DiagnoseClaw(hardware.claw),
-            DiagnoseArm(hardware.arm, hardware.elevator),
         ]
 
         self._hardware = proxy(hardware)
         self._module_list = proxy(module_list)
         self._battery_voltage: List[float] = []
         self._is_test = False
+        subsystems = [
+            next(iter(component.getRequirements()))
+            for component in self.components_tests
+        ]
 
         self._run_all_command = DiagnoseAll(
             self._hardware,
             [
-                SetRunningTest(list(component.getRequirements())[0], True)
-                .andThen(component)
-                .andThen(SetRunningTest(list(component.getRequirements())[0], False))
-                for component in components_tests
+                sequence(
+                    SetRunningTest(subsystem, True),
+                    component,
+                    SetRunningTest(subsystem, False),
+                )
+                for subsystem, component in zip(subsystems, self.components_tests)
             ],
         )
 
@@ -70,5 +75,5 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
-        builder.publishConstStringArray("Components", getComponentsNames())
+        builder.addStringArrayProperty("Components", getComponentsNames, noop)
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
