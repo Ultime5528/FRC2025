@@ -33,7 +33,7 @@ class DiagnosticsModule(Module):
                 .andThen(component)
                 .andThen(SetRunningTest(next(iter(component.getRequirements())), False))
                 for component in self.components_tests
-            ]
+            ],
         )
 
     def robotPeriodic(self) -> None:
