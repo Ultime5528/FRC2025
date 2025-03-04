@@ -5,11 +5,17 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "named",
+                "data": {
+                  "name": "ResetAllButClimber"
+                }
+              },
+              {
+                "type": "parallel",
                 "data": {
                   "commands": [
                     {
@@ -17,18 +23,11 @@
                       "data": {
                         "name": "MoveElevator.toLevel2"
                       }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
+                    },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "StraightPath"
+                        "pathName": "Straight Align #22"
                       }
                     }
                   ]
@@ -44,28 +43,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Go to Coral Station after reef #22"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ResetClimber"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "Go to Coral Station after reef #22"
           }
         },
         {
@@ -79,22 +59,9 @@
                 }
               },
               {
-                "type": "parallel",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MoveElevator.toLevel4"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ExtendArm"
-                      }
-                    }
-                  ]
+                  "name": "MoveElevator.toLevel2"
                 }
               }
             ]

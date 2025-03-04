@@ -14,7 +14,7 @@ robot_to_camera_offset = wpimath.geometry.Transform3d(
 
 
 class TagVisionModule(AbsoluteVision):
-    ambiguity_threshold = autoproperty(0.2)
+    ambiguity_threshold = autoproperty(0.05)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__(

@@ -37,7 +37,7 @@ class HardwareModule(Module):
 
         self.climber = Climber()
 
-        # self.led = LEDController(self)
+        self.led = LEDController(self)
 
         self.subsystems: list[Subsystem] = [
             self.drivetrain,
@@ -47,5 +47,5 @@ class HardwareModule(Module):
             self.arm,
             self.printer,
             self.climber,
-            # self.led,
+            self.led,
         ]
