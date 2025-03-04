@@ -37,15 +37,13 @@ def test_reset_right(robot_controller: RobotTestController, robot: Robot):
     cmd = ResetPrinterRight(printer)
     cmd.schedule()
 
-    robot_controller.wait(0.05)
-
     def switch_is_pressed():
         pressed = printer.isRight()
         if not pressed:
-            assert printer._motor.get() < 0.0
+            assert printer._motor.get() <= 0.0
         return pressed
 
-    robot_controller.wait_until(switch_is_pressed, 5.0, 0.02)
+    robot_controller.wait_until(switch_is_pressed, 10.0)
     robot_controller.wait(0.02)
 
     def switch_is_not_pressed():

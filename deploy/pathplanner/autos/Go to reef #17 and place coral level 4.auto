@@ -32,7 +32,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CompleteDropSequence.toRight"
+            "name": "DropPrepareLoading.toLeft"
           }
         }
       ]
