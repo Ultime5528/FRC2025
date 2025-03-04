@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StraightPath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ResetAll"
+            "pathName": "Go to Coral Station after reef #22"
           }
         }
       ]

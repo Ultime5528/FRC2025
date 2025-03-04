@@ -31,15 +31,15 @@ class DriveToPoses(Command):
 
     xy_accel = autoproperty(5.0)
     xy_speed_end = autoproperty(10.0)
-    xy_tol_pos = autoproperty(0.8)
-    xy_tol_pos_last = autoproperty(0.5)
+    xy_tol_pos = autoproperty(0.3)
+    xy_tol_pos_last = autoproperty(0.1)
     xy_speed_max = autoproperty(10.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(1.0)
-    rot_tol_pos = autoproperty(10.0)
+    rot_speed_end = autoproperty(6.0)
+    rot_tol_pos = autoproperty(50)
     rot_tol_pos_last = autoproperty(10.0)
-    rot_speed_max = autoproperty(16.0)
+    rot_speed_max = autoproperty(6.0)
 
     def __init__(
         self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
@@ -97,7 +97,7 @@ class DriveToPoses(Command):
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero
-        if translation_error_norm < 0.001:
+        if translation_error_norm < 0.01:
             vel_xy = Translation2d()
         else:
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
