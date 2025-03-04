@@ -37,6 +37,7 @@ class DriveField(Command):
     ):
         super().__init__()
         self.rot: float = 0.0
+        self.actual_rot: float = 0.0
         self.addRequirements(drivetrain)
         self.xbox_remote = xbox_remote
         self.drivetrain = drivetrain
@@ -69,8 +70,13 @@ class DriveField(Command):
             if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
                 self.rot = Rotation2d.fromDegrees(180 + self.rot.degrees())
 
+        if self.xbox_remote.leftBumper():
+            self.actual_rot = self.rot + Rotation2d.fromDegrees(180.0)
+        else:
+            self.actual_rot = self.rot
+
         rot_speed = (
-            (self.rot - self.drivetrain.getPose().rotation()).degrees()
+            (self.actual_rot - self.drivetrain.getPose().rotation()).degrees()
             * self.rotate_speed
             * rot_hyp
         )

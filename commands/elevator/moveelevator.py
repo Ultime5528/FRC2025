@@ -1,7 +1,12 @@
+from typing import Literal
+
 import wpilib
 from commands2 import SelectCommand
+from wpilib import DriverStation
+from wpimath.geometry import Pose2d
 
-from subsystems.arm import Arm
+from commands.alignwithreefside import getCurrentSextant
+from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 from ultime.command import Command, with_timeout
@@ -10,6 +15,24 @@ from ultime.trapezoidalmotion import TrapezoidalMotion
 
 @with_timeout(10.0)
 class MoveElevator(Command):
+    @staticmethod
+    def _getAlgaeLevelPosition(pose: Pose2d) -> Literal["None", "Level2", "Level3"]:
+        alliance = DriverStation.getAlliance()
+        sextant = getCurrentSextant(pose)
+        if alliance is not None:
+            if alliance == alliance.kBlue:
+                if sextant in {0, 2, 4}:
+                    return "Level2"
+                else:
+                    return "Level3"
+            elif alliance.kRed:
+                if sextant in {0, 2, 4}:
+                    return "Level3"
+                else:
+                    return "Level2"
+        else:
+            return "None"
+
     @classmethod
     def toLevel1(cls, elevator: Elevator):
         cmd = cls(
@@ -81,13 +104,13 @@ class MoveElevator(Command):
         return cmd
 
     @classmethod
-    def toAlgae(cls, elevator: Elevator, arm: Arm):
+    def toAlgae(cls, elevator: Elevator, drivetrain: Drivetrain):
         cmd = SelectCommand(
             {
-                Elevator.State.Level4: cls.toLevel3Algae(elevator),
-                Elevator.State.Level3: cls.toLevel2Algae(elevator),
+                "Level3": cls.toLevel3Algae(elevator),
+                "Level2": cls.toLevel2Algae(elevator),
             },
-            lambda: elevator.state,
+            lambda: MoveElevator._getAlgaeLevelPosition(drivetrain.getPose()),
         )
 
         cmd.setName(cmd.getName() + ".toAlgae")
@@ -100,8 +123,8 @@ class MoveElevator(Command):
         super().__init__()
         self.end_position_getter = asCallable(end_position)
         self.elevator = elevator
-        self.addRequirements(elevator)
         self.new_state = new_state
+        self.addRequirements(elevator)
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
@@ -137,7 +160,7 @@ class MoveElevator(Command):
 
 
 class _ClassProperties:
-    position_level1 = autoproperty(0.12, subtable=MoveElevator.__name__)
+    position_level1 = autoproperty(0.14, subtable=MoveElevator.__name__)
     position_level2 = autoproperty(0.35, subtable=MoveElevator.__name__)
     position_level2_algae = autoproperty(0.8, subtable=MoveElevator.__name__)
     position_level3 = autoproperty(0.75, subtable=MoveElevator.__name__)
