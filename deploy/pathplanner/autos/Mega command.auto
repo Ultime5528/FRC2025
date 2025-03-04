@@ -49,6 +49,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "WaitUntilCoral"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [

@@ -9,6 +9,7 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.resetclimber import ResetClimber
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
@@ -66,6 +67,7 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
+        registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))

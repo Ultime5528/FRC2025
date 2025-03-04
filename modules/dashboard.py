@@ -6,6 +6,7 @@ from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
+from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.resetgyro import ResetGyro
@@ -34,6 +35,8 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+
+        putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
 
         """
         Elevator
