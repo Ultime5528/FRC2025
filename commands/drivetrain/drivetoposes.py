@@ -30,15 +30,15 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(0.2)
-    xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.05)
-    xy_speed_max = autoproperty(20.0)
+    xy_speed_end = autoproperty(10.0)
+    xy_tol_pos = autoproperty(0.8)
+    xy_tol_pos_last = autoproperty(0.5)
+    xy_speed_max = autoproperty(10.0)
 
     rot_accel = autoproperty(0.2)
     rot_speed_end = autoproperty(1.0)
     rot_tol_pos = autoproperty(10.0)
-    rot_tol_pos_last = autoproperty(5.0)
+    rot_tol_pos_last = autoproperty(10.0)
     rot_speed_max = autoproperty(16.0)
 
     def __init__(
@@ -106,7 +106,7 @@ class DriveToPoses(Command):
             (current_pos.rotation() - self.start_rotation).degrees()
         )
 
-        print(vel_xy.X(), vel_xy.Y(), vel_rot)
+        # print(vel_xy.X(), vel_xy.Y(), vel_rot)
 
         self.drivetrain.driveRaw(
             vel_xy.X(),

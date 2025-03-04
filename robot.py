@@ -6,6 +6,7 @@ from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
+from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetection
@@ -19,6 +20,7 @@ class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def __init__(self):
         super().__init__()
+
         wpilib.LiveWindow.disableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(True)
