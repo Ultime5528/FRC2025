@@ -1,8 +1,10 @@
 from commands2 import Command
 
+from ultime.command import ignore_requirements
 from ultime.subsystem import Subsystem
 
 
+@ignore_requirements(["subsystem"])
 class SetRunningTest(Command):
     def __init__(self, subsystem: Subsystem, is_running_test: bool):
         super().__init__()
