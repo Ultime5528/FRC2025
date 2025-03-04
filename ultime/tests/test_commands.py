@@ -21,6 +21,7 @@ def get_commands() -> List[Type[Command]]:
             if (
                 issubclass(cls, Command)
                 and not cls.__module__.startswith("commands2")
+                and not cls.__module__.startswith("ultime.command")
                 and cls not in cmds
             ):
                 cls = getattr(cls, "__wrapped_class", cls)

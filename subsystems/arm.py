@@ -6,6 +6,7 @@ from wpiutil import SendableBuilder
 from ports import PWM
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
+from ultime.timethis import timethis as tt
 
 
 class Arm(Subsystem):
@@ -20,7 +21,7 @@ class Arm(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(-0.3)
+    speed = autoproperty(-0.6)
 
     def __init__(self):
         super().__init__()
@@ -48,14 +49,17 @@ class Arm(Subsystem):
     def getCurrentDrawAmps(self) -> float:
         return 0.0
 
+    def getMotorInput(self):
+        return self._motor.get()
+
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
 
         def noop(_):
             pass
 
-        builder.addFloatProperty("motor_input", self._motor.get, noop)
-        builder.addStringProperty("state", lambda: self.state.name, noop)
+        builder.addFloatProperty("motor_input", tt(self.getMotorInput), noop)
+        builder.addStringProperty("state", tt(lambda: self.state.name), noop)
         builder.addStringProperty(
-            "state_movement", lambda: self.movement_state.name, noop
+            "state_movement", tt(lambda: self.movement_state.name), noop
         )

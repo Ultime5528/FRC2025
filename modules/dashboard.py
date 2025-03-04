@@ -8,7 +8,6 @@ from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
-from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
@@ -37,15 +36,6 @@ class DashboardModule(Module):
         self._module_list = module_list
 
         """
-        Drivetrain
-        """
-        putCommandOnDashboard(
-            "Drivetrain",
-            DriveToPoses.back(hardware.drivetrain, 1),
-            name="DriveToPoses.back(1)",
-        )
-
-        """
         Elevator
         """
         putCommandOnDashboard("Elevator", ResetElevator(hardware.elevator))
@@ -59,7 +49,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Elevator", MoveElevator.toLevel3Algae(hardware.elevator))
         putCommandOnDashboard("Elevator", MoveElevator.toLevel4(hardware.elevator))
         putCommandOnDashboard(
-            "Elevator", MoveElevator.toAlgae(hardware.elevator, hardware.arm)
+            "Elevator",
+            MoveElevator.toAlgae(hardware.elevator, hardware.drivetrain),
         )
         putCommandOnDashboard("Elevator", MoveElevator.toLoading(hardware.elevator))
 
@@ -112,6 +103,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Intake", MoveIntake.toExtended(hardware.intake))
         putCommandOnDashboard("Intake", MoveIntake.toRetracted(hardware.intake))
         putCommandOnDashboard("Intake", ResetIntake(hardware.intake))
+
         """
         Groups
         """
@@ -128,26 +120,6 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group",
-            DropPrepareLoading.left(
-                hardware.arm,
-                hardware.claw,
-                hardware.drivetrain,
-                hardware.elevator,
-                hardware.printer,
-            ),
-        )
-        putCommandOnDashboard(
-            "Group",
-            DropPrepareLoading.right(
-                hardware.arm,
-                hardware.claw,
-                hardware.drivetrain,
-                hardware.elevator,
-                hardware.printer,
-            ),
-        )
-        putCommandOnDashboard(
-            "Group",
             ResetAllButClimber(
                 hardware.elevator,
                 hardware.printer,
@@ -157,6 +129,26 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group", PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+            ),
         )
 
     def robotInit(self) -> None:

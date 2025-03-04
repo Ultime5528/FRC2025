@@ -2,16 +2,9 @@ import math
 
 import wpilib
 import wpimath
-from commands2 import Command
-from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.config import RobotConfig
-from pathplannerlib.path import PathPlannerPath
-from pathplannerlib.telemetry import PPLibTelemetry
-from pathplannerlib.trajectory import PathPlannerTrajectoryState
 from pathplannerlib.util import DriveFeedforwards
 from photonlibpy.photonCamera import PhotonCamera
-from wpilib import RobotBase, DriverStation
-from wpimath._controls._controls.trajectory import Trajectory
+from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -26,8 +19,9 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
-from ultime.swerve import SwerveModule
+from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
 from ultime.swerveconfig import SwerveConstants
+from ultime.timethis import timethis as tt
 
 
 class Drivetrain(Subsystem):
@@ -85,6 +79,15 @@ class Drivetrain(Subsystem):
         self._field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("Field", self._field)
 
+        swerve_drive_sendable = SwerveDriveElasticSendable(
+            self.swerve_module_fl,
+            self.swerve_module_fr,
+            self.swerve_module_bl,
+            self.swerve_module_br,
+            lambda: self._gyro.getRotation2d().radians(),
+        )
+        wpilib.SmartDashboard.putData("SwerveDrive", swerve_drive_sendable)
+
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
         )
@@ -115,32 +118,8 @@ class Drivetrain(Subsystem):
         self.vision_pose = self._field.getObject("Vision Pose")
         self.odometry_pose = self._field.getObject("Odometry Pose")
 
-        # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
-        # Must test which AutoBuilder works best
-        # AutoBuilder.configure(
-        #     self.getPose,
-        #     self.resetToPose,
-        #     self.getRobotRelativeChassisSpeeds,
-        #     self.driveFromChassisSpeeds,
-        #     PPHolonomicDriveController(
-        #         PIDConstants(5, 0, 0),
-        #         PIDConstants(5, 0, 0),
-        #     ),
-        #     RobotConfig.fromGUISettings(),
-        #     should_flip_path,
-        #     self,
-        # )
-
-        # Flipping must be done by the command because the AutoBuilder uses custom code
-        AutoBuilder.configureCustom(
-            self.getCommandFromPathplannerPath, self.resetToPose, True, should_flip_path
-        )
-
         if RobotBase.isSimulation():
             self.sim_yaw = 0
-
-    def getCommandFromPathplannerPath(self, path: PathPlannerPath):
-        return FollowPathplannerPath(path, self)
 
     def drive(
         self,
@@ -154,10 +133,8 @@ class Drivetrain(Subsystem):
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
-    def driveFromChassisSpeeds(
-        self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
-    ) -> None:
-        corrected_chassis_speed = self.correctForDynamics(speeds)
+    def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
+        corrected_chassis_speed = self.correctForDynamics(speed)
 
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
@@ -170,6 +147,11 @@ class Drivetrain(Subsystem):
         self.swerve_module_fr.setDesiredState(swerve_module_states[1])
         self.swerve_module_bl.setDesiredState(swerve_module_states[2])
         self.swerve_module_br.setDesiredState(swerve_module_states[3])
+
+    def driveFromChassisSpeedsFF(
+        self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
+    ) -> None:
+        self.driveFromChassisSpeeds(speeds)
 
     def driveRaw(
         self,
@@ -185,19 +167,7 @@ class Drivetrain(Subsystem):
         else:
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
-        corrected_chassis_speed = self.correctForDynamics(base_chassis_speed)
-
-        swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
-            corrected_chassis_speed
-        )
-
-        SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, SwerveConstants.max_speed_per_second
-        )
-        self.swerve_module_fl.setDesiredState(swerve_module_states[0])
-        self.swerve_module_fr.setDesiredState(swerve_module_states[1])
-        self.swerve_module_bl.setDesiredState(swerve_module_states[2])
-        self.swerve_module_br.setDesiredState(swerve_module_states[3])
+        self.driveFromChassisSpeeds(base_chassis_speed)
 
     def getAngle(self):
         """
@@ -251,44 +221,21 @@ class Drivetrain(Subsystem):
         return updated_speeds
 
     def periodic(self):
-        self.swerve_estimator.update(
-            self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+        rotation = self._gyro.getRotation2d()
+        swerve_positions = (
+            self.swerve_module_fl.getPosition(),
+            self.swerve_module_fr.getPosition(),
+            self.swerve_module_bl.getPosition(),
+            self.swerve_module_br.getPosition(),
         )
 
-        self.swerve_odometry.update(
-            self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
-        )
+        self.swerve_estimator.update(rotation, swerve_positions)
+        self.swerve_odometry.update(rotation, swerve_positions)
 
         self.odometry_pose.setPose(self.swerve_odometry.getPose())
         self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
 
     def simulationPeriodic(self):
-        wpilib.SmartDashboard.putNumberArray(
-            "SwerveStates",
-            [
-                self.swerve_module_fl.getState().angle.degrees(),
-                self.swerve_module_fl.getState().speed,
-                self.swerve_module_fr.getState().angle.degrees(),
-                self.swerve_module_fr.getState().speed,
-                self.swerve_module_bl.getState().angle.degrees(),
-                self.swerve_module_bl.getState().speed,
-                self.swerve_module_br.getState().angle.degrees(),
-                self.swerve_module_br.getState().speed,
-            ],
-        )
-
         self.swerve_module_fl.simulationUpdate(self.period_seconds)
         self.swerve_module_fr.simulationUpdate(self.period_seconds)
         self.swerve_module_bl.simulationUpdate(self.period_seconds)
@@ -330,9 +277,9 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose3d, timestamp: float):
+    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float):
         self.swerve_estimator.addVisionMeasurement(pose, timestamp)
-        self.vision_pose.setPose(pose.toPose2d())
+        self.vision_pose.setPose(pose)
 
     def getCurrentDrawAmps(self):
         return 0.0
@@ -343,127 +290,4 @@ class Drivetrain(Subsystem):
         def noop(_):
             pass
 
-        builder.addFloatProperty("angle", self.getAngle, noop)
-
-
-def should_flip_path():
-    # Boolean supplier that controls when the path will be mirrored for the red alliance
-    # This will flip the path being followed to the red side of the field.
-    # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    return DriverStation.getAlliance() == DriverStation.Alliance.kRed
-
-
-class FollowPathplannerPath(Command):
-    delta_t = autoproperty(0.08)
-    pos_tolerance = autoproperty(0.3)
-    rot_tolerance = autoproperty(0.5)
-
-    def __init__(self, pathplanner_path: PathPlannerPath, drivetrain: Drivetrain):
-        super().__init__()
-        self.sampled_trajectory = None
-        self.drivetrain = drivetrain
-        self.pathplanner_path_base = pathplanner_path
-        self.addRequirements(drivetrain)
-        self.sampled_trajectory: list[PathPlannerTrajectoryState] = []
-        self.current_goal = 0
-        self.flipped_path = pathplanner_path.flipPath()
-
-    def initialize(self):
-        self.current_goal = 0
-        self.sampled_trajectory = []
-
-        pathplanner_path = (
-            self.flipped_path if should_flip_path() else self.pathplanner_path_base
-        )
-        PPLibTelemetry.setCurrentPath(pathplanner_path)
-        trajectory = pathplanner_path.getIdealTrajectory(RobotConfig.fromGUISettings())
-        states = []
-        for state in trajectory.getStates():
-            # Calculate acceleration from velocity change if needed
-            acceleration = 0.0  # Or calculate based on velocity differences
-            heading_rad = state.heading.radians()
-            states.append(
-                Trajectory.State(
-                    state.timeSeconds,
-                    state.linearVelocity,
-                    acceleration,
-                    state.pose,
-                    heading_rad,
-                )
-            )
-        self.drivetrain._field.getObject("traj").setTrajectory(Trajectory(states))
-        for i in range(math.ceil(trajectory.getEndState().timeSeconds / self.delta_t)):
-            self.sampled_trajectory.append(trajectory.sample(i * self.delta_t))
-
-    def execute(self):
-        PPLibTelemetry.setCurrentPose(self.drivetrain.getPose())
-        PPLibTelemetry.setTargetPose(
-            Pose2d(
-                self.sampled_trajectory[self.current_goal].pose.X(),
-                self.sampled_trajectory[self.current_goal].pose.Y(),
-                self.sampled_trajectory[self.current_goal].pose.rotation(),
-            )
-        )
-        position_error = (
-            self.sampled_trajectory[self.current_goal].pose.translation()
-            - self.drivetrain.getPose().translation()
-        )
-        rotation_error: Rotation2d = (
-            self.sampled_trajectory[self.current_goal].pose.rotation()
-            - self.drivetrain.getPose().rotation()
-        )
-        if (
-            math.hypot(position_error.X(), position_error.Y()) <= self.pos_tolerance
-            and rotation_error.degrees() <= self.rot_tolerance
-        ):
-            self.current_goal += 1
-        else:
-            PPLibTelemetry.setVelocities(
-                math.hypot(
-                    self.drivetrain.getRobotRelativeChassisSpeeds().vx,
-                    self.drivetrain.getRobotRelativeChassisSpeeds().vy,
-                ),
-                math.copysign(
-                    min(
-                        self.sampled_trajectory[self.current_goal].linearVelocity,
-                        abs(position_error.X()),
-                    ),
-                    position_error.X(),
-                ),
-                rotation_error.radians(),
-                self.drivetrain.getRobotRelativeChassisSpeeds().omega,
-            )
-            self.drivetrain.drive(
-                math.copysign(
-                    min(
-                        self.sampled_trajectory[self.current_goal].linearVelocity,
-                        abs(
-                            position_error.X()
-                            * self.sampled_trajectory[self.current_goal].linearVelocity
-                        ),
-                    ),
-                    position_error.X(),
-                ),
-                math.copysign(
-                    min(
-                        self.sampled_trajectory[self.current_goal].linearVelocity,
-                        abs(
-                            position_error.Y()
-                            * self.sampled_trajectory[self.current_goal].linearVelocity
-                        ),
-                    ),
-                    position_error.Y(),
-                ),
-                rotation_error.radians(),
-                True,
-            )
-
-    def isFinished(self) -> bool:
-        return self.current_goal >= len(self.sampled_trajectory)
-
-    def end(self, interrupted: bool):
-        self.drivetrain.drive(0, 0, 0, True)
-
-        if interrupted:
-            self.current_goal = 0
-            self.sampled_trajectory = []
+        builder.addFloatProperty("angle", tt(self.getAngle), noop)

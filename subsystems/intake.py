@@ -10,6 +10,7 @@ from ultime.alert import AlertType, Alert
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
+from ultime.timethis import timethis as tt
 
 
 class Intake(Subsystem):
@@ -21,9 +22,10 @@ class Intake(Subsystem):
         Drop = auto()
 
     speed_pivot = autoproperty(0.3)
-    speed_grab = autoproperty(0.8)
+    speed_grab = autoproperty(0.6)
     pivot_position_min = autoproperty(0.0)
     threshold_grab = autoproperty(2.0)
+
     position_conversion_factor = autoproperty(0.445)
 
     def __init__(self):
@@ -154,13 +156,19 @@ class Intake(Subsystem):
         def setHasReset(value: bool):
             self._has_reset = value
 
-        builder.addStringProperty("state", lambda: self.state.name, noop)
-        builder.addFloatProperty("pivot_motor_input", self._pivot_motor.get, noop)
-        builder.addFloatProperty("grab_motor_input", self._grab_motor.get, noop)
-        builder.addFloatProperty("pivot_encoder", self._pivot_encoder.get, noop)
-        builder.addFloatProperty("offset", lambda: self._offset, lambda x: setOffset(x))
-        builder.addFloatProperty("pivot_position", self.getPivotPosition, noop)
-        builder.addBooleanProperty("has_reset", lambda: self._has_reset, setHasReset)
-        builder.addBooleanProperty("hasAlgae", self.hasAlgae, noop)
-        builder.addBooleanProperty("pivot_switch", self._pivot_switch.isPressed, noop)
-        builder.addBooleanProperty("isRetracted", self.isRetracted, noop)
+        builder.addStringProperty("state", tt(lambda: self.state.name), noop)
+        builder.addFloatProperty("pivot_motor_input", tt(self._pivot_motor.get), noop)
+        builder.addFloatProperty("grab_motor_input", tt(self._grab_motor.get), noop)
+        builder.addFloatProperty("pivot_encoder", tt(self._pivot_encoder.get), noop)
+        builder.addFloatProperty(
+            "offset", tt(lambda: self._offset), lambda x: setOffset(x)
+        )
+        builder.addFloatProperty("pivot_position", tt(self.getPivotPosition), noop)
+        builder.addBooleanProperty(
+            "has_reset", tt(lambda: self._has_reset), setHasReset
+        )
+        builder.addBooleanProperty("hasAlgae", tt(self.hasAlgae), noop)
+        builder.addBooleanProperty(
+            "pivot_switch", tt(self._pivot_switch.isPressed), noop
+        )
+        builder.addBooleanProperty("isRetracted", tt(self.isRetracted), noop)
