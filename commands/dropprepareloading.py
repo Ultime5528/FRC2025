@@ -88,8 +88,8 @@ class DropPrepareLoading(SequentialCommandGroup):
 
 
 class _ClassProperties:
-    distance_remove_algae = autoproperty(0.5, subtable=DropPrepareLoading.__name__)
-    distance_end = autoproperty(0.1, subtable=DropPrepareLoading.__name__)
+    distance_remove_algae = autoproperty(0.7, subtable=DropPrepareLoading.__name__)
+    distance_end = autoproperty(0.2, subtable=DropPrepareLoading.__name__)
 
 
 _properties = _ClassProperties()

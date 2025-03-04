@@ -30,8 +30,8 @@ class Elevator(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed_up = autoproperty(0.1)
-    speed_down = autoproperty(-0.1)
+    speed_up = autoproperty(0.5)
+    speed_down = autoproperty(-0.2)
     speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
     height_max = autoproperty(1.37)

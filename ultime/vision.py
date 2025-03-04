@@ -2,7 +2,7 @@ from enum import Enum, auto
 from typing import List
 from typing import Optional
 
-from photonlibpy import PhotonPoseEstimator, PoseStrategy
+from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
@@ -56,7 +56,7 @@ class AbsoluteVision(Vision):
             self._cam,
             camera_offset,
         )
-        self.estimated_pose = None
+        self.estimated_pose: EstimatedRobotPose = None
         self.camera_pose_estimator.multiTagFallbackStrategy = (
             PoseStrategy.LOWEST_AMBIGUITY
         )
@@ -83,9 +83,15 @@ class AbsoluteVision(Vision):
         if self.estimated_pose:
             return self.estimated_pose.timestampSeconds
 
-    def getUsedTagIDs(self):
+    def getUsedTagIDs(self) -> [int]:
         if self.estimated_pose:
             return [target.fiducialId for target in self.estimated_pose.targetsUsed]
+        else:
+            return []
+
+    def getUsedTags(self) -> list[PhotonTrackedTarget]:
+        if self.estimated_pose:
+            return self.estimated_pose.targetsUsed
         else:
             return []
 
@@ -96,4 +102,3 @@ class AbsoluteVision(Vision):
             pass
 
         builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
-        # builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
