@@ -10,7 +10,16 @@ class BlockElevatorUntilCoral(Module):
         self.elevator = hardware.elevator
 
     def robotPeriodic(self) -> None:
-        if self.elevator.state == Elevator.State.Loading and not self.claw.has_coral:
-            self.elevator.loading_state = Elevator.LoadingState.DoNotMoveWhileLoading
-        else:
-            self.elevator.loading_state = Elevator.LoadingState.FreeToMove
+        if (
+            self.elevator.loading_state != Elevator.LoadingState.DoNotMoveWhileLoading
+            or self.claw.has_coral
+        ):
+            if (
+                self.elevator.state == Elevator.State.Loading
+                and not self.claw.has_coral
+            ):
+                self.elevator.loading_state = (
+                    Elevator.LoadingState.DoNotMoveWhileLoading
+                )
+            else:
+                self.elevator.loading_state = Elevator.LoadingState.FreeToMove

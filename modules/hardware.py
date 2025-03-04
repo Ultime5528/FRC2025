@@ -8,7 +8,6 @@ from subsystems.climber import Climber
 from subsystems.drivetrain import Drivetrain
 from subsystems.elevator import Elevator
 from subsystems.intake import Intake
-from subsystems.led import LEDController
 from subsystems.printer import Printer
 from ultime.module import Module
 from ultime.subsystem import Subsystem

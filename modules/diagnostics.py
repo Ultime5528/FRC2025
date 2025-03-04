@@ -5,8 +5,8 @@ import commands2
 from commands2 import CommandScheduler
 from wpilib import RobotController
 
-from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.diagnoseall import DiagnoseAll
+from commands.diagnostics.intake import DiagnoseIntake
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 

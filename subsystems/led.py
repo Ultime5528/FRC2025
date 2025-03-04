@@ -3,7 +3,6 @@ import weakref
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
-import wpilib
 from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
@@ -197,7 +196,10 @@ class LEDController(Subsystem):
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
 
-                if self.claw.seesObject() and self.elevator.state == self.elevator.State.Loading:
+                if (
+                    self.claw.seesObject()
+                    and self.elevator.state == self.elevator.State.Loading
+                ):
                     self.modeCoralLoaded()
 
                 elif self.elevator.state == self.elevator.State.Moving:

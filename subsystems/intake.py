@@ -6,7 +6,7 @@ from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
-from ultime.alert import AlertType, Alert
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
