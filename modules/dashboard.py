@@ -156,9 +156,7 @@ class DashboardModule(Module):
             ResetAutonomous(
                 hardware.elevator,
                 hardware.printer,
-                hardware.arm,
-                hardware.intake,
-                hardware.climber,
+                hardware.arm
             ),
         )
 

@@ -12,6 +12,7 @@ from commands.arm.retractarm import RetractArm
 from commands.climber.resetclimber import ResetClimber
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
+from commands.intake.resetintake import ResetIntake
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
@@ -55,6 +56,9 @@ class AutonomousModule(Module):
             True,
             lambda: False,  # Disable flipping, will be done by the command
         )
+
+        self.reset_climber_command = ResetClimber(self.hardware.climber)
+        self.reset_intake_command = ResetIntake(self.hardware.intake)
 
         self.setupCommandsOnPathPlanner()
 
@@ -111,6 +115,9 @@ class AutonomousModule(Module):
         )
 
     def autonomousInit(self):
+        self.reset_intake_command.schedule()
+        self.reset_climber_command.schedule()
+
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:
             self.auto_command.schedule()
