@@ -104,7 +104,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
-                self.hardware.controller
+                self.hardware.controller,
             )
         )
         registerNamedCommand(
@@ -114,7 +114,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
-                self.hardware.controller
+                self.hardware.controller,
             )
         )
 

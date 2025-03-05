@@ -63,7 +63,7 @@ class ControlModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                hardware.controller
+                hardware.controller,
             )
         )
         AxisTrigger(hardware.panel_2, 1, "down").onTrue(
@@ -73,7 +73,7 @@ class ControlModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                hardware.controller
+                hardware.controller,
             )
         )
         AxisTrigger(hardware.panel_2, 0, "up").onTrue(
