@@ -6,6 +6,7 @@ from wpilib.simulation import PWMSim, EncoderSim
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
@@ -39,6 +40,7 @@ class Printer(Subsystem):
 
     def __init__(self):
         super().__init__()
+
         self._switch_right = Switch(
             Switch.Type.NormallyClosed, ports.DIO.printer_switch_right
         )
@@ -64,6 +66,21 @@ class Printer(Subsystem):
         self._prev_is_left = False
         self.movement_state = Printer.MovementState.Unknown
         self.state = Printer.State.Unknown
+
+        self.alert_left_lswitch = self.createAlert(
+            f"Left limit switch returned incorrect value. Check connections. DIO={ports.DIO.printer_switch_left}",
+            AlertType.Error,
+        )
+
+        self.alert_right_lswitch = self.createAlert(
+            f"Right limit switch returned incorrect value. Check connections. DIO={ports.DIO.printer_switch_right}",
+            AlertType.Error,
+        )
+
+        self.alert_motor = self.createAlert(
+            f"Motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM={ports.PWM.printer_motor}",
+            AlertType.Error,
+        )
 
         if RobotBase.isSimulation():
             self._sim_motor = PWMSim(self._motor)
