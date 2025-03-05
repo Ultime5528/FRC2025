@@ -121,7 +121,76 @@
         {
           "type": "named",
           "data": {
-            "name": "DropPrepareLoading.toRight"
+            "name": "DropAutonomous.toRight"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Coral Station after reef #17"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareLoading"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitUntilCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to tag #17 after loading"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "MoveElevator.toLevel2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LoadCoral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "MovePrinter.toMiddleLeft"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropPrepareLoading.toLeft"
           }
         }
       ]
