@@ -51,6 +51,10 @@ class Climber(Subsystem):
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
 
+    def setReset(self):
+        self._has_reset = True
+        self.state = self.State.Initial
+
     def periodic(self) -> None:
         if self._prev_is_down and not self._switch.isPressed():
             self._offset = (

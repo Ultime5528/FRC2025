@@ -1,5 +1,3 @@
-import pytest
-
 from robot import Robot
 from ultime.tests import RobotTestController
 
