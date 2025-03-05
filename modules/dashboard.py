@@ -153,11 +153,7 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard(
             "Group",
-            ResetAutonomous(
-                hardware.elevator,
-                hardware.printer,
-                hardware.arm
-            ),
+            ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
 
     def robotInit(self) -> None:
