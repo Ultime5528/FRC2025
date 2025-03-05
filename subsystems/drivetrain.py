@@ -135,20 +135,37 @@ class Drivetrain(Subsystem):
         )
 
         self.alert_fl_faults = self.createAlert(
-            "FL Swerve has active faults. Check for faults on REV Hardware Client.",
+            "FL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
             AlertType.Warning,
         )
         self.alert_fr_faults = self.createAlert(
-            "FR Swerve has active faults. Check for faults on REV Hardware Client.",
+            "FR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
             AlertType.Warning,
         )
         self.alert_bl_faults = self.createAlert(
-            "BL Swerve has active faults. Check for faults on REV Hardware Client.",
+            "BL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
             AlertType.Warning,
         )
         self.alert_br_faults = self.createAlert(
-            "BR Swerve has active faults. Check for faults on REV Hardware Client.",
+            "BR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
             AlertType.Warning,
+        )
+
+        self.alert_fl_encoder = self.createAlert(
+            "FL Swerve encoder measured velocity is too low.", AlertType.Warning
+        )
+        self.alert_fr_encoder = self.createAlert(
+            "FR Swerve encoder measured velocity is too low.", AlertType.Warning
+        )
+        self.alert_bl_encoder = self.createAlert(
+            "BL Swerve encoder measured velocity is too low.", AlertType.Warning
+        )
+        self.alert_br_encoder = self.createAlert(
+            "BR Swerve encoder measured velocity is too low.", AlertType.Warning
+        )
+
+        self.alert_odometry = self.createAlert(
+            "Odometry failed to calculate robot position accurately.", AlertType.Error
         )
 
         if RobotBase.isSimulation():
@@ -308,6 +325,8 @@ class Drivetrain(Subsystem):
         if (
             self.swerve_module_fl._driving_motor.hasActiveFault()
             or self.swerve_module_fl._turning_motor.hasActiveFault()
+            or self.swerve_module_fl._driving_motor.hasActiveWarning()
+            or self.swerve_module_fl._turning_motor.hasActiveWarning()
         ):
             self.alert_fl_faults.set(True)
         else:
@@ -315,6 +334,8 @@ class Drivetrain(Subsystem):
         if (
             self.swerve_module_fr._driving_motor.hasActiveFault()
             or self.swerve_module_fr._turning_motor.hasActiveFault()
+            or self.swerve_module_fr._driving_motor.hasActiveWarning()
+            or self.swerve_module_fr._turning_motor.hasActiveWarning()
         ):
             self.alert_fr_faults.set(True)
         else:
@@ -322,6 +343,8 @@ class Drivetrain(Subsystem):
         if (
             self.swerve_module_bl._driving_motor.hasActiveFault()
             or self.swerve_module_bl._turning_motor.hasActiveFault()
+            or self.swerve_module_bl._driving_motor.hasActiveWarning()
+            or self.swerve_module_bl._turning_motor.hasActiveWarning()
         ):
             self.alert_bl_faults.set(True)
         else:
@@ -329,6 +352,8 @@ class Drivetrain(Subsystem):
         if (
             self.swerve_module_br._driving_motor.hasActiveFault()
             or self.swerve_module_br._turning_motor.hasActiveFault()
+            or self.swerve_module_br._driving_motor.hasActiveWarning()
+            or self.swerve_module_br._turning_motor.hasActiveWarning()
         ):
             self.alert_br_faults.set(True)
         else:
