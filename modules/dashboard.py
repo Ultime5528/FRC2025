@@ -10,6 +10,7 @@ from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.resetgyro import ResetGyro
+from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
@@ -142,7 +143,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                hardware.controller
+                hardware.controller,
             ),
         )
         putCommandOnDashboard(
@@ -153,7 +154,27 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                hardware.controller
+                hardware.controller,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropAutonomous.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropAutonomous.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
             ),
         )
         putCommandOnDashboard(
