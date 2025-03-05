@@ -15,10 +15,12 @@ class DiagnoseSwerveModule(SequentialCommandGroup):
     angle_tolerance = autoproperty(0.8)
     target_angle = autoproperty(-45)
 
-    def __init__(self, swerve: SwerveModule, alert_encoders: Alert, alert_turning_motor: Alert):
+    def __init__(
+        self, swerve: SwerveModule, alert_encoders: Alert, alert_turning_motor: Alert
+    ):
         super().__init__(
             runOnce(proxy(self.before_test)),
-            parallel( # for driving motor
+            parallel(  # for driving motor
                 FunctionalCommand(
                     lambda: None,
                     lambda: self.swerve._driving_motor.set(0.2),
@@ -34,15 +36,17 @@ class DiagnoseSwerveModule(SequentialCommandGroup):
             ),
             runOnce(proxy(self.after_encoder_test)),
             runOnce(proxy(self.before_test)),
-            FunctionalCommand( # for turning motor
+            FunctionalCommand(  # for turning motor
                 lambda: None,
                 lambda: self.swerve.setDesiredState(self.swerve_module_state_test),
                 lambda _: None,
                 lambda: self.timer.get() > 1,
             ),
-            runOnce(proxy(self.after_turning_motor_test))
+            runOnce(proxy(self.after_turning_motor_test)),
         )
-        self.swerve_module_state_test = SwerveModuleState(0, Rotation2d.fromDegrees(self.target_angle))
+        self.swerve_module_state_test = SwerveModuleState(
+            0, Rotation2d.fromDegrees(self.target_angle)
+        )
         self.timer = wpilib.Timer()
         self.swerve = proxy(swerve)
         self.max_velocity = 0
@@ -64,4 +68,4 @@ class DiagnoseSwerveModule(SequentialCommandGroup):
     def after_turning_motor_test(self):
         angle = self.swerve.getPosition().angle.degrees()
         self.alert_turning_motor.set(True)
-        #TODO: add angle check
+        # TODO: add angle check

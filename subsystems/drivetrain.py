@@ -123,36 +123,36 @@ class Drivetrain(Subsystem):
 
         self.alerts_hot = {
             "FL": self.createAlert(
-            "FL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-        ),
+                "FL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
+            ),
             "FR": self.createAlert(
-            "FR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-        ),
+                "FR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
+            ),
             "BL": self.createAlert(
-            "BL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-        ),
+                "BL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
+            ),
             "BR": self.createAlert(
-            "BR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-        ),
+                "BR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
+            ),
         }
 
         self.alerts_faults = {
             "FL": self.createAlert(
-            "FL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-            AlertType.Warning,
-        ),
+                "FL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+                AlertType.Warning,
+            ),
             "FR": self.createAlert(
-            "FR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-            AlertType.Warning,
-        ),
+                "FR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+                AlertType.Warning,
+            ),
             "BL": self.createAlert(
-            "BL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-            AlertType.Warning,
-        ),
+                "BL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+                AlertType.Warning,
+            ),
             "BR": self.createAlert(
-            "BR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-            AlertType.Warning,
-        ),
+                "BR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+                AlertType.Warning,
+            ),
         }
 
         self.swerve_modules = {
@@ -164,32 +164,36 @@ class Drivetrain(Subsystem):
 
         self.alerts_encoder = {
             "FL": self.createAlert(
-            "FL Swerve encoder measured velocity is too low.", AlertType.Warning
-        ),
+                "FL Swerve encoder measured velocity is too low.", AlertType.Warning
+            ),
             "FR": self.createAlert(
-            "FR Swerve encoder measured velocity is too low.", AlertType.Warning
-        ),
+                "FR Swerve encoder measured velocity is too low.", AlertType.Warning
+            ),
             "BL": self.createAlert(
-            "BL Swerve encoder measured velocity is too low.", AlertType.Warning
-        ),
+                "BL Swerve encoder measured velocity is too low.", AlertType.Warning
+            ),
             "BR": self.createAlert(
-            "BR Swerve encoder measured velocity is too low.", AlertType.Warning
-        ),
+                "BR Swerve encoder measured velocity is too low.", AlertType.Warning
+            ),
         }
 
         self.alerts_turning_motor = {
             "FL": self.createAlert(
-            "FL Swerve turning motor failed to reach desired state.", AlertType.Error
-        ),
+                "FL Swerve turning motor failed to reach desired state.",
+                AlertType.Error,
+            ),
             "FR": self.createAlert(
-            "FR Swerve turning motor failed to reach desired state.", AlertType.Error
-        ),
+                "FR Swerve turning motor failed to reach desired state.",
+                AlertType.Error,
+            ),
             "BL": self.createAlert(
-            "BL Swerve turning motor failed to reach desired state.", AlertType.Error
-        ),
+                "BL Swerve turning motor failed to reach desired state.",
+                AlertType.Error,
+            ),
             "BR": self.createAlert(
-            "BR Swerve turning motor failed to reach desired state.", AlertType.Error
-        ),
+                "BR Swerve turning motor failed to reach desired state.",
+                AlertType.Error,
+            ),
         }
 
         self.alert_odometry = self.createAlert(
@@ -333,7 +337,6 @@ class Drivetrain(Subsystem):
                 self.alerts_faults[location].set(True)
             else:
                 self.alerts_faults[location].set(False)
-
 
     def simulationPeriodic(self):
         self.swerve_module_fl.simulationUpdate(self.period_seconds)
