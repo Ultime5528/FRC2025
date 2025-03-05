@@ -142,6 +142,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                hardware.controller
             ),
         )
         putCommandOnDashboard(
@@ -152,6 +153,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                hardware.controller
             ),
         )
         putCommandOnDashboard(

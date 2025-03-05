@@ -54,7 +54,9 @@ class AutonomousModule(Module):
 
         AutoBuilder.configureCustom(
             proxy(self.createFollowPathCommand),
-            lambda pose: self.hardware.drivetrain.resetToPose(pose),  # Disable resetOdometry
+            lambda pose: self.hardware.drivetrain.resetToPose(
+                pose
+            ),  # Disable resetOdometry
             True,
             lambda: False,  # Disable flipping, will be done by the command
         )
@@ -106,6 +108,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                self.hardware.controller
             )
         )
         registerNamedCommand(
@@ -115,6 +118,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                self.hardware.controller
             )
         )
 
