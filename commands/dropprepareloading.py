@@ -1,9 +1,11 @@
 from typing import Literal
 
+import commands2
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none
+from commands2.cmd import sequence, either, none, race
 
 from commands.claw.autodrop import AutoDrop
+from commands.drivetrain.drive import DriveField
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
@@ -27,8 +29,11 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
     ):
-        cmd = DropPrepareLoading(printer, arm, elevator, drivetrain, claw, "left")
+        cmd = DropPrepareLoading(
+            printer, arm, elevator, drivetrain, claw, controller, "left"
+        )
         cmd.setName(DropPrepareLoading.__name__ + ".toLeft")
         return cmd
 
@@ -39,8 +44,11 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
     ):
-        cmd = DropPrepareLoading(printer, arm, elevator, drivetrain, claw, "right")
+        cmd = DropPrepareLoading(
+            printer, arm, elevator, drivetrain, claw, controller, "right"
+        )
         cmd.setName(DropPrepareLoading.__name__ + ".toRight")
         return cmd
 
@@ -51,6 +59,7 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
         side: Literal["right", "left"],
     ):
         super().__init__(
@@ -83,7 +92,10 @@ class DropPrepareLoading(SequentialCommandGroup):
                 lambda: elevator.state == Elevator.State.Level1,
             ),
             DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
-            PrepareLoading(elevator, arm, printer),
+            race(
+                PrepareLoading(elevator, arm, printer),
+                DriveField(drivetrain, controller),
+            ),
         )
 
 
