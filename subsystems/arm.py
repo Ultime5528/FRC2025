@@ -35,6 +35,10 @@ class Arm(Subsystem):
             AlertType.Error,
         )
 
+    def setReset(self):
+        self.state = self.State.Retracted
+        self.movement_state = self.MovementState.DoNotMove
+
     def extend(self):
         if self.movement_state == Arm.MovementState.DoNotMove:
             self.stop()
