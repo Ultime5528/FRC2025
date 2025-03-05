@@ -12,9 +12,11 @@ from commands.arm.retractarm import RetractArm
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.resetclimber import ResetClimber
+from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.resetintake import ResetIntake
+from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
@@ -75,7 +77,11 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
-        registerNamedCommand(ResetAutonomous(self.hardware.elevator, self.hardware.printer, self.hardware.arm))
+        registerNamedCommand(
+            ResetAutonomous(
+                self.hardware.elevator, self.hardware.printer, self.hardware.arm
+            )
+        )
         registerNamedCommand(LoadCoral(self.hardware.claw))
         registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
@@ -121,6 +127,29 @@ class AutonomousModule(Module):
                 self.hardware.drivetrain,
                 self.hardware.claw,
                 self.hardware.controller,
+            )
+        )
+        registerNamedCommand(
+            DropAutonomous.toLeft(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
+        registerNamedCommand(
+            DropAutonomous.toRight(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
+        registerNamedCommand(
+            PrepareLoading(
+                self.hardware.elevator, self.hardware.arm, self.hardware.printer
             )
         )
 

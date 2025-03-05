@@ -39,13 +39,26 @@
         {
           "type": "named",
           "data": {
-            "name": "DropPrepareLoading.toRight"
+            "name": "DropAutonomous.toRight"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Go to Coral Station after reef #22"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Coral Station after reef #22"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareLoading"
+                }
+              }
+            ]
           }
         },
         {
