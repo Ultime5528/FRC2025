@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.900042771599658,
-        "y": 1.6829982891360133
+        "x": 5.664683219178082,
+        "y": 1.9664811643835618
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.50937496338048,
-        "y": 2.3140770562593014
+        "x": 5.274015410958904,
+        "y": 2.597559931506848
       },
       "isLocked": false,
       "linkedName": "StartPosition Blue"
     },
     {
       "anchor": {
-        "x": 5.239478186484174,
-        "y": 2.7188836612489307
+        "x": 5.213912671232877,
+        "y": 2.777868150684932
       },
       "prevControl": {
-        "x": 5.550364620563178,
-        "y": 2.299462681779298
+        "x": 5.484375000000001,
+        "y": 2.2519691780821915
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Place Coral #22"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],

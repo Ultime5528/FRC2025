@@ -18,6 +18,7 @@ from commands.intake.resetintake import ResetIntake
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
+from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.followpath import FollowPath
 from ultime.module import Module
@@ -74,6 +75,7 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
+        registerNamedCommand(ResetAutonomous(self.hardware.elevator, self.hardware.printer, self.hardware.arm))
         registerNamedCommand(LoadCoral(self.hardware.claw))
         registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
