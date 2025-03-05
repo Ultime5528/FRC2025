@@ -19,9 +19,22 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "MoveElevator.toLevel2"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MovePrinter.toMiddleRight"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MoveElevator.toLevel3"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -84,9 +97,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "LoadCoral"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LoadCoral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "MovePrinter.toMiddleRight"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -95,7 +121,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DropPrepareLoading.toLeft"
+            "name": "DropPrepareLoading.toRight"
           }
         }
       ]

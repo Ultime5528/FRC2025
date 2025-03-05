@@ -15,10 +15,6 @@ class PrepareLoading(ParallelCommandGroup):
     def __init__(self, elevator: Elevator, arm: Arm, printer: Printer):
         super().__init__(
             MoveElevator.toLoading(elevator),
-            either(
-                none(),
-                RetractArm(arm),
-                lambda: arm.state == Arm.State.Retracted,
-            ),
+            RetractArm(arm),
             MovePrinter.toLoading(printer),
         )

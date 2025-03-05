@@ -88,9 +88,12 @@ class AutonomousModule(Module):
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
+        registerNamedCommand(MovePrinter.toMiddleRight(self.hardware.printer))
+        registerNamedCommand(MovePrinter.toMiddleLeft(self.hardware.printer))
         registerNamedCommand(MoveElevator.toLevel4(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel2(self.hardware.elevator))
+        registerNamedCommand(MoveElevator.toLevel3(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
         registerNamedCommand(
             ResetAll(

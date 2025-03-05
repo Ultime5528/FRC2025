@@ -3,53 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.153809931506849,
-        "y": 2.8529965753424653
+        "x": 5.2391493055555545,
+        "y": 2.725260416666666
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.576816941820588,
-        "y": 1.3471465630676722
+        "x": 4.163020833333332,
+        "y": 1.8867187499999996
       },
       "isLocked": false,
       "linkedName": "Place Coral #22"
     },
     {
       "anchor": {
-        "x": 1.9366552609067578,
-        "y": 1.81811377245509
+        "x": 1.4098090277777766,
+        "y": 0.9782986111111108
       },
       "prevControl": {
-        "x": 2.7047981590585795,
-        "y": 2.1747493901984716
-      },
-      "nextControl": {
-        "x": 1.7099027758352179,
-        "y": 1.7128364695171774
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.3399305555555543,
-        "y": 0.9643229166666663
-      },
-      "prevControl": {
-        "x": 1.662710199407484,
-        "y": 1.4827723288685564
+        "x": 1.7325886716297063,
+        "y": 1.496748023313001
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CoralStation #12"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": -36.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
