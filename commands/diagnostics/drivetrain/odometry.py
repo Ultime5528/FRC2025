@@ -1,7 +1,6 @@
 import wpilib
-from commands2 import SequentialCommandGroup, Command
+from commands2 import Command
 from wpilib import DataLogManager
-from wpimath.geometry import Pose2d
 
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty

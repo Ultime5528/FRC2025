@@ -3,7 +3,6 @@ import math
 import wpilib
 import wpimath
 from pathplannerlib.util import DriveFeedforwards
-from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
@@ -71,6 +70,13 @@ class Drivetrain(Subsystem):
             self.angular_offset_br,
         )
 
+        self.swerve_modules = {
+            "FL": self.swerve_module_fl,
+            "FR": self.swerve_module_fr,
+            "BL": self.swerve_module_bl,
+            "BR": self.swerve_module_br,
+        }
+
         # Gyro
         """
         Possibilités : NavX, ADIS16448, ADIS16470, ADXRS, Empty
@@ -90,6 +96,10 @@ class Drivetrain(Subsystem):
             lambda: self._gyro.getRotation2d().radians(),
         )
         wpilib.SmartDashboard.putData("SwerveDrive", swerve_drive_sendable)
+
+        """
+        Pose estimation
+        """
 
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
@@ -117,83 +127,44 @@ class Drivetrain(Subsystem):
             ),
             Pose2d(0, 0, 0),
         )
-        self.cam = PhotonCamera("mainCamera")
+
         self.vision_pose = self._field.getObject("Vision Pose")
         self.odometry_pose = self._field.getObject("Odometry Pose")
 
+        """
+        Alerts
+        """
+
         self.alerts_hot = {
-            "FL": self.createAlert(
-                "FL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-            ),
-            "FR": self.createAlert(
-                "FR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-            ),
-            "BL": self.createAlert(
-                "BL Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-            ),
-            "BR": self.createAlert(
-                "BR Swerve is too hot. Allow swerves to cool down.", AlertType.Warning
-            ),
+            location: self.createAlert(
+                f"{location} Swerve is too hot. Allow swerves to cool down.",
+                AlertType.Warning,
+            )
+            for location in self.swerve_modules.keys()
         }
 
         self.alerts_faults = {
-            "FL": self.createAlert(
-                "FL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+            location: self.createAlert(
+                f"{location} Swerve has active faults/warnings. Check for them on REV Hardware Client.",
                 AlertType.Warning,
-            ),
-            "FR": self.createAlert(
-                "FR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-                AlertType.Warning,
-            ),
-            "BL": self.createAlert(
-                "BL Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-                AlertType.Warning,
-            ),
-            "BR": self.createAlert(
-                "BR Swerve has active faults/warnings. Check for them on REV Hardware Client.",
-                AlertType.Warning,
-            ),
+            )
+            for location in self.swerve_modules.keys()
         }
 
-        self.swerve_modules = {
-            "FL": self.swerve_module_fl,
-            "FR": self.swerve_module_fr,
-            "BL": self.swerve_module_bl,
-            "BR": self.swerve_module_br,
-        }
-
-        self.alerts_encoder = {
-            "FL": self.createAlert(
-                "FL Swerve encoder measured velocity is too low.", AlertType.Warning
-            ),
-            "FR": self.createAlert(
-                "FR Swerve encoder measured velocity is too low.", AlertType.Warning
-            ),
-            "BL": self.createAlert(
-                "BL Swerve encoder measured velocity is too low.", AlertType.Warning
-            ),
-            "BR": self.createAlert(
-                "BR Swerve encoder measured velocity is too low.", AlertType.Warning
-            ),
+        self.alerts_drive_encoder = {
+            location: self.createAlert(
+                f"{location} Swerve Drive encoder measured velocity is too low.",
+                AlertType.Error,
+            )
+            for location in self.swerve_modules.keys()
         }
 
         self.alerts_turning_motor = {
-            "FL": self.createAlert(
-                "FL Swerve turning motor failed to reach desired state.",
+            location: self.createAlert(
+                f"{location} Swerve turning motor failed to reach desired state.",
                 AlertType.Error,
-            ),
-            "FR": self.createAlert(
-                "FR Swerve turning motor failed to reach desired state.",
-                AlertType.Error,
-            ),
-            "BL": self.createAlert(
-                "BL Swerve turning motor failed to reach desired state.",
-                AlertType.Error,
-            ),
-            "BR": self.createAlert(
-                "BR Swerve turning motor failed to reach desired state.",
-                AlertType.Error,
-            ),
+            )
+            for location in self.swerve_modules.keys()
         }
 
         self.alert_odometry = self.createAlert(
