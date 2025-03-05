@@ -69,7 +69,8 @@ class Elevator(Subsystem):
             AlertType.Error,
         )
         self.alert_is_up = self.createAlert(
-            "isUp returned incorrect value. Elevator went to level 1, not max height. Check encoder.", AlertType.Error
+            "isUp returned incorrect value. Elevator went to level 1, not max height. Check encoder.",
+            AlertType.Error,
         )
 
         self.alert_motor = self.createAlert(

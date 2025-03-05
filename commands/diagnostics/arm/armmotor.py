@@ -39,7 +39,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             ),
             WaitCommand(0.1),
             RetractArm(arm),
-            ResetElevator(elevator)
+            ResetElevator(elevator),
         )
         self.arm = arm
         self.voltage_before = None

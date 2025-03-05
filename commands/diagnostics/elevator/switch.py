@@ -12,9 +12,7 @@ from ultime.proxy import proxy
 class DiagnoseSwitch(SequentialCommandGroup):
     def __init__(self, elevator: Elevator):
         super().__init__(
-            runOnce(
-                proxy(self.before_test)
-            ),
+            runOnce(proxy(self.before_test)),
             MoveElevator.toLevel1(elevator),
             runOnce(proxy(self.after_level1)),
             ResetElevator(elevator),
