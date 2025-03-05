@@ -26,6 +26,7 @@ from commands.printer.resetprinter import ResetPrinterRight
 from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
+from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -152,6 +153,10 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
             ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
 
     def robotInit(self) -> None:

@@ -101,6 +101,10 @@ class Intake(Subsystem):
         else:
             self._pivot_switch.setSimUnpressed()
 
+    def setReset(self):
+        self._has_reset = True
+        self.state = self.State.Retracted
+
     def stopPivot(self):
         self._pivot_motor.stopMotor()
 

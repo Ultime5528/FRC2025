@@ -109,3 +109,27 @@ class Alert:
         cls._groups.add(new_group)
         SmartDashboard.putData(group_name, new_group)
         return new_group
+
+
+class AlertCreator:
+    """
+    A mixin for modules and subsystems that allows them to create alerts.
+    Classes using this mixin must have a method getName() that returns a string.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.registered_alerts = []
+        self.running_test = self.createAlert("Diagnosing component...", AlertType.Info)
+
+    def createAlert(self, text: str, alert_type: AlertType) -> Alert:
+        alert = Alert(text, alert_type, self.getName() + "/Alerts")
+        self.registered_alerts.append(alert)
+        return alert
+
+    def clearAlerts(self) -> None:
+        for alert in self.registered_alerts:
+            alert.set(False)
+
+    def getName(self) -> str:
+        return super().getName()

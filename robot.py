@@ -24,7 +24,7 @@ class Robot(ModuleRobot):
 
         wpilib.LiveWindow.disableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
-        self.enableLiveWindowInTest(True)
+        self.enableLiveWindowInTest(False)
 
         self.hardware = HardwareModule()
 
