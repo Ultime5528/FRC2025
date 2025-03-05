@@ -69,6 +69,19 @@ class Elevator(Subsystem):
             AlertType.Error,
         )
 
+        self.alert_is_down = self.createAlert(
+            f"isDown returned incorrect value. Is the limit switch connected? DIO={ports.DIO.elevator_switch}",
+            AlertType.Error,
+        )
+        self.alert_is_up = self.createAlert(
+            "isUp returned incorrect value.", AlertType.Error
+        )
+
+        self.alert_motor = self.createAlert(
+            f"Motor didn't affect battery voltage during test. Is it connected to the roboRIO? CAN={ports.CAN.elevator_motor}",
+            AlertType.Error,
+        )
+
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
             self._sim_encoder = self._sim_motor.getRelativeEncoderSim()
