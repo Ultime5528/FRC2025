@@ -25,6 +25,7 @@ def test_resetautonomous(robot_controller: RobotTestController, robot: Robot):
     assert elevator.state == Elevator.State.Reset
     assert elevator.movement_state == Elevator.MovementState.FreeToMove
     assert printer.state == Printer.State.Reset
+    assert printer.movement_state == Printer.MovementState.FreeToMove
     assert arm.state == Arm.State.Retracted
     assert arm.movement_state == Arm.MovementState.DoNotMove
     assert robot.hardware.intake.state == robot.hardware.intake.State.Retracted
