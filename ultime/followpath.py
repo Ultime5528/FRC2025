@@ -38,7 +38,10 @@ def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
             if previous_pose.translation().distance(state.pose.translation()) >= 0.1:
                 poses.append(state.pose)
                 previous_pose = state.pose
-    if poses[-2].translation().distance(poses[-1].translation()) <= 0.1 and len(poses) > 2:
+    if (
+        poses[-2].translation().distance(poses[-1].translation()) <= 0.1
+        and len(poses) > 2
+    ):
         poses.remove(poses[-2])
 
     return poses
