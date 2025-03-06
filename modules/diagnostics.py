@@ -6,6 +6,7 @@ from wpilib import RobotController
 
 from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
+from commands.diagnostics.climber import DiagnoseClimber
 from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
@@ -22,6 +23,7 @@ class DiagnosticsModule(Module):
             hardware.intake: DiagnoseIntake(hardware.intake),
             hardware.claw: DiagnoseClaw(hardware.claw),
             hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
+            hardware.climber: DiagnoseClimber(hardware.climber),
         }
 
         self._battery_voltage: List[float] = []
