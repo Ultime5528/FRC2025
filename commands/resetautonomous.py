@@ -25,5 +25,5 @@ class ResetAutonomous(SequentialCommandGroup):
             parallel(
                 ResetPrinterRight(printer),
                 ResetElevator(elevator),
-            )
+            ),
         )
