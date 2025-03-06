@@ -67,13 +67,15 @@ class Printer(Subsystem):
         self.movement_state = Printer.MovementState.Unknown
         self.state = Printer.State.Unknown
 
-        self.alert_left_lswitch = self.createAlert(
-            f"Left limit switch returned incorrect value. Check connections. DIO={ports.DIO.printer_switch_left}",
+        self.alert_switch_left = self.createAlert(
+            "Left switch returned incorrect value. Is it connected? "
+            + f"DIO={ports.DIO.printer_switch_left}",
             AlertType.Error,
         )
 
-        self.alert_right_lswitch = self.createAlert(
-            f"Right limit switch returned incorrect value. Check connections. DIO={ports.DIO.printer_switch_right}",
+        self.alert_switch_right = self.createAlert(
+            "Right switch returned incorrect value. Is it connected? "
+            + f"DIO={ports.DIO.printer_switch_right}",
             AlertType.Error,
         )
 

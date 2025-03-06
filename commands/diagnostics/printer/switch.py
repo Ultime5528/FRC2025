@@ -22,12 +22,12 @@ class DiagnoseSwitch(SequentialCommandGroup):
 
     def check_switches_left(self):
         if not self.printer.isLeft():
-            self.printer.alert_left_lswitch.set(True)
+            self.printer.alert_switch_left.set(True)
         if self.printer.isRight():
-            self.printer.alert_right_lswitch.set(True)
+            self.printer.alert_switch_right.set(True)
 
     def check_switches_right(self):
         if not self.printer.isRight():
-            self.printer.alert_right_lswitch.set(True)
+            self.printer.alert_switch_right.set(True)
         if self.printer.isLeft():
-            self.printer.alert_left_lswitch.set(True)
+            self.printer.alert_switch_left.set(True)
