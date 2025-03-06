@@ -18,13 +18,10 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
         super().__init__(
             runOnce(proxy(self.before_climb)),
             ReadyClimber(climber),
-            deadline(
-                Climb(climber),
-                run(proxy(self.during_climb))
-            ),
+            deadline(Climb(climber), run(proxy(self.during_climb))),
             WaitCommand(0.1),
             runOnce(proxy(self.after_climb)),
-            ResetClimber(climber)
+            ResetClimber(climber),
         )
         self.climber = climber
         self.voltage_before = None
@@ -43,7 +40,10 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
         self.voltage_after = RobotController.getBatteryVoltage()
         voltage_delta_before = self.voltage_before - self.voltage_during
         voltage_delta_after = self.voltage_after - self.voltage_during
-        if voltage_delta_before < self.voltage_change_threshold or voltage_delta_after < self.voltage_change_threshold:
+        if (
+            voltage_delta_before < self.voltage_change_threshold
+            or voltage_delta_after < self.voltage_change_threshold
+        ):
             self.climber.alert_motor.set(True)
         if not self.climber.isClimbed():
             self.climber.alert_lswitch.set(True)

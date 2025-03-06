@@ -42,9 +42,15 @@ class Climber(Subsystem):
             SparkBase.PersistMode.kPersistParameters,
         )
 
-        self.alert_lswitch = self.createAlert(f"isClimbed returned incorrect value. Is the limit switch connected properly? DOI={ports.DIO.climber_switch}", AlertType.Error)
+        self.alert_lswitch = self.createAlert(
+            f"isClimbed returned incorrect value. Is the limit switch connected properly? DOI={ports.DIO.climber_switch}",
+            AlertType.Error,
+        )
 
-        self.alert_motor = self.createAlert(f"Motor didn't affect battery voltage during test. Is it connected? CAN={ports.CAN.climber_motor}", AlertType.Error)
+        self.alert_motor = self.createAlert(
+            f"Motor didn't affect battery voltage during test. Is it connected? CAN={ports.CAN.climber_motor}",
+            AlertType.Error,
+        )
 
         self.state = self.State.Unknown
         self._prev_is_down = False
