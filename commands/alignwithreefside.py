@@ -66,7 +66,7 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    pose_offset = autoproperty(0.5)
+    pose_offset = autoproperty(0.52)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
@@ -75,8 +75,7 @@ class AlignWithReefSide(DeferredCommand):
 
     def createCommand(self) -> Command:
         return DriveToPoses(
-            self.drivetrain,
-            [self.getTagPoseToAlign()],
+            self.drivetrain, [self.getTagPoseToAlign()], 10.5, 7.0, 15.0, 5.0
         )
 
     def getTagPoseToAlign(self) -> Pose2d:

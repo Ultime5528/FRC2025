@@ -12,11 +12,15 @@ from commands.arm.retractarm import RetractArm
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.resetclimber import ResetClimber
+from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
+from commands.intake.resetintake import ResetIntake
+from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
+from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.followpath import FollowPath
 from ultime.module import Module
@@ -58,6 +62,9 @@ class AutonomousModule(Module):
             lambda: False,  # Disable flipping, will be done by the command
         )
 
+        self.reset_climber_command = ResetClimber(self.hardware.climber)
+        self.reset_intake_command = ResetIntake(self.hardware.intake)
+
         self.setupCommandsOnPathPlanner()
 
         self.auto_command: Optional[commands2.Command] = None
@@ -68,15 +75,23 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
+        registerNamedCommand(
+            ResetAutonomous(
+                self.hardware.elevator, self.hardware.printer, self.hardware.arm
+            )
+        )
         registerNamedCommand(LoadCoral(self.hardware.claw))
         registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
         registerNamedCommand(RetractArm(self.hardware.arm))
         registerNamedCommand(ExtendArm(self.hardware.arm))
         registerNamedCommand(ResetClimber(self.hardware.climber))
+        registerNamedCommand(MovePrinter.toMiddleRight(self.hardware.printer))
+        registerNamedCommand(MovePrinter.toMiddleLeft(self.hardware.printer))
         registerNamedCommand(MoveElevator.toLevel4(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel1(self.hardware.elevator))
         registerNamedCommand(MoveElevator.toLevel2(self.hardware.elevator))
+        registerNamedCommand(MoveElevator.toLevel3(self.hardware.elevator))
         registerNamedCommand(MovePrinter.toLoading(self.hardware.printer))
         registerNamedCommand(
             ResetAll(
@@ -102,6 +117,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                self.hardware.controller,
             )
         )
         registerNamedCommand(
@@ -111,10 +127,37 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                self.hardware.controller,
+            )
+        )
+        registerNamedCommand(
+            DropAutonomous.toLeft(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
+        registerNamedCommand(
+            DropAutonomous.toRight(
+                self.hardware.printer,
+                self.hardware.arm,
+                self.hardware.elevator,
+                self.hardware.drivetrain,
+                self.hardware.claw,
+            )
+        )
+        registerNamedCommand(
+            PrepareLoading(
+                self.hardware.elevator, self.hardware.arm, self.hardware.printer
             )
         )
 
     def autonomousInit(self):
+        self.reset_intake_command.schedule()
+        self.reset_climber_command.schedule()
+
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:
             self.auto_command.schedule()

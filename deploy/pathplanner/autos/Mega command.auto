@@ -5,32 +5,45 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "ResetAllButClimber"
-                }
-              },
-              {
-                "type": "parallel",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "MoveElevator.toLevel2"
+                        "name": "ResetAutonomous"
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "parallel",
                       "data": {
-                        "pathName": "Straight Align #22"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MovePrinter.toMiddleRight"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MoveElevator.toLevel3"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Straight Align #22"
                 }
               }
             ]
@@ -39,13 +52,26 @@
         {
           "type": "named",
           "data": {
-            "name": "DropPrepareLoading.toRight"
+            "name": "DropAutonomous.toRight"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Go to Coral Station after reef #22"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Coral Station after reef #22"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareLoading"
+                }
+              }
+            ]
           }
         },
         {
@@ -71,9 +97,91 @@
                 }
               },
               {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LoadCoral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "MovePrinter.toMiddleRight"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropAutonomous.toRight"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Coral Station after reef #17"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "LoadCoral"
+                  "name": "PrepareLoading"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitUntilCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to tag #17 after loading"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "MoveElevator.toLevel2"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LoadCoral"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "MovePrinter.toMiddleLeft"
+                      }
+                    }
+                  ]
                 }
               }
             ]
