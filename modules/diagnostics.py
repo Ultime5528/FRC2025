@@ -1,12 +1,15 @@
-from _weakref import proxy
 from typing import List
 
-import commands2
 from commands2 import CommandScheduler
+from commands2.cmd import sequence
 from wpilib import RobotController
 
+from commands.diagnostics.arm import DiagnoseArm
+from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.intake import DiagnoseIntake
+from commands.diagnostics.printer import DiagnosePrinter
+from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -14,16 +17,28 @@ from ultime.module import Module, ModuleList
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components_tests: List[commands2.Command] = [
-            DiagnoseIntake(hardware.intake)
-        ]
+        self.components = hardware.subsystems + module_list.modules
 
-        self._hardware: HardwareModule = proxy(hardware)
-        self._module_list = proxy(module_list)
+        self.components_tests = {
+            hardware.intake: DiagnoseIntake(hardware.intake),
+            hardware.claw: DiagnoseClaw(hardware.claw),
+            hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
+            hardware.printer: DiagnosePrinter(hardware.printer),
+        }
+
         self._battery_voltage: List[float] = []
         self._is_test = False
-
-        self._run_all_command = DiagnoseAll(self._hardware, self.components_tests)
+        self._run_all_command = DiagnoseAll(
+            hardware,
+            [
+                sequence(
+                    SetRunningTest(component, True),
+                    test,
+                    SetRunningTest(component, False),
+                )
+                for component, test in self.components_tests.items()
+            ],
+        )
 
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
@@ -31,7 +46,7 @@ class DiagnosticsModule(Module):
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().enable()
-        for component in self._hardware.subsystems + self._module_list.modules:
+        for component in self.components:
             component.clearAlerts()
         self._run_all_command.schedule()
         self._is_test = True
@@ -46,8 +61,9 @@ class DiagnosticsModule(Module):
 
         def getComponentsNames() -> List[str]:
             return [
-                subsystem.getName()
-                for subsystem in self._hardware.subsystems + self._module_list.modules
+                component.getName()
+                for component in self.components
+                if len(component.registered_alerts) > 1
             ]
 
         def getBatteryVoltage() -> List[float]:
@@ -56,6 +72,6 @@ class DiagnosticsModule(Module):
             else:
                 return []
 
-        builder.addBooleanProperty("Ready", lambda: True, noop)
-        builder.addStringArrayProperty("Components", getComponentsNames, noop)
+        builder.publishConstBoolean("Ready", True)
+        builder.publishConstStringArray("Components", getComponentsNames())
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
