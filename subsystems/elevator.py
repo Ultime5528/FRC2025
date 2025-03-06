@@ -65,16 +65,20 @@ class Elevator(Subsystem):
         self.movement_state = Elevator.MovementState.Unknown
 
         self.alert_is_down = self.createAlert(
-            f"isDown returned incorrect value. Is the limit switch connected? DIO={ports.DIO.elevator_switch}",
+            "isDown returned incorrect value. "
+            + f"Is the limit switch connected? DIO={ports.DIO.elevator_switch}",
             AlertType.Error,
         )
+        
         self.alert_is_up = self.createAlert(
-            "isUp returned incorrect value. Elevator went to level 1, not max height. Check encoder.",
+            "isUp returned incorrect value. Elevator went to level 1, not max height. "
+            f"Check encoder. CAN={ports.CAN.elevator_motor}",
             AlertType.Error,
         )
 
         self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected to the roboRIO? CAN={ports.CAN.elevator_motor}",
+            "Motor didn't affect battery voltage during test. Is it connected? "
+            + f"CAN={ports.CAN.elevator_motor}",
             AlertType.Error,
         )
 
