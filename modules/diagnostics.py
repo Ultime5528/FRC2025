@@ -8,6 +8,7 @@ from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.intake import DiagnoseIntake
+from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
@@ -22,6 +23,7 @@ class DiagnosticsModule(Module):
             hardware.intake: DiagnoseIntake(hardware.intake),
             hardware.claw: DiagnoseClaw(hardware.claw),
             hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
+            hardware.printer: DiagnosePrinter(hardware.printer),
         }
 
         self._battery_voltage: List[float] = []
