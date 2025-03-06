@@ -36,8 +36,6 @@ class DashboardModule(Module):
         self._hardware = hardware
         self._module_list = module_list
 
-        putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
-
         """
         Elevator
         """
@@ -83,6 +81,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
         putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
+        putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
 
         """
         Arm
