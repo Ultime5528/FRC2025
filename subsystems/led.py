@@ -7,7 +7,6 @@ from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
-from commands.claw.autodrop import AutoDrop
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 

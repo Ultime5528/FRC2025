@@ -7,7 +7,7 @@ import ports
 from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Arm(Subsystem):

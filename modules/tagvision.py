@@ -1,5 +1,4 @@
 import wpimath
-from wpilib import SmartDashboard
 from wpimath.geometry import Transform3d
 
 from subsystems.drivetrain import Drivetrain
@@ -27,30 +26,37 @@ class TagVisionModule(AbsoluteVision):
         super().robotPeriodic()
         estimated_pose = self.getEstimatedPose2D()
         used_tags = self.getUsedTags()
+        n_used_tags = len(used_tags)
 
-        if len(used_tags) == 1:
-            if used_tags[0].getPoseAmbiguity() < self.ambiguity_threshold:
+        if n_used_tags > 1 or (
+            n_used_tags == 1
+            and used_tags[0].getPoseAmbiguity() < self.ambiguity_threshold
+        ):
+            if estimated_pose is not None:
                 time_stamp = self.getEstimatedPoseTimeStamp()
                 self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
 
-        elif estimated_pose is not None:
-            time_stamp = self.getEstimatedPoseTimeStamp()
-            self.drivetrain.addVisionMeasurement(estimated_pose, time_stamp)
-
-        SmartDashboard.putNumber("NumberOfTagUsed", self.getNumberTagUsed())
-        SmartDashboard.putNumber("AmbiguityOfTheTag", self.getAmbiguity())
-
-    def getNumberTagUsed(self) -> int:
+    def getNumberTagsUsed(self) -> int:
         return len(self.getUsedTags())
 
-    def getAmbiguity(self) -> float:
-        if len(self.getUsedTags()) == 1:
-            return self.getUsedTags()[0].getPoseAmbiguity()
-        return 5528
+    def getFirstTagAmbiguity(self) -> float:
+        """
+        Get the ambiguity of the first tag used, -1.0 if no tag is seen.
+        """
+        used_tags = self.getUsedTags()
 
-    # def initSendable(self, builder):
-    #     super().initSendable(builder)
-    #
-    #     def noop(x):
-    #         pass
-    #
+        if used_tags:
+            return used_tags[0].getPoseAmbiguity()
+
+        return -1.0
+
+    def initSendable(self, builder):
+        super().initSendable(builder)
+
+        def noop(x):
+            pass
+
+        builder.addIntegerProperty("number_tags_used", self.getNumberTagsUsed, noop)
+        builder.addDoubleProperty(
+            "first_tag_ambiguity", self.getFirstTagAmbiguity, noop
+        )

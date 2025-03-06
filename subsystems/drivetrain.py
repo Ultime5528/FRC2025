@@ -21,7 +21,7 @@ from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
 from ultime.swerveconfig import SwerveConstants
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Drivetrain(Subsystem):

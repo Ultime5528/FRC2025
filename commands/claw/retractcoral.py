@@ -7,27 +7,33 @@ from ultime.command import Command
 
 class RetractCoral(Command):
     @classmethod
-    def up(cls, claw: Claw):
+    def retract(cls, claw: Claw):
         cmd = cls(
             claw,
             lambda: retract_properties.speed_left,
             lambda: retract_properties.speed_right,
+            True,
         )
-        cmd.setName(cmd.getName() + ".up")
+        cmd.setName(cmd.getName() + ".retract")
         return cmd
 
     @classmethod
-    def down(cls, claw: Claw):
+    def unretract(cls, claw: Claw):
         cmd = cls(
             claw,
             lambda: -retract_properties.speed_left,
             lambda: -retract_properties.speed_right,
+            False,
         )
-        cmd.setName(cmd.getName() + ".down")
+        cmd.setName(cmd.getName() + ".unretract")
         return cmd
 
     def __init__(
-        self, claw: Claw, speed_left: FloatProperty, speed_right: FloatProperty
+        self,
+        claw: Claw,
+        speed_left: FloatProperty,
+        speed_right: FloatProperty,
+        retracted: bool,
     ):
         super().__init__()
         self.claw = claw
@@ -36,6 +42,7 @@ class RetractCoral(Command):
 
         self.get_speed_left = asCallable(speed_left)
         self.get_speed_right = asCallable(speed_right)
+        self.retracted = retracted
 
     def initialize(self):
         self.timer.restart()
@@ -49,7 +56,7 @@ class RetractCoral(Command):
 
     def end(self, interrupted: bool):
         self.claw.stop()
-        self.claw.is_coral_retracted = not self.claw.is_coral_retracted
+        self.claw.is_coral_retracted = self.retracted
 
 
 class _ClassProperties:
