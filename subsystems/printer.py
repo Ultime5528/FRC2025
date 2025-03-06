@@ -78,7 +78,8 @@ class Printer(Subsystem):
         )
 
         self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected to the roboRIO? PWM={ports.PWM.printer_motor}",
+            f"Motor didn't affect battery voltage during test. Is it connected? "
+            + f"PWM={ports.PWM.printer_motor} PDP={ports.PDP.printer_motor}",
             AlertType.Error,
         )
 
