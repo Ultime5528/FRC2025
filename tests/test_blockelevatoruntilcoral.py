@@ -24,13 +24,9 @@ def test_block_elevator_until_coral(
         ResetAllButClimber(elevator, printer, arm, intake), 10.0
     )
 
-    robot_controller.run_command(
-        MoveElevator.toLoading(elevator), 10.0
-    )
+    robot_controller.run_command(MoveElevator.toLoading(elevator), 10.0)
 
-    robot_controller.run_command(
-        MovePrinter.toLoading(printer), 10.0
-    )
+    robot_controller.run_command(MovePrinter.toLoading(printer), 10.0)
 
     assert not claw.has_coral
 

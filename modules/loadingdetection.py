@@ -31,5 +31,7 @@ class LoadingDetectionModule(Module):
         def noop(_):
             pass
 
-        builder.addBooleanProperty("is_at_loading", tt(lambda: self._is_at_loading), noop)
+        builder.addBooleanProperty(
+            "is_at_loading", tt(lambda: self._is_at_loading), noop
+        )
         builder.addBooleanProperty("is_loading", tt(self.isLoading), noop)
