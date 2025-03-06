@@ -4,13 +4,13 @@ import wpilib
 from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollision
 from modules.autonomous import AutonomousModule
-from modules.blockelevatoruntilcoral import BlockElevatorUntilCoral
+from modules.blockelevatoruntilcoral import BlockElevatorUntilCoralModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
-from modules.loadingdetection import LoadingDetection
+from modules.loadingdetection import LoadingDetectionModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
@@ -34,8 +34,10 @@ class Robot(ModuleRobot):
         self.control = ControlModule(self.hardware, self.algae_vision)
 
         self.arm_collision = ArmCollision(self.hardware)
-        self.loading_detection = LoadingDetection(self.hardware)
-        self.block_elevator_until_coral = BlockElevatorUntilCoral(self.hardware)
+        self.loading_detection = LoadingDetectionModule(self.hardware)
+        self.block_elevator_until_coral = BlockElevatorUntilCoralModule(
+            self.loading_detection, self.hardware.elevator
+        )
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )

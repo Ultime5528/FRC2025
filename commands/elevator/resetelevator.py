@@ -27,8 +27,6 @@ class ResetElevator(Command):
     def end(self, interrupted: bool):
         if interrupted:
             self.elevator.state = self.elevator.State.Unknown
-            self.elevator.loading_state = self.elevator.LoadingState.Unknown
         else:
             self.elevator.state = self.elevator.State.Reset
-            self.elevator.loading_state = self.elevator.LoadingState.FreeToMove
         self.elevator.stop()
