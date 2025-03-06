@@ -55,6 +55,7 @@ class DriveToPoses(Command):
         self.drivetrain = drivetrain
         self.get_goals = goals if callable(goals) else lambda: goals
         self.goals: List[Pose2d] = None
+        self.last_goal: Pose2d = None
         self.speed_constraint = speed_constraint
         self.end_speed_constraint = end_speed_constraint
         self.rotation_speed_constraint = rotation_speed_constraint
@@ -70,7 +71,7 @@ class DriveToPoses(Command):
         )
 
     def updateMotions(self):
-        current_goal = self.goals[self.currGoal]
+        self.last_goal = self.goals[-1]
         current_pose = self.drivetrain.getPose()
         self.trap_motion_xy = TrapezoidalMotion(
             start_speed=self.speed_constraint,
@@ -78,8 +79,8 @@ class DriveToPoses(Command):
             max_speed=self.speed_constraint,
             accel=self.xy_accel,
             start_position=(
-                current_goal.translation() - current_pose.translation()
-            ).norm(),
+                self.last_goal.translation().distance(current_pose.translation())
+            ),
             end_position=0.0,
         )
         self.start_rotation = current_pose.rotation()
@@ -88,8 +89,8 @@ class DriveToPoses(Command):
             end_speed=self.rotation_end_speed_constraint,
             max_speed=self.rotation_speed_constraint,
             accel=self.rot_accel,
-            start_position=0.0,
-            end_position=((current_goal.rotation() - self.start_rotation).degrees()),
+            start_position=(self.last_goal.rotation() - current_pose.rotation()).degrees(),
+            end_position=0.0,
         )
 
     def initialize(self):
@@ -110,12 +111,12 @@ class DriveToPoses(Command):
         self.updateMotions()
 
     def execute(self):
-        current_pos = self.drivetrain.getPose()
+        current_pose = self.drivetrain.getPose()
         translation_error = (
-            self.goals[self.currGoal].translation() - current_pos.translation()
+            self.goals[self.currGoal].translation() - current_pose.translation()
         )
 
-        xy_mag = abs(self.trap_motion_xy.calculate(translation_error.norm()))
+        xy_mag = abs(self.trap_motion_xy.calculate(self.last_goal.translation().distance(current_pose.translation())))
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero
@@ -125,7 +126,7 @@ class DriveToPoses(Command):
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
 
         vel_rot = self.trap_motion_rot.calculate(
-            (current_pos.rotation() - self.start_rotation).degrees()
+            (self.last_goal.rotation() - current_pose.rotation()).degrees()
         )
 
         # print(vel_xy.X(), vel_xy.Y(), vel_rot)
