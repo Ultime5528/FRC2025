@@ -69,7 +69,7 @@ class Elevator(Subsystem):
             + f"Is the limit switch connected? DIO={ports.DIO.elevator_switch}",
             AlertType.Error,
         )
-        
+
         self.alert_is_up = self.createAlert(
             "isUp returned incorrect value. Elevator went to level 1, not max height. "
             f"Check encoder. CAN={ports.CAN.elevator_motor}",
