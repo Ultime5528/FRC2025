@@ -2,15 +2,12 @@ from typing import Literal
 
 import commands2
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none, race
+from commands2.cmd import deadline
 
-from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drive import DriveField
 from commands.drivetrain.drivetoposes import DriveToPoses
-from commands.elevator.moveelevator import MoveElevator
+from commands.dropautonomous import DropAutonomous
 from commands.prepareloading import PrepareLoading
-from commands.printer.moveprinter import MovePrinter
-from commands.printer.scanprinter import ScanPrinter
 from subsystems.arm import Arm
 from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
@@ -63,36 +60,9 @@ class DropPrepareLoading(SequentialCommandGroup):
         side: Literal["right", "left"],
     ):
         super().__init__(
-            either(
-                sequence(
-                    MovePrinter.toMiddle(printer),
-                    AutoDrop(claw, elevator),
-                ),
-                sequence(
-                    # Check side
-                    (
-                        ScanPrinter.right(printer)
-                        if side == "right"
-                        else ScanPrinter.left(printer)
-                    ),
-                    AutoDrop(claw, elevator),
-                    # Check if elevator is level 4 and arm extended (remove algae) if not, prepare loading
-                    either(
-                        sequence(
-                            MoveElevator.toAlgae(elevator, drivetrain),
-                            DriveToPoses.back(
-                                drivetrain, lambda: _properties.distance_remove_algae
-                            ),
-                        ),
-                        none(),
-                        lambda: elevator.state == Elevator.State.Level4
-                        and arm.state == Arm.State.Extended,
-                    ),
-                ),
-                lambda: elevator.state == Elevator.State.Level1,
-            ),
+            DropAutonomous(printer, arm, elevator, drivetrain, claw, side),
             DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
-            race(
+            deadline(
                 PrepareLoading(elevator, arm, printer),
                 DriveField(drivetrain, controller),
             ),
