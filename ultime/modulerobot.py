@@ -1,3 +1,5 @@
+from typing import Final
+
 import commands2
 from wpilib import RobotBase
 
@@ -5,8 +7,10 @@ from ultime.module import ModuleList, Module
 
 
 class ModuleRobot(commands2.TimedCommandRobot):
+    period: Final[float] = 0.02
+
     def __init__(self):
-        super().__init__()
+        super().__init__(self.period)
         self.modules = ModuleList()
 
     def addModules(self, *modules: Module):
