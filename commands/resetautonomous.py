@@ -1,4 +1,5 @@
-from commands2 import ParallelCommandGroup, InstantCommand
+from commands2 import InstantCommand, SequentialCommandGroup
+from commands2.cmd import parallel
 
 from commands.elevator.resetelevator import ResetElevator
 from commands.printer.resetprinter import ResetPrinterRight
@@ -9,15 +10,20 @@ from ultime.command import ignore_requirements
 
 
 @ignore_requirements(["elevator", "printer", "arm", "intake", "climber"])
-class ResetAutonomous(ParallelCommandGroup):
+class ResetAutonomous(SequentialCommandGroup):
     def __init__(
         self,
         elevator: Elevator,
         printer: Printer,
         arm: Arm,
     ):
+        def setArmRetracted():
+            arm.state = Arm.State.Retracted
+
         super().__init__(
-            InstantCommand(lambda: arm.setReset()),
-            ResetPrinterRight(printer),
-            ResetElevator(elevator),
+            InstantCommand(setArmRetracted),
+            parallel(
+                ResetPrinterRight(printer),
+                ResetElevator(elevator),
+            )
         )
