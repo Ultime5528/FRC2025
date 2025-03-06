@@ -72,9 +72,11 @@ class AlignWithReefSide(DeferredCommand):
         self.addRequirements(drivetrain)
 
     def createCommand(self) -> Command:
-        return DriveToPoses(
-            self.drivetrain, [self.getTagPoseToAlign()], 10.5, 7.0, 15.0, 5.0
-        )
+        return DriveToPoses(self.drivetrain, [self.getTagPoseToAlign()],
+                            10.5,
+                            5.0,
+                            15.0,
+                            5.0)
 
     def getTagPoseToAlign(self) -> Pose2d:
         tag = getClosestReefTagID(self.drivetrain.getPose())

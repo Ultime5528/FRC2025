@@ -1,7 +1,7 @@
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
+from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber, ReadyClimberAndBalance
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
@@ -91,7 +91,7 @@ class ControlModule(Module):
 
         # Climber
         hardware.panel_2.button(7).onTrue(ResetClimber(hardware.climber))
-        hardware.panel_2.button(4).onTrue(ReadyClimber(hardware.climber))
+        hardware.panel_2.button(4).onTrue(ReadyClimberAndBalance(hardware.printer, hardware.climber))
         hardware.panel_2.button(5).onTrue(Climb(hardware.climber))
         hardware.panel_2.button(6).onTrue(ReleaseClimber(hardware.climber))
 

@@ -165,7 +165,7 @@ class _ClassProperties:
     position_level2_algae = autoproperty(0.8, subtable=MoveElevator.__name__)
     position_level3 = autoproperty(0.765, subtable=MoveElevator.__name__)
     position_level3_algae = autoproperty(1.215, subtable=MoveElevator.__name__)
-    position_level4 = autoproperty(1.35, subtable=MoveElevator.__name__)
+    position_level4 = autoproperty(1.335, subtable=MoveElevator.__name__)
     position_loading = autoproperty(0.0, subtable=MoveElevator.__name__)
 
     speed_min = autoproperty(0.12, subtable=MoveElevator.__name__)

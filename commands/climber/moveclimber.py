@@ -1,6 +1,10 @@
 from abc import abstractmethod
 
+from commands2 import ParallelCommandGroup
+
+from commands.printer.moveprinter import MovePrinter
 from subsystems.climber import Climber
+from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
@@ -31,8 +35,15 @@ class MoveClimber(Command):
             self.climber.state = self.new_state
 
 
+class ReadyClimberAndBalance(ParallelCommandGroup):
+    def __init__(self, printer: Printer, climber: Climber):
+        super().__init__(
+            ReadyClimber(climber),
+            MovePrinter.toRight(printer)
+        )
+
 class ReadyClimber(MoveClimber):
-    position = autoproperty(40.0)
+    position = autoproperty(30)
 
     def __init__(self, climber: Climber):
         super().__init__(climber=climber, state=Climber.State.Ready)
