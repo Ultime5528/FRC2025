@@ -9,8 +9,8 @@ class CoralRetractionModule(Module):
         super().__init__()
         self.elevator = elevator
         self.claw = claw
-        self.cmd_up = RetractCoral.up(self.claw)
-        self.cmd_down = RetractCoral.down(self.claw)
+        self.cmd_retract = RetractCoral.retract(self.claw)
+        self.cmd_unretract = RetractCoral.unretract(self.claw)
 
     def robotPeriodic(self) -> None:
         if (
@@ -18,11 +18,11 @@ class CoralRetractionModule(Module):
             and self.claw.has_coral
             and not self.claw.is_coral_retracted
         ):
-            self.cmd_up.schedule()
+            self.cmd_retract.schedule()
 
         if (
             self.elevator.state == Elevator.State.Moving
             and self.claw.has_coral
             and self.claw.is_coral_retracted
         ):
-            self.cmd_down.schedule()
+            self.cmd_unretract.schedule()
