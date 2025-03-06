@@ -1,14 +1,11 @@
 from typing import Literal
 
-import commands2
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none, race
+from commands2.cmd import sequence, either, none
 
 from commands.claw.autodrop import AutoDrop
-from commands.drivetrain.drive import DriveField
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.moveelevator import MoveElevator
-from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.scanprinter import ScanPrinter
 from subsystems.arm import Arm

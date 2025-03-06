@@ -1,5 +1,4 @@
 from commands2 import ParallelCommandGroup
-from commands2.cmd import either, none
 
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator

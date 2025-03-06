@@ -49,7 +49,6 @@ class DriveToPoses(Command):
         end_speed_constraint: Optional[float] = None,
         rotation_speed_constraint: Optional[float] = None,
         rotation_end_speed_constraint: Optional[float] = None,
-
     ):
         super().__init__()
         self.addRequirements(drivetrain)
