@@ -39,7 +39,19 @@ class Robot(ModuleRobot):
             self.hardware.elevator, self.hardware.claw
         )
         self.vision = TagVisionModule(self.hardware.drivetrain)
-        self.repl = RemoteREPL(self)
+
+        self.repl = RemoteREPL(
+            {
+                "robot": self,
+                "r": self,
+            },
+            [
+                self,  # At this moment. If attributes are added below, they will not be considered.
+                self.hardware
+            ]
+        )
+
+        self.remote_debug = RemoteDebugModule(self)
 
         self.addModules(
             self.hardware,
