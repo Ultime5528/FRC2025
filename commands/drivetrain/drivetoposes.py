@@ -30,16 +30,16 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(0.2)
-    xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.05)
-    xy_speed_max = autoproperty(20.0)
+    xy_speed_end = autoproperty(12.0)
+    xy_tol_pos = autoproperty(0.3)
+    xy_tol_pos_last = autoproperty(0.1)
+    xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(1.0)
-    rot_tol_pos = autoproperty(10.0)
-    rot_tol_pos_last = autoproperty(5.0)
-    rot_speed_max = autoproperty(16.0)
+    rot_speed_end = autoproperty(8.0)
+    rot_tol_pos = autoproperty(50)
+    rot_tol_pos_last = autoproperty(10.0)
+    rot_speed_max = autoproperty(8.0)
 
     def __init__(
         self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
@@ -97,7 +97,7 @@ class DriveToPoses(Command):
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero
-        if translation_error_norm < 0.001:
+        if translation_error_norm < 0.01:
             vel_xy = Translation2d()
         else:
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
@@ -106,7 +106,7 @@ class DriveToPoses(Command):
             (current_pos.rotation() - self.start_rotation).degrees()
         )
 
-        print(vel_xy.X(), vel_xy.Y(), vel_rot)
+        # print(vel_xy.X(), vel_xy.Y(), vel_rot)
 
         self.drivetrain.driveRaw(
             vel_xy.X(),

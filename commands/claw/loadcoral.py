@@ -6,7 +6,6 @@ from ultime.autoproperty import autoproperty
 
 
 class LoadCoral(Command):
-
     def __init__(self, claw: Claw):
         super().__init__()
         self.claw = claw

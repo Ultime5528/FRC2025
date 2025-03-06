@@ -9,7 +9,7 @@ import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Climber(Subsystem):

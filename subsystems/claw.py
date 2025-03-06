@@ -5,7 +5,7 @@ import ports
 from ultime.alert import AlertType
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Claw(Subsystem):
@@ -18,7 +18,6 @@ class Claw(Subsystem):
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
         self._load_command = LoadCoral(self)
         self.has_coral = False
-        self.is_at_loading = False
         self.is_coral_retracted = False
 
         self.alert_sees_object = self.createAlert(
@@ -69,7 +68,6 @@ class Claw(Subsystem):
         builder.addFloatProperty("motor_right", tt(self.getRightInput), noop)
         builder.addBooleanProperty("sees_object", tt(self.seesObject), noop)
         builder.addBooleanProperty("has_coral", tt(lambda: self.has_coral), noop)
-        builder.addBooleanProperty("is_at_loading", tt(lambda: self.has_coral), noop)
         builder.addBooleanProperty(
             "is_coral_retracted", tt(lambda: self.is_coral_retracted), noop
         )

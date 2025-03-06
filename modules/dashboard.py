@@ -6,6 +6,7 @@ from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
+from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.resetgyro import ResetGyro
@@ -80,6 +81,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
         putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
+        putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
 
         """
         Arm
