@@ -83,7 +83,7 @@ class AbsoluteVision(Vision):
         if self.estimated_pose:
             return self.estimated_pose.timestampSeconds
 
-    def getUsedTagIDs(self) -> [int]:
+    def getUsedTagIDs(self) -> list[int]:
         if self.estimated_pose:
             return [target.fiducialId for target in self.estimated_pose.targetsUsed]
         else:
