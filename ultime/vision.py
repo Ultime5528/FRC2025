@@ -9,6 +9,7 @@ from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
 
 from ultime.module import Module
+from ultime.timethis import tt
 
 
 class VisionMode(Enum):
@@ -101,4 +102,4 @@ class AbsoluteVision(Vision):
         def noop(x):
             pass
 
-        builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
+        builder.addIntegerArrayProperty("UsedTagIDs", tt(self.getUsedTagIDs), noop)
