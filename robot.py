@@ -14,6 +14,7 @@ from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
 from ultime.modulerobot import ModuleRobot
+from ultime.remotdebug import RemoteDebugModule
 from ultime.repl import RemoteREPL
 
 
@@ -65,5 +66,6 @@ class Robot(ModuleRobot):
             self.arm_collision,
             self.coral_retraction,
             self.loading_detection,
+            self.remote_debug,
             # self.battery_sim,  # Current becomes so low, robot stops working
         )
