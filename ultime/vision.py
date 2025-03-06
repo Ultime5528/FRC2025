@@ -12,6 +12,9 @@ from ultime.module import Module
 from ultime.timethis import tt
 
 
+april_tag_field_layout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
+
+
 class VisionMode(Enum):
     Relative = auto()
     Absolute = auto()
@@ -52,7 +55,7 @@ class AbsoluteVision(Vision):
         super().__init__(camera_name=camera_name)
 
         self.camera_pose_estimator = PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagField.kDefaultField),
+            april_tag_field_layout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             self._cam,
             camera_offset,

@@ -2,7 +2,6 @@ import math
 from typing import Optional
 
 from commands2 import Command
-from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpilib import DriverStation
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
@@ -10,8 +9,7 @@ from commands.drivetrain.drivetoposes import DriveToPoses
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.command import DeferredCommand
-
-tag_field = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeAndyMark)
+from ultime.vision import april_tag_field_layout
 
 
 # Links the sextants to the corresponding AprilTag ID for each reef
@@ -28,7 +26,7 @@ alliance_to_reef_center = {
 
 
 tag_poses = {
-    tag_id: tag_field.getTagPose(tag_id).toPose2d()
+    tag_id: april_tag_field_layout.getTagPose(tag_id).toPose2d()
     for tag_id in [6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22]
 }
 
