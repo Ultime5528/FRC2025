@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.37459366980325,
-        "y": 2.3435628742514973
+        "x": 3.743749999999999,
+        "y": 2.8650173611111107
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.256538114247695,
-        "y": 1.9382677353626083
+        "x": 2.667621527777776,
+        "y": 2.026475694444444
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Place Coral #17"
     },
     {
       "anchor": {
-        "x": 2.086783575705731,
-        "y": 0.10665098374679133
+        "x": 1.4098090277777766,
+        "y": 0.9782986111111108
       },
       "prevControl": {
-        "x": 2.478103020150176,
-        "y": -0.7039392940309872
+        "x": 1.7325886716297063,
+        "y": 1.496748023313001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CoralStation #12"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -35.77910291743212
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 55.49147701233164
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

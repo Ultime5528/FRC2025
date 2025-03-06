@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Optional
 
 from commands2 import Command
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
@@ -36,19 +36,29 @@ class DriveToPoses(Command):
     xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(8.0)
+    rot_speed_end = autoproperty(10.0)
     rot_tol_pos = autoproperty(50)
     rot_tol_pos_last = autoproperty(10.0)
-    rot_speed_max = autoproperty(8.0)
+    rot_speed_max = autoproperty(10.0)
 
     def __init__(
-        self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
+        self,
+        drivetrain: Drivetrain,
+        goals: List[Pose2d] | Callable[[], List[Pose2d]],
+        speed_constraint: Optional[float] = None,
+        end_speed_constraint: Optional[float] = None,
+        rotation_speed_constraint: Optional[float] = None,
+        rotation_end_speed_constraint: Optional[float] = None,
     ):
         super().__init__()
         self.addRequirements(drivetrain)
         self.drivetrain = drivetrain
         self.get_goals = goals if callable(goals) else lambda: goals
         self.goals: List[Pose2d] = None
+        self.speed_constraint = speed_constraint
+        self.end_speed_constraint = end_speed_constraint
+        self.rotation_speed_constraint = rotation_speed_constraint
+        self.rotation_end_speed_constraint = rotation_end_speed_constraint
 
     @staticmethod
     def fromRedBluePoints(
@@ -63,9 +73,9 @@ class DriveToPoses(Command):
         current_goal = self.goals[self.currGoal]
         current_pose = self.drivetrain.getPose()
         self.trap_motion_xy = TrapezoidalMotion(
-            start_speed=self.xy_speed_max,
-            end_speed=self.xy_speed_end,
-            max_speed=self.xy_speed_max,
+            start_speed=self.speed_constraint,
+            end_speed=self.end_speed_constraint,
+            max_speed=self.speed_constraint,
             accel=self.xy_accel,
             start_position=(
                 current_goal.translation() - current_pose.translation()
@@ -74,15 +84,27 @@ class DriveToPoses(Command):
         )
         self.start_rotation = current_pose.rotation()
         self.trap_motion_rot = TrapezoidalMotion(
-            start_speed=self.rot_speed_max,
-            end_speed=self.rot_speed_end,
-            max_speed=self.rot_speed_max,
+            start_speed=self.rotation_speed_constraint,
+            end_speed=self.rotation_end_speed_constraint,
+            max_speed=self.rotation_speed_constraint,
             accel=self.rot_accel,
             start_position=0.0,
             end_position=((current_goal.rotation() - self.start_rotation).degrees()),
         )
 
     def initialize(self):
+        if self.speed_constraint is None:
+            self.speed_constraint = self.xy_speed_max
+
+        if self.end_speed_constraint is None:
+            self.end_speed_constraint = self.xy_speed_end
+
+        if self.rotation_speed_constraint is None:
+            self.rotation_speed_constraint = self.rot_speed_max
+
+        if self.rotation_end_speed_constraint is None:
+            self.rotation_end_speed_constraint = self.rot_speed_end
+
         self.goals = self.get_goals()
         self.currGoal = 0
         self.updateMotions()
