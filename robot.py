@@ -2,7 +2,7 @@
 import wpilib
 
 from modules.algaevision import AlgaeVisionModule
-from modules.armcollision import ArmCollision
+from modules.armcollision import ArmCollisionModule
 from modules.autonomous import AutonomousModule
 from modules.blockelevatoruntilcoral import BlockElevatorUntilCoralModule
 from modules.control import ControlModule
@@ -33,7 +33,7 @@ class Robot(ModuleRobot):
 
         self.control = ControlModule(self.hardware, self.algae_vision)
 
-        self.arm_collision = ArmCollision(self.hardware)
+        self.arm_collision = ArmCollisionModule(self.hardware)
         self.loading_detection = LoadingDetectionModule(self.hardware)
         self.block_elevator_until_coral = BlockElevatorUntilCoralModule(
             self.loading_detection, self.hardware.elevator

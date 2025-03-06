@@ -5,7 +5,7 @@ from subsystems.printer import Printer
 from ultime.module import Module
 
 
-class ArmCollision(Module):
+class ArmCollisionModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.arm = hardware.arm
