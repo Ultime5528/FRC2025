@@ -48,7 +48,7 @@ class Climber(Subsystem):
         )
 
         self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected? CAN={ports.CAN.climber_motor} PDP={?}",
+            f"Motor didn't affect battery voltage during test. Is it connected? CAN={ports.CAN.climber_motor} PDP={ports.PDP.climber_motor}",
             AlertType.Error,
         )
 
