@@ -9,6 +9,7 @@ from wpiutil import SendableBuilder
 import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
+from ultime.timethis import tt
 
 
 def interpolate(t, color1, color2):
@@ -244,4 +245,4 @@ class LEDController(Subsystem):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
-        builder.addIntegerProperty("time", lambda: self.time, lambda _: None)
+        builder.addIntegerProperty("time", tt(lambda: self.time), lambda _: None)
