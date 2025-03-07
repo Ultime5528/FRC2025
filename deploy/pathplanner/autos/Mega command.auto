@@ -25,13 +25,13 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "MovePrinter.toMiddleRight"
+                              "name": "MoveElevator.toLevel4"
                             }
                           },
                           {
                             "type": "named",
                             "data": {
-                              "name": "MoveElevator.toLevel4"
+                              "name": "RetractCoral.retract"
                             }
                           }
                         ]
@@ -101,6 +101,12 @@
                 "data": {
                   "name": "MoveElevator.toLevel4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractCoral.retract"
+                }
               }
             ]
           }
@@ -159,16 +165,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MovePrinter.toMiddleLeft"
-                      }
-                    }
-                  ]
+                  "name": "RetractCoral.retract"
                 }
               }
             ]
