@@ -1,9 +1,13 @@
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.climber.moveclimber import ReadyClimber, Climb, ReleaseClimber
+from commands.claw.drop import Drop
+from commands.climber.moveclimber import (
+    Climb,
+    ReleaseClimber,
+    ReadyClimberAndBalance,
+)
 from commands.climber.resetclimber import ResetClimber
-from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
@@ -41,7 +45,7 @@ class ControlModule(Module):
         Copilot's panel
         """
         # Elevator Levels
-        hardware.panel_2.button(2).onTrue(ResetGyro(hardware.drivetrain))
+        hardware.panel_2.button(2).onTrue(Drop.atLevel2(hardware.claw))
         AxisTrigger(hardware.panel_1, 1, "up").onTrue(
             MoveElevator.toLevel1(hardware.elevator)
         )
@@ -64,6 +68,7 @@ class ControlModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
+                False
             )
         )
         AxisTrigger(hardware.panel_2, 1, "down").onTrue(
@@ -74,6 +79,7 @@ class ControlModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
+                False
             )
         )
         AxisTrigger(hardware.panel_2, 0, "up").onTrue(
@@ -91,7 +97,9 @@ class ControlModule(Module):
 
         # Climber
         hardware.panel_2.button(7).onTrue(ResetClimber(hardware.climber))
-        hardware.panel_2.button(4).onTrue(ReadyClimber(hardware.climber))
+        hardware.panel_2.button(4).onTrue(
+            ReadyClimberAndBalance(hardware.printer, hardware.climber)
+        )
         hardware.panel_2.button(5).onTrue(Climb(hardware.climber))
         hardware.panel_2.button(6).onTrue(ReleaseClimber(hardware.climber))
 

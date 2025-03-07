@@ -7,7 +7,8 @@ from wpilib.simulation import SimDeviceSim
 from wpimath.geometry import Rotation2d
 from wpiutil import Sendable, SendableBuilder
 
-from ultime.autoproperty import autoproperty
+from ultime.autoproperty import autoproperty, defaultSetter
+from ultime.timethis import tt
 
 
 class AbstractSendableMetaclass(type(ABC), type(Sendable)):
@@ -45,10 +46,10 @@ class Gyro(AbstractSendable):
     def getRotation2d(self):
         return Rotation2d.fromDegrees(self.getAngle())
 
-    # def initSendable(self, builder: SendableBuilder) -> None:
-    #     super().initSendable(builder)
-    #     builder.addDoubleProperty("angle", self.getAngle, defaultSetter)
-    #     builder.addDoubleProperty("pitch", self.getPitch, defaultSetter)
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+        builder.addDoubleProperty("angle", self.getAngle, defaultSetter)
+        builder.addDoubleProperty("pitch", self.getPitch, defaultSetter)
 
 
 class NavX(Gyro):
@@ -141,15 +142,19 @@ class ADIS16470(Gyro):
             pass
 
         builder.addFloatProperty(
-            "yaw", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw), noop
-        )
-        builder.addFloatProperty(
-            "pitch",
-            lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch),
+            "raw_yaw",
+            tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw)),
             noop,
         )
         builder.addFloatProperty(
-            "roll", lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll), noop
+            "raw_pitch",
+            tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch)),
+            noop,
+        )
+        builder.addFloatProperty(
+            "raw_roll",
+            tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll)),
+            noop,
         )
 
 

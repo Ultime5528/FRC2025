@@ -31,7 +31,7 @@
                           {
                             "type": "named",
                             "data": {
-                              "name": "MoveElevator.toLevel3"
+                              "name": "MoveElevator.toLevel4"
                             }
                           }
                         ]
@@ -81,6 +81,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "LoadCoral"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -93,26 +99,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "MoveElevator.toLevel2"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "LoadCoral"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MovePrinter.toMiddleRight"
-                      }
-                    }
-                  ]
+                  "name": "MoveElevator.toLevel4"
                 }
               }
             ]
@@ -150,6 +137,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "LoadCoral"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -162,19 +155,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "MoveElevator.toLevel2"
+                  "name": "MoveElevator.toLevel4"
                 }
               },
               {
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "LoadCoral"
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {

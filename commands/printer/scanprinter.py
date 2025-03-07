@@ -1,4 +1,5 @@
 from commands2 import SequentialCommandGroup
+from commands2.cmd import either, none
 
 from commands.printer.moveprinter import MovePrinter
 from subsystems.printer import Printer
@@ -10,7 +11,13 @@ class ScanPrinter(Command):
     @staticmethod
     def right(printer: Printer):
         cmd = SequentialCommandGroup(
-            MovePrinter.toMiddleRight(printer), _ScanPrinter.right(printer)
+            MovePrinter.toRight(printer),
+            _ScanPrinter.left(printer),
+            either(
+                none(),
+                MovePrinter.toRight(printer),
+                lambda: printer.scanned
+            )
         )
         cmd.setName(ScanPrinter.__name__ + ".right")
         return cmd
@@ -18,7 +25,13 @@ class ScanPrinter(Command):
     @staticmethod
     def left(printer: Printer):
         cmd = SequentialCommandGroup(
-            MovePrinter.toMiddleLeft(printer), _ScanPrinter.left(printer)
+            MovePrinter.toLeft(printer),
+            _ScanPrinter.right(printer),
+            either(
+                none(),
+                MovePrinter.toLeft(printer),
+                lambda: printer.scanned
+            )
         )
         cmd.setName(ScanPrinter.__name__ + ".left")
         return cmd
@@ -43,26 +56,26 @@ class _ScanPrinter(Command):
         self.addRequirements(printer)
         self._list_point = []
         self.get_speed = asCallable(speed)
-        self.scanned = False
+        self.printer.scanned = False
 
     def initialize(self):
         self._list_point = []
-        self.scanned = False
+        self.printer.scanned = False
         self.needed_position = 0.0
         self.printer.state = self.printer.State.Moving
 
     def execute(self):
-        if not self.scanned:
+        if not self.printer.scanned:
             self.printer.setSpeed(self.get_speed())
 
             if self.printer.seesReef():
                 self._list_point.append(self.printer.getPosition())
 
             if self._list_point and (not self.printer.seesReef()):
-                self.scanned = True
+                self.printer.scanned = True
                 self.needed_position = (self._list_point[0] + self._list_point[-1]) / 2
 
-        if self.scanned:
+        if self.printer.scanned:
             self.printer.setSpeed(-self.get_speed())
 
     def isFinished(self) -> bool:
@@ -71,7 +84,7 @@ class _ScanPrinter(Command):
         ):
             return True
 
-        if not self.scanned:
+        if not self.printer.scanned:
             return False
 
         if self.get_speed() > 0:
@@ -91,7 +104,7 @@ class _ScanPrinter(Command):
 
 
 class _ClassProperties:
-    speed = autoproperty(0.7, subtable=ScanPrinter.__name__)
+    speed = autoproperty(0.5, subtable=ScanPrinter.__name__)
 
 
 scan_printer_properties = _ClassProperties()

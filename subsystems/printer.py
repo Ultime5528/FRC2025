@@ -66,6 +66,7 @@ class Printer(Subsystem):
         self._prev_is_left = False
         self.movement_state = Printer.MovementState.Unknown
         self.state = Printer.State.Unknown
+        self.scanned = False
 
         self.alert_switch_left = self.createAlert(
             "Left switch returned incorrect value. Is it connected? "
@@ -216,3 +217,4 @@ class Printer(Subsystem):
         builder.addBooleanProperty("isLeft", tt(self.isLeft), noop)
         builder.addBooleanProperty("seesReef", tt(self.seesReef), noop)
         builder.addBooleanProperty("isInMiddleZone", tt(self.isInMiddleZone), noop)
+        builder.addBooleanProperty("scanned", tt(lambda: self.scanned), noop)
