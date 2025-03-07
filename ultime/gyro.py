@@ -7,7 +7,7 @@ from wpilib.simulation import SimDeviceSim
 from wpimath.geometry import Rotation2d
 from wpiutil import Sendable, SendableBuilder
 
-from ultime.autoproperty import autoproperty
+from ultime.autoproperty import autoproperty, defaultSetter
 from ultime.timethis import tt
 
 
@@ -45,6 +45,11 @@ class Gyro(AbstractSendable):
 
     def getRotation2d(self):
         return Rotation2d.fromDegrees(self.getAngle())
+
+    def initSendable(self, builder: SendableBuilder) -> None:
+        super().initSendable(builder)
+        builder.addDoubleProperty("angle", self.getAngle, defaultSetter)
+        builder.addDoubleProperty("pitch", self.getPitch, defaultSetter)
 
 
 class NavX(Gyro):
@@ -137,17 +142,17 @@ class ADIS16470(Gyro):
             pass
 
         builder.addFloatProperty(
-            "yaw",
+            "raw_yaw",
             tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw)),
             noop,
         )
         builder.addFloatProperty(
-            "pitch",
+            "raw_pitch",
             tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kPitch)),
             noop,
         )
         builder.addFloatProperty(
-            "roll",
+            "raw_roll",
             tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll)),
             noop,
         )
