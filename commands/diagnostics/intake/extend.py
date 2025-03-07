@@ -1,6 +1,6 @@
 from commands2 import SequentialCommandGroup
 from commands2.cmd import runOnce, deadline, run
-from wpilib import DataLogManager
+from wpilib import DataLogManager, PowerDistribution
 
 import ports
 from commands.intake.moveintake import MoveIntake
@@ -12,7 +12,7 @@ from ultime.proxy import proxy
 
 @ignore_requirements(["intake"])
 class DiagnoseExtend(SequentialCommandGroup):
-    def __init__(self, intake: Intake, pdp):
+    def __init__(self, intake: Intake, pdp: PowerDistribution):
         super().__init__(
             runOnce(proxy(self.before_command)),
             ResetIntake(intake),
