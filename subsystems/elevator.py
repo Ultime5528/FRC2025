@@ -78,7 +78,7 @@ class Elevator(Subsystem):
 
         self.alert_motor = self.createAlert(
             "Motor didn't affect battery voltage during test. Is it connected? "
-            + f"CAN={ports.CAN.elevator_motor} PDP={?}",
+            + f"CAN={ports.CAN.elevator_motor} PDP={ports.PDP.elevator_motor}",
             AlertType.Error,
         )
 
