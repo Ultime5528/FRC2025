@@ -13,6 +13,6 @@ class DiagnoseClaw(SequentialCommandGroup):
     def __init__(self, claw: Claw, pdp: PowerDistribution):
         super().__init__(
             DiagnoseHasCoral(claw),
-            # DiagnoseLeftMotor(claw, pdp),
-            # DiagnoseRightMotor(claw, pdp),
+            DiagnoseLeftMotor(claw, pdp),
+            DiagnoseRightMotor(claw, pdp),
         )
