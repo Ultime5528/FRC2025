@@ -4,8 +4,9 @@ from commands2 import (
     FunctionalCommand,
 )
 from commands2.cmd import runOnce, parallel, sequence
-from wpilib import RobotController, DataLogManager
+from wpilib import RobotController, DataLogManager, PowerDistribution
 
+import ports
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
@@ -19,9 +20,7 @@ from ultime.proxy import proxy
 
 @ignore_requirements(["arm", "elevator"])
 class DiagnoseArmMotor(SequentialCommandGroup):
-    voltage_change_threshold = autoproperty(0.5)
-
-    def __init__(self, arm: Arm, elevator: Elevator):
+    def __init__(self, arm: Arm, elevator: Elevator, pdp: PowerDistribution):
         super().__init__(
             runOnce(proxy(self.before_command)),
             MoveElevator.toLevel1(elevator),
@@ -40,36 +39,25 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             WaitCommand(0.1),
             RetractArm(arm),
             ResetElevator(elevator),
+            runOnce(proxy(self.before_command)),
         )
         self.arm = arm
-        self.voltage_before = None
-        self.voltage_during = None
-        self.voltage_after = None
+        self.pdp = pdp
 
     def before_command(self):
-        self.voltage_before = RobotController.getBatteryVoltage()
         self.arm.stop()
+        if self.pdp.getCurrent(ports.PDP.arm_motor) > 0.1:
+            DataLogManager.log(
+                f"Arm diagnostics: Motor current measured too high. {self.pdp.getCurrent(ports.PDP.arm_motor)}"
+            )
+            self.arm.alert_motor_hi.set(True)
 
     def while_extending(self):
-        self.voltage_during = RobotController.getBatteryVoltage()
+        if self.pdp.getCurrent(ports.PDP.arm_motor) < 0.1:
+            DataLogManager.log(
+                f"Arm diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.arm_motor)}"
+            )
+            self.arm.alert_motor_lo.set(True)
 
     def is_arm_extended(self):
         return self.arm.state == Arm.State.Extended
-
-    def end(self, interrupted: bool):
-        super().end(interrupted)
-        self.voltage_after = RobotController.getBatteryVoltage()
-        self.arm.stop()
-        voltage_delta_before = self.voltage_before - self.voltage_during
-        voltage_delta_after = self.voltage_after - self.voltage_during
-        DataLogManager.log(
-            "Arm diagnostics: voltage delta before" + str(voltage_delta_before)
-        )
-        DataLogManager.log(
-            "Arm diagnostics: voltage delta after" + str(voltage_delta_after)
-        )
-        if (
-            voltage_delta_before < self.voltage_change_threshold
-            or voltage_delta_after < self.voltage_change_threshold
-        ):
-            self.arm.alert_motor.set(True)

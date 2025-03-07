@@ -82,8 +82,13 @@ class Elevator(Subsystem):
             AlertType.Error,
         )
 
-        self.alert_motor = self.createAlert(
-            "Motor didn't affect battery voltage during test. Is it connected? "
+        self.alert_motor_hi = self.createAlert(
+            "Motor current measured too high. Is it connected? "
+            + f"CAN={ports.CAN.elevator_motor} PDP={ports.PDP.elevator_motor}",
+            AlertType.Error,
+        )
+        self.alert_motor_lo = self.createAlert(
+            "Motor current measured too low. Is it connected? "
             + f"CAN={ports.CAN.elevator_motor} PDP={ports.PDP.elevator_motor}",
             AlertType.Error,
         )
