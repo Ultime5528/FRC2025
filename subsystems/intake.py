@@ -77,6 +77,26 @@ class Intake(Subsystem):
             "Intake didn't return correct value in isRetracted. Is the sensor properly connected? Check connections.",
             AlertType.Error,
         )
+        self.alert_pivot_motor_hi = self.createAlert(
+            "Pivot motor current measured too high. Is it connected? "
+            + f"PWM={ports.PWM.intake_motor_pivot}",
+            AlertType.Error,
+        )
+        self.alert_pivot_motor_lo = self.createAlert(
+            "Pivot motor current measured too low. Is it connected? "
+            + f"PWM={ports.PWM.intake_motor_pivot}",
+            AlertType.Error,
+        )
+        self.alert_grab_motor_hi = self.createAlert(
+            "Grab motor current measured too high. Is it connected? "
+            + f"PWM={ports.PWM.intake_motor_grab}",
+            AlertType.Error,
+        )
+        self.alert_grab_motor_lo = self.createAlert(
+            "Grab motor current measured too low. Is it connected? "
+            + f"PWM={ports.PWM.intake_motor_grab}",
+            AlertType.Error,
+        )
 
     def periodic(self) -> None:
         if not self.hasReset():

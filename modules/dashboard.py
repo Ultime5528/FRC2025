@@ -145,9 +145,9 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                False
+                False,
             ),
-            "DropPrepareLoading.toLeft.NotAlways"
+            "DropPrepareLoading.toLeft.NotAlways",
         )
         putCommandOnDashboard(
             "Group",
@@ -158,9 +158,9 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                False
+                False,
             ),
-            "DropPrepareLoading.toRight.NotAlways"
+            "DropPrepareLoading.toRight.NotAlways",
         )
         putCommandOnDashboard(
             "Group",
@@ -171,9 +171,9 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                True
+                True,
             ),
-            "DropPrepareLoading.toLeft.Always"
+            "DropPrepareLoading.toLeft.Always",
         )
         putCommandOnDashboard(
             "Group",
@@ -184,9 +184,9 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                True
+                True,
             ),
-            "DropPrepareLoading.toRight.Always"
+            "DropPrepareLoading.toRight.Always",
         )
         putCommandOnDashboard(
             "Group",
@@ -196,7 +196,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                True
+                True,
             ),
         )
         putCommandOnDashboard(
@@ -207,7 +207,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
-                True
+                True,
             ),
         )
         putCommandOnDashboard(
@@ -220,6 +220,7 @@ class DashboardModule(Module):
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 
         wpilib.SmartDashboard.putData("Gyro", self._hardware.drivetrain._gyro)
+        wpilib.SmartDashboard.putData("PowerDistribution", self._hardware.pdp)
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:

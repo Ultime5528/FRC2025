@@ -29,8 +29,13 @@ class Arm(Subsystem):
         self._motor = wpilib.VictorSP(ports.PWM.arm_motor)
         self.state = Arm.State.Unknown
         self.movement_state = Arm.MovementState.Unknown
-        self.alert_motor = self.createAlert(
-            "Arm motor didn't affect battery voltage during test. "
+        self.alert_motor_hi = self.createAlert(
+            "Arm motor current measured too high. "
+            + f"Is it connected? PWM={ports.PWM.arm_motor} PDP={ports.PDP.arm_motor}",
+            AlertType.Error,
+        )
+        self.alert_motor_lo = self.createAlert(
+            "Arm motor current measured too low. "
             + f"Is it connected? PWM={ports.PWM.arm_motor} PDP={ports.PDP.arm_motor}",
             AlertType.Error,
         )
