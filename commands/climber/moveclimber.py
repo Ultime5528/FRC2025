@@ -6,7 +6,7 @@ from commands.printer.moveprinter import MovePrinter
 from subsystems.climber import Climber
 from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty
-from ultime.command import Command
+from ultime.command import Command, ignore_requirements
 
 
 class MoveClimber(Command):
@@ -35,6 +35,7 @@ class MoveClimber(Command):
             self.climber.state = self.new_state
 
 
+@ignore_requirements(["printer", "climber"])
 class ReadyClimberAndBalance(ParallelCommandGroup):
     def __init__(self, printer: Printer, climber: Climber):
         super().__init__(ReadyClimber(climber), MovePrinter.toRight(printer))
