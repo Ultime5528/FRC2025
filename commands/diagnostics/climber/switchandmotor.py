@@ -46,4 +46,4 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
         ):
             self.climber.alert_motor.set(True)
         if not self.climber.isClimbed():
-            self.climber.alert_lswitch.set(True)
+            self.climber.alert_switch.set(True)
