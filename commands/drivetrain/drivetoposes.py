@@ -123,7 +123,6 @@ class DriveToPoses(Command):
             )
         )
         translation_error_norm = translation_error.norm()
-        print(xy_mag)
 
         # Prevent division by zero
         if translation_error_norm < 0.01:
