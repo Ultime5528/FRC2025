@@ -150,7 +150,6 @@ class DriveToPoses(Command):
         ):
             self.currGoal += 1
 
-
     def end(self, interrupted):
         self.currGoal = 0
         self.goals: List[Pose2d] = None
@@ -167,5 +166,8 @@ class DriveToPoses(Command):
 
     def isWithinTolerances(self) -> bool:
         return (
-            self.goals[self.currGoal].translation().distance(self.drivetrain.getPose().translation()) <= self.xy_tol_pos
+            self.goals[self.currGoal]
+            .translation()
+            .distance(self.drivetrain.getPose().translation())
+            <= self.xy_tol_pos
         )
