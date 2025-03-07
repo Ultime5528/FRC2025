@@ -30,16 +30,16 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(12.0)
+    xy_speed_end = autoproperty(5.0)
     xy_tol_pos = autoproperty(0.3)
     xy_tol_pos_last = autoproperty(0.1)
     xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(10.0)
+    rot_speed_end = autoproperty(8.0)
     rot_tol_pos = autoproperty(50)
     rot_tol_pos_last = autoproperty(10.0)
-    rot_speed_max = autoproperty(10.0)
+    rot_speed_max = autoproperty(8.0)
 
     def __init__(
         self,
@@ -83,7 +83,6 @@ class DriveToPoses(Command):
             ),
             end_position=0.0,
         )
-        self.start_rotation = current_pose.rotation()
         self.trap_motion_rot = TrapezoidalMotion(
             start_speed=self.rotation_speed_constraint,
             end_speed=self.rotation_end_speed_constraint,
@@ -124,6 +123,7 @@ class DriveToPoses(Command):
             )
         )
         translation_error_norm = translation_error.norm()
+        print(xy_mag)
 
         # Prevent division by zero
         if translation_error_norm < 0.01:
@@ -131,11 +131,9 @@ class DriveToPoses(Command):
         else:
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
 
-        vel_rot = self.trap_motion_rot.calculate(
+        vel_rot = -self.trap_motion_rot.calculate(
             (self.last_goal.rotation() - current_pose.rotation()).degrees()
         )
-
-        # print(vel_xy.X(), vel_xy.Y(), vel_rot)
 
         self.drivetrain.driveRaw(
             vel_xy.X(),
@@ -152,8 +150,6 @@ class DriveToPoses(Command):
         ):
             self.currGoal += 1
 
-            if self.currGoal < len(self.goals):
-                self.updateMotions()
 
     def end(self, interrupted):
         self.currGoal = 0
@@ -171,6 +167,5 @@ class DriveToPoses(Command):
 
     def isWithinTolerances(self) -> bool:
         return (
-            self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos
-            and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos
+            self.goals[self.currGoal].translation().distance(self.drivetrain.getPose().translation()) <= self.xy_tol_pos
         )
