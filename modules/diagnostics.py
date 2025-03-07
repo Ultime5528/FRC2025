@@ -7,6 +7,7 @@ from wpilib import RobotController
 from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.diagnoseall import DiagnoseAll
+from commands.diagnostics.drivetrain import DiagnoseDrivetrain
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
@@ -20,6 +21,7 @@ class DiagnosticsModule(Module):
         self.components = hardware.subsystems + module_list.modules
 
         self.components_tests = {
+            hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
             hardware.intake: DiagnoseIntake(hardware.intake),
             hardware.claw: DiagnoseClaw(hardware.claw),
             hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
@@ -73,5 +75,6 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
+        builder.publishConstInteger("ComponentCount", len(self.components))
         builder.publishConstStringArray("Components", getComponentsNames())
         builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
