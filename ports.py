@@ -60,6 +60,7 @@ class DIO(Immutable):
 
 
 class PDP(Immutable):
+    climber_motor = "?"
     arm_motor = 12
     printer_motor = 15
     claw_motor_left = "?"
