@@ -37,7 +37,9 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+        # self.setupCommands(hardware)
 
+    def setupCommands(self, hardware):
         """
         Elevator
         """

@@ -8,6 +8,7 @@ from wpilib import Timer, DataLogManager
 from wpiutil import SendableBuilder
 
 from ultime.autoproperty import FloatProperty, asCallable
+from ultime.timethis import tt
 
 
 def ignore_requirements(reqs: list[str]):
@@ -113,10 +114,12 @@ class DeferredCommand(Command):
         super().initSendable(builder)
         builder.addStringProperty(
             "deferred",
-            lambda: (
-                "null"
-                if self._command is self._null_command
-                else self._command.getName()
+            tt(
+                lambda: (
+                    "null"
+                    if self._command is self._null_command
+                    else self._command.getName()
+                )
             ),
             lambda _: None,
         )

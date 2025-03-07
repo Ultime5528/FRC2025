@@ -13,6 +13,7 @@ from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
+from ultime.timethis import tt
 
 
 class DiagnosticsModule(Module):
@@ -77,4 +78,4 @@ class DiagnosticsModule(Module):
         builder.publishConstBoolean("Ready", True)
         builder.publishConstInteger("ComponentCount", len(self.components))
         builder.publishConstStringArray("Components", getComponentsNames())
-        builder.addDoubleArrayProperty("BatteryVoltage", getBatteryVoltage, noop)
+        builder.addDoubleArrayProperty("BatteryVoltage", tt(getBatteryVoltage), noop)
