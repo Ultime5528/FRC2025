@@ -89,7 +89,9 @@ class DriveToPoses(Command):
             end_speed=self.rotation_end_speed_constraint,
             max_speed=self.rotation_speed_constraint,
             accel=self.rot_accel,
-            start_position=(self.last_goal.rotation() - current_pose.rotation()).degrees(),
+            start_position=(
+                self.last_goal.rotation() - current_pose.rotation()
+            ).degrees(),
             end_position=0.0,
         )
 
@@ -116,7 +118,11 @@ class DriveToPoses(Command):
             self.goals[self.currGoal].translation() - current_pose.translation()
         )
 
-        xy_mag = abs(self.trap_motion_xy.calculate(self.last_goal.translation().distance(current_pose.translation())))
+        xy_mag = abs(
+            self.trap_motion_xy.calculate(
+                self.last_goal.translation().distance(current_pose.translation())
+            )
+        )
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero

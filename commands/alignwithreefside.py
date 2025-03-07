@@ -11,7 +11,6 @@ from ultime.autoproperty import autoproperty
 from ultime.command import DeferredCommand
 from ultime.vision import april_tag_field_layout
 
-
 # Links the sextants to the corresponding AprilTag ID for each reef
 alliance_to_sextant_to_tag_id = {
     DriverStation.Alliance.kBlue: {0: 21, 1: 20, 2: 19, 3: 18, 4: 17, 5: 22},
@@ -72,11 +71,9 @@ class AlignWithReefSide(DeferredCommand):
         self.addRequirements(drivetrain)
 
     def createCommand(self) -> Command:
-        return DriveToPoses(self.drivetrain, [self.getTagPoseToAlign()],
-                            10.5,
-                            5.0,
-                            15.0,
-                            5.0)
+        return DriveToPoses(
+            self.drivetrain, [self.getTagPoseToAlign()], 10.5, 5.0, 15.0, 5.0
+        )
 
     def getTagPoseToAlign(self) -> Pose2d:
         tag = getClosestReefTagID(self.drivetrain.getPose())

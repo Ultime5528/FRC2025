@@ -137,7 +137,9 @@ class ADIS16470(Gyro):
             pass
 
         builder.addFloatProperty(
-            "yaw", tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw)), noop
+            "yaw",
+            tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kYaw)),
+            noop,
         )
         builder.addFloatProperty(
             "pitch",
@@ -145,7 +147,9 @@ class ADIS16470(Gyro):
             noop,
         )
         builder.addFloatProperty(
-            "roll", tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll)), noop
+            "roll",
+            tt(lambda: self.gyro.getAngle(wpilib.ADIS16470_IMU.IMUAxis.kRoll)),
+            noop,
         )
 
 

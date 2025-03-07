@@ -11,8 +11,9 @@ from wpimath.geometry import Transform3d
 from ultime.module import Module
 from ultime.timethis import tt
 
-
-april_tag_field_layout = AprilTagFieldLayout.loadField(AprilTagField.k2025ReefscapeWelded)
+april_tag_field_layout = AprilTagFieldLayout.loadField(
+    AprilTagField.k2025ReefscapeWelded
+)
 
 
 class VisionMode(Enum):

@@ -37,10 +37,8 @@ class MoveClimber(Command):
 
 class ReadyClimberAndBalance(ParallelCommandGroup):
     def __init__(self, printer: Printer, climber: Climber):
-        super().__init__(
-            ReadyClimber(climber),
-            MovePrinter.toRight(printer)
-        )
+        super().__init__(ReadyClimber(climber), MovePrinter.toRight(printer))
+
 
 class ReadyClimber(MoveClimber):
     position = autoproperty(30)

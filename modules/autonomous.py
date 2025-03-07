@@ -155,7 +155,9 @@ class AutonomousModule(Module):
         )
 
     def autonomousInit(self):
-        self.hardware.drivetrain.swerve_odometry.resetPose(self.hardware.drivetrain.getPose())
+        self.hardware.drivetrain.swerve_odometry.resetPose(
+            self.hardware.drivetrain.getPose()
+        )
 
         self.reset_intake_command.schedule()
         self.reset_climber_command.schedule()
