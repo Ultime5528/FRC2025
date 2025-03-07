@@ -13,11 +13,7 @@ class ScanPrinter(Command):
         cmd = SequentialCommandGroup(
             MovePrinter.toRight(printer),
             _ScanPrinter.left(printer),
-            either(
-                none(),
-                MovePrinter.toRight(printer),
-                lambda: printer.scanned
-            )
+            either(none(), MovePrinter.toRight(printer), lambda: printer.scanned),
         )
         cmd.setName(ScanPrinter.__name__ + ".right")
         return cmd
@@ -27,11 +23,7 @@ class ScanPrinter(Command):
         cmd = SequentialCommandGroup(
             MovePrinter.toLeft(printer),
             _ScanPrinter.right(printer),
-            either(
-                none(),
-                MovePrinter.toLeft(printer),
-                lambda: printer.scanned
-            )
+            either(none(), MovePrinter.toLeft(printer), lambda: printer.scanned),
         )
         cmd.setName(ScanPrinter.__name__ + ".left")
         return cmd

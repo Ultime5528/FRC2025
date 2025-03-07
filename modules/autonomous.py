@@ -118,7 +118,7 @@ class AutonomousModule(Module):
                 self.hardware.drivetrain,
                 self.hardware.claw,
                 self.hardware.controller,
-                True
+                True,
             )
         )
         registerNamedCommand(
@@ -129,7 +129,7 @@ class AutonomousModule(Module):
                 self.hardware.drivetrain,
                 self.hardware.claw,
                 self.hardware.controller,
-                True
+                True,
             )
         )
         registerNamedCommand(
@@ -139,7 +139,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
-                True
+                True,
             )
         )
         registerNamedCommand(
@@ -149,7 +149,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
-                True
+                True,
             )
         )
         registerNamedCommand(

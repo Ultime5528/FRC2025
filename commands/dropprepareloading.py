@@ -27,7 +27,7 @@ class DropPrepareLoading(SequentialCommandGroup):
         drivetrain: Drivetrain,
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
-        always_drop: bool
+        always_drop: bool,
     ):
         cmd = DropPrepareLoading(
             printer, arm, elevator, drivetrain, claw, controller, "left", always_drop
@@ -43,7 +43,7 @@ class DropPrepareLoading(SequentialCommandGroup):
         drivetrain: Drivetrain,
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
-        always_drop: bool
+        always_drop: bool,
     ):
         cmd = DropPrepareLoading(
             printer, arm, elevator, drivetrain, claw, controller, "right", always_drop
@@ -60,7 +60,7 @@ class DropPrepareLoading(SequentialCommandGroup):
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
         side: Literal["right", "left"],
-        always_drop: bool
+        always_drop: bool,
     ):
         super().__init__(
             DropAutonomous(printer, arm, elevator, drivetrain, claw, side, always_drop),
@@ -73,8 +73,8 @@ class DropPrepareLoading(SequentialCommandGroup):
                     ),
                 ),
                 none(),
-                lambda: always_drop or printer.scanned
-            )
+                lambda: always_drop or printer.scanned,
+            ),
         )
 
 
