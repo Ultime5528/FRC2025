@@ -143,7 +143,9 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
+                False
             ),
+            "DropPrepareLoading.toLeft.NotAlways"
         )
         putCommandOnDashboard(
             "Group",
@@ -154,7 +156,35 @@ class DashboardModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
+                False
             ),
+            "DropPrepareLoading.toRight.NotAlways"
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                True
+            ),
+            "DropPrepareLoading.toLeft.Always"
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                True
+            ),
+            "DropPrepareLoading.toRight.Always"
         )
         putCommandOnDashboard(
             "Group",
@@ -164,6 +194,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                True
             ),
         )
         putCommandOnDashboard(
@@ -174,6 +205,7 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                True
             ),
         )
         putCommandOnDashboard(

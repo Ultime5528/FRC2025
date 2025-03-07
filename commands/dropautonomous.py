@@ -26,8 +26,9 @@ class DropAutonomous(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        always_drop: bool
     ):
-        cmd = DropAutonomous(printer, arm, elevator, drivetrain, claw, "left")
+        cmd = DropAutonomous(printer, arm, elevator, drivetrain, claw, "left", always_drop)
         cmd.setName(DropAutonomous.__name__ + ".toLeft")
         return cmd
 
@@ -38,8 +39,9 @@ class DropAutonomous(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        always_drop: bool
     ):
-        cmd = DropAutonomous(printer, arm, elevator, drivetrain, claw, "right")
+        cmd = DropAutonomous(printer, arm, elevator, drivetrain, claw, "right", always_drop)
         cmd.setName(DropAutonomous.__name__ + ".toRight")
         return cmd
 
@@ -51,6 +53,7 @@ class DropAutonomous(SequentialCommandGroup):
         drivetrain: Drivetrain,
         claw: Claw,
         side: Literal["right", "left"],
+        always_drop: bool
     ):
         super().__init__(
             either(
@@ -65,19 +68,26 @@ class DropAutonomous(SequentialCommandGroup):
                         if side == "right"
                         else ScanPrinter.left(printer)
                     ),
-                    AutoDrop(claw, elevator),
-                    # Check if elevator is level 4 and arm extended (remove algae) if not, prepare loading
+
                     either(
                         sequence(
-                            MoveElevator.toAlgae(elevator, drivetrain),
-                            DriveToPoses.back(
-                                drivetrain, lambda: _properties.distance_remove_algae
-                            ),
+                            AutoDrop(claw, elevator),
+                            either(
+                                sequence(
+                                    MoveElevator.toAlgae(elevator, drivetrain),
+                                    DriveToPoses.back(
+                                        drivetrain, lambda: _properties.distance_remove_algae
+                                    ),
+                                ),
+                                none(),
+                                lambda: elevator.state == Elevator.State.Level4
+                                        and arm.state == Arm.State.Extended,
+                            )
                         ),
                         none(),
-                        lambda: elevator.state == Elevator.State.Level4
-                        and arm.state == Arm.State.Extended,
+                        lambda: always_drop or printer.scanned
                     ),
+                    # Check if elevator is level 4 and arm extended (remove algae) if not, prepare loading
                 ),
                 lambda: elevator.state == Elevator.State.Level1,
             ),
