@@ -24,21 +24,21 @@ class DiagnoseRightMotor(Command):
 
     def execute(self):
         if self.timer.get() < 0.1:
-            self.claw.setLeft(0)
+            self.claw.setRight(0)
             if self.pdp.getCurrent(ports.PDP.claw_motor_right) > 0.1:
                 DataLogManager.log(
                     f"Claw diagnostics: Right motor current measured too high. {self.pdp.getCurrent(ports.PDP.claw_motor_right)}"
                 )
                 self.claw.alert_right_motor_hi.set(True)
         elif self.timer.get() < 1:
-            self.claw.setLeft(drop_properties.speed_level_4_right)
+            self.claw.setRight(drop_properties.speed_level_4_right)
             if self.pdp.getCurrent(ports.PDP.claw_motor_right) < 0.1:
                 DataLogManager.log(
                     f"Claw diagnostics: Right motor current measured too low. {self.pdp.getCurrent(ports.PDP.claw_motor_right)}"
                 )
                 self.claw.alert_right_motor_lo.set(True)
         elif self.timer.get() < 2:
-            self.claw.setLeft(0)
+            self.claw.setRight(0)
             if self.pdp.getCurrent(ports.PDP.claw_motor_right) > 0.1:
                 DataLogManager.log(
                     f"Claw diagnostics: Right motor current measured too high. {self.pdp.getCurrent(ports.PDP.claw_motor_right)}"
