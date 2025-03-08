@@ -1,3 +1,5 @@
+from commands2.cmd import run
+
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
@@ -40,6 +42,9 @@ class ControlModule(Module):
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
         )
+
+        hardware.controller.button(3).whileTrue(run(lambda: hardware.drivetrain.drive(0,0.2,0,False), hardware.drivetrain))
+        hardware.controller.button(2).whileTrue(run(lambda: hardware.drivetrain.drive(0.0,-0.2,0,False), hardware.drivetrain))
 
         """
         Copilot's panel

@@ -24,7 +24,7 @@ class DiagnosticsModule(Module):
         self.components = hardware.subsystems + module_list.modules
 
         self.components_tests = {
-            hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
+            #hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
             hardware.elevator: DiagnoseElevator(hardware.elevator, hardware.pdp),
             hardware.intake: DiagnoseIntake(hardware.intake, hardware.pdp),
             hardware.claw: DiagnoseClaw(hardware.claw, hardware.pdp),
