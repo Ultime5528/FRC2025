@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.743749999999999,
-        "y": 2.8650173611111107
+        "x": 3.8014982876712327,
+        "y": 2.8830479452054796
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.667621527777776,
-        "y": 2.026475694444444
+        "x": 2.72536981544901,
+        "y": 2.044506278538813
       },
       "isLocked": false,
       "linkedName": "Place Coral #17"
     },
     {
       "anchor": {
-        "x": 1.4098090277777766,
-        "y": 0.9782986111111108
+        "x": 1.3523116438356164,
+        "y": 0.9447345890410963
       },
       "prevControl": {
-        "x": 1.7325886716297063,
-        "y": 1.496748023313001
+        "x": 1.6750912876875461,
+        "y": 1.4631840012429866
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.77910291743212
+    "rotation": -36.67200408882864
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 55.49147701233164
+    "rotation": 59.42378298716654
   },
   "useDefaultConstraints": true
 }

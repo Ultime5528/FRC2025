@@ -66,6 +66,7 @@ class Printer(Subsystem):
         self._prev_is_left = False
         self.movement_state = Printer.MovementState.Unknown
         self.state = Printer.State.Unknown
+        self.scanned = False
 
         self.alert_switch_left = self.createAlert(
             "Left switch returned incorrect value. Is it connected? "
@@ -79,8 +80,13 @@ class Printer(Subsystem):
             AlertType.Error,
         )
 
-        self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected? "
+        self.alert_motor_hi = self.createAlert(
+            f"Motor current measured too high. Is it connected? "
+            + f"PWM={ports.PWM.printer_motor} PDP={ports.PDP.printer_motor}",
+            AlertType.Error,
+        )
+        self.alert_motor_lo = self.createAlert(
+            f"Motor current measured too low. Is it connected? "
             + f"PWM={ports.PWM.printer_motor} PDP={ports.PDP.printer_motor}",
             AlertType.Error,
         )
@@ -211,3 +217,4 @@ class Printer(Subsystem):
         builder.addBooleanProperty("isLeft", tt(self.isLeft), noop)
         builder.addBooleanProperty("seesReef", tt(self.seesReef), noop)
         builder.addBooleanProperty("isInMiddleZone", tt(self.isInMiddleZone), noop)
+        builder.addBooleanProperty("scanned", tt(lambda: self.scanned), noop)

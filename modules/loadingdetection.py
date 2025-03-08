@@ -13,7 +13,7 @@ class LoadingDetectionModule(Module):
         self._load_command = LoadCoral(self.claw)
         self._is_at_loading = False
 
-    def robotPeriodic(self) -> None:
+    def teleopPeriodic(self) -> None:
         self._is_at_loading = (
             self.printer.state == self.printer.State.Loading
             and self.elevator.state == self.elevator.State.Loading
