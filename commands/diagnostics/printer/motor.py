@@ -1,5 +1,5 @@
 from commands2 import SequentialCommandGroup, FunctionalCommand
-from commands2.cmd import parallel, runOnce
+from commands2.cmd import parallel, runOnce, deadline, run
 from wpilib import RobotController, DataLogManager, PowerDistribution
 
 import ports
@@ -19,13 +19,10 @@ class DiagnoseMotor(SequentialCommandGroup):
         super().__init__(
             WaitCommand(0.1),
             runOnce(proxy(self.before_moving)),
-            parallel(
+            deadline(
                 MovePrinter.toLeft(printer),
-                FunctionalCommand(
-                    lambda: None,
+                run(
                     proxy(self.during_moving),
-                    lambda _: None,
-                    lambda: printer.isLeft(),
                 ),
             ),
             WaitCommand(0.1),
