@@ -1,5 +1,6 @@
 import commands2
 import wpilib
+from commands2 import CommandScheduler
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
@@ -188,6 +189,9 @@ class DashboardModule(Module):
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 
         wpilib.SmartDashboard.putData("Gyro", self._hardware.drivetrain._gyro)
+        wpilib.SmartDashboard.putData(
+            "CommandScheduler", CommandScheduler.getInstance()
+        )
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:
