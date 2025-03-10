@@ -28,6 +28,8 @@ class LoadCoral(Command):
             self.timer.stop()
             self.timer.reset()
 
+        
+
     def isFinished(self) -> bool:
         return (
             not self.claw.seesObject()
