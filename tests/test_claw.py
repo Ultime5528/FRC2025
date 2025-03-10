@@ -291,8 +291,12 @@ def test_LoadingDetection(robot_controller: RobotTestController, robot: Robot):
     claw._sensor.setSimUnpressed()
     assert not cmd_prepare_loading.isScheduled()
     assert robot.loading_detection._is_at_loading
-    assert claw._motor_right.get() == approx(load_coral_properties.speed_right, rel=0.1)
-    assert claw._motor_left.get() == approx(load_coral_properties.speed_left, rel=0.1)
+    assert claw._motor_right.get() == approx(
+        load_coral_properties.claw_speed_right, rel=0.1
+    )
+    assert claw._motor_left.get() == approx(
+        load_coral_properties.claw_speed_left, rel=0.1
+    )
     assert not claw.has_coral
 
     # The motors are stopped
