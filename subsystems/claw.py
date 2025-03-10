@@ -11,12 +11,10 @@ from ultime.timethis import tt
 class Claw(Subsystem):
     def __init__(self):
         super().__init__()
-        from commands.claw.loadcoral import LoadCoral
 
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
-        self._load_command = LoadCoral(self)
         self.has_coral = False
         self.is_coral_retracted = False
 
@@ -54,9 +52,6 @@ class Claw(Subsystem):
 
     def seesObject(self):
         return self._sensor.isPressed()
-
-    def periodic(self) -> None:
-        pass
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)

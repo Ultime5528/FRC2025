@@ -11,8 +11,7 @@ class LoadCoral(Command):
         super().__init__()
         self.claw = claw
         self.printer = printer
-        self.addRequirements(claw)
-        self.addRequirements(printer)
+        self.addRequirements(claw, printer)
         self.timer = wpilib.Timer()
         self.speed_left_claw = load_coral_properties.claw_speed_left
         self.speed_right_claw = load_coral_properties.claw_speed_right

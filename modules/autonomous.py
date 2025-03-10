@@ -80,7 +80,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator, self.hardware.printer, self.hardware.arm
             )
         )
-        registerNamedCommand(LoadCoral(self.hardware.claw))
+        registerNamedCommand(LoadCoral(self.hardware.claw, self.hardware.printer))
         registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
         registerNamedCommand(RetractArm(self.hardware.arm))
