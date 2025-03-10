@@ -1,5 +1,3 @@
-from commands2.cmd import run
-
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm

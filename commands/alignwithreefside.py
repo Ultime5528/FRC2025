@@ -81,15 +81,18 @@ class AlignWithReefSide(DeferredCommand):
         return self.offsetTagPositions(pose, self.backwards_offset, self.left_offset)
 
     @staticmethod
-    def offsetTagPositions(tag_pos: Pose2d, backwards_offset: float, left_offset: float):
-        flipped_tag = Pose2d(tag_pos.translation(), tag_pos.rotation() + Rotation2d.fromDegrees(180))
-
+    def offsetTagPositions(
+        tag_pos: Pose2d, backwards_offset: float, left_offset: float
+    ):
+        flipped_tag = Pose2d(
+            tag_pos.translation(), tag_pos.rotation() + Rotation2d.fromDegrees(180)
+        )
 
         return [
             flipped_tag.transformBy(
-            Transform2d(-backwards_offset*1.5, left_offset, Rotation2d())
-        ),
+                Transform2d(-backwards_offset * 1.5, left_offset, Rotation2d())
+            ),
             flipped_tag.transformBy(
-            Transform2d(-backwards_offset, left_offset, Rotation2d())
-        ),
+                Transform2d(-backwards_offset, left_offset, Rotation2d())
+            ),
         ]

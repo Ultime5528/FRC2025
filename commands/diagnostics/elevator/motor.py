@@ -1,4 +1,3 @@
-import wpilib
 from commands2 import SequentialCommandGroup, FunctionalCommand, WaitCommand
 from commands2.cmd import runOnce, parallel, sequence
 from wpilib import DataLogManager, PowerDistribution

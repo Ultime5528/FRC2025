@@ -1,6 +1,6 @@
 from commands2 import SequentialCommandGroup, FunctionalCommand
 from commands2.cmd import parallel, runOnce
-from wpilib import RobotController, DataLogManager, PowerDistribution
+from wpilib import DataLogManager, PowerDistribution
 
 import ports
 from commands.printer.moveprinter import MovePrinter

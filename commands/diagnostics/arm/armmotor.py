@@ -4,7 +4,7 @@ from commands2 import (
     FunctionalCommand,
 )
 from commands2.cmd import runOnce, parallel, sequence
-from wpilib import RobotController, DataLogManager, PowerDistribution
+from wpilib import DataLogManager, PowerDistribution
 
 import ports
 from commands.arm.extendarm import ExtendArm
@@ -13,7 +13,6 @@ from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
-from ultime.autoproperty import autoproperty
 from ultime.command import ignore_requirements
 from ultime.proxy import proxy
 

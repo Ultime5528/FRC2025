@@ -1,6 +1,6 @@
-from commands2 import Command, SequentialCommandGroup
+from commands2 import SequentialCommandGroup
 from commands2.cmd import runOnce, deadline, run
-from wpilib import RobotController, PowerDistribution, DataLogManager
+from wpilib import PowerDistribution, DataLogManager
 
 import ports
 from commands.climber.moveclimber import ReadyClimber, Climb

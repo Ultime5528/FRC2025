@@ -1,6 +1,6 @@
 import wpilib
 from commands2 import Command
-from wpilib import RobotController, DataLogManager, PowerDistribution
+from wpilib import DataLogManager, PowerDistribution
 
 import ports
 from commands.claw.drop import drop_properties
