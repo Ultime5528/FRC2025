@@ -43,9 +43,6 @@ class ControlModule(Module):
             AlignWithReefSide(hardware.drivetrain)
         )
 
-        hardware.controller.button(3).whileTrue(run(lambda: hardware.drivetrain.drive(0,0.2,0,False), hardware.drivetrain))
-        hardware.controller.button(2).whileTrue(run(lambda: hardware.drivetrain.drive(0.0,-0.2,0,False), hardware.drivetrain))
-
         """
         Copilot's panel
         """

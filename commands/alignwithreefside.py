@@ -3,7 +3,7 @@ from typing import Optional
 
 from commands2 import Command
 from wpilib import DriverStation
-from wpimath.geometry import Pose2d, Rotation2d, Translation2d
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 
 from commands.drivetrain.drivetoposes import DriveToPoses
 from subsystems.drivetrain import Drivetrain
@@ -63,7 +63,8 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    pose_offset = autoproperty(0.52)
+    backwards_offset = autoproperty(0.4)
+    left_offset = autoproperty(0.05)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
@@ -71,25 +72,24 @@ class AlignWithReefSide(DeferredCommand):
         self.addRequirements(drivetrain)
 
     def createCommand(self) -> Command:
-        return DriveToPoses(self.drivetrain, [self.getTagPoseToAlign()])
+        return DriveToPoses(self.drivetrain, self.getTagPoseToAlign())
 
-    def getTagPoseToAlign(self) -> Pose2d:
+    def getTagPoseToAlign(self) -> list[Pose2d]:
         tag = getClosestReefTagID(self.drivetrain.getPose())
         pose = tag_poses[tag]
 
-        return self.offsetTagPositions(pose, self.pose_offset)
+        return self.offsetTagPositions(pose, self.backwards_offset, self.left_offset)
 
     @staticmethod
-    def offsetTagPositions(tag_pos: Pose2d, offset_from_center: float):
-        reef_center = alliance_to_reef_center[DriverStation.getAlliance()]
+    def offsetTagPositions(tag_pos: Pose2d, backwards_offset: float, left_offset: float):
+        flipped_tag = Pose2d(tag_pos.translation(), tag_pos.rotation() + Rotation2d.fromDegrees(180))
 
-        # Get vector from reef center to tag position
-        center_to_tag = tag_pos.translation() - reef_center
-        # Scale unit vector by (original magnitude + offset)
-        magnitude = center_to_tag.norm()
-        end_vector = center_to_tag * ((magnitude + offset_from_center) / magnitude)
 
-        return Pose2d(
-            reef_center + end_vector,
-            center_to_tag.angle() + Rotation2d.fromDegrees(180),
-        )
+        return [
+            flipped_tag.transformBy(
+            Transform2d(-backwards_offset*1.5, left_offset, Rotation2d())
+        ),
+            flipped_tag.transformBy(
+            Transform2d(-backwards_offset, left_offset, Rotation2d())
+        ),
+        ]

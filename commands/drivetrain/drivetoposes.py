@@ -30,14 +30,14 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(5.0)
+    xy_speed_end = autoproperty(3.0)
     xy_tol_pos = autoproperty(0.3)
     xy_tol_pos_last = autoproperty(0.1)
     xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(8.0)
-    rot_tol_pos = autoproperty(50)
+    rot_speed_end = autoproperty(4.0)
+    rot_tol_pos = autoproperty(50.0)
     rot_tol_pos_last = autoproperty(10.0)
     rot_speed_max = autoproperty(8.0)
 
