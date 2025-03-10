@@ -10,6 +10,7 @@ from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.loadcoral import LoadCoral
+from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.resetclimber import ResetClimber
 from commands.dropautonomous import DropAutonomous
@@ -80,6 +81,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator, self.hardware.printer, self.hardware.arm
             )
         )
+        registerNamedCommand(RetractCoral.retract(self.hardware.claw))
         registerNamedCommand(LoadCoral(self.hardware.claw))
         registerNamedCommand(WaitUntilCoral(self.hardware.claw))
         registerNamedCommand(AlignWithReefSide(self.hardware.drivetrain))
@@ -118,6 +120,7 @@ class AutonomousModule(Module):
                 self.hardware.drivetrain,
                 self.hardware.claw,
                 self.hardware.controller,
+                True,
             )
         )
         registerNamedCommand(
@@ -128,6 +131,7 @@ class AutonomousModule(Module):
                 self.hardware.drivetrain,
                 self.hardware.claw,
                 self.hardware.controller,
+                True,
             )
         )
         registerNamedCommand(
@@ -137,6 +141,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                True,
             )
         )
         registerNamedCommand(
@@ -146,6 +151,7 @@ class AutonomousModule(Module):
                 self.hardware.elevator,
                 self.hardware.drivetrain,
                 self.hardware.claw,
+                True,
             )
         )
         registerNamedCommand(

@@ -2,7 +2,7 @@ from typing import Literal
 
 import commands2
 from commands2 import SequentialCommandGroup
-from commands2.cmd import deadline
+from commands2.cmd import deadline, either, none, sequence
 
 from commands.drivetrain.drive import DriveField
 from commands.drivetrain.drivetoposes import DriveToPoses
@@ -27,9 +27,10 @@ class DropPrepareLoading(SequentialCommandGroup):
         drivetrain: Drivetrain,
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
+        always_drop: bool,
     ):
         cmd = DropPrepareLoading(
-            printer, arm, elevator, drivetrain, claw, controller, "left"
+            printer, arm, elevator, drivetrain, claw, controller, "left", always_drop
         )
         cmd.setName(DropPrepareLoading.__name__ + ".toLeft")
         return cmd
@@ -42,9 +43,10 @@ class DropPrepareLoading(SequentialCommandGroup):
         drivetrain: Drivetrain,
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
+        always_drop: bool,
     ):
         cmd = DropPrepareLoading(
-            printer, arm, elevator, drivetrain, claw, controller, "right"
+            printer, arm, elevator, drivetrain, claw, controller, "right", always_drop
         )
         cmd.setName(DropPrepareLoading.__name__ + ".toRight")
         return cmd
@@ -58,13 +60,20 @@ class DropPrepareLoading(SequentialCommandGroup):
         claw: Claw,
         controller: commands2.button.commandxboxcontroller,
         side: Literal["right", "left"],
+        always_drop: bool,
     ):
         super().__init__(
-            DropAutonomous(printer, arm, elevator, drivetrain, claw, side),
-            DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
-            deadline(
-                PrepareLoading(elevator, arm, printer),
-                DriveField(drivetrain, controller),
+            DropAutonomous(printer, arm, elevator, drivetrain, claw, side, always_drop),
+            either(
+                sequence(
+                    DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
+                    deadline(
+                        PrepareLoading(elevator, arm, printer),
+                        DriveField(drivetrain, controller),
+                    ),
+                ),
+                none(),
+                lambda: always_drop or printer.scanned,
             ),
         )
 

@@ -6,8 +6,9 @@ from wpilib import RobotController
 
 from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
+from commands.diagnostics.climber import DiagnoseClimber
 from commands.diagnostics.diagnoseall import DiagnoseAll
-from commands.diagnostics.drivetrain import DiagnoseDrivetrain
+from commands.diagnostics.elevator import DiagnoseElevator
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
@@ -22,11 +23,13 @@ class DiagnosticsModule(Module):
         self.components = hardware.subsystems + module_list.modules
 
         self.components_tests = {
-            hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
-            hardware.intake: DiagnoseIntake(hardware.intake),
-            hardware.claw: DiagnoseClaw(hardware.claw),
-            hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),
-            hardware.printer: DiagnosePrinter(hardware.printer),
+            # hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
+            hardware.elevator: DiagnoseElevator(hardware.elevator, hardware.pdp),
+            hardware.intake: DiagnoseIntake(hardware.intake, hardware.pdp),
+            hardware.claw: DiagnoseClaw(hardware.claw, hardware.pdp),
+            hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator, hardware.pdp),
+            hardware.printer: DiagnosePrinter(hardware.printer, hardware.pdp),
+            hardware.climber: DiagnoseClimber(hardware.climber, hardware.pdp),
         }
 
         self._battery_voltage: List[float] = []

@@ -12,7 +12,7 @@ class CoralRetractionModule(Module):
         self.cmd_retract = RetractCoral.retract(self.claw)
         self.cmd_unretract = RetractCoral.unretract(self.claw)
 
-    def robotPeriodic(self) -> None:
+    def teleopPeriodic(self) -> None:
         if (
             self.elevator.state == Elevator.State.Level4
             and self.claw.has_coral
