@@ -19,7 +19,7 @@ class LoadingDetectionModule(Module):
             and self.elevator.state == self.elevator.State.Loading
         )
 
-        if self.claw.seesObject() and not self.claw.has_coral and self._is_at_loading:
+        if self.claw.seesObject() and self._is_at_loading:
             self._load_command.schedule()
 
     def isLoading(self):
