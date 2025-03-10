@@ -59,8 +59,12 @@ class _ScanPrinter(Command):
                 self._list_point.append(self.printer.getPosition())
 
             if self._list_point and (not self.printer.seesReef()):
-                self.scanned = True
-                self.needed_position = (self._list_point[0] + self._list_point[-1]) / 2
+                object_width = abs(self._list_point[-1] - self._list_point[0])
+                if object_width <= scan_printer_properties.coral_width:
+                    self.scanned = True
+                    self.needed_position = (self._list_point[0] + self._list_point[-1]) / 2
+                else:
+                    self._list_point = []
 
         if self.scanned:
             self.printer.setSpeed(-self.get_speed())
@@ -92,6 +96,7 @@ class _ScanPrinter(Command):
 
 class _ClassProperties:
     speed = autoproperty(0.5, subtable=ScanPrinter.__name__)
+    coral_width = autoproperty(3.0, subtable=ScanPrinter.__name__)
 
 
 scan_printer_properties = _ClassProperties()
