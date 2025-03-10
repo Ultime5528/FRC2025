@@ -1,5 +1,3 @@
-from commands2.cmd import run
-
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
@@ -70,7 +68,7 @@ class ControlModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                False
+                False,
             )
         )
         AxisTrigger(hardware.panel_2, 1, "down").onTrue(
@@ -81,7 +79,7 @@ class ControlModule(Module):
                 hardware.drivetrain,
                 hardware.claw,
                 hardware.controller,
-                False
+                False,
             )
         )
         AxisTrigger(hardware.panel_2, 0, "up").onTrue(
