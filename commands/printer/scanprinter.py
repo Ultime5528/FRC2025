@@ -62,7 +62,9 @@ class _ScanPrinter(Command):
                 object_width = abs(self._list_point[-1] - self._list_point[0])
                 if object_width <= scan_printer_properties.coral_width:
                     self.scanned = True
-                    self.needed_position = (self._list_point[0] + self._list_point[-1]) / 2
+                    self.needed_position = (
+                        self._list_point[0] + self._list_point[-1]
+                    ) / 2
                 else:
                     self._list_point = []
 
