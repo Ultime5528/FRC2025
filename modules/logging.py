@@ -1,9 +1,6 @@
-import os
-
 from commands2 import CommandScheduler
 from wpilib import DataLogManager, DriverStation
 
-import ports
 from ultime.module import Module
 from ultime.timethis import print_stats_every
 
