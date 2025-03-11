@@ -13,16 +13,16 @@ class LoadCoral(Command):
         self.printer = printer
         self.addRequirements(claw, printer)
         self.timer = wpilib.Timer()
-        self.speed_left_claw = load_coral_properties.claw_speed_left
-        self.speed_right_claw = load_coral_properties.claw_speed_right
+        self.speed_left = load_coral_properties.speed_left
+        self.speed_right = load_coral_properties.speed_right
 
     def initialize(self):
         self.timer.stop()
         self.timer.reset()
 
     def execute(self):
-        self.claw.setLeft(self.speed_left_claw)
-        self.claw.setRight(self.speed_right_claw)
+        self.claw.setLeft(self.speed_left)
+        self.claw.setRight(self.speed_right)
 
         if not self.claw.seesObject():
             self.timer.start()
@@ -49,10 +49,9 @@ class LoadCoral(Command):
 
 
 class _ClassProperties:
-    # Claw Properties #
     delay = autoproperty(0.0, subtable=LoadCoral.__name__)
-    claw_speed_left = autoproperty(-0.6, subtable=LoadCoral.__name__)
-    claw_speed_right = autoproperty(0.6, subtable=LoadCoral.__name__)
+    speed_left = autoproperty(-0.6, subtable=LoadCoral.__name__)
+    speed_right = autoproperty(0.6, subtable=LoadCoral.__name__)
 
 
 load_coral_properties = _ClassProperties()
