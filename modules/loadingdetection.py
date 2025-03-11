@@ -8,9 +8,10 @@ class LoadingDetectionModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.claw = hardware.claw
+        self.printer = hardware.printer
         self.elevator = hardware.elevator
         self.printer = hardware.printer
-        self._load_command = LoadCoral(self.claw)
+        self._load_command = LoadCoral(self.claw, self.printer)
         self._is_at_loading = False
 
     def teleopPeriodic(self) -> None:

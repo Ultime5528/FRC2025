@@ -84,7 +84,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
-        putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
+        putCommandOnDashboard("Claw", LoadCoral(hardware.claw, hardware.printer))
         putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
 
         """
