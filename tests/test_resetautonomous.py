@@ -51,7 +51,7 @@ def test_resetautonomous(robot_controller: RobotTestController, robot: Robot):
     arm.state = Arm.State.Extended
 
     cmd = DropPrepareLoading.toLeft(
-        printer, arm, elevator, drivetrain, claw, controller
+        printer, arm, elevator, drivetrain, claw, controller, True
     )
     cmd.schedule()
 
