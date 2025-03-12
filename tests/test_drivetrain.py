@@ -1,4 +1,7 @@
-from commands.drivetrain.movehorizontal import MoveHorizontal
+from hal import AllianceStationID
+from wpilib.simulation import DriverStationSim
+
+from commands.alignwithreefside import AlignWithReefSide
 from commands.drivetrain.resetgyro import ResetGyro
 from robot import Robot
 from ultime.tests import RobotTestController
@@ -28,3 +31,11 @@ def test_movehorizontal(robot_controller: RobotTestController, robot: Robot):
     right_cmd.schedule()
     robot_controller.wait(2.0)
     assert robot.hardware.drivetrain.getPose().Y() <= 0
+
+
+def test_AlignWithReefSide_not_crash(
+    robot_controller: RobotTestController, robot: Robot
+):
+    DriverStationSim.setAllianceStationId(AllianceStationID.kRed1)
+    robot_controller.startTeleop()
+    robot_controller.run_command(AlignWithReefSide(robot.hardware.drivetrain), 10.0)

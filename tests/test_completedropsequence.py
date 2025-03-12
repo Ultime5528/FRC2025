@@ -19,7 +19,7 @@ def test_completedropsequence(robot_controller: RobotTestController, robot: Robo
     arm.state = Arm.State.Extended
 
     cmd = DropPrepareLoading.toLeft(
-        printer, arm, elevator, drivetrain, claw, controller
+        printer, arm, elevator, drivetrain, claw, controller, True
     )
     cmd.schedule()
 

@@ -2,14 +2,16 @@ import wpilib
 from commands2 import Command
 
 from subsystems.claw import Claw
+from subsystems.printer import Printer
 from ultime.autoproperty import autoproperty
 
 
 class LoadCoral(Command):
-    def __init__(self, claw: Claw):
+    def __init__(self, claw: Claw, printer: Printer):
         super().__init__()
         self.claw = claw
-        self.addRequirements(claw)
+        self.printer = printer
+        self.addRequirements(claw, printer)
         self.timer = wpilib.Timer()
         self.speed_left = load_coral_properties.speed_left
         self.speed_right = load_coral_properties.speed_right
@@ -28,6 +30,11 @@ class LoadCoral(Command):
             self.timer.stop()
             self.timer.reset()
 
+        if not self.printer.isRight():
+            self.printer.moveRight()
+        else:
+            self.printer.stop()
+
     def isFinished(self) -> bool:
         return (
             not self.claw.seesObject()
@@ -42,7 +49,6 @@ class LoadCoral(Command):
 
 
 class _ClassProperties:
-    # Claw Properties #
     delay = autoproperty(0.0, subtable=LoadCoral.__name__)
     speed_left = autoproperty(-0.6, subtable=LoadCoral.__name__)
     speed_right = autoproperty(0.6, subtable=LoadCoral.__name__)
