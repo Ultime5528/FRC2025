@@ -1,8 +1,16 @@
-from commands2 import CommandScheduler
+from typing import Optional
+
+from commands2 import CommandScheduler, Command
 from wpilib import DataLogManager, DriverStation
 
 from ultime.module import Module
 from ultime.timethis import print_stats_every
+
+
+def logInterrupt(interrupted: Command, interruptor: Optional[Command]):
+    DataLogManager.log(
+        f"Command {interrupted.getName()} interrupted by {interruptor.getName() if interruptor else 'None'}"
+    )
 
 
 class LoggingModule(Module):
@@ -16,11 +24,7 @@ class LoggingModule(Module):
         CommandScheduler.getInstance().onCommandFinish(
             lambda cmd: DataLogManager.log(f"Command {cmd.getName()} finished")
         )
-        CommandScheduler.getInstance().onCommandInterruptWithCause(
-            lambda interrupted, interrupter: DataLogManager.log(
-                f"Command {interrupted.getName()} interrupted by {interrupter.getName()}"
-            )
-        )
+        CommandScheduler.getInstance().onCommandInterruptWithCause(logInterrupt)
 
     def robotPeriodic(self) -> None:
         print_stats_every(5.0, "ns")
