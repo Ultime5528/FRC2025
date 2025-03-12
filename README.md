@@ -15,7 +15,7 @@
 | commands/claw/ejectcoral.py                     |        0 |        0 |        0 |        0 |    100% |           |
 | commands/claw/loadcoral.py                      |       39 |        0 |        6 |        1 |     98% |  47->exit |
 | commands/claw/retractcoral.py                   |       38 |        6 |        0 |        0 |     84% |48, 51-52, 55, 58-59 |
-| commands/claw/waituntilcoral.py                 |       10 |        1 |        0 |        0 |     90% |        15 |
+| commands/claw/waituntilcoral.py                 |       16 |        2 |        0 |        0 |     88% |    19, 22 |
 | commands/climber/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
 | commands/climber/moveclimber.py                 |       52 |        3 |        2 |        1 |     93% |24, 28, 33 |
 | commands/climber/resetclimber.py                |       25 |        0 |        6 |        0 |    100% |           |
@@ -144,7 +144,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       69 |       13 |       20 |        5 |     71% |41->exit, 48-51, 72->exit, 76-79, 83, 88-89, 93, 99, 107 |
-|                                       **TOTAL** | **5898** |  **688** |  **726** |  **121** | **85%** |           |
+|                                       **TOTAL** | **5904** |  **689** |  **726** |  **121** | **85%** |           |
 
 
 ## Setup coverage badge
