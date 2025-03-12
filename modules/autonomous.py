@@ -3,6 +3,7 @@ from typing import Optional
 
 import commands2
 import wpilib
+from wpilib import SendableChooser
 from commands2 import Command
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
@@ -72,6 +73,11 @@ class AutonomousModule(Module):
 
         self.auto_chooser = AutoBuilder.buildAutoChooser()
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
+
+        self.auto_side = SendableChooser()
+        self.auto_side.setDefaultOption("right")
+        self.auto_side.addOption("left")
+        wpilib.SmartDashboard.putData("Autonomous Side", self.auto_side)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
 
