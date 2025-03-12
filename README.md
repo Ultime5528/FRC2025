@@ -28,7 +28,7 @@
 | commands/diagnostics/claw/rightmotor.py         |       41 |        0 |        8 |        1 |     98% |  54->exit |
 | commands/diagnostics/diagnoseall.py             |        7 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/drivetrain/\_\_init\_\_.py |        9 |        0 |        0 |        0 |    100% |           |
-| commands/diagnostics/drivetrain/odometry.py     |       36 |        1 |       10 |        1 |     96% |        49 |
+| commands/diagnostics/drivetrain/odometry.py     |       36 |        0 |       10 |        1 |     98% |  48->exit |
 | commands/diagnostics/drivetrain/swerve.py       |       53 |        3 |        4 |        2 |     91% | 48-52, 88 |
 | commands/diagnostics/intake/\_\_init\_\_.py     |       10 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/intake/extend.py           |       16 |        3 |        4 |        1 |     70% |     19-22 |
@@ -97,6 +97,7 @@
 | subsystems/printer.py                           |      133 |        4 |       16 |        2 |     96% |89->exit, 141->148, 184, 190, 193, 196 |
 | tests/\_\_init\_\_.py                           |        0 |        0 |        0 |        0 |    100% |           |
 | tests/test\_arm.py                              |      213 |        0 |        6 |        1 |     99% |  304->314 |
+| tests/test\_autonomouslevel4.py                 |       11 |        0 |        4 |        1 |     93% |      8->7 |
 | tests/test\_blockelevatoruntilcoral.py          |       48 |        0 |        0 |        0 |    100% |           |
 | tests/test\_claw.py                             |      163 |        0 |        0 |        0 |    100% |           |
 | tests/test\_climber.py                          |       89 |        0 |        0 |        0 |    100% |           |
@@ -144,7 +145,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **5913** |  **690** |  **726** |  **121** | **85%** |           |
+|                                       **TOTAL** | **5924** |  **689** |  **730** |  **122** | **85%** |           |
 
 
 ## Setup coverage badge
