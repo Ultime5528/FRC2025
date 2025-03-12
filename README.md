@@ -28,7 +28,7 @@
 | commands/diagnostics/claw/rightmotor.py         |       41 |        0 |        8 |        1 |     98% |  54->exit |
 | commands/diagnostics/diagnoseall.py             |        7 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/drivetrain/\_\_init\_\_.py |        9 |        0 |        0 |        0 |    100% |           |
-| commands/diagnostics/drivetrain/odometry.py     |       36 |        0 |       10 |        1 |     98% |  48->exit |
+| commands/diagnostics/drivetrain/odometry.py     |       36 |        1 |       10 |        1 |     96% |        49 |
 | commands/diagnostics/drivetrain/swerve.py       |       53 |        3 |        4 |        2 |     91% | 48-52, 88 |
 | commands/diagnostics/intake/\_\_init\_\_.py     |       10 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/intake/extend.py           |       16 |        3 |        4 |        1 |     70% |     19-22 |
@@ -42,6 +42,7 @@
 | commands/drivetrain/\_\_init\_\_.py             |        0 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/drive.py                    |       60 |       11 |       14 |        4 |     74% |18, 22-25, 69-71, 74, 89-91 |
 | commands/drivetrain/drivetoposes.py             |       83 |        3 |       12 |        5 |     92% |13, 68, 98->101, 101->104, 104->107, 107->110, 129 |
+| commands/drivetrain/movehorizontal.py           |       26 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/resetgyro.py                |       17 |        1 |        2 |        1 |     89% |        18 |
 | commands/drivetrain/resetpose.py                |       13 |        6 |        0 |        0 |     54% |9-12, 15, 18 |
 | commands/dropautonomous.py                      |       33 |        0 |        0 |        0 |    100% |           |
@@ -74,9 +75,9 @@
 | modules/autonomous.py                           |       84 |        2 |        4 |        2 |     95% |  173, 177 |
 | modules/batterysim.py                           |       11 |       11 |        0 |        0 |      0% |      1-15 |
 | modules/blockelevatoruntilcoral.py              |       12 |        0 |        2 |        0 |    100% |           |
-| modules/control.py                              |       43 |        0 |        0 |        0 |    100% |           |
+| modules/control.py                              |       46 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
-| modules/dashboard.py                            |      119 |        1 |       12 |        2 |     98% |243, 247->250 |
+| modules/dashboard.py                            |      122 |        1 |       12 |        2 |     98% |247, 251->254 |
 | modules/diagnostics.py                          |       52 |        3 |        4 |        0 |     95% | 64-65, 69 |
 | modules/hardware.py                             |       30 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
@@ -105,7 +106,7 @@
 | tests/test\_completedropsequence.py             |       23 |        0 |        0 |        0 |    100% |           |
 | tests/test\_dashboard.py                        |        3 |        0 |        0 |        0 |    100% |           |
 | tests/test\_diagnostics.py                      |        9 |        0 |        0 |        0 |    100% |           |
-| tests/test\_drivetrain.py                       |       17 |        0 |        0 |        0 |    100% |           |
+| tests/test\_drivetrain.py                       |       27 |        0 |        0 |        0 |    100% |           |
 | tests/test\_elevator.py                         |      161 |        0 |        0 |        0 |    100% |           |
 | tests/test\_intake.py                           |       91 |        0 |        0 |        0 |    100% |           |
 | tests/test\_printer.py                          |      146 |        5 |        8 |        3 |     95% |52, 214-215, 254-255 |
@@ -145,7 +146,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **5924** |  **689** |  **730** |  **122** | **85%** |           |
+|                                       **TOTAL** | **5966** |  **690** |  **730** |  **122** | **86%** |           |
 
 
 ## Setup coverage badge
