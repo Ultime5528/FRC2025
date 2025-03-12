@@ -1,10 +1,12 @@
 from commands2 import SequentialCommandGroup
 from commands2.cmd import either, none
+from wpiutil import SendableBuilder
 
 from commands.printer.moveprinter import MovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import FloatProperty, autoproperty, asCallable
 from ultime.command import Command
+from ultime.timethis import tt
 
 
 class ScanPrinter(Command):
@@ -48,13 +50,14 @@ class _ScanPrinter(Command):
         self.addRequirements(printer)
         self._list_point = []
         self.get_speed = asCallable(speed)
-        self.printer.scanned = False
+        self.object_width: float = 0.0
 
     def initialize(self):
         self._list_point = []
         self.printer.scanned = False
         self.needed_position = 0.0
         self.printer.state = self.printer.State.Moving
+        self.object_width = 0.0
 
     def execute(self):
         if not self.printer.scanned:
@@ -64,8 +67,14 @@ class _ScanPrinter(Command):
                 self._list_point.append(self.printer.getPosition())
 
             if self._list_point and (not self.printer.seesReef()):
-                self.printer.scanned = True
-                self.needed_position = (self._list_point[0] + self._list_point[-1]) / 2
+                self.object_width = abs(self._list_point[-1] - self._list_point[0])
+                if self.object_width <= scan_printer_properties.coral_width:
+                    self.scanned = True
+                    self.needed_position = (
+                        self._list_point[0] + self._list_point[-1]
+                    ) / 2
+                else:
+                    self._list_point = []
 
         if self.printer.scanned:
             self.printer.setSpeed(-self.get_speed())
@@ -94,9 +103,16 @@ class _ScanPrinter(Command):
         self.printer.stop()
         self.printer.state = self.printer.State.Unknown
 
+    def initSendable(self, builder: SendableBuilder) -> None:
+        def noop(x):
+            pass
+
+        builder.addFloatProperty("ObjectWidth", tt(lambda: self.object_width), noop)
+
 
 class _ClassProperties:
     speed = autoproperty(0.5, subtable=ScanPrinter.__name__)
+    coral_width = autoproperty(3.0, subtable=ScanPrinter.__name__)
 
 
 scan_printer_properties = _ClassProperties()
