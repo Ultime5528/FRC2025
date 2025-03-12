@@ -80,8 +80,13 @@ class Printer(Subsystem):
             AlertType.Error,
         )
 
-        self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected? "
+        self.alert_motor_hi = self.createAlert(
+            f"Motor current measured too high. Is it connected? "
+            + f"PWM={ports.PWM.printer_motor} PDP={ports.PDP.printer_motor}",
+            AlertType.Error,
+        )
+        self.alert_motor_lo = self.createAlert(
+            f"Motor current measured too low. Is it connected? "
             + f"PWM={ports.PWM.printer_motor} PDP={ports.PDP.printer_motor}",
             AlertType.Error,
         )

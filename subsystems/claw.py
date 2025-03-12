@@ -23,13 +23,23 @@ class Claw(Subsystem):
             + f"Is there an actual coral in the loader? DIO={ports.DIO.claw_photocell}",
             AlertType.Warning,
         )
-        self.alert_left_motor = self.createAlert(
-            "Left motor didn't affect battery voltage during test. "
+        self.alert_left_motor_hi = self.createAlert(
+            "Left motor current measured too high. "
             + f"Is it connected? PWM={ports.PWM.claw_motor_left} DIO={ports.PDP.claw_motor_left}",
             AlertType.Error,
         )
-        self.alert_right_motor = self.createAlert(
-            "Right motor didn't affect battery voltage during test. "
+        self.alert_left_motor_lo = self.createAlert(
+            "Left motor current measured too low. "
+            + f"Is it connected? PWM={ports.PWM.claw_motor_left} DIO={ports.PDP.claw_motor_left}",
+            AlertType.Error,
+        )
+        self.alert_right_motor_hi = self.createAlert(
+            "Right motor current measured too high. "
+            + f"Is it connected? PWM={ports.PWM.claw_motor_right} DIO={ports.PDP.claw_motor_right}",
+            AlertType.Error,
+        )
+        self.alert_right_motor_lo = self.createAlert(
+            "Right motor current measured too low. "
             + f"Is it connected? PWM={ports.PWM.claw_motor_right} DIO={ports.PDP.claw_motor_right}",
             AlertType.Error,
         )

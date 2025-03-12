@@ -220,6 +220,7 @@ class DashboardModule(Module):
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 
         wpilib.SmartDashboard.putData("Gyro", self._hardware.drivetrain._gyro)
+        wpilib.SmartDashboard.putData("PowerDistribution", self._hardware.pdp)
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:
