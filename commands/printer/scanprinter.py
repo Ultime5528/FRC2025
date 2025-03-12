@@ -50,7 +50,7 @@ class _ScanPrinter(Command):
         self.addRequirements(printer)
         self._list_point = []
         self.get_speed = asCallable(speed)
-        self.scanned = False
+        self.printer.scanned = False
         self.object_width: float = 0.0
 
     def initialize(self):
