@@ -8,6 +8,7 @@ from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
 
+from ultime.alert import AlertType
 from ultime.module import Module
 from ultime.timethis import tt
 
@@ -28,11 +29,18 @@ class Vision(Module):
         self._cam = PhotonCamera(self.camera_name)
         self.mode = VisionMode.Relative
 
+        self.alert_vision_offline = self.createAlert(
+            "Vision camera is having connection issues, check for connections?",
+            AlertType.Error,
+        )
+
+    def robotPeriodic(self) -> None:
+        self.alert_vision_offline.set(not self._cam.isConnected())
+
 
 class RelativeVision(Vision):
     def __init__(self, camera_name: str):
         super().__init__(camera_name=camera_name)
-
         self._targets: List[PhotonTrackedTarget] = []
 
     def robotPeriodic(self) -> None:
