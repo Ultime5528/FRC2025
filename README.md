@@ -77,7 +77,7 @@
 | modules/control.py                              |       43 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
 | modules/dashboard.py                            |      119 |        1 |       12 |        2 |     98% |243, 247->250 |
-| modules/diagnostics.py                          |       47 |        3 |        4 |        0 |     94% | 58-59, 63 |
+| modules/diagnostics.py                          |       52 |        3 |        4 |        0 |     95% | 64-65, 69 |
 | modules/hardware.py                             |       30 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
 | modules/logging.py                              |       17 |        0 |        0 |        0 |    100% |           |
@@ -123,7 +123,7 @@
 | ultime/gyro.py                                  |      131 |       47 |       10 |        5 |     63% |29->exit, 32->exit, 35->exit, 38->exit, 41, 44, 57-63, 66, 69, 72, 75, 80-84, 87, 90, 93, 96, 132, 136, 142, 163-167, 170, 173, 176, 179, 184-193, 196, 199, 202-203, 206-207, 210, 213 |
 | ultime/immutable.py                             |        6 |        2 |        0 |        0 |     67% |      3, 8 |
 | ultime/linearinterpolator.py                    |       25 |       25 |        6 |        0 |      0% |      1-36 |
-| ultime/module.py                                |       81 |        7 |       20 |        2 |     91% |21, 42, 48, 54, 60, 66, 97, 109->108 |
+| ultime/module.py                                |       81 |        8 |       20 |        2 |     90% |21, 24, 42, 48, 54, 60, 66, 97, 109->108 |
 | ultime/modulerobot.py                           |       45 |        1 |        4 |        2 |     94% |22->exit, 28->exit, 65 |
 | ultime/proxy.py                                 |       19 |        0 |        2 |        0 |    100% |           |
 | ultime/subsystem.py                             |       26 |        2 |        4 |        0 |     93% |    13, 35 |
@@ -143,8 +143,8 @@
 | ultime/tests/utils.py                           |       74 |        7 |       10 |        0 |     92% |28-29, 40-44 |
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
-| ultime/vision.py                                |       69 |       13 |       20 |        5 |     71% |41->exit, 48-51, 72->exit, 76-79, 83, 88-89, 93, 99, 107 |
-|                                       **TOTAL** | **5904** |  **689** |  **726** |  **121** | **85%** |           |
+| ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
+|                                       **TOTAL** | **5913** |  **690** |  **726** |  **121** | **85%** |           |
 
 
 ## Setup coverage badge
