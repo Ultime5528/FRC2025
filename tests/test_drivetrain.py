@@ -1,3 +1,4 @@
+from commands.drivetrain.movehorizontal import MoveHorizontal
 from commands.drivetrain.resetgyro import ResetGyro
 from robot import Robot
 from ultime.tests import RobotTestController
@@ -10,3 +11,20 @@ def test_ResetGyro(robot_controller: RobotTestController, robot: Robot):
     cmd.schedule()
     robot_controller.wait(0.5)
     assert not cmd.isScheduled()
+
+
+def test_movehorizontal(robot_controller: RobotTestController, robot: Robot):
+    robot_controller.startTeleop()
+    robot_controller.wait(0.5)
+
+    # Move left
+    left_cmd = MoveHorizontal.left(robot.hardware.drivetrain)
+    left_cmd.schedule()
+    robot_controller.wait(1.0)
+    assert robot.hardware.drivetrain.getPose().Y() >= 1
+
+    # Move right
+    right_cmd = MoveHorizontal.right(robot.hardware.drivetrain)
+    right_cmd.schedule()
+    robot_controller.wait(2.0)
+    assert robot.hardware.drivetrain.getPose().Y() <= 0

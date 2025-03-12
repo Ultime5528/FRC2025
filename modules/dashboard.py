@@ -9,6 +9,7 @@ from commands.claw.loadcoral import LoadCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.movehorizontal import MoveHorizontal
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
@@ -37,7 +38,7 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
-        # self.setupCommands(hardware)
+        self.setupCommands(hardware)
 
     def setupCommands(self, hardware):
         """
@@ -114,6 +115,9 @@ class DashboardModule(Module):
         Groups
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", MoveHorizontal.left(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", MoveHorizontal.right(hardware.drivetrain))
+
         putCommandOnDashboard(
             "Group",
             ResetAll(
