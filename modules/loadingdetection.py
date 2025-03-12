@@ -8,18 +8,19 @@ class LoadingDetectionModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.claw = hardware.claw
+        self.printer = hardware.printer
         self.elevator = hardware.elevator
         self.printer = hardware.printer
-        self._load_command = LoadCoral(self.claw)
+        self._load_command = LoadCoral(self.claw, self.printer)
         self._is_at_loading = False
 
-    def robotPeriodic(self) -> None:
+    def teleopPeriodic(self) -> None:
         self._is_at_loading = (
             self.printer.state == self.printer.State.Loading
             and self.elevator.state == self.elevator.State.Loading
         )
 
-        if self.claw.seesObject() and not self.claw.has_coral and self._is_at_loading:
+        if self.claw.seesObject() and self._is_at_loading:
             self._load_command.schedule()
 
     def isLoading(self):
