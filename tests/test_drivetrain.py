@@ -2,6 +2,7 @@ from hal import AllianceStationID
 from wpilib.simulation import DriverStationSim
 
 from commands.alignwithreefside import AlignWithReefSide
+from commands.drivetrain.movehorizontal import MoveHorizontal
 from commands.drivetrain.resetgyro import ResetGyro
 from robot import Robot
 from ultime.tests import RobotTestController
