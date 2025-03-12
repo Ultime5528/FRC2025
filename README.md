@@ -76,11 +76,11 @@
 | modules/blockelevatoruntilcoral.py              |       12 |        0 |        2 |        0 |    100% |           |
 | modules/control.py                              |       43 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
-| modules/dashboard.py                            |      117 |        1 |       12 |        2 |     98% |239, 243->246 |
+| modules/dashboard.py                            |      119 |        1 |       12 |        2 |     98% |243, 247->250 |
 | modules/diagnostics.py                          |       47 |        3 |        4 |        0 |     94% | 58-59, 63 |
 | modules/hardware.py                             |       30 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
-| modules/logging.py                              |       21 |        1 |        6 |        1 |     93% |        26 |
+| modules/logging.py                              |       17 |        0 |        0 |        0 |    100% |           |
 | modules/propertysavechecker.py                  |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | modules/tagvision.py                            |       35 |        5 |        6 |        2 |     78% |36-38, 50, 58 |
 | ports.py                                        |       39 |        0 |        0 |        0 |    100% |           |
@@ -144,7 +144,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       69 |       13 |       20 |        5 |     71% |41->exit, 48-51, 72->exit, 76-79, 83, 88-89, 93, 99, 107 |
-|                                       **TOTAL** | **5889** |  **683** |  **730** |  **122** | **85%** |           |
+|                                       **TOTAL** | **5887** |  **682** |  **724** |  **121** | **85%** |           |
 
 
 ## Setup coverage badge
