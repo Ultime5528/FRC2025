@@ -8,6 +8,7 @@ from ultime.command import ignore_requirements
 
 @ignore_requirements(["claw"])
 class WaitUntilCoral(Command):
+    timeout = autoproperty(3.0)
 
     def __init__(self, claw: Claw):
         super().__init__()
@@ -15,16 +16,7 @@ class WaitUntilCoral(Command):
         self.timer = wpilib.Timer()
 
     def initialize(self):
-        self.timer.stop()
-        self.timer.reset()
-        self.timer.start()
+        self.timer.restart()
 
     def isFinished(self) -> bool:
-        return self.claw.seesObject() or self.timer.get() >= _properties.timeout
-
-
-class _ClassProperties:
-    timeout = autoproperty(3, subtable=WaitUntilCoral.__name__)
-
-
-_properties = _ClassProperties()
+        return self.claw.seesObject() or self.timer.hasElapsed(self.timeout)
