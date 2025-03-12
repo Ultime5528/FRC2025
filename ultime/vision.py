@@ -29,11 +29,18 @@ class Vision(Module):
         self._cam = PhotonCamera(self.camera_name)
         self.mode = VisionMode.Relative
 
+        self.alert_vision_offline = self.createAlert(
+            "Vision camera is having connection issues, check for connections?",
+            AlertType.Error,
+        )
+
+    def robotPeriodic(self) -> None:
+        self.alert_vision_offline.set(not self._cam.isConnected())
+
 
 class RelativeVision(Vision):
     def __init__(self, camera_name: str):
         super().__init__(camera_name=camera_name)
-
         self._targets: List[PhotonTrackedTarget] = []
 
     def robotPeriodic(self) -> None:
@@ -67,13 +74,8 @@ class AbsoluteVision(Vision):
             PoseStrategy.LOWEST_AMBIGUITY
         )
 
-        self.alert_vision_offline = self.createAlert(
-            "Vision camera is having connection issues, check for connections?",
-            AlertType.Error,
-        )
-
     def robotPeriodic(self) -> None:
-        self.alert_vision_offline.set(not self._cam.isConnected())
+        super().robotPeriodic()
 
         if self.mode == VisionMode.Absolute:
             self.estimated_pose = self.camera_pose_estimator.update()
