@@ -8,6 +8,7 @@ from commands.climber.moveclimber import (
     ReadyClimberAndBalance,
 )
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.movehorizontal import MoveHorizontal
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
@@ -39,6 +40,12 @@ class ControlModule(Module):
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
+        )
+        hardware.controller.povLeft().whileTrue(
+            MoveHorizontal.left(hardware.drivetrain)
+        )
+        hardware.controller.povRight().whileTrue(
+            MoveHorizontal.right(hardware.drivetrain)
         )
 
         """
