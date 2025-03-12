@@ -19,7 +19,8 @@ from ultime.timethis import tt
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.components = hardware.subsystems + module_list.modules
+        self.hardware = hardware
+        self.module_list = module_list
 
         self.components_tests = {
             hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
@@ -46,6 +47,10 @@ class DiagnosticsModule(Module):
     def robotPeriodic(self) -> None:
         self._battery_voltage.append(RobotController.getBatteryVoltage())
         self._battery_voltage = self._battery_voltage[-100:]
+
+    @property
+    def components(self):
+        return self.hardware.subsystems + self.module_list.modules
 
     def testInit(self) -> None:
         CommandScheduler.getInstance().enable()
@@ -76,6 +81,8 @@ class DiagnosticsModule(Module):
                 return []
 
         builder.publishConstBoolean("Ready", True)
-        builder.publishConstInteger("ComponentCount", len(self.components))
-        builder.publishConstStringArray("Components", getComponentsNames())
+        builder.addIntegerProperty(
+            "ComponentCount", tt(lambda: len(self.components)), noop
+        )
+        builder.addStringArrayProperty("Components", tt(getComponentsNames), noop)
         builder.addDoubleArrayProperty("BatteryVoltage", tt(getBatteryVoltage), noop)
