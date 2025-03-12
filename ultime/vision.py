@@ -8,6 +8,7 @@ from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
 
+from ultime.alert import AlertType
 from ultime.module import Module
 from ultime.timethis import tt
 
@@ -66,8 +67,13 @@ class AbsoluteVision(Vision):
             PoseStrategy.LOWEST_AMBIGUITY
         )
 
+        self.alert_vision_offline = self.createAlert(
+            "Vision camera is having connection issues, check for connections?",
+            AlertType.Error,
+        )
+
     def robotPeriodic(self) -> None:
-        super().robotPeriodic()
+        self.alert_vision_offline.set(not self._cam.isConnected())
 
         if self.mode == VisionMode.Absolute:
             self.estimated_pose = self.camera_pose_estimator.update()
