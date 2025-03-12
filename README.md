@@ -61,7 +61,7 @@
 | commands/printer/manualmoveprinter.py           |       34 |        0 |        4 |        1 |     97% |  34->exit |
 | commands/printer/moveprinter.py                 |       97 |        2 |        8 |        2 |     96% |  122, 133 |
 | commands/printer/resetprinter.py                |       21 |        0 |        2 |        0 |    100% |           |
-| commands/printer/scanprinter.py                 |       64 |        7 |       14 |        5 |     82% |60->70, 64, 67-68, 71, 82-88 |
+| commands/printer/scanprinter.py                 |       75 |       13 |       16 |        5 |     76% |63->79, 67, 70-77, 80, 91-97, 107-110 |
 | commands/resetall.py                            |       13 |        0 |        0 |        0 |    100% |           |
 | commands/resetallbutclimber.py                  |       16 |        0 |        0 |        0 |    100% |           |
 | commands/resetautonomous.py                     |       14 |        0 |        0 |        0 |    100% |           |
@@ -144,7 +144,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       69 |       13 |       20 |        5 |     71% |41->exit, 48-51, 72->exit, 76-79, 83, 88-89, 93, 99, 107 |
-|                                       **TOTAL** | **5887** |  **682** |  **724** |  **121** | **85%** |           |
+|                                       **TOTAL** | **5898** |  **688** |  **726** |  **121** | **85%** |           |
 
 
 ## Setup coverage badge
