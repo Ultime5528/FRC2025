@@ -13,14 +13,15 @@ from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
+from ultime.proxy import proxy
 from ultime.timethis import tt
 
 
 class DiagnosticsModule(Module):
     def __init__(self, hardware: HardwareModule, module_list: ModuleList):
         super().__init__()
-        self.hardware = hardware
-        self.module_list = module_list
+        self.hardware = proxy(hardware)
+        self.module_list = proxy(module_list)
 
         self.components_tests = {
             hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
