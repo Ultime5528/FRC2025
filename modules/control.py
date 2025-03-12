@@ -41,8 +41,12 @@ class ControlModule(Module):
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
         )
-        hardware.controller.povLeft().whileTrue(MoveHorizontal.left(hardware.drivetrain))
-        hardware.controller.povRight().whileTrue(MoveHorizontal.right(hardware.drivetrain))
+        hardware.controller.povLeft().whileTrue(
+            MoveHorizontal.left(hardware.drivetrain)
+        )
+        hardware.controller.povRight().whileTrue(
+            MoveHorizontal.right(hardware.drivetrain)
+        )
 
         """
         Copilot's panel
