@@ -26,7 +26,7 @@ class MoveHorizontal(Command):
         self.drivetrain.drive(0, self.speed(), 0, False)
 
     def end(self, interrupted: bool):
-        self.drivetrain.drive(0, 0, 0, True)
+        self.drivetrain.stop()
 
 
 class _ClassProperties:

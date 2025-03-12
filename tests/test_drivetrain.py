@@ -18,20 +18,19 @@ def test_ResetGyro(robot_controller: RobotTestController, robot: Robot):
 
 
 def test_movehorizontal(robot_controller: RobotTestController, robot: Robot):
+    drivetrain = robot.hardware.drivetrain
+
     robot_controller.startTeleop()
-    robot_controller.wait(0.5)
 
     # Move left
-    left_cmd = MoveHorizontal.left(robot.hardware.drivetrain)
+    left_cmd = MoveHorizontal.left(drivetrain)
     left_cmd.schedule()
-    robot_controller.wait(1.0)
-    assert robot.hardware.drivetrain.getPose().Y() >= 1
+    robot_controller.wait_until(lambda: drivetrain.getPose().Y() >= 1, 1.0)
 
     # Move right
-    right_cmd = MoveHorizontal.right(robot.hardware.drivetrain)
+    right_cmd = MoveHorizontal.right(drivetrain)
     right_cmd.schedule()
-    robot_controller.wait(2.0)
-    assert robot.hardware.drivetrain.getPose().Y() <= 0
+    robot_controller.wait_until(lambda: drivetrain.getPose().Y() <= 0, 1.0)
 
 
 def test_AlignWithReefSide_not_crash(
