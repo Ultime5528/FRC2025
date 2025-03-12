@@ -22,8 +22,9 @@ class WaitUntilCoral(Command):
     def isFinished(self) -> bool:
         return self.claw.seesObject() or self.timer.get() >= _properties.timeout
 
+
 class _ClassProperties:
     timeout = autoproperty(3, subtable=WaitUntilCoral.__name__)
 
 
-_properties=_ClassProperties()
+_properties = _ClassProperties()
