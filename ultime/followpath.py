@@ -1,6 +1,7 @@
 __all__ = ["FollowPath"]
 
 import math
+from typing import Literal, Callable, List
 
 from commands2 import Command
 from pathplannerlib.config import RobotConfig
@@ -9,7 +10,7 @@ from pathplannerlib.telemetry import PPLibTelemetry
 from pathplannerlib.trajectory import PathPlannerTrajectoryState
 from wpilib import DriverStation
 from wpimath._controls._controls.trajectory import Trajectory
-from wpimath.geometry import Rotation2d, Pose2d
+from wpimath.geometry import Rotation2d, Pose2d, Translation2d
 
 from commands.drivetrain.drivetoposes import DriveToPoses
 from subsystems.drivetrain import Drivetrain
@@ -22,6 +23,17 @@ def shouldFlipPath():
     # This will flip the path being followed to the red side of the field.
     # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
     return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+
+def flipPose(unflipped_pose: Pose2d):
+    k_field_size_x: float = 17.55 # meters
+    k_field_size_y: float = 8.05 # meters
+
+    pose_translation: Translation2d = unflipped_pose.translation()
+    pose_rotation: Rotation2d = unflipped_pose.rotation()
+
+    return Pose2d(Translation2d(pose_translation.X(), k_field_size_y - pose_translation.Y()),
+                  -pose_rotation)
+
 
 
 def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
@@ -47,16 +59,22 @@ def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
     return poses
 
 
+def flip_side(poses: List[Pose2d], should_flip_side: bool) -> List[Pose2d]:
+    return list(map(flipPose, poses)) if should_flip_side else poses
+
+
 class FollowPathWithDriveToPoses(DeferredCommand):
-    def __init__(self, path: PathPlannerPath, drivetrain: Drivetrain):
+    def __init__(self, path: PathPlannerPath, drivetrain: Drivetrain, should_flip_side: Callable[[], bool]):
         super().__init__()
         self.drivetrain = drivetrain
         self.poses = pathToPoses(path)
         self.flipped_poses = pathToPoses(path.flipPath())
+        self.should_flip_side = should_flip_side
+
         self.addRequirements(drivetrain)
 
     def createCommand(self) -> Command:
-        return DriveToPoses(self.drivetrain, self.getPoses())
+        return DriveToPoses(self.drivetrain, flip_side(self.getPoses(), self.should_flip_side()))
 
     def getPoses(self) -> list[Pose2d]:
         return self.flipped_poses if shouldFlipPath() else self.poses

@@ -53,8 +53,15 @@ class AutonomousModule(Module):
         #     self.hardware.drivetrain,
         # )
 
+
+        self.auto_side = SendableChooser()
+        self.auto_side.setDefaultOption("Right", False)
+        self.auto_side.addOption("Left", True)
+        wpilib.SmartDashboard.putData("Autonomous Side", self.auto_side)
+
+
         self.createFollowPathCommand = lambda path: FollowPath(
-            path, self.hardware.drivetrain
+            path, self.hardware.drivetrain, self.auto_side.getSelected
         )
 
         AutoBuilder.configureCustom(
@@ -73,11 +80,6 @@ class AutonomousModule(Module):
 
         self.auto_chooser = AutoBuilder.buildAutoChooser()
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
-
-        self.auto_side = SendableChooser()
-        self.auto_side.setDefaultOption("right")
-        self.auto_side.addOption("left")
-        wpilib.SmartDashboard.putData("Autonomous Side", self.auto_side)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
 

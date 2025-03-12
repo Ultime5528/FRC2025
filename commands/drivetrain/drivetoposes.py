@@ -7,7 +7,6 @@ from subsystems.drivetrain import Drivetrain
 from ultime.auto import eitherRedBlue
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
 from ultime.trapezoidalmotion import TrapezoidalMotion
-from modules.autonomous import AutonomousModule
 
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d
 import math
@@ -15,17 +14,6 @@ import math
 
 def pose(x: float, y: float, deg: float) -> Pose2d:
     return Pose2d(x, y, Rotation2d.fromDegrees(deg))
-
-def flipPose(pose: Pose2d):
-    kFieldSizeX: float = 17.55 # meters
-    kFieldSizeY: float = 8.05 # meters
-
-    pose_translation: Translation2d = pose.translation()
-    pose_rotation: Rotation2d = pose.rotation()
-
-    return Pose2d(Translation2d(pose_translation.X(), kFieldSizeY - pose_translation.Y()),
-                  Rotation2d(math.pi) - pose_rotation)
-
 
 
 class DriveToPoses(Command):
@@ -59,7 +47,6 @@ class DriveToPoses(Command):
     def __init__(
         self,
         drivetrain: Drivetrain,
-        autonomous_module: AutonomousModule
         goals: List[Pose2d] | Callable[[], List[Pose2d]],
         speed_constraint: Optional[float] = None,
         end_speed_constraint: Optional[float] = None,
@@ -69,7 +56,6 @@ class DriveToPoses(Command):
         super().__init__()
         self.addRequirements(drivetrain)
         self.drivetrain = drivetrain
-        self.autonomous_module = autonomous_module
         self.get_goals = goals if callable(goals) else lambda: goals
         self.goals: List[Pose2d] = None
         self.last_goal: Pose2d = None
@@ -125,8 +111,6 @@ class DriveToPoses(Command):
             self.rotation_end_speed_constraint = self.rot_speed_end
 
         self.goals = self.get_goals()
-        if self.autonomous_module.auto_side == "left":
-            self.goals = map(flipPose, self.goals)
         self.currGoal = 0
         self.updateMotions()
 
