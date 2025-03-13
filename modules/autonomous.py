@@ -36,41 +36,12 @@ class AutonomousModule(Module):
         super().__init__()
         self.hardware = proxy(hardware)
 
-        # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
-        # Must test which AutoBuilder works best
-        # AutoBuilder.configure(
-        #     self.hardware.drivetrain.getPose,
-        #     self.hardware.drivetrain.resetToPose,
-        #     self.hardware.drivetrain.getRobotRelativeChassisSpeeds,
-        #     self.hardware.drivetrain.driveFromChassisSpeeds,
-        #     PPHolonomicDriveController(
-        #         PIDConstants(5, 0, 0),
-        #         PIDConstants(5, 0, 0),
-        #     ),
-        #     RobotConfig.fromGUISettings(),
-        #     shouldFlipPath,
-        #     self.hardware.drivetrain,
-        # )
-
-        self.createFollowPathCommand = lambda path: FollowPath(
-            path, self.hardware.drivetrain
-        )
-
-        AutoBuilder.configureCustom(
-            proxy(self.createFollowPathCommand),
-            lambda _: None,  # Disable resetOdometry
-            True,
-            lambda: False,  # Disable flipping, will be done by the command
-        )
-
         self.reset_climber_command = ResetClimber(self.hardware.climber)
         self.reset_intake_command = ResetIntake(self.hardware.intake)
 
-        self.setupCommandsOnPathPlanner()
-
         self.auto_command: Optional[commands2.Command] = None
 
-        self.auto_chooser = AutoBuilder.buildAutoChooser()
+        self.auto_chooser = wpilib.SendableChooser()
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
@@ -176,17 +147,3 @@ class AutonomousModule(Module):
         if self.auto_command:
             self.auto_command.cancel()
 
-    def __del__(self):
-        AutoBuilder._configured = False
-
-        AutoBuilder._pathFollowingCommandBuilder = None
-        AutoBuilder._getPose = None
-        AutoBuilder._resetPose = None
-        AutoBuilder._shouldFlipPath = None
-        AutoBuilder._isHolonomic = False
-
-        AutoBuilder._pathfindingConfigured = False
-        AutoBuilder._pathfindToPoseCommandBuilder = None
-        AutoBuilder._pathfindThenFollowPathCommandBuilder = None
-
-        NamedCommands._namedCommands = {}
