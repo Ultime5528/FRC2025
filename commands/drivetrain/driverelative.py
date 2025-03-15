@@ -43,9 +43,10 @@ class DriveRelative(Command):
     def initialize(self):
         self.normalized_speed = self.direction / self.direction.norm() * self.speed
 
-
     def execute(self):
-        self.drivetrain.drive(self.normalized_speed.x, self.normalized_speed.y, 0, False)
+        self.drivetrain.drive(
+            self.normalized_speed.x, self.normalized_speed.y, 0, False
+        )
 
     def end(self, interrupted: bool):
         self.drivetrain.stop()
