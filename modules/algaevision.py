@@ -17,6 +17,7 @@ class AlgaeVisionModule(RelativeVision):
         )
         self.mode = VisionMode.Relative
         self._field = wpilib.Field2d()
+        wpilib.SmartDashboard.putData("AlgaeField", self._field)
 
     def robotPeriodic(self) -> None:
         if self.getClosestTargetPose() is not None:
