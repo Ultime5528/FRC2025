@@ -9,7 +9,7 @@ from pathplannerlib.auto import NamedCommands
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.autonomous.megaautonome import MegaAutonomous
+from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
