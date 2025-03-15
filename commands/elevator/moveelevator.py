@@ -169,7 +169,7 @@ class _ClassProperties:
     position_loading = autoproperty(0.0, subtable=MoveElevator.__name__)
 
     speed_min = autoproperty(0.11, subtable=MoveElevator.__name__)
-    speed_max = autoproperty(0.5, subtable=MoveElevator.__name__)
+    speed_max = autoproperty(0.7, subtable=MoveElevator.__name__)
     accel = autoproperty(2.0, subtable=MoveElevator.__name__)
 
 
