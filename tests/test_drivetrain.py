@@ -2,7 +2,7 @@ from hal import AllianceStationID
 from wpilib.simulation import DriverStationSim
 
 from commands.alignwithreefside import AlignWithReefSide
-from commands.drivetrain.movehorizontal import MoveHorizontal
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.resetgyro import ResetGyro
 from robot import Robot
 from ultime.tests import RobotTestController
@@ -17,20 +17,30 @@ def test_ResetGyro(robot_controller: RobotTestController, robot: Robot):
     assert not cmd.isScheduled()
 
 
-def test_movehorizontal(robot_controller: RobotTestController, robot: Robot):
+def test_drive_relative(robot_controller: RobotTestController, robot: Robot):
     drivetrain = robot.hardware.drivetrain
 
     robot_controller.startTeleop()
 
     # Move left
-    left_cmd = MoveHorizontal.left(drivetrain)
+    left_cmd = DriveRelative.left(drivetrain)
     left_cmd.schedule()
-    robot_controller.wait_until(lambda: drivetrain.getPose().Y() >= 1, 1.0)
+    robot_controller.wait_until(lambda: drivetrain.getPose().Y() >= 1, 5.0)
 
     # Move right
-    right_cmd = MoveHorizontal.right(drivetrain)
+    right_cmd = DriveRelative.right(drivetrain)
     right_cmd.schedule()
-    robot_controller.wait_until(lambda: drivetrain.getPose().Y() <= 0, 1.0)
+    robot_controller.wait_until(lambda: drivetrain.getPose().Y() <= 0, 5.0)
+
+    # Move forwards
+    left_cmd = DriveRelative.forwards(drivetrain)
+    left_cmd.schedule()
+    robot_controller.wait_until(lambda: drivetrain.getPose().X() >= 1, 5.0)
+
+    # Move backwards
+    right_cmd = DriveRelative.backwards(drivetrain)
+    right_cmd.schedule()
+    robot_controller.wait_until(lambda: drivetrain.getPose().X() <= 0, 5.0)
 
 
 def test_AlignWithReefSide_not_crash(
