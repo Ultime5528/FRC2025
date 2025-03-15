@@ -1,0 +1,4 @@
+from commands2 import SequentialCommandGroup
+
+
+class SystemIdentificationRoutine(SequentialCommandGroup):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import wpilib
+from commands2.sysid import SysIdRoutine
 
 from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollisionModule
@@ -13,6 +14,7 @@ from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetectionModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
+from modules.systemidentification import SystemIdentificationModule
 from modules.tagvision import TagVisionModule
 from ultime.modulerobot import ModuleRobot
 
@@ -27,6 +29,8 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(False)
 
         self.hardware = HardwareModule()
+
+        self.system_identification = SystemIdentificationModule(self.hardware.drivetrain)
 
         self.tag_vision = TagVisionModule(self.hardware.drivetrain)
         self.algae_vision = AlgaeVisionModule()
