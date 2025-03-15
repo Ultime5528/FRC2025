@@ -35,7 +35,7 @@ class AlignWithAlgae(Command):
         self.m_yspeedLimiter = SlewRateLimiter(3)
 
     def execute(self):
-        self.target = self.vision.getBestAlgae()
+        self.target = self.vision.getClosestTarget()
 
         if self.xbox_remote:
             x_speed, y_speed, _ = apply_center_distance_deadzone(
