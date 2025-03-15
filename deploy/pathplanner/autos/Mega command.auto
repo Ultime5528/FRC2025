@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Straight Align #22"
+                  "pathName": "Straight Align #22 Right"
                 }
               }
             ]
@@ -62,7 +62,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to Coral Station after reef #22"
+                  "pathName": "Go to Coral Station after reef #22 Right"
                 }
               },
               {
@@ -93,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to tag #17 after loading"
+                  "pathName": "Go to tag #17 after loading Right"
                 }
               },
               {
@@ -124,7 +124,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to Coral Station after reef #17"
+                  "pathName": "Go to Coral Station after reef #17 Right"
                 }
               },
               {
@@ -155,7 +155,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Go to tag #17 after loading"
+                  "pathName": "Go to tag #17 after loading Right"
                 }
               },
               {

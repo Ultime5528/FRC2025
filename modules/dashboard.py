@@ -216,9 +216,8 @@ class DashboardModule(Module):
             "Group",
             ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
-        putCommandOnDashboard("Group", MegaAutonomous(
-            hardware
-        ))
+        putCommandOnDashboard("Group", MegaAutonomous.left(hardware))
+        putCommandOnDashboard("Group", MegaAutonomous.right(hardware))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:

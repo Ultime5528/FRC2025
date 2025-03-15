@@ -4,7 +4,7 @@ from typing import Optional
 import commands2
 import wpilib
 from commands2 import Command
-from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.auto import NamedCommands
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -24,7 +24,6 @@ from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
-from ultime.followpath import FollowPath
 from ultime.module import Module
 
 
@@ -43,7 +42,12 @@ class AutonomousModule(Module):
         self.auto_command: Optional[commands2.Command] = None
 
         self.auto_chooser = wpilib.SendableChooser()
-        self.auto_chooser.addOption("MegaAutonomous", MegaAutonomous(hardware))
+        self.auto_chooser.addOption(
+            "MegaAutonomous Left", MegaAutonomous.left(hardware)
+        )
+        self.auto_chooser.addOption(
+            "MegaAutonomous Right", MegaAutonomous.right(hardware)
+        )
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
@@ -148,4 +152,3 @@ class AutonomousModule(Module):
     def autonomousExit(self):
         if self.auto_command:
             self.auto_command.cancel()
-

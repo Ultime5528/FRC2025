@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 5.909982638888888,
-        "y": 1.663107638888888
+        "y": 1.6630000000000003
       },
       "prevControl": null,
       "nextControl": {
         "x": 5.5193148306697095,
-        "y": 2.2941864060121757
+        "y": 2.2940787671232883
       },
       "isLocked": false,
       "linkedName": "StartPosition Blue"
@@ -45,7 +45,7 @@
     "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999
