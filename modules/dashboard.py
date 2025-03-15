@@ -4,6 +4,7 @@ from commands2 import CommandScheduler
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
@@ -219,6 +220,8 @@ class DashboardModule(Module):
             "Group",
             ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
+        putCommandOnDashboard("Group", MegaAutonomous.left(hardware))
+        putCommandOnDashboard("Group", MegaAutonomous.right(hardware))
 
     def robotInit(self) -> None:
         for subsystem in self._hardware.subsystems:
