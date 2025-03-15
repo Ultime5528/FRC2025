@@ -16,7 +16,12 @@ class SystemIdentificationModule(Module):
         self.drivetrain = drivetrain
 
         self.sysid_routine = SysIdRoutine(
-            SysIdRoutine.Config(),
+            SysIdRoutine.Config(
+                1.0,
+                7.0,
+                5.0,
+
+            ),
             SysIdRoutine.Mechanism(
                 self.driveSwervesFromVoltage,
                 self.logSysId,

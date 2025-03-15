@@ -2,9 +2,10 @@ import math
 
 import wpilib
 import wpimath
+from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
-from wpilib import RobotBase
+from wpilib import RobotBase, SmartDashboard
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -29,6 +30,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
+    max_speed = autoproperty(5.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
@@ -77,6 +79,9 @@ class Drivetrain(Subsystem):
             "BL": self.swerve_module_bl,
             "BR": self.swerve_module_br,
         }
+
+        self.chassis_speed = ChassisSpeeds()
+        self.chassis_speed_goal = ChassisSpeeds()
 
         # Gyro
         """
@@ -182,20 +187,22 @@ class Drivetrain(Subsystem):
         rot_speed: float,
         is_field_relative: bool,
     ):
-        x_speed = x_speed_input * SwerveConstants.max_speed_per_second
-        y_speed = y_speed_input * SwerveConstants.max_speed_per_second
+        x_speed = x_speed_input * self.max_speed
+        y_speed = y_speed_input * self.max_speed
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
     def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
         corrected_chassis_speed = self.correctForDynamics(speed)
 
+        self.chassis_speed_goal = corrected_chassis_speed
+
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
         )
 
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, SwerveConstants.max_speed_per_second
+            swerve_module_states, self.max_speed
         )
         self.swerve_module_fl.setDesiredState(swerve_module_states[0])
         self.swerve_module_fr.setDesiredState(swerve_module_states[1])
@@ -309,6 +316,14 @@ class Drivetrain(Subsystem):
             self.swerve_module_br.getPosition(),
         )
 
+        self.chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(
+            (
+                self.swerve_module_fl.getState(),
+                self.swerve_module_fr.getState(),
+                self.swerve_module_bl.getState(),
+                self.swerve_module_br.getState(),
+            )
+        )
         self.swerve_estimator.update(rotation, swerve_positions)
         self.swerve_odometry.update(rotation, swerve_positions)
 
@@ -392,3 +407,10 @@ class Drivetrain(Subsystem):
             pass
 
         builder.addFloatProperty("angle", tt(self.getAngle), noop)
+        builder.addFloatProperty("chassis_speed_x", tt(lambda: self.chassis_speed.vx), noop)
+        builder.addFloatProperty("chassis_speed_y", tt(lambda: self.chassis_speed.vy), noop)
+        builder.addFloatProperty("chassis_speed_rot", tt(lambda: self.chassis_speed.omega), noop)
+        builder.addFloatProperty("chassis_speed_goal_x", tt(lambda: self.chassis_speed_goal.vx), noop)
+        builder.addFloatProperty("chassis_speed_goal_y", tt(lambda: self.chassis_speed_goal.vy), noop)
+        builder.addFloatProperty("chassis_speed_goal_rot", tt(lambda: self.chassis_speed_goal.omega), noop)
+
