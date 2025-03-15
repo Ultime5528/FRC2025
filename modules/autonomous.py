@@ -9,6 +9,7 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.autonomous.megaautonome import MegaAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
@@ -42,6 +43,7 @@ class AutonomousModule(Module):
         self.auto_command: Optional[commands2.Command] = None
 
         self.auto_chooser = wpilib.SendableChooser()
+        self.auto_chooser.addOption("MegaAutonomous", MegaAutonomous(hardware))
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
