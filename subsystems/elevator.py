@@ -35,7 +35,7 @@ class Elevator(Subsystem):
         DoNotMoveWhileLoading = auto()
         Unknown = auto()
 
-    speed_up = autoproperty(0.5)
+    speed_up = autoproperty(0.2)
     speed_down = autoproperty(-0.2)
     speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
@@ -43,7 +43,7 @@ class Elevator(Subsystem):
     height_maintain = autoproperty(0.0)
     height_lower_zone = autoproperty(0.12)
 
-    position_conversion_factor = autoproperty(0.00623)
+    position_conversion_factor = autoproperty(0.01869)
 
     def __init__(self):
         super().__init__()
