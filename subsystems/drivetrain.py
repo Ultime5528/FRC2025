@@ -3,6 +3,7 @@ import math
 import wpilib
 import wpimath
 from pathplannerlib.util import DriveFeedforwards
+from rev import SparkBase
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
@@ -233,6 +234,32 @@ class Drivetrain(Subsystem):
 
     def getPose(self):
         return self.swerve_estimator.getEstimatedPosition()
+
+    def setForwardFormation(self):
+        """
+        Points all the wheels into the center to prevent movement
+        """
+        for swerve in self.swerve_modules.values():
+            swerve._turning_closed_loop_controller.setReference(
+                swerve._chassis_angular_offset, SparkBase.ControlType.kPosition
+            )
+
+    def setSidewaysFormation(self):
+        """
+        Points all the wheels into the center to prevent movement
+        """
+        self.swerve_module_fl.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_fr.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_bl.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_br.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
 
     def setXFormation(self):
         """

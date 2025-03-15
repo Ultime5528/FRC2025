@@ -11,16 +11,22 @@ class SystemIdentificationModule(Module):
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
 
-        self.is_in_safe_position = False
+        self.is_in_safe_position: bool = False
 
         self.drivetrain = drivetrain
 
         self.sysid_routine = SysIdRoutine(
             SysIdRoutine.Config(),
             SysIdRoutine.Mechanism(
-                self.driveSwervesFromVoltage, self.logSysId, drivetrain
+                self.driveSwervesFromVoltage,
+                self.logSysId,
+                drivetrain,
+                "swerve-drivetrain",
             ),
         )
+
+    def setIsInSafePosition(self, value: bool):
+        self.is_in_safe_position = value
 
     def getQuasistaticTest(self, direction: SysIdRoutine.Direction) -> Command:
         return self.sysid_routine.quasistatic(direction)
