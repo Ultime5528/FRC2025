@@ -13,13 +13,15 @@ class SwerveConstants:
 
     wheel_diameter = 0.0755  # meters
     drive_encoder_position_conversion_factor = (
-            math.pi * wheel_diameter / drive_motor_gear_ratio
+        math.pi * wheel_diameter / drive_motor_gear_ratio
     )  # meters
     drive_encoder_velocity_conversion_factor = (
         drive_encoder_position_conversion_factor / 60
     )  # meters per second
     drive_motor_free_rps = 5676 / 60  # Neo motor max free RPM into rotations per second
-    drive_wheel_free_rps = drive_motor_free_rps * (math.pi * wheel_diameter) / drive_motor_gear_ratio
+    drive_wheel_free_rps = (
+        drive_motor_free_rps * (math.pi * wheel_diameter) / drive_motor_gear_ratio
+    )
 
     turning_encoder_position_conversion_factor = math.pi * 2  # radians
     turning_encoder_velocity_conversion_factor = math.pi * 2 / 60  # radians per second
@@ -50,7 +52,7 @@ driving_config.encoder.velocityConversionFactor(driving_velocity_factor)
 driving_config.closedLoop.setFeedbackSensor(
     ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
 )
-driving_config.closedLoop.pid(0.04, 0.0, 0.0)  # 0.04
+driving_config.closedLoop.pid(0.06, 0.0, 0.0)
 driving_config.closedLoop.velocityFF(driving_velocity_feed_forward)
 driving_config.closedLoop.outputRange(-1, 1)
 

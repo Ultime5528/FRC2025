@@ -1,16 +1,13 @@
 from commands2 import (
     SequentialCommandGroup,
-    ParallelCommandGroup,
-    RunCommand,
     InstantCommand,
 )
 from commands2.cmd import race, run
+from commands2.sysid import SysIdRoutine
 
 from modules.systemidentification import SystemIdentificationModule
 from subsystems.drivetrain import Drivetrain
 from ultime.command import WaitCommand
-
-from commands2.sysid import SysIdRoutine
 
 
 class SystemIdentificationRoutine(SequentialCommandGroup):

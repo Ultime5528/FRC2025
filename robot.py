@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import wpilib
-from commands2.sysid import SysIdRoutine
 
 from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollisionModule
@@ -50,7 +49,9 @@ class Robot(ModuleRobot):
 
         self.autonomous = AutonomousModule(self.hardware)
 
-        self.dashboard = DashboardModule(self.hardware, self.modules, self.system_identification)
+        self.dashboard = DashboardModule(
+            self.hardware, self.modules, self.system_identification
+        )
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()

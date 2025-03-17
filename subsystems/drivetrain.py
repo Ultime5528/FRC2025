@@ -5,7 +5,7 @@ import wpimath
 from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
-from wpilib import RobotBase, SmartDashboard
+from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -22,7 +22,6 @@ from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
-from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import tt
 
 
@@ -80,8 +79,11 @@ class Drivetrain(Subsystem):
             "BR": self.swerve_module_br,
         }
 
-        self.chassis_speed = ChassisSpeeds()
-        self.chassis_speed_goal = ChassisSpeeds()
+        self.chassis_speed_goal_pub = (
+            NetworkTableInstance.getDefault()
+            .getStructTopic("Chassis Speed Goal", ChassisSpeeds)
+            .publish()
+        )
 
         # Gyro
         """
@@ -195,7 +197,7 @@ class Drivetrain(Subsystem):
     def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
         corrected_chassis_speed = self.correctForDynamics(speed)
 
-        self.chassis_speed_goal = corrected_chassis_speed
+        self.chassis_speed_goal_pub.set(corrected_chassis_speed)
 
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
@@ -407,10 +409,3 @@ class Drivetrain(Subsystem):
             pass
 
         builder.addFloatProperty("angle", tt(self.getAngle), noop)
-        builder.addFloatProperty("chassis_speed_x", tt(lambda: self.chassis_speed.vx), noop)
-        builder.addFloatProperty("chassis_speed_y", tt(lambda: self.chassis_speed.vy), noop)
-        builder.addFloatProperty("chassis_speed_rot", tt(lambda: self.chassis_speed.omega), noop)
-        builder.addFloatProperty("chassis_speed_goal_x", tt(lambda: self.chassis_speed_goal.vx), noop)
-        builder.addFloatProperty("chassis_speed_goal_y", tt(lambda: self.chassis_speed_goal.vy), noop)
-        builder.addFloatProperty("chassis_speed_goal_rot", tt(lambda: self.chassis_speed_goal.omega), noop)
-

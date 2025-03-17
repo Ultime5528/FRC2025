@@ -20,7 +20,6 @@ class SystemIdentificationModule(Module):
                 1.0,
                 7.0,
                 5.0,
-
             ),
             SysIdRoutine.Mechanism(
                 self.driveSwervesFromVoltage,
