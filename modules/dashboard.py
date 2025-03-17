@@ -2,6 +2,7 @@ import commands2
 import wpilib
 from commands2 import CommandScheduler
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
@@ -118,6 +119,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", MoveHorizontal.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", MoveHorizontal.right(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
 
         putCommandOnDashboard(
             "Group",
