@@ -36,7 +36,7 @@
 | commands/diagnostics/intake/retract.py          |       16 |        0 |        4 |        2 |     90% |18->exit, 21->exit |
 | commands/diagnostics/printer/\_\_init\_\_.py    |        9 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/printer/motor.py           |       30 |        0 |        2 |        1 |     97% |  58->exit |
-| commands/diagnostics/printer/switch.py          |       22 |        3 |        8 |        4 |     77% |25, 27, 30->32, 33 |
+| commands/diagnostics/printer/switch.py          |       22 |        4 |        8 |        4 |     73% |25, 27, 31, 33 |
 | commands/diagnostics/utils/\_\_init\_\_.py      |        0 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/utils/setrunningtest.py    |       15 |        0 |        0 |        0 |    100% |           |
 | commands/drivetrain/\_\_init\_\_.py             |        0 |        0 |        0 |        0 |    100% |           |
@@ -49,7 +49,7 @@
 | commands/dropprepareloading.py                  |       33 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/\_\_init\_\_.py               |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py           |       16 |        0 |        2 |        0 |    100% |           |
-| commands/elevator/manualmoveelevator.py         |       28 |        0 |        0 |        0 |    100% |           |
+| commands/elevator/manualmoveelevator.py         |       31 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/moveelevator.py               |      101 |       13 |       14 |        1 |     79% |20-34, 157 |
 | commands/elevator/resetelevator.py              |       24 |        1 |        4 |        1 |     93% |        29 |
 | commands/intake/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
@@ -62,7 +62,7 @@
 | commands/printer/manualmoveprinter.py           |       34 |        0 |        4 |        1 |     97% |  34->exit |
 | commands/printer/moveprinter.py                 |       97 |        2 |        8 |        2 |     96% |  122, 133 |
 | commands/printer/resetprinter.py                |       21 |        0 |        2 |        0 |    100% |           |
-| commands/printer/scanprinter.py                 |       75 |       13 |       16 |        5 |     76% |63->79, 67, 70-77, 80, 91-97, 107-110 |
+| commands/printer/scanprinter.py                 |       73 |       11 |       16 |        5 |     78% |64->81, 68, 71-79, 82, 93-99 |
 | commands/resetall.py                            |       13 |        0 |        0 |        0 |    100% |           |
 | commands/resetallbutclimber.py                  |       16 |        0 |        0 |        0 |    100% |           |
 | commands/resetautonomous.py                     |       14 |        0 |        0 |        0 |    100% |           |
@@ -146,7 +146,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **5966** |  **690** |  **730** |  **122** | **86%** |           |
+|                                       **TOTAL** | **5967** |  **689** |  **730** |  **122** | **86%** |           |
 
 
 ## Setup coverage badge
