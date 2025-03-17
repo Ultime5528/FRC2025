@@ -48,20 +48,25 @@ class MoveIntake(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            goal=self.end_position_getter(),
-            max_speed=move_intake_properties.speed_max,
+            start_position=self.intake.getPivotPosition(),
+            end_position=self.end_position_getter(),
+            start_speed=max(
+                move_intake_properties.speed_min,
+                abs(self.intake.getPivotMotorInput()),
+            ),
             end_speed=move_intake_properties.speed_min,
+            max_speed=move_intake_properties.speed_max,
             accel=move_intake_properties.accel,
         )
         self.intake.state = Intake.State.Moving
 
     def execute(self):
         pos = self.intake.getPivotPosition()
-        speed = self.motion.update(pos)
-        self.intake.setPivotSpeed(speed)
+        self.motion.setPosition(pos)
+        self.intake.setPivotSpeed(self.motion.getSpeed())
 
     def isFinished(self) -> bool:
-        return self.motion.crossedGoal() or not self.intake.hasReset()
+        return self.motion.isFinished() or not self.intake.hasReset()
 
     def end(self, interrupted: bool):
         if not self.intake.hasReset():

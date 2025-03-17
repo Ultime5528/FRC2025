@@ -4,164 +4,200 @@ from typing import Optional
 
 __all__ = ["TrapezoidalMotion"]
 
-import wpilib
 
+@dataclass
+class MotionConfig:
+    start_position: Optional[float]
+    end_position: Optional[float]
+    displacement: Optional[float]
+    start_speed: Optional[float]
+    end_speed: Optional[float]
+    max_speed: Optional[float]
+    accel: Optional[float]
 
-def ensure_positive(value: float, name: str):
-    if value <= 0:
-        raise ValueError(f"{name} must be positive: {value}")
-    return value
+    def check_final_state(self):
+        if self.end_position is None and self.displacement is None:
+            raise ValueError("'end_position' and 'displacement' cannot both be None")
+        elif self.end_position is not None and self.displacement is not None:
+            raise ValueError("'end_position' and 'displacement' cannot both be set")
+
 
 class TrapezoidalMotion:
-    """
-    Proof
-    -----
-    Let
-    ds = displacement (s - s0)
-    v = current speed (m/s)
-    vi = initial speed (m/s)
-    vf = final speed (m/s)
-    a = acceleration (m/s²)
-    as = "acceleration" by distance (change of speed per unit of distance traveled) (m/s / m)
-
-    Hence, by definition:
-    (1.1) as = (vf - vi) / ds (constant)
-    (1.2) => ds = (vf - vi) / as
-
-    Cinematic equations:
-    (2.1) v = vi + a * t
-    (2.2) => t = (v - vi) / a
-    # (2.3) => a = (v - vi) / t
-
-    With cinematic equation:
-    (3) ds = vi * t + ½ * a * t²
-
-    Replace t by (2.2) in (3)
-    => ds = vi * (v - vi) / a + ½ * ((v - vi)/a)²
-    => ds = (v² - vi²) / 2a
-    => 2 a ds = v² - vi²
-    (4) => v = sqrt( vi² + 2 a ds )
-
-    In cases where we know as, but not a.
-    We want to express v in respect of ds: v(ds) = ?
-
-    We know that v(0) = vi. This is already the case: v(0) = sqrt( vi² + 2 a * 0 ) = vi.
-    By eq. (1.2), we also know that the ds to reach vf is (vf - vi) / as.
-
-    Hence,
-    v((vf - vi) / as) = vf.
-
-    Let's replace ds by (vf - vi) / as in eq. (4) and solve for a:
-    vf = sqrt( vi² + 2 a (vf - vi) / as )
-    vf² = vi² + 2 a (vf - vi) / as
-    a = (vf² - vi²) / 2 ((vf - vi)/as)
-
-    Hence,
-    (5) v = sqrt( vi² + ds / ((vf - vi)/as) * (vf² - vi²) )
-
-    The previous equation is more intuitive, but it can be simplified:
-    (6) v = sqrt( vi² + as ds (vi + vf) )
-
-    """
     def __init__(
         self,
-        goal: float,
-        max_speed: float,
-        end_speed: float,
-        accel: float,
-        decel: Optional[float] = None,
+        min_speed: Optional[float] = None,
+        start_speed: Optional[float] = None,
+        end_speed: Optional[float] = None,
+        max_speed: Optional[float] = None,
+        accel: Optional[float] = None,
+        start_position: Optional[float] = None,
+        end_position: Optional[float] = None,
+        displacement: Optional[float] = None,
     ):
-        self._goal = goal
-        self._max_speed = ensure_positive(max_speed, "max_speed")
-        self._end_speed = ensure_positive(end_speed, "end_speed")
-        if self._max_speed < self._end_speed:
-            raise ValueError(f"max_speed cannot be lower than than end_speed: {self._max_speed} < {self._end_speed}")
-        self._accel = ensure_positive(accel, "accel")
-        self._decel = ensure_positive(decel, "decel") if decel is not None else accel
-        self._last_time = None
-        self._speed = None
-        self._remaining_distance = None
-        self._crossed_goal = False
-
-    def _calculate_stopping_distance(self, current_speed: float):
-        """
-        Calculate the distance needed to decelerate from current speed to end speed.
-
-        Args:
-            current_speed (float): Current speed (m/s)
-
-        Returns:
-            float: Distance required to reach end_speed (m)
-        """
-        # Use v² = v₀² + 2a·x formula (solving for x)
-        # We're decelerating, so a is negative
-        return max(0.0, (current_speed**2 - self._end_speed**2) / (2 * self._decel))
-
-    def update(self, position: float, current_speed: Optional[float] = None) -> float:
-        remaining_distance = self._goal - position
-
-        if self._remaining_distance and self._remaining_distance * remaining_distance < 0:
-            self._crossed_goal = True
-
-        self._remaining_distance = remaining_distance
-
-        if current_speed is None:
-            current_speed = self._speed if self._speed is not None else 0.0
-
-        current_time = wpilib.Timer.getFPGATimestamp()
-        delta = current_time - self._last_time if self._last_time is not None else 0
-        self._last_time = current_time
-
-        # Not moving in the right direction
-
-
-        remaining_distance_abs = abs(self._remaining_distance)
-        current_speed_abs = abs(current_speed)
-
-        # Calculate stopping distance based on current speed
-        stopping_distance = self._calculate_stopping_distance(current_speed_abs)
-
-        target_speed = self._max_speed
-
-        if self._remaining_distance * current_speed < 0:
-            target_speed = current_speed - math.copysign(self._accel * delta, current_speed)
-
-        # Check if we need to start decelerating
+        if min_speed is None:
+            assert start_speed is not None and end_speed is not None
         else:
-            if remaining_distance_abs <= stopping_distance:
-                # We need to decelerate now
-                # Formula: v² = v₀² + 2a·x (solving for v)
-                # target_speed = (self.end_speed**2 + 2 * self.decel * remaining_distance)**0.5
-                # Ensure we don't exceed current speed when decelerating
-                # target_speed = min(target_speed, current_speed_abs)
-                target_speed = max(current_speed_abs - self._decel * delta, self._end_speed)
+            assert (
+                start_speed is None and end_speed is None
+            ), "If min_speed is specfied, start_speed and end_speed cannot be specified"
+            start_speed = min_speed
+            end_speed = min_speed
 
-            # If we're not at max speed yet, accelerate
-            elif current_speed_abs < self._max_speed:
-                target_speed = min(current_speed_abs + self._accel * delta, self._max_speed)
+        self._initial_config = MotionConfig(
+            start_position,
+            end_position,
+            displacement,
+            start_speed,
+            end_speed,
+            max_speed,
+            accel,
+        )
+        self._real_config: Optional[MotionConfig] = None
+        self._position = None
+        self._inverted = False
 
-            target_speed = math.copysign(target_speed, self._remaining_distance)
+        if start_position is not None:
+            self._compute()
 
-        self._speed = target_speed
+    def update(
+        self,
+        start_position: Optional[float] = None,
+        displacement: Optional[float] = None,
+        end_position: Optional[float] = None,
+        min_speed: Optional[float] = None,
+        start_speed: Optional[float] = None,
+        end_speed: Optional[float] = None,
+        max_speed: Optional[float] = None,
+        accel: Optional[float] = None,
+    ):
+        if start_position is not None:
+            self._initial_config.start_position = start_position
+        if displacement is not None:
+            self._initial_config.displacement = displacement
+        if end_position is not None:
+            self._initial_config.end_position = end_position
+        if min_speed is not None:
+            self._initial_config.start_speed = min_speed
+            self._initial_config.end_speed = min_speed
+        if start_speed is not None:
+            self._initial_config.start_speed = start_speed
+        if end_speed is not None:
+            self._initial_config.end_speed = end_speed
+        if max_speed is not None:
+            self._initial_config.max_speed = max_speed
+        if accel is not None:
+            self._initial_config.accel = accel
 
-        print(f"{position:.2f}\t{current_speed:.2f}\t{self._speed:.2f}")
+        self._compute()
 
-        return self._speed
+    def _compute(self):
+        assert (
+            self._initial_config.start_position is not None
+        ), "'start_position' is not set."
+        assert self._initial_config.start_speed is not None, "'start_speed' is not set."
+        assert self._initial_config.end_speed is not None, "'end_speed' is not set."
+        assert self._initial_config.max_speed is not None, "'max_speed' is not set."
+        assert self._initial_config.accel is not None, "'accel' is not set."
 
+        self._initial_config.check_final_state()
+
+        self._position = self._initial_config.start_position
+
+        if self._initial_config.end_position is not None:
+            end_position = self._initial_config.end_position
+            displacement = end_position - self._initial_config.start_position
+        else:
+            displacement = self._initial_config.displacement
+            end_position = self._initial_config.start_position + displacement
+
+        self._inverted = displacement < 0
+        displacement = abs(displacement)
+
+        self._real_config = MotionConfig(
+            start_position=self._initial_config.start_position,
+            end_position=end_position,
+            displacement=displacement,
+            start_speed=abs(self._initial_config.start_speed),
+            end_speed=abs(self._initial_config.end_speed),
+            max_speed=abs(self._initial_config.max_speed),
+            accel=abs(self._initial_config.accel),
+        )
+
+        assert self._real_config.start_speed <= self._real_config.max_speed
+        assert self._real_config.end_speed <= self._real_config.max_speed
+
+        self._start_accel_window = (
+            self._real_config.max_speed - self._real_config.start_speed
+        ) / self._real_config.accel
+        self._end_accel_window = (
+            self._real_config.max_speed - self._real_config.end_speed
+        ) / self._real_config.accel
+
+        if (
+            self._start_accel_window + self._end_accel_window
+            > self._real_config.displacement
+        ):
+            self._start_accel_window = self._real_config.displacement / 2 + (
+                self._real_config.end_speed - self._real_config.start_speed
+            ) / (2 * self._real_config.accel)
+            self._end_accel_window = (
+                self._real_config.displacement - self._start_accel_window
+            )
+            self._real_config.max_speed = (
+                self._real_config.start_speed
+                + self._real_config.accel * self._start_accel_window
+            )
+
+    def setPosition(self, position: float):
+        assert (
+            self._real_config
+        ), "Motion is not yet computed. 'start_position' and ('end_position' or 'displacement') must be set."
+        self._position = position
 
     def getSpeed(self) -> float:
-        return self._speed
+        assert self._position is not None, "Position has not been set."
+
+        if self._inverted:
+            s = self._real_config.start_position - self._position
+        else:
+            s = self._position - self._real_config.start_position
+
+        v = 0
+
+        if s < 0:
+            v = self._real_config.start_speed
+        elif s < self._start_accel_window:
+            v = math.sqrt(
+                self._real_config.start_speed**2
+                + (s / self._start_accel_window)
+                * (self._real_config.max_speed**2 - self._real_config.start_speed**2)
+            )
+        elif s < self._real_config.displacement - self._end_accel_window:
+            v = self._real_config.max_speed
+        elif s < self._real_config.displacement:
+            v = math.sqrt(
+                self._real_config.end_speed**2
+                + (self._real_config.displacement - s)
+                / self._end_accel_window
+                * (self._real_config.max_speed**2 - self._real_config.end_speed**2)
+            )
+        else:
+            v = -self._real_config.end_speed
+
+        if self._inverted:
+            v *= -1
+
+        return v
+
+    def isFinished(self):
+        if self._inverted:
+            return self._position <= self._real_config.end_position
+        else:
+            return self._position >= self._real_config.end_position
+
+    def calculate(self, position: float) -> float:
+        self.setPosition(position)
+        return self.getSpeed()
 
     def getRemainingDistance(self) -> float:
-        """
-        Get the remaining distance to the goal.
-        Can be negative.
-        :return:
-        """
-        return self._remaining_distance
-
-    def reachedGoal(self, tolerance):
-        return abs(self._remaining_distance) <= tolerance
-
-    def crossedGoal(self):
-        return self._crossed_goal
+        return abs(self._real_config.end_position - self._position)

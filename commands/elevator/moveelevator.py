@@ -128,20 +128,24 @@ class MoveElevator(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            goal=self.end_position_getter(),
-            max_speed=move_elevator_properties.speed_max,
+            start_position=self.elevator.getHeight(),
+            end_position=self.end_position_getter(),
+            start_speed=max(
+                move_elevator_properties.speed_min, abs(self.elevator.getMotorInput())
+            ),
             end_speed=move_elevator_properties.speed_min,
-            accel=move_elevator_properties.accel
+            max_speed=move_elevator_properties.speed_max,
+            accel=move_elevator_properties.accel,
         )
         self.elevator.state = Elevator.State.Moving
 
     def execute(self):
         height = self.elevator.getHeight()
-        speed = self.motion.update(height)
-        self.elevator.setSpeed(speed)
+        self.motion.setPosition(height)
+        self.elevator.setSpeed(self.motion.getSpeed())
 
     def isFinished(self) -> bool:
-        return self.motion.crossedGoal() or not self.elevator.hasReset()
+        return self.motion.isFinished() or not self.elevator.hasReset()
 
     def end(self, interrupted: bool) -> None:
         if not self.elevator.hasReset():
