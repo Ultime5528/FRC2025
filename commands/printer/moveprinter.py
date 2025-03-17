@@ -99,21 +99,17 @@ class _MovePrinterSetpoint(Command):
 
     def initialize(self):
         self.motion = TrapezoidalMotion(
-            start_position=self.printer.getPosition(),
-            end_position=self.end_position_getter(),
-            start_speed=max(
-                move_printer_properties.speed_min, abs(self.printer.getMotorInput())
-            ),
-            end_speed=move_printer_properties.speed_min,
+            goal=self.end_position_getter(),
             max_speed=move_printer_properties.speed_max,
+            end_speed=move_printer_properties.speed_min,
             accel=move_printer_properties.accel,
         )
         self.printer.state = Printer.State.Moving
 
     def execute(self):
         height = self.printer.getPosition()
-        self.motion.setPosition(height)
-        self.printer.setSpeed(self.motion.getSpeed())
+        speed = self.motion.update(height)
+        self.printer.setSpeed(speed)
 
     def isFinished(self) -> bool:
         if self.motion.getSpeed() > 0.0 and self.printer.isLeft():
@@ -121,7 +117,7 @@ class _MovePrinterSetpoint(Command):
         if self.motion.getSpeed() < 0.0 and self.printer.isRight():
             return True
 
-        return self.motion.isFinished() or not self.printer.hasReset()
+        return self.motion.crossedGoal() or not self.printer.hasReset()
 
     def end(self, interrupted: bool) -> None:
         if not self.printer.hasReset():
