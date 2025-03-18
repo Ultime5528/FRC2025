@@ -27,7 +27,7 @@ def apply_linear_deadzone(_input, deadzone):
 
 class DriveField(Command):
     rotation_deadzone = autoproperty(0.3)
-    rotate_speed = autoproperty(0.03)
+    rotate_speed = autoproperty(0.00375)
     speed_rate = autoproperty(0.33)
 
     def __init__(
@@ -44,8 +44,6 @@ class DriveField(Command):
 
         self.m_xspeedLimiter = SlewRateLimiter(3)
         self.m_yspeedLimiter = SlewRateLimiter(3)
-        self.m_rotLimiter_x = SlewRateLimiter(3)
-        self.m_rotLimiter_y = SlewRateLimiter(3)
 
     def initialize(self):
         self.rot = self.drivetrain.getPose().rotation()
@@ -56,8 +54,8 @@ class DriveField(Command):
             self.xbox_remote.getLeftX() * -1,
             properties.moving_deadzone,
         )
-        x_speed = self.m_xspeedLimiter.calculate(x_speed)
-        y_speed = self.m_yspeedLimiter.calculate(y_speed)
+        # x_speed = self.m_xspeedLimiter.calculate(x_speed)
+        # y_speed = self.m_yspeedLimiter.calculate(y_speed)
 
         rot_x, rot_y, rot_hyp = apply_center_distance_deadzone(
             self.xbox_remote.getRightX(),

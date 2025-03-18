@@ -85,6 +85,12 @@ class Drivetrain(Subsystem):
             .publish()
         )
 
+        self.chassis_speed_pub = (
+            NetworkTableInstance.getDefault()
+            .getStructTopic("Chassis Speed", ChassisSpeeds)
+            .publish()
+        )
+
         # Gyro
         """
         Possibilités : NavX, ADIS16448, ADIS16470, ADXRS, Empty
@@ -318,7 +324,7 @@ class Drivetrain(Subsystem):
             self.swerve_module_br.getPosition(),
         )
 
-        self.chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(
+        chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(
             (
                 self.swerve_module_fl.getState(),
                 self.swerve_module_fr.getState(),
@@ -326,6 +332,7 @@ class Drivetrain(Subsystem):
                 self.swerve_module_br.getState(),
             )
         )
+        self.chassis_speed_pub.set(chassis_speed)
         self.swerve_estimator.update(rotation, swerve_positions)
         self.swerve_odometry.update(rotation, swerve_positions)
 

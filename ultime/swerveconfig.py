@@ -52,7 +52,7 @@ driving_config.encoder.velocityConversionFactor(driving_velocity_factor)
 driving_config.closedLoop.setFeedbackSensor(
     ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
 )
-driving_config.closedLoop.pid(0.06, 0.0, 0.0)
+driving_config.closedLoop.pid(0.04, 0.0, 0.0)
 driving_config.closedLoop.velocityFF(driving_velocity_feed_forward)
 driving_config.closedLoop.outputRange(-1, 1)
 
