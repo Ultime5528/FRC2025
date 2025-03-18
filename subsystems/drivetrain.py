@@ -2,7 +2,9 @@ import math
 
 import wpilib
 import wpimath
+from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
+from rev import SparkBase
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
@@ -20,7 +22,6 @@ from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
-from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import tt
 
 
@@ -28,6 +29,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
+    max_speed = autoproperty(5.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
@@ -76,6 +78,12 @@ class Drivetrain(Subsystem):
             "BL": self.swerve_module_bl,
             "BR": self.swerve_module_br,
         }
+
+        self.chassis_speed_goal_pub = (
+            NetworkTableInstance.getDefault()
+            .getStructTopic("Chassis Speed Goal", ChassisSpeeds)
+            .publish()
+        )
 
         # Gyro
         """
@@ -181,20 +189,22 @@ class Drivetrain(Subsystem):
         rot_speed: float,
         is_field_relative: bool,
     ):
-        x_speed = x_speed_input * SwerveConstants.max_speed_per_second
-        y_speed = y_speed_input * SwerveConstants.max_speed_per_second
+        x_speed = x_speed_input * self.max_speed
+        y_speed = y_speed_input * self.max_speed
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
     def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
         corrected_chassis_speed = self.correctForDynamics(speed)
 
+        self.chassis_speed_goal_pub.set(corrected_chassis_speed)
+
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
         )
 
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
-            swerve_module_states, SwerveConstants.max_speed_per_second
+            swerve_module_states, self.max_speed
         )
         self.swerve_module_fl.setDesiredState(swerve_module_states[0])
         self.swerve_module_fr.setDesiredState(swerve_module_states[1])
@@ -233,6 +243,32 @@ class Drivetrain(Subsystem):
 
     def getPose(self):
         return self.swerve_estimator.getEstimatedPosition()
+
+    def setForwardFormation(self):
+        """
+        Points all the wheels into the center to prevent movement
+        """
+        for swerve in self.swerve_modules.values():
+            swerve._turning_closed_loop_controller.setReference(
+                swerve._chassis_angular_offset, SparkBase.ControlType.kPosition
+            )
+
+    def setSidewaysFormation(self):
+        """
+        Points all the wheels into the center to prevent movement
+        """
+        self.swerve_module_fl.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_fr.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_bl.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
+        self.swerve_module_br.setDesiredState(
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+        )
 
     def setXFormation(self):
         """
@@ -282,6 +318,14 @@ class Drivetrain(Subsystem):
             self.swerve_module_br.getPosition(),
         )
 
+        self.chassis_speed = self.swervedrive_kinematics.toChassisSpeeds(
+            (
+                self.swerve_module_fl.getState(),
+                self.swerve_module_fr.getState(),
+                self.swerve_module_bl.getState(),
+                self.swerve_module_br.getState(),
+            )
+        )
         self.swerve_estimator.update(rotation, swerve_positions)
         self.swerve_odometry.update(rotation, swerve_positions)
 
