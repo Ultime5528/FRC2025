@@ -2,14 +2,15 @@
 import wpilib
 
 from modules.algaevision import AlgaeVisionModule
-from modules.armcollision import ArmCollision
+from modules.armcollision import ArmCollisionModule
 from modules.autonomous import AutonomousModule
+from modules.blockelevatoruntilcoral import BlockElevatorUntilCoralModule
 from modules.control import ControlModule
 from modules.coralretraction import CoralRetractionModule
 from modules.dashboard import DashboardModule
 from modules.diagnostics import DiagnosticsModule
 from modules.hardware import HardwareModule
-from modules.loadingdetection import LoadingDetection
+from modules.loadingdetection import LoadingDetectionModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
 from modules.tagvision import TagVisionModule
@@ -20,6 +21,7 @@ class Robot(ModuleRobot):
     # robotInit fonctionne mieux avec les tests que __init__
     def __init__(self):
         super().__init__()
+
         wpilib.LiveWindow.disableAllTelemetry()
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
         self.enableLiveWindowInTest(False)
@@ -31,8 +33,11 @@ class Robot(ModuleRobot):
 
         self.control = ControlModule(self.hardware, self.algae_vision)
 
-        self.arm_collision = ArmCollision(self.hardware)
-        self.loading_detection = LoadingDetection(self.hardware)
+        self.arm_collision = ArmCollisionModule(self.hardware)
+        self.loading_detection = LoadingDetectionModule(self.hardware)
+        self.block_elevator_until_coral = BlockElevatorUntilCoralModule(
+            self.loading_detection, self.hardware.elevator
+        )
         self.coral_retraction = CoralRetractionModule(
             self.hardware.elevator, self.hardware.claw
         )
@@ -52,6 +57,7 @@ class Robot(ModuleRobot):
             self.control,
             self.arm_collision,
             self.loading_detection,
+            self.block_elevator_until_coral,
             self.coral_retraction,
             self.autonomous,
             self.dashboard,

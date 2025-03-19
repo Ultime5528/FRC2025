@@ -5,20 +5,17 @@ import ports
 from ultime.alert import AlertType
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Claw(Subsystem):
     def __init__(self):
         super().__init__()
-        from commands.claw.loadcoral import LoadCoral
 
         self._motor_right = VictorSP(ports.PWM.claw_motor_right)
         self._motor_left = VictorSP(ports.PWM.claw_motor_left)
         self._sensor = Switch(Switch.Type.NormallyOpen, ports.DIO.claw_photocell)
-        self._load_command = LoadCoral(self)
         self.has_coral = False
-        self.is_at_loading = False
         self.is_coral_retracted = False
 
         self.alert_sees_object = self.createAlert(
@@ -28,12 +25,12 @@ class Claw(Subsystem):
         )
         self.alert_left_motor = self.createAlert(
             "Left motor didn't affect battery voltage during test. "
-            + f"Is it connected to the roboRIO? PWM={ports.PWM.claw_motor_left} DIO={ports.PDP.claw_motor_left}",
+            + f"Is it connected? PWM={ports.PWM.claw_motor_left} DIO={ports.PDP.claw_motor_left}",
             AlertType.Error,
         )
         self.alert_right_motor = self.createAlert(
             "Right motor didn't affect battery voltage during test. "
-            + f"Is it connected to the roboRIO? PWM={ports.PWM.claw_motor_right} DIO={ports.PDP.claw_motor_right}",
+            + f"Is it connected? PWM={ports.PWM.claw_motor_right} DIO={ports.PDP.claw_motor_right}",
             AlertType.Error,
         )
 
@@ -56,9 +53,6 @@ class Claw(Subsystem):
     def seesObject(self):
         return self._sensor.isPressed()
 
-    def periodic(self) -> None:
-        pass
-
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
 
@@ -69,7 +63,6 @@ class Claw(Subsystem):
         builder.addFloatProperty("motor_right", tt(self.getRightInput), noop)
         builder.addBooleanProperty("sees_object", tt(self.seesObject), noop)
         builder.addBooleanProperty("has_coral", tt(lambda: self.has_coral), noop)
-        builder.addBooleanProperty("is_at_loading", tt(lambda: self.has_coral), noop)
         builder.addBooleanProperty(
             "is_coral_retracted", tt(lambda: self.is_coral_retracted), noop
         )

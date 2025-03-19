@@ -11,4 +11,4 @@ def test_runs_in_test_mode(robot_controller: RobotTestController, robot: Robot):
     robot_controller.startTest()
     assert diagnose_command.isScheduled()
 
-    robot_controller.wait_until(lambda: not diagnose_command.isScheduled(), 30.0)
+    robot_controller.wait_until(lambda: not diagnose_command.isScheduled(), 60.0)

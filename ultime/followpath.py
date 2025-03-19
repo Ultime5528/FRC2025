@@ -27,8 +27,23 @@ def shouldFlipPath():
 def pathToPoses(path: PathPlannerPath) -> list[Pose2d]:
     states = path.getIdealTrajectory(RobotConfig.fromGUISettings()).getStates()
     poses = []
-    for state in states:
-        poses.append(state.pose)
+
+    previous_pose: Pose2d = states[0].pose
+    for value, state in enumerate(states):
+        if value == 0:
+            poses.append(state.pose)
+        elif value == len(states) - 1:
+            poses.append(state.pose)
+        else:
+            if previous_pose.translation().distance(state.pose.translation()) >= 0.1:
+                poses.append(state.pose)
+                previous_pose = state.pose
+    if (
+        poses[-2].translation().distance(poses[-1].translation()) <= 0.1
+        and len(poses) > 2
+    ):
+        poses.remove(poses[-2])
+
     return poses
 
 

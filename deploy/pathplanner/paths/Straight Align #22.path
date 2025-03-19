@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.684895833333332,
-        "y": 1.8308159722222217
+        "x": 5.909982638888888,
+        "y": 1.663107638888888
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.566840277777777,
-        "y": 1.4255208333333327
+        "x": 5.5193148306697095,
+        "y": 2.2941864060121757
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "StartPosition Blue"
     },
     {
       "anchor": {
-        "x": 5.141319444444443,
-        "y": 2.8789930555555556
+        "x": 5.168835616438356,
+        "y": 2.868022260273973
       },
       "prevControl": {
-        "x": 5.532638888888888,
-        "y": 2.068402777777777
+        "x": 5.43929794520548,
+        "y": 2.3421232876712326
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Place Coral #22"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.0,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 119.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

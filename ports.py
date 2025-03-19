@@ -62,5 +62,6 @@ class DIO(Immutable):
 class PDP(Immutable):
     elevator_motor = "?"
     arm_motor = 12
-    claw_motor_left = "?"
-    claw_motor_right = "?"
+    printer_motor = 15
+    claw_motor_left = 10
+    claw_motor_right = 11

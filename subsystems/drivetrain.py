@@ -3,7 +3,6 @@ import math
 import wpilib
 import wpimath
 from pathplannerlib.util import DriveFeedforwards
-from photonlibpy.photonCamera import PhotonCamera
 from wpilib import RobotBase
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
@@ -16,12 +15,13 @@ from wpimath.kinematics import (
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.gyro import ADIS16470
 from ultime.subsystem import Subsystem
 from ultime.swerve import SwerveModule, SwerveDriveElasticSendable
 from ultime.swerveconfig import SwerveConstants
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Drivetrain(Subsystem):
@@ -33,6 +33,8 @@ class Drivetrain(Subsystem):
     angular_offset_fr = autoproperty(0.0)
     angular_offset_bl = autoproperty(3.14)
     angular_offset_br = autoproperty(1.57)
+
+    swerve_temperature_threshold = autoproperty(55.0)
 
     def __init__(self) -> None:
         super().__init__()
@@ -68,6 +70,13 @@ class Drivetrain(Subsystem):
             self.angular_offset_br,
         )
 
+        self.swerve_modules = {
+            "FL": self.swerve_module_fl,
+            "FR": self.swerve_module_fr,
+            "BL": self.swerve_module_bl,
+            "BR": self.swerve_module_br,
+        }
+
         # Gyro
         """
         Possibilités : NavX, ADIS16448, ADIS16470, ADXRS, Empty
@@ -87,6 +96,10 @@ class Drivetrain(Subsystem):
             lambda: self._gyro.getRotation2d().radians(),
         )
         wpilib.SmartDashboard.putData("SwerveDrive", swerve_drive_sendable)
+
+        """
+        Pose estimation
+        """
 
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
@@ -114,9 +127,49 @@ class Drivetrain(Subsystem):
             ),
             Pose2d(0, 0, 0),
         )
-        self.cam = PhotonCamera("mainCamera")
+
         self.vision_pose = self._field.getObject("Vision Pose")
         self.odometry_pose = self._field.getObject("Odometry Pose")
+
+        """
+        Alerts
+        """
+
+        self.alerts_hot = {
+            location: self.createAlert(
+                f"{location} Swerve is too hot. Allow swerves to cool down.",
+                AlertType.Warning,
+            )
+            for location in self.swerve_modules.keys()
+        }
+
+        self.alerts_faults = {
+            location: self.createAlert(
+                f"{location} Swerve has active faults/warnings. Check for them on REV Hardware Client.",
+                AlertType.Warning,
+            )
+            for location in self.swerve_modules.keys()
+        }
+
+        self.alerts_drive_encoder = {
+            location: self.createAlert(
+                f"{location} Swerve Drive encoder measured velocity is too low.",
+                AlertType.Error,
+            )
+            for location in self.swerve_modules.keys()
+        }
+
+        self.alerts_turning_motor = {
+            location: self.createAlert(
+                f"{location} Swerve turning motor failed to reach desired state.",
+                AlertType.Error,
+            )
+            for location in self.swerve_modules.keys()
+        }
+
+        self.alert_odometry = self.createAlert(
+            "Odometry failed to calculate robot position accurately.", AlertType.Error
+        )
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
@@ -234,6 +287,27 @@ class Drivetrain(Subsystem):
 
         self.odometry_pose.setPose(self.swerve_odometry.getPose())
         self._field.setRobotPose(self.swerve_estimator.getEstimatedPosition())
+
+        for location, swerve_module in self.swerve_modules.items():
+            if (
+                swerve_module._driving_motor.getMotorTemperature()
+                > self.swerve_temperature_threshold
+                or swerve_module._turning_motor.getMotorTemperature()
+                > self.swerve_temperature_threshold
+            ):
+                self.alerts_hot[location].set(True)
+            else:
+                self.alerts_hot[location].set(False)
+
+            if (
+                swerve_module._driving_motor.hasActiveFault()
+                or swerve_module._turning_motor.hasActiveFault()
+                or swerve_module._driving_motor.hasActiveWarning()
+                or swerve_module._turning_motor.hasActiveWarning()
+            ):
+                self.alerts_faults[location].set(True)
+            else:
+                self.alerts_faults[location].set(False)
 
     def simulationPeriodic(self):
         self.swerve_module_fl.simulationUpdate(self.period_seconds)

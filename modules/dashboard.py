@@ -1,14 +1,18 @@
 import commands2
 import wpilib
+from commands2 import CommandScheduler
 
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
+from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.resetgyro import ResetGyro
+from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.manualmoveelevator import ManualMoveElevator
@@ -25,6 +29,7 @@ from commands.printer.resetprinter import ResetPrinterRight
 from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
+from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
 
@@ -34,7 +39,9 @@ class DashboardModule(Module):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
+        self.setupCommands(hardware)
 
+    def setupCommands(self, hardware):
         """
         Elevator
         """
@@ -79,7 +86,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Claw", Drop.atLevel3(hardware.claw))
         putCommandOnDashboard("Claw", Drop.atLevel4(hardware.claw))
         putCommandOnDashboard("Claw", AutoDrop(hardware.claw, hardware.elevator))
-        putCommandOnDashboard("Claw", LoadCoral(hardware.claw))
+        putCommandOnDashboard("Claw", LoadCoral(hardware.claw, hardware.printer))
+        putCommandOnDashboard("Claw", WaitUntilCoral(hardware.claw))
 
         """
         Arm
@@ -108,6 +116,13 @@ class DashboardModule(Module):
         Groups
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))
+        putCommandOnDashboard(
+            "Drivetrain", DriveRelative.backwards(hardware.drivetrain)
+        )
+
         putCommandOnDashboard(
             "Group",
             ResetAll(
@@ -138,7 +153,10 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                hardware.controller,
+                False,
             ),
+            "DropPrepareLoading.toLeft.NotAlways",
         )
         putCommandOnDashboard(
             "Group",
@@ -148,7 +166,62 @@ class DashboardModule(Module):
                 hardware.elevator,
                 hardware.drivetrain,
                 hardware.claw,
+                hardware.controller,
+                False,
             ),
+            "DropPrepareLoading.toRight.NotAlways",
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                True,
+            ),
+            "DropPrepareLoading.toLeft.Always",
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropPrepareLoading.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                True,
+            ),
+            "DropPrepareLoading.toRight.Always",
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropAutonomous.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                True,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            DropAutonomous.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                True,
+            ),
+        )
+        putCommandOnDashboard(
+            "Group",
+            ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
 
     def robotInit(self) -> None:
@@ -156,6 +229,9 @@ class DashboardModule(Module):
             wpilib.SmartDashboard.putData(subsystem.getName(), subsystem)
 
         wpilib.SmartDashboard.putData("Gyro", self._hardware.drivetrain._gyro)
+        wpilib.SmartDashboard.putData(
+            "CommandScheduler", CommandScheduler.getInstance()
+        )
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:

@@ -2,13 +2,19 @@ from enum import Enum, auto
 from typing import List
 from typing import Optional
 
-from photonlibpy import PhotonPoseEstimator, PoseStrategy
+from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
 
+from ultime.alert import AlertType
 from ultime.module import Module
+from ultime.timethis import tt
+
+april_tag_field_layout = AprilTagFieldLayout.loadField(
+    AprilTagField.k2025ReefscapeWelded
+)
 
 
 class VisionMode(Enum):
@@ -23,11 +29,18 @@ class Vision(Module):
         self._cam = PhotonCamera(self.camera_name)
         self.mode = VisionMode.Relative
 
+        self.alert_vision_offline = self.createAlert(
+            "Vision camera is having connection issues, check for connections?",
+            AlertType.Error,
+        )
+
+    def robotPeriodic(self) -> None:
+        self.alert_vision_offline.set(not self._cam.isConnected())
+
 
 class RelativeVision(Vision):
     def __init__(self, camera_name: str):
         super().__init__(camera_name=camera_name)
-
         self._targets: List[PhotonTrackedTarget] = []
 
     def robotPeriodic(self) -> None:
@@ -51,12 +64,12 @@ class AbsoluteVision(Vision):
         super().__init__(camera_name=camera_name)
 
         self.camera_pose_estimator = PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagField.kDefaultField),
+            april_tag_field_layout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             self._cam,
             camera_offset,
         )
-        self.estimated_pose = None
+        self.estimated_pose: EstimatedRobotPose = None
         self.camera_pose_estimator.multiTagFallbackStrategy = (
             PoseStrategy.LOWEST_AMBIGUITY
         )
@@ -83,9 +96,15 @@ class AbsoluteVision(Vision):
         if self.estimated_pose:
             return self.estimated_pose.timestampSeconds
 
-    def getUsedTagIDs(self):
+    def getUsedTagIDs(self) -> list[int]:
         if self.estimated_pose:
             return [target.fiducialId for target in self.estimated_pose.targetsUsed]
+        else:
+            return []
+
+    def getUsedTags(self) -> list[PhotonTrackedTarget]:
+        if self.estimated_pose:
+            return self.estimated_pose.targetsUsed
         else:
             return []
 
@@ -95,5 +114,4 @@ class AbsoluteVision(Vision):
         def noop(x):
             pass
 
-        builder.addIntegerArrayProperty("UsedTagIDs", self.getUsedTagIDs, noop)
-        # builder.add("Estimated_pose_2D", self.getEstimatedPose2D, noop)
+        builder.addIntegerArrayProperty("UsedTagIDs", tt(self.getUsedTagIDs), noop)
