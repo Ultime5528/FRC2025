@@ -1,4 +1,4 @@
-__all__ = ["timethis_enabled", "timethis", "print_stats", "print_stats_every"]
+__all__ = ["timethis_enabled", "timethis", "tt", "print_stats", "print_stats_every"]
 
 import functools
 import inspect
@@ -43,6 +43,9 @@ def timethis(f, key: str = None):
         return ret
 
     return wrapper
+
+
+tt = timethis
 
 
 class Stats:

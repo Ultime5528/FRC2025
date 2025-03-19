@@ -10,7 +10,7 @@ from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Climber(Subsystem):
@@ -22,7 +22,7 @@ class Climber(Subsystem):
         Climbed = auto()
 
     height_max = autoproperty(90.0)
-    position_conversion_factor = autoproperty(0.205)
+    position_conversion_factor = autoproperty(0.2)
     speed = autoproperty(1.0)
 
     def __init__(self):

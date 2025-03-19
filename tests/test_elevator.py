@@ -5,12 +5,14 @@ from commands.arm.retractarm import RetractArm
 from commands.elevator.manualmoveelevator import ManualMoveElevator
 from commands.elevator.moveelevator import MoveElevator, move_elevator_properties
 from commands.elevator.resetelevator import ResetElevator
+from commands.resetallbutclimber import ResetAllButClimber
 from robot import Robot
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from subsystems.printer import Printer
 from ultime.switch import Switch
 from ultime.tests import RobotTestController
+from ultime.tests.utils import robot_controller
 
 
 def test_ports(robot: Robot):
@@ -37,34 +39,36 @@ def test_settings(robot: Robot):
 def test_maintain(robot_controller: RobotTestController, robot: Robot):
     arm = robot.hardware.arm
     elevator = robot.hardware.elevator
+    intake = robot.hardware.intake
     printer = robot.hardware.printer
 
     arm.movement_state = Arm.MovementState.FreeToMove
     elevator.movement_state = Elevator.MovementState.FreeToMove
     printer.movement_state = Printer.MovementState.FreeToMove
 
-    arm.state = Arm.State.Retracted
-
     robot_controller.startTeleop()
 
-    ResetElevator(elevator).schedule()
-    robot_controller.wait(10)
+    cmd = ResetAllButClimber(elevator, printer, arm, intake)
+    cmd.schedule()
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+    assert elevator.state == Elevator.State.Reset
+    assert not elevator.hasReset()
+
+    robot_controller.wait(0.02)
+    assert elevator.state == Elevator.State.Reset
     assert elevator.hasReset()
 
     cmd = MoveElevator.toLevel1(elevator)
     cmd.schedule()
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
+    assert elevator._motor.get() == approx(0.0)
 
-    robot_controller.wait(10)
-
-    assert not cmd.isScheduled()
+    robot_controller.wait(0.02)
     assert elevator._motor.get() == approx(elevator.speed_maintain)
 
     cmd = ResetElevator(elevator)
     cmd.schedule()
-
-    robot_controller.wait(10)
-
-    assert not cmd.isScheduled()
+    robot_controller.wait_until(lambda: not cmd.isScheduled(), 10.0)
     assert elevator._motor.get() == 0.0
 
 
@@ -78,37 +82,30 @@ def common_test_moveElevator_from_switch_down(
     elevator = robot.hardware.elevator
     printer = robot.hardware.printer
 
-    arm.movement_state = Arm.MovementState.FreeToMove
-    elevator.movement_state = Elevator.MovementState.FreeToMove
-    printer.movement_state = Printer.MovementState.FreeToMove
-
-    arm.state = Arm.State.Retracted
-
     robotController.startTeleop()
-    # Set hasReset to true
-    elevator._has_reset = True
-    # Set encoder to the minimum value so switch_down is pressed
-    elevator._sim_motor.setPosition(-0.05)
-    elevator._sim_height = -0.05
-    # Enable robot and schedule command
-    robotController.wait(0.5)
-    assert elevator.isDown()
+
+    robotController.run_command(
+        ResetAllButClimber(elevator, printer, arm, robot.hardware.intake), 10.0
+    )
 
     cmd = MoveElevatorCommand(elevator)
     cmd.schedule()
 
-    robotController.wait(0.5)
+    robotController.wait(0.02)
 
-    assert elevator._motor.get() > 0.0
+    assert elevator.state == Elevator.State.Moving
 
-    robotController.wait(10)
+    robotController.run_command(cmd, 10.0)
+    robotController.wait(0.1)
 
-    assert not elevator._switch.isPressed()
-
-    robotController.wait(20)
-
-    assert elevator._motor.get() == approx(0.02)  # speed_maintain
-    assert elevator.getHeight() == approx(wantedHeight, rel=0.1)
+    assert not elevator.state == Elevator.State.Moving
+    if wantedHeight >= elevator.height_maintain:
+        assert elevator._motor.get() == approx(
+            elevator.speed_maintain
+        )  # speed_maintain
+    else:
+        assert elevator._motor.get() == 0.0
+    assert elevator.getHeight() == approx(wantedHeight, abs=0.05)
 
 
 def test_moveElevator_toLevel1(robot_controller: RobotTestController, robot: Robot):

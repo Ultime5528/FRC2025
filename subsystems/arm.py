@@ -7,7 +7,7 @@ import ports
 from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Arm(Subsystem):
@@ -22,7 +22,7 @@ class Arm(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed = autoproperty(-0.6)
+    speed = autoproperty(-0.8)
 
     def __init__(self):
         super().__init__()

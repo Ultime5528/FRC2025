@@ -3,13 +3,13 @@ import weakref
 from typing import Union, Tuple, List, Callable
 
 import numpy as np
-import wpilib
 from wpilib import AddressableLED, DriverStation, SmartDashboard, getTime
 from wpiutil import SendableBuilder
 
 import ports
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
+from ultime.timethis import tt
 
 
 def interpolate(t, color1, color2):
@@ -27,10 +27,13 @@ Color = Union[np.ndarray, Tuple[int, int, int], List[int]]
 
 class LEDController(Subsystem):
     green_rgb = np.array([0, 255, 0])
+    dark_green_rgb = np.array([3, 53, 0])
     red_rgb = np.array([255, 0, 0])
     blue_rgb = np.array([0, 0, 255])
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
+    purple = np.array([128, 0, 128])
+    pink = np.array([255, 105, 180])
 
     led_number = autoproperty(300.0)
 
@@ -49,11 +52,9 @@ class LEDController(Subsystem):
         self.claw = hardware.claw
         self.elevator = hardware.elevator
         self.printer = hardware.printer
+        self.climber = hardware.climber
 
         self.time = 0
-        self.has_seen_coral = False
-        self.timer = wpilib.Timer()
-        self.timer.reset()
 
         self.hardware = weakref.proxy(hardware)
 
@@ -106,7 +107,7 @@ class LEDController(Subsystem):
             self.buffer[i].setRGB(*y)
 
     def modeTeleop(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 1.0)
+        self.commonTeleop(self.getAllianceColor(), self.white, 0.5)
 
     def modeEndgame(self):
         period = 15
@@ -119,11 +120,26 @@ class LEDController(Subsystem):
         for i, y in enumerate(pixel_value):
             self.buffer[i].setRGB(*y)
 
-    def modePickUp(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 3.0)
+    def modeElevatorMove(self):
+        self.commonTeleop(self.getAllianceColor(), self.white, 3.5)
+
+    def modeClimberMove(self):
+        self.commonTeleop(self.purple, self.white, 3.0)
+
+    def modeDrop(self):
+        self.commonTeleop(self.white, self.white, 0)
 
     def modeCoralLoaded(self):
-        self.commonTeleop(self.green_rgb, self.black, 1.0)
+        self.commonTeleop(self.green_rgb, self.dark_green_rgb, 3.0)
+
+    def modeClimberReady(self):
+        self.commonTeleop(self.purple, self.purple, 0.0)
+
+    def modeClimberMoving(self):
+        self.commonTeleop(self.purple, self.white, 2.0)
+
+    def modeDropping(self):
+        self.commonTeleop(self.pink, self.white, 0.2)
 
     def commonTeleop(self, color1, color2, speed):
         color1 = (self.brightness * color1).astype(int)
@@ -188,24 +204,20 @@ class LEDController(Subsystem):
         elif DriverStation.isTeleopEnabled():  # teleop
             if DriverStation.getMatchTime() > 15:
                 if (
-                    self.claw.has_coral
-                    and not self.has_seen_coral
-                    and self.timer.get() <= 2
+                    self.claw.seesObject()
+                    and self.elevator.state == self.elevator.State.Loading
                 ):
+
                     self.modeCoralLoaded()
-                    self.timer.start()
-
-                elif self.timer.get() >= 2:
-                    self.has_seen_coral = True
-
-                elif not self.claw.has_coral:
-                    self.has_seen_coral = False
-                    self.timer.stop()
-                    self.timer.reset()
 
                 elif self.elevator.state == self.elevator.State.Moving:
-                    self.modePickUp()
+                    self.modeElevatorMove()
 
+                elif self.climber.state == self.climber.State.Ready:
+                    self.modeClimberReady()
+
+                elif self.climber.state == self.climber.State.Moving:
+                    self.modeClimberMoving()
                 else:
                     self.modeTeleop()
 
@@ -213,6 +225,13 @@ class LEDController(Subsystem):
                 self.rainbow()
             else:
                 self.modeEndgame()
+
+            if self.climber.state == self.climber.State.Ready:
+                self.modeClimberReady()
+
+            elif self.climber.state == self.climber.State.Moving:
+                self.modeClimberMoving()
+
         elif DriverStation.isDSAttached():
             self.modeConnected()  # connected to driver station
         else:  # not connected to driver station
@@ -226,4 +245,4 @@ class LEDController(Subsystem):
 
     def initSendable(self, builder: SendableBuilder) -> None:
         super().initSendable(builder)
-        builder.addIntegerProperty("time", lambda: self.time, lambda _: None)
+        builder.addIntegerProperty("time", tt(lambda: self.time), lambda _: None)

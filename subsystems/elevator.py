@@ -6,10 +6,11 @@ from wpimath._controls._controls.plant import DCMotor
 from wpiutil import SendableBuilder
 
 import ports
+from ultime.alert import AlertType
 from ultime.autoproperty import autoproperty
 from ultime.subsystem import Subsystem
 from ultime.switch import Switch
-from ultime.timethis import timethis as tt
+from ultime.timethis import tt
 
 
 class Elevator(Subsystem):
@@ -30,15 +31,20 @@ class Elevator(Subsystem):
         FreeToMove = auto()
         Unknown = auto()
 
-    speed_up = autoproperty(0.1)
-    speed_down = autoproperty(-0.1)
+    class LoadingState(Enum):
+        FreeToMove = auto()
+        DoNotMoveWhileLoading = auto()
+        Unknown = auto()
+
+    speed_up = autoproperty(0.2)
+    speed_down = autoproperty(-0.2)
     speed_maintain = autoproperty(0.02)
     height_min = autoproperty(0.0)
     height_max = autoproperty(1.37)
     height_maintain = autoproperty(0.0)
     height_lower_zone = autoproperty(0.12)
 
-    position_conversion_factor = autoproperty(0.00623)
+    position_conversion_factor = autoproperty(0.01869)
 
     def __init__(self):
         super().__init__()
@@ -62,6 +68,25 @@ class Elevator(Subsystem):
         self._prev_is_down = False
         self.state = Elevator.State.Unknown
         self.movement_state = Elevator.MovementState.Unknown
+        self.loading_state = Elevator.LoadingState.Unknown
+
+        self.alert_is_down = self.createAlert(
+            "isDown returned incorrect value. "
+            + f"Is the limit switch connected? DIO={ports.DIO.elevator_switch}",
+            AlertType.Error,
+        )
+
+        self.alert_is_up = self.createAlert(
+            "isUp returned incorrect value. Elevator went to level 1, not max height. "
+            f"Check encoder. CAN={ports.CAN.elevator_motor}",
+            AlertType.Error,
+        )
+
+        self.alert_motor = self.createAlert(
+            "Motor didn't affect battery voltage during test. Is it connected? "
+            + f"CAN={ports.CAN.elevator_motor} PDP={ports.PDP.elevator_motor}",
+            AlertType.Error,
+        )
 
         if RobotBase.isSimulation():
             self._sim_motor = SparkMaxSim(self._motor, DCMotor.NEO(1))
@@ -113,8 +138,12 @@ class Elevator(Subsystem):
             and speed < 0
         ):
             speed = self.speed_maintain
+        elif self.loading_state == Elevator.LoadingState.DoNotMoveWhileLoading:
+            speed = self.speed_maintain
+
         elif self.isDown():
             speed = speed if speed >= 0.0 else 0.0
+
         elif self.isUp():
             speed = speed if speed <= 0.0 else self.speed_maintain
 

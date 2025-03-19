@@ -10,6 +10,7 @@ from wpimath.system.plant import DCMotor
 from wpiutil import Sendable, SendableBuilder
 
 from ultime import swerveconfig
+from ultime.timethis import tt
 
 
 def radians_per_second_to_rpm(rps: float):
@@ -163,38 +164,38 @@ class SwerveDriveElasticSendable(Sendable):
 
         builder.addDoubleProperty(
             "Front Left Angle",
-            lambda: self.module_fl.getPosition().angle.radians(),
+            tt(lambda: self.module_fl.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Front Left Velocity", self.module_fl.getVelocity, noop
+            "Front Left Velocity", tt(self.module_fl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
             "Front Right Angle",
-            lambda: self.module_fr.getPosition().angle.radians(),
+            tt(lambda: self.module_fr.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Front Right Velocity", self.module_fr.getVelocity, noop
+            "Front Right Velocity", tt(self.module_fr.getVelocity), noop
         )
 
         builder.addDoubleProperty(
             "Back Left Angle",
-            lambda: self.module_bl.getPosition().angle.radians(),
+            tt(lambda: self.module_bl.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Back Left Velocity", self.module_bl.getVelocity, noop
+            "Back Left Velocity", tt(self.module_bl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
             "Back Right Angle",
-            lambda: self.module_br.getPosition().angle.radians(),
+            tt(lambda: self.module_br.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Back Right Velocity", self.module_br.getVelocity, noop
+            "Back Right Velocity", tt(self.module_br.getVelocity), noop
         )
 
-        builder.addDoubleProperty("Robot Angle", self.get_robot_angle_radians, noop)
+        builder.addDoubleProperty("Robot Angle", tt(self.get_robot_angle_radians), noop)

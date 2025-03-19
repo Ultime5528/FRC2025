@@ -1,14 +1,13 @@
 from typing import Literal
 
+import commands2
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none
+from commands2.cmd import deadline, either, none, sequence
 
-from commands.claw.autodrop import AutoDrop
+from commands.drivetrain.drive import DriveField
 from commands.drivetrain.drivetoposes import DriveToPoses
-from commands.elevator.moveelevator import MoveElevator
+from commands.dropautonomous import DropAutonomous
 from commands.prepareloading import PrepareLoading
-from commands.printer.moveprinter import MovePrinter
-from commands.printer.scanprinter import ScanPrinter
 from subsystems.arm import Arm
 from subsystems.claw import Claw
 from subsystems.drivetrain import Drivetrain
@@ -27,8 +26,12 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
+        always_drop: bool,
     ):
-        cmd = DropPrepareLoading(printer, arm, elevator, drivetrain, claw, "left")
+        cmd = DropPrepareLoading(
+            printer, arm, elevator, drivetrain, claw, controller, "left", always_drop
+        )
         cmd.setName(DropPrepareLoading.__name__ + ".toLeft")
         return cmd
 
@@ -39,8 +42,12 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
+        always_drop: bool,
     ):
-        cmd = DropPrepareLoading(printer, arm, elevator, drivetrain, claw, "right")
+        cmd = DropPrepareLoading(
+            printer, arm, elevator, drivetrain, claw, controller, "right", always_drop
+        )
         cmd.setName(DropPrepareLoading.__name__ + ".toRight")
         return cmd
 
@@ -51,45 +58,31 @@ class DropPrepareLoading(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
+        controller: commands2.button.commandxboxcontroller,
         side: Literal["right", "left"],
+        always_drop: bool,
     ):
         super().__init__(
+            DropAutonomous(printer, arm, elevator, drivetrain, claw, side, always_drop),
             either(
                 sequence(
-                    MovePrinter.toMiddle(printer),
-                    AutoDrop(claw, elevator),
-                ),
-                sequence(
-                    # Check side
-                    (
-                        ScanPrinter.right(printer)
-                        if side == "right"
-                        else ScanPrinter.left(printer)
-                    ),
-                    AutoDrop(claw, elevator),
-                    # Check if elevator is level 4 and arm extended (remove algae) if not, prepare loading
-                    either(
-                        sequence(
-                            MoveElevator.toAlgae(elevator, drivetrain),
-                            DriveToPoses.back(
-                                drivetrain, lambda: _properties.distance_remove_algae
-                            ),
-                        ),
-                        none(),
-                        lambda: elevator.state == Elevator.State.Level4
-                        and arm.state == Arm.State.Extended,
+                    DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
+                    deadline(
+                        PrepareLoading(elevator, arm, printer),
+                        DriveField(drivetrain, controller),
                     ),
                 ),
-                lambda: elevator.state == Elevator.State.Level1,
+                none(),
+                lambda: always_drop
+                or printer.scanned
+                or elevator.state == Elevator.State.Level1,
             ),
-            DriveToPoses.back(drivetrain, lambda: _properties.distance_end),
-            PrepareLoading(elevator, arm, printer),
         )
 
 
 class _ClassProperties:
-    distance_remove_algae = autoproperty(0.5, subtable=DropPrepareLoading.__name__)
-    distance_end = autoproperty(0.1, subtable=DropPrepareLoading.__name__)
+    distance_remove_algae = autoproperty(0.7, subtable=DropPrepareLoading.__name__)
+    distance_end = autoproperty(0.2, subtable=DropPrepareLoading.__name__)
 
 
 _properties = _ClassProperties()

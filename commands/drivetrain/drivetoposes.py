@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Optional
 
 from commands2 import Command
 from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
@@ -30,25 +30,36 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(0.2)
-    xy_tol_pos = autoproperty(0.5)
-    xy_tol_pos_last = autoproperty(0.05)
-    xy_speed_max = autoproperty(20.0)
+    xy_speed_end = autoproperty(3.0)
+    xy_tol_pos = autoproperty(0.3)
+    xy_tol_pos_last = autoproperty(0.1)
+    xy_speed_max = autoproperty(12.0)
 
     rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(1.0)
-    rot_tol_pos = autoproperty(10.0)
-    rot_tol_pos_last = autoproperty(5.0)
-    rot_speed_max = autoproperty(16.0)
+    rot_speed_end = autoproperty(4.0)
+    rot_tol_pos = autoproperty(50.0)
+    rot_tol_pos_last = autoproperty(10.0)
+    rot_speed_max = autoproperty(8.0)
 
     def __init__(
-        self, drivetrain: Drivetrain, goals: List[Pose2d] | Callable[[], List[Pose2d]]
+        self,
+        drivetrain: Drivetrain,
+        goals: List[Pose2d] | Callable[[], List[Pose2d]],
+        speed_constraint: Optional[float] = None,
+        end_speed_constraint: Optional[float] = None,
+        rotation_speed_constraint: Optional[float] = None,
+        rotation_end_speed_constraint: Optional[float] = None,
     ):
         super().__init__()
         self.addRequirements(drivetrain)
         self.drivetrain = drivetrain
         self.get_goals = goals if callable(goals) else lambda: goals
         self.goals: List[Pose2d] = None
+        self.last_goal: Pose2d = None
+        self.speed_constraint = speed_constraint
+        self.end_speed_constraint = end_speed_constraint
+        self.rotation_speed_constraint = rotation_speed_constraint
+        self.rotation_end_speed_constraint = rotation_end_speed_constraint
 
     @staticmethod
     def fromRedBluePoints(
@@ -60,53 +71,68 @@ class DriveToPoses(Command):
         )
 
     def updateMotions(self):
-        current_goal = self.goals[self.currGoal]
+        self.last_goal = self.goals[-1]
         current_pose = self.drivetrain.getPose()
         self.trap_motion_xy = TrapezoidalMotion(
-            start_speed=self.xy_speed_max,
-            end_speed=self.xy_speed_end,
-            max_speed=self.xy_speed_max,
+            start_speed=self.speed_constraint,
+            end_speed=self.end_speed_constraint,
+            max_speed=self.speed_constraint,
             accel=self.xy_accel,
             start_position=(
-                current_goal.translation() - current_pose.translation()
-            ).norm(),
+                self.last_goal.translation().distance(current_pose.translation())
+            ),
             end_position=0.0,
         )
-        self.start_rotation = current_pose.rotation()
         self.trap_motion_rot = TrapezoidalMotion(
-            start_speed=self.rot_speed_max,
-            end_speed=self.rot_speed_end,
-            max_speed=self.rot_speed_max,
+            start_speed=self.rotation_speed_constraint,
+            end_speed=self.rotation_end_speed_constraint,
+            max_speed=self.rotation_speed_constraint,
             accel=self.rot_accel,
-            start_position=0.0,
-            end_position=((current_goal.rotation() - self.start_rotation).degrees()),
+            start_position=(
+                self.last_goal.rotation() - current_pose.rotation()
+            ).degrees(),
+            end_position=0.0,
         )
 
     def initialize(self):
+        if self.speed_constraint is None:
+            self.speed_constraint = self.xy_speed_max
+
+        if self.end_speed_constraint is None:
+            self.end_speed_constraint = self.xy_speed_end
+
+        if self.rotation_speed_constraint is None:
+            self.rotation_speed_constraint = self.rot_speed_max
+
+        if self.rotation_end_speed_constraint is None:
+            self.rotation_end_speed_constraint = self.rot_speed_end
+
         self.goals = self.get_goals()
         self.currGoal = 0
         self.updateMotions()
 
     def execute(self):
-        current_pos = self.drivetrain.getPose()
+        current_pose = self.drivetrain.getPose()
         translation_error = (
-            self.goals[self.currGoal].translation() - current_pos.translation()
+            self.goals[self.currGoal].translation() - current_pose.translation()
         )
 
-        xy_mag = abs(self.trap_motion_xy.calculate(translation_error.norm()))
+        xy_mag = abs(
+            self.trap_motion_xy.calculate(
+                self.last_goal.translation().distance(current_pose.translation())
+            )
+        )
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero
-        if translation_error_norm < 0.001:
+        if translation_error_norm < 0.01:
             vel_xy = Translation2d()
         else:
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
 
-        vel_rot = self.trap_motion_rot.calculate(
-            (current_pos.rotation() - self.start_rotation).degrees()
+        vel_rot = -self.trap_motion_rot.calculate(
+            (self.last_goal.rotation() - current_pose.rotation()).degrees()
         )
-
-        print(vel_xy.X(), vel_xy.Y(), vel_rot)
 
         self.drivetrain.driveRaw(
             vel_xy.X(),
@@ -122,9 +148,6 @@ class DriveToPoses(Command):
             and self.isWithinLastTolerances()
         ):
             self.currGoal += 1
-
-            if self.currGoal < len(self.goals):
-                self.updateMotions()
 
     def end(self, interrupted):
         self.currGoal = 0
@@ -142,6 +165,8 @@ class DriveToPoses(Command):
 
     def isWithinTolerances(self) -> bool:
         return (
-            self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos
-            and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos
+            self.goals[self.currGoal]
+            .translation()
+            .distance(self.drivetrain.getPose().translation())
+            <= self.xy_tol_pos
         )

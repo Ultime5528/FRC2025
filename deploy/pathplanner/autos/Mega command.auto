@@ -15,23 +15,35 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "MoveElevator.toLevel2"
+                        "name": "ResetAutonomous"
+                      }
+                    },
+                    {
+                      "type": "parallel",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "MoveElevator.toLevel4"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "RetractCoral.retract"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
                 }
               },
               {
-                "type": "sequential",
+                "type": "path",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "StraightPath"
-                      }
-                    }
-                  ]
+                  "pathName": "Straight Align #22"
                 }
               }
             ]
@@ -40,7 +52,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DropPrepareLoading.toRight"
+            "name": "DropAutonomous.toRight"
           }
         },
         {
@@ -56,16 +68,22 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ResetClimber"
+                  "name": "PrepareLoading"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 2.0
+            "name": "WaitUntilCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LoadCoral"
           }
         },
         {
@@ -79,22 +97,77 @@
                 }
               },
               {
-                "type": "parallel",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "MoveElevator.toLevel4"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ExtendArm"
-                      }
-                    }
-                  ]
+                  "name": "MoveElevator.toLevel4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractCoral.retract"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropAutonomous.toRight"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to Coral Station after reef #17"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "PrepareLoading"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitUntilCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LoadCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Go to tag #17 after loading"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "MoveElevator.toLevel4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RetractCoral.retract"
                 }
               }
             ]
