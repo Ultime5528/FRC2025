@@ -63,7 +63,8 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    backwards_offset = autoproperty(0.4)
+    backwards_1_offset = autoproperty(1.0)
+    backwards_2_offset = autoproperty(0.4)
     left_offset = autoproperty(0.05)
 
     def __init__(self, drivetrain: Drivetrain):
@@ -78,11 +79,16 @@ class AlignWithReefSide(DeferredCommand):
         tag = getClosestReefTagID(self.drivetrain.getPose())
         pose = tag_poses[tag]
 
-        return self.offsetTagPositions(pose, self.backwards_offset, self.left_offset)
+        return self.offsetTagPositions(
+            pose, self.backwards_1_offset, self.backwards_2_offset, self.left_offset
+        )
 
     @staticmethod
     def offsetTagPositions(
-        tag_pose: Pose2d, backwards_offset: float, left_offset: float
+        tag_pose: Pose2d,
+        backwards_1_offset: float,
+        backwards_2_offset: float,
+        left_offset: float,
     ):
         flipped_tag = Pose2d(
             tag_pose.translation(), tag_pose.rotation() + Rotation2d.fromDegrees(180)
@@ -90,9 +96,9 @@ class AlignWithReefSide(DeferredCommand):
 
         return [
             flipped_tag.transformBy(
-                Transform2d(-backwards_offset * 1.5, left_offset, Rotation2d())
+                Transform2d(-backwards_1_offset, left_offset, Rotation2d())
             ),
             flipped_tag.transformBy(
-                Transform2d(-backwards_offset, left_offset, Rotation2d())
+                Transform2d(-backwards_2_offset, left_offset, Rotation2d())
             ),
         ]
