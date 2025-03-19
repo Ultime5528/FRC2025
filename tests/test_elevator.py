@@ -85,7 +85,9 @@ def common_test_moveElevator_from_switch_down(
 
     robotController.startTeleop()
 
-    robotController.run_command(ResetAllButClimber(elevator, printer, arm, robot.hardware.intake), 10.0)
+    robotController.run_command(
+        ResetAllButClimber(elevator, printer, arm, robot.hardware.intake), 10.0
+    )
 
     cmd = MoveElevatorCommand(elevator)
     cmd.schedule()
@@ -99,7 +101,9 @@ def common_test_moveElevator_from_switch_down(
 
     assert not elevator.state == Elevator.State.Moving
     if wantedHeight >= elevator.height_maintain:
-        assert elevator._motor.get() == approx(elevator.speed_maintain)  # speed_maintain
+        assert elevator._motor.get() == approx(
+            elevator.speed_maintain
+        )  # speed_maintain
     else:
         assert elevator._motor.get() == 0.0
     assert elevator.getHeight() == approx(wantedHeight, abs=0.05)
@@ -161,6 +165,7 @@ def test_moveElevator_toLevel4(robot_controller: RobotTestController, robot: Rob
         MoveElevator.toLevel4,
         move_elevator_properties.position_level4,
     )
+
 
 def test_moveElevator_toLoading(robot_controller: RobotTestController, robot: Robot):
     common_test_moveElevator_from_switch_down(
