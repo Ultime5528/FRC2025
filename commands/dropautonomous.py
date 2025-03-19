@@ -1,7 +1,7 @@
 from typing import Literal
 
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none, race, deadline
+from commands2.cmd import sequence, either, none, deadline
 
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
@@ -67,7 +67,7 @@ class DropAutonomous(SequentialCommandGroup):
                         MovePrinter.toMiddle(printer),
                         AutoDrop(claw, elevator),
                     ),
-                    MaintainElevator(elevator)
+                    MaintainElevator(elevator),
                 ),
                 sequence(
                     deadline(
@@ -77,7 +77,7 @@ class DropAutonomous(SequentialCommandGroup):
                             if side == "right"
                             else ScanPrinter.left(printer)
                         ),
-                        MaintainElevator(elevator)
+                        MaintainElevator(elevator),
                     ),
                     either(
                         sequence(

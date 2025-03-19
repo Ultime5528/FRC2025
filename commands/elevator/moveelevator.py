@@ -142,7 +142,7 @@ class MoveElevator(Command):
     def execute(self):
         height = self.elevator.getHeight()
         self.motion.setPosition(height)
-        self.elevator.setSpeed(self.motion.getSpeed() + self.elevator.speed_maintain)
+        self.elevator.setSpeed(self.motion.getSpeed())
 
     def isFinished(self) -> bool:
         return self.motion.isFinished() or not self.elevator.hasReset()

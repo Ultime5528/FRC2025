@@ -73,7 +73,9 @@ class DropPrepareLoading(SequentialCommandGroup):
                     ),
                 ),
                 none(),
-                lambda: always_drop or printer.scanned or elevator.state == Elevator.State.Level1,
+                lambda: always_drop
+                or printer.scanned
+                or elevator.state == Elevator.State.Level1,
             ),
         )
 

@@ -8,6 +8,7 @@ from commands.diagnostics.arm import DiagnoseArm
 from commands.diagnostics.claw import DiagnoseClaw
 from commands.diagnostics.diagnoseall import DiagnoseAll
 from commands.diagnostics.drivetrain import DiagnoseDrivetrain
+from commands.diagnostics.elevator import DiagnoseElevator
 from commands.diagnostics.intake import DiagnoseIntake
 from commands.diagnostics.printer import DiagnosePrinter
 from commands.diagnostics.utils.setrunningtest import SetRunningTest
@@ -25,6 +26,7 @@ class DiagnosticsModule(Module):
 
         self.components_tests = {
             hardware.drivetrain: DiagnoseDrivetrain(hardware.drivetrain),
+            hardware.elevator: DiagnoseElevator(hardware.elevator),
             hardware.intake: DiagnoseIntake(hardware.intake),
             hardware.claw: DiagnoseClaw(hardware.claw),
             hardware.arm: DiagnoseArm(hardware.arm, hardware.elevator),

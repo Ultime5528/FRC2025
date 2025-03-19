@@ -79,11 +79,16 @@ class AlignWithReefSide(DeferredCommand):
         tag = getClosestReefTagID(self.drivetrain.getPose())
         pose = tag_poses[tag]
 
-        return self.offsetTagPositions(pose, self.backwards_1_offset, self.backwards_2_offset, self.left_offset)
+        return self.offsetTagPositions(
+            pose, self.backwards_1_offset, self.backwards_2_offset, self.left_offset
+        )
 
     @staticmethod
     def offsetTagPositions(
-        tag_pose: Pose2d, backwards_1_offset: float, backwards_2_offset: float, left_offset: float
+        tag_pose: Pose2d,
+        backwards_1_offset: float,
+        backwards_2_offset: float,
+        left_offset: float,
     ):
         flipped_tag = Pose2d(
             tag_pose.translation(), tag_pose.rotation() + Rotation2d.fromDegrees(180)

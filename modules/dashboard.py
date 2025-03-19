@@ -245,6 +245,7 @@ class DashboardModule(Module):
         wpilib.SmartDashboard.putData(
             "CommandScheduler", CommandScheduler.getInstance()
         )
+        wpilib.SmartDashboard.putData("PDP", self._hardware.pdp)
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:

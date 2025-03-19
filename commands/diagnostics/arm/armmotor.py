@@ -9,6 +9,7 @@ from wpilib import RobotController, DataLogManager
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.elevator.moveelevator import MoveElevator
+from commands.elevator.resetelevator import ResetElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
 from ultime.autoproperty import autoproperty
@@ -38,6 +39,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             ),
             WaitCommand(0.1),
             RetractArm(arm),
+            ResetElevator(elevator),
         )
         self.arm = arm
         self.voltage_before = None
