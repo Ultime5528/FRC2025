@@ -53,7 +53,7 @@ def test_grab_algae(robot_controller: RobotTestController, robot: Robot):
     wait(0.05)
 
     assert intake._grab_motor.get() == approx(0.0)
-    assert intake._pivot_motor.get() >= move_intake_properties.speed_min
+    assert intake._pivot_motor.get() >= move_intake_properties.speed_end
 
     robot_controller.wait_until(
         lambda: intake.getPivotPosition() >= move_intake_properties.position_extended,
