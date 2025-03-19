@@ -21,7 +21,7 @@
 | commands/climber/resetclimber.py                |       25 |        0 |        6 |        0 |    100% |           |
 | commands/diagnostics/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/arm/\_\_init\_\_.py        |        9 |        0 |        0 |        0 |    100% |           |
-| commands/diagnostics/arm/armmotor.py            |       37 |        0 |        2 |        1 |     97% |  69->exit |
+| commands/diagnostics/arm/armmotor.py            |       38 |        0 |        2 |        1 |     98% |  71->exit |
 | commands/diagnostics/claw/\_\_init\_\_.py       |       10 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/claw/hascoral.py           |       12 |        0 |        2 |        1 |     93% |  13->exit |
 | commands/diagnostics/claw/leftmotor.py          |       41 |        0 |        8 |        1 |     98% |  54->exit |
@@ -30,6 +30,9 @@
 | commands/diagnostics/drivetrain/\_\_init\_\_.py |        9 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/drivetrain/odometry.py     |       36 |        1 |       10 |        1 |     96% |        49 |
 | commands/diagnostics/drivetrain/swerve.py       |       53 |        3 |        4 |        2 |     91% | 48-52, 88 |
+| commands/diagnostics/elevator/\_\_init\_\_.py   |        9 |        0 |        0 |        0 |    100% |           |
+| commands/diagnostics/elevator/motor.py          |       35 |        0 |        2 |        1 |     97% |  61->exit |
+| commands/diagnostics/elevator/switch.py         |       20 |        3 |        6 |        3 |     77% |24, 28, 30 |
 | commands/diagnostics/intake/\_\_init\_\_.py     |       10 |        0 |        0 |        0 |    100% |           |
 | commands/diagnostics/intake/extend.py           |       16 |        3 |        4 |        1 |     70% |     19-22 |
 | commands/diagnostics/intake/hasalgae.py         |       12 |        1 |        2 |        1 |     86% |        14 |
@@ -78,13 +81,13 @@
 | modules/control.py                              |       48 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
 | modules/dashboard.py                            |      127 |        1 |       12 |        2 |     98% |253, 257->260 |
-| modules/diagnostics.py                          |       52 |        3 |        4 |        0 |     95% | 64-65, 69 |
+| modules/diagnostics.py                          |       53 |        3 |        4 |        0 |     95% | 66-67, 71 |
 | modules/hardware.py                             |       30 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
 | modules/logging.py                              |       17 |        0 |        0 |        0 |    100% |           |
 | modules/propertysavechecker.py                  |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
 | modules/tagvision.py                            |       35 |        5 |        6 |        2 |     78% |36-38, 50, 58 |
-| ports.py                                        |       39 |        0 |        0 |        0 |    100% |           |
+| ports.py                                        |       40 |        0 |        0 |        0 |    100% |           |
 | properties.py                                   |       85 |       72 |       18 |        1 |     14% |17-24, 34-58, 62-78, 82-127, 131-158 |
 | robot.py                                        |       35 |        0 |        0 |        0 |    100% |           |
 | subsystems/\_\_init\_\_.py                      |        0 |        0 |        0 |        0 |    100% |           |
@@ -92,7 +95,7 @@
 | subsystems/claw.py                              |       40 |        1 |        0 |        0 |     98% |        60 |
 | subsystems/climber.py                           |       84 |        3 |       10 |        1 |     96% |49->exit, 109, 112, 115 |
 | subsystems/drivetrain.py                        |      140 |       15 |       10 |        3 |     88% |174->exit, 207, 232, 241-250, 298, 308, 333-340, 355-356, 359, 365 |
-| subsystems/elevator.py                          |      132 |        5 |       16 |        2 |     95% |72->exit, 129, 163, 172, 175, 178 |
+| subsystems/elevator.py                          |      136 |        5 |       16 |        2 |     95% |91->exit, 148, 182, 191, 194, 197 |
 | subsystems/intake.py                            |      106 |        5 |       10 |        2 |     94% |59->66, 109, 145, 151, 154, 157 |
 | subsystems/led.py                               |      169 |       59 |       50 |        8 |     60% |16-17, 66, 69-71, 76, 78, 84-97, 110, 113-121, 124, 127, 130, 133, 136, 142, 164-165, 171-185, 201, 206-222, 227, 230, 238, 244 |
 | subsystems/printer.py                           |      133 |        4 |       16 |        2 |     96% |89->exit, 141->148, 184, 190, 193, 196 |
@@ -146,7 +149,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **5989** |  **687** |  **732** |  **123** | **86%** |           |
+|                                       **TOTAL** | **6060** |  **690** |  **740** |  **127** | **86%** |           |
 
 
 ## Setup coverage badge
