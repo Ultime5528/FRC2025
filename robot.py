@@ -29,7 +29,7 @@ class Robot(ModuleRobot):
         self.hardware = HardwareModule()
 
         self.tag_vision = TagVisionModule(self.hardware.drivetrain)
-        self.algae_vision = AlgaeVisionModule()
+        self.algae_vision = AlgaeVisionModule(self.hardware.drivetrain)
 
         self.control = ControlModule(self.hardware, self.algae_vision)
 

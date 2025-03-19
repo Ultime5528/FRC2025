@@ -9,6 +9,8 @@ from photonlibpy.targeting import PhotonTrackedTarget
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d, Pose2d, Rotation2d
 
+from robot import Robot
+from subsystems.drivetrain import Drivetrain
 from ultime.alert import AlertType
 from ultime.module import Module
 from ultime.timethis import tt
@@ -49,15 +51,17 @@ class RelativeVision(Vision):
         fov_y: float,
         image_height: float,
         image_width: float,
+        drivetrain: Drivetrain,
     ):
         super().__init__(camera_name=camera_name)
         self._targets: List[PhotonTrackedTarget] = []
         self.camera_height = camera_height
-        self.camera_pitch = camera_pitch
-        self.fov = fov
-        self.fov_y = fov_y
+        self.camera_pitch = math.radians(camera_pitch)
+        self.fov = math.radians(fov)
+        self.fov_y = math.radians(fov_y)
         self.image_height = image_height
         self.image_width = image_width
+        self.drivetrain = drivetrain
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
@@ -92,17 +96,22 @@ class RelativeVision(Vision):
                 (self.image_height / 2 - target.pitch) / (self.image_height / 2)
             ) * (self.fov_y / 2)
 
-            dx = math.cos(target_pitch) * math.cos(target_yaw)
-            dy = math.cos(target_pitch) * math.sin(target_yaw)
+            robot_x = self.drivetrain.getPose().x
+            robot_y = self.drivetrain.getPose().y
+            robot_yaw = math.radians(self.drivetrain.getAngle())
+
+            yaw_total = robot_yaw + target_yaw
+
+            dx = math.cos(target_pitch) * math.cos(yaw_total)
+            dy = math.cos(target_pitch) * math.sin(yaw_total)
             dz = math.sin(target_pitch)
 
             dz_cam = math.sin(self.camera_pitch)
             dz_world = dz * math.cos(self.camera_pitch) - dz * dz_cam
 
             t = -self.camera_height / dz_world
-
-            X = t * dx
-            Y = t * dy
+            X = robot_x + t * dx
+            Y = robot_y + t * dy
             return Pose2d(X, Y, Rotation2d.fromDegrees(0))
         return None
 
