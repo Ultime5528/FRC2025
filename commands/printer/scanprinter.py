@@ -1,13 +1,11 @@
 from commands2 import SequentialCommandGroup
 from commands2.cmd import either, none
 from wpilib import DataLogManager
-from wpiutil import SendableBuilder
 
 from commands.printer.moveprinter import MovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import FloatProperty, autoproperty, asCallable
 from ultime.command import Command
-from ultime.timethis import tt
 
 
 class ScanPrinter(Command):

@@ -1,7 +1,7 @@
 from typing import Literal
 
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none, race, deadline
+from commands2.cmd import sequence, either, none, deadline
 
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
