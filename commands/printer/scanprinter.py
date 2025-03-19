@@ -107,7 +107,7 @@ class _ScanPrinter(Command):
 
 
 class _ClassProperties:
-    speed = autoproperty(0.5, subtable=ScanPrinter.__name__)
+    speed = autoproperty(0.7, subtable=ScanPrinter.__name__)
     coral_width = autoproperty(0.04, subtable=ScanPrinter.__name__)
 
 
