@@ -12,6 +12,7 @@ def ensure_positive(value: float, name: str):
         raise ValueError(f"{name} must be positive: {value}")
     return value
 
+
 class DynamicMotion:
     """
     Proof
@@ -63,6 +64,7 @@ class DynamicMotion:
     (6) v = sqrt( vi² + as ds (vi + vf) )
 
     """
+
     def __init__(
         self,
         goal: float,
@@ -75,7 +77,9 @@ class DynamicMotion:
         self._max_speed = ensure_positive(max_speed, "max_speed")
         self._end_speed = ensure_positive(end_speed, "end_speed")
         if self._max_speed < self._end_speed:
-            raise ValueError(f"max_speed cannot be lower than than end_speed: {self._max_speed} < {self._end_speed}")
+            raise ValueError(
+                f"max_speed cannot be lower than than end_speed: {self._max_speed} < {self._end_speed}"
+            )
         self._accel = ensure_positive(accel, "accel")
         self._decel = ensure_positive(decel, "decel") if decel is not None else accel
         self._last_time = None
@@ -101,7 +105,10 @@ class DynamicMotion:
     def update(self, position: float, current_speed: Optional[float] = None) -> float:
         remaining_distance = self._goal - position
 
-        if self._remaining_distance and self._remaining_distance * remaining_distance < 0:
+        if (
+            self._remaining_distance
+            and self._remaining_distance * remaining_distance < 0
+        ):
             self._crossed_goal = True
 
         self._remaining_distance = remaining_distance
@@ -114,8 +121,6 @@ class DynamicMotion:
         self._last_time = current_time
 
         # Not moving in the right direction
-
-
         remaining_distance_abs = abs(self._remaining_distance)
         current_speed_abs = abs(current_speed)
 
@@ -125,7 +130,9 @@ class DynamicMotion:
         target_speed = self._max_speed
 
         if self._remaining_distance * current_speed < 0:
-            target_speed = current_speed - math.copysign(self._accel * delta, current_speed)
+            target_speed = current_speed - math.copysign(
+                self._accel * delta, current_speed
+            )
 
         # Check if we need to start decelerating
         else:
@@ -135,11 +142,15 @@ class DynamicMotion:
                 # target_speed = (self.end_speed**2 + 2 * self.decel * remaining_distance)**0.5
                 # Ensure we don't exceed current speed when decelerating
                 # target_speed = min(target_speed, current_speed_abs)
-                target_speed = max(current_speed_abs - self._decel * delta, self._end_speed)
+                target_speed = max(
+                    current_speed_abs - self._decel * delta, self._end_speed
+                )
 
             # If we're not at max speed yet, accelerate
             elif current_speed_abs < self._max_speed:
-                target_speed = min(current_speed_abs + self._accel * delta, self._max_speed)
+                target_speed = min(
+                    current_speed_abs + self._accel * delta, self._max_speed
+                )
 
             target_speed = math.copysign(target_speed, self._remaining_distance)
 
@@ -148,7 +159,6 @@ class DynamicMotion:
         print(f"{position:.2f}\t{current_speed:.2f}\t{self._speed:.2f}")
 
         return self._speed
-
 
     def getSpeed(self) -> float:
         return self._speed

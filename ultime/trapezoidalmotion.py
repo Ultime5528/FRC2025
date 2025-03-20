@@ -14,6 +14,7 @@ class MotionConfig:
     end_speed: Optional[float]
     max_speed: Optional[float]
     accel: Optional[float]
+    decel: Optional[float]
 
     def check_final_state(self):
         if self.end_position is None and self.displacement is None:
@@ -30,6 +31,7 @@ class TrapezoidalMotion:
         end_speed: Optional[float] = None,
         max_speed: Optional[float] = None,
         accel: Optional[float] = None,
+        decel: Optional[float] = None,
         start_position: Optional[float] = None,
         end_position: Optional[float] = None,
         displacement: Optional[float] = None,
@@ -51,6 +53,7 @@ class TrapezoidalMotion:
             end_speed,
             max_speed,
             accel,
+            decel if decel is not None else accel,
         )
         self._real_config: Optional[MotionConfig] = None
         self._position = None
@@ -121,6 +124,7 @@ class TrapezoidalMotion:
             end_speed=abs(self._initial_config.end_speed),
             max_speed=abs(self._initial_config.max_speed),
             accel=abs(self._initial_config.accel),
+            decel=abs(self._initial_config.decel),
         )
 
         assert self._real_config.start_speed <= self._real_config.max_speed
@@ -131,15 +135,17 @@ class TrapezoidalMotion:
         ) / self._real_config.accel
         self._end_accel_window = (
             self._real_config.max_speed - self._real_config.end_speed
-        ) / self._real_config.accel
+        ) / self._real_config.decel
 
         if (
             self._start_accel_window + self._end_accel_window
             > self._real_config.displacement
         ):
-            self._start_accel_window = self._real_config.displacement / 2 + (
-                self._real_config.end_speed - self._real_config.start_speed
-            ) / (2 * self._real_config.accel)
+            self._start_accel_window = (
+                self._real_config.end_speed
+                - self._real_config.start_speed
+                + self._real_config.decel * self._real_config.displacement
+            ) / (self._real_config.accel + self._real_config.decel)
             self._end_accel_window = (
                 self._real_config.displacement - self._start_accel_window
             )

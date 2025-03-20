@@ -136,7 +136,11 @@ class MoveElevator(Command):
                 move_elevator_properties.speed_start, abs(self.elevator.getMotorInput())
             ),
             end_speed=move_elevator_properties.speed_end,
-            max_speed=move_elevator_properties.speed_max_up if end > start else move_elevator_properties.speed_max_down,
+            max_speed=(
+                move_elevator_properties.speed_max_up
+                if end > start
+                else move_elevator_properties.speed_max_down
+            ),
             accel=move_elevator_properties.accel,
         )
         self.elevator.state = Elevator.State.Moving
