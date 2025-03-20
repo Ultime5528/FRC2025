@@ -8,6 +8,7 @@ from wpimath.geometry import Rotation2d
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.command import Command
+from ultime.dynamicmotion import DynamicMotion
 
 
 def apply_center_distance_deadzone(x_dist, y_dist, deadzone):
@@ -27,26 +28,33 @@ def apply_linear_deadzone(_input, deadzone):
 
 class DriveField(Command):
     rotation_deadzone = autoproperty(0.3)
-    rotate_speed = autoproperty(0.00375)
+    rotate_speed = autoproperty(0.0375)
+    rotate_accel = autoproperty(0.01)
     speed_rate = autoproperty(0.33)
+    angle_tol = autoproperty(8)
 
     def __init__(
-        self,
-        drivetrain: Drivetrain,
-        xbox_remote: commands2.button.CommandXboxController,
+            self,
+            drivetrain: Drivetrain,
+            xbox_remote: commands2.button.CommandXboxController,
     ):
         super().__init__()
         self.rot: float = 0.0
-        self.actual_rot: float = 0.0
+        self.actual_rot: Rotation2d = Rotation2d()
         self.addRequirements(drivetrain)
         self.xbox_remote = xbox_remote
         self.drivetrain = drivetrain
 
-        self.m_xspeedLimiter = SlewRateLimiter(3)
-        self.m_yspeedLimiter = SlewRateLimiter(3)
-
     def initialize(self):
         self.rot = self.drivetrain.getPose().rotation()
+        self.rot_motion = DynamicMotion(
+            goal=0,
+            max_speed=self.rotate_speed,
+            end_speed=0.00001,
+            accel=self.rotate_accel,
+
+        )
+        self.rot_motion.update(self.rot.degrees())
 
     def execute(self):
         x_speed, y_speed, _ = apply_center_distance_deadzone(
@@ -54,8 +62,6 @@ class DriveField(Command):
             self.xbox_remote.getLeftX() * -1,
             properties.moving_deadzone,
         )
-        # x_speed = self.m_xspeedLimiter.calculate(x_speed)
-        # y_speed = self.m_yspeedLimiter.calculate(y_speed)
 
         rot_x, rot_y, rot_hyp = apply_center_distance_deadzone(
             self.xbox_remote.getRightX(),
@@ -69,16 +75,12 @@ class DriveField(Command):
                 self.rot = Rotation2d.fromDegrees(180 + self.rot.degrees())
 
         if self.xbox_remote.leftBumper():
-            self.actual_rot = self.rot + Rotation2d.fromDegrees(180.0)
+            self.actual_rot: Rotation2d = self.rot + Rotation2d.fromDegrees(180.0)
         else:
-            self.actual_rot = self.rot
+            self.actual_rot: Rotation2d = self.rot
 
-        rot_speed = (
-            (self.actual_rot - self.drivetrain.getPose().rotation()).degrees()
-            * self.rotate_speed
-            * rot_hyp
-        )
-
+        rot_speed = self.rot_motion.update((self.drivetrain.getPose().rotation() - self.actual_rot).degrees())
+        print((self.actual_rot - self.drivetrain.getPose().rotation()).degrees)
         if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
             x_speed *= -1
             y_speed *= -1
@@ -86,9 +88,9 @@ class DriveField(Command):
         if self.xbox_remote.rightBumper():
             x_speed *= self.speed_rate
             y_speed *= self.speed_rate
-            rot_speed *= self.speed_rate
 
-        self.drivetrain.drive(x_speed, y_speed, rot_speed, True)
+        self.drivetrain.drive(x_speed, y_speed, rot_speed if not self.rot_motion.reachedGoal(self.angle_tol) else 0,
+                              True)
 
     def end(self, interrupted: bool) -> None:
         self.drivetrain.stop()

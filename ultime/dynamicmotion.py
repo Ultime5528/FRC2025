@@ -71,7 +71,7 @@ class DynamicMotion:
         accel: float,
         decel: Optional[float] = None,
     ):
-        self._goal = goal
+        self.goal = goal
         self._max_speed = ensure_positive(max_speed, "max_speed")
         self._end_speed = ensure_positive(end_speed, "end_speed")
         if self._max_speed < self._end_speed:
@@ -99,7 +99,7 @@ class DynamicMotion:
         return max(0.0, (current_speed**2 - self._end_speed**2) / (2 * self._decel))
 
     def update(self, position: float, current_speed: Optional[float] = None) -> float:
-        remaining_distance = self._goal - position
+        remaining_distance = self.goal - position
 
         if self._remaining_distance and self._remaining_distance * remaining_distance < 0:
             self._crossed_goal = True
@@ -149,6 +149,9 @@ class DynamicMotion:
 
         return self._speed
 
+
+    def graphOnSmartDashboard(self):
+        pass
 
     def getSpeed(self) -> float:
         return self._speed
