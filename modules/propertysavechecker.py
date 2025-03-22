@@ -41,7 +41,7 @@ class PropertySaveCheckerModule(Module):
                 self.entry_check_time.setDouble(current_time)
                 if self.timer_check.advanceIfElapsed(loop_delay * 2):
                     mirror_time = self.entry_check_mirror.getDouble(0.0)
-                    if current_time - mirror_time < 5.0:
+                    if current_time - mirror_time < loop_delay:
                         print("Save loop running")
                     else:
                         raise RuntimeError(

@@ -36,7 +36,11 @@ from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
+    def __init__(
+        self,
+        hardware: HardwareModule,
+        module_list: ModuleList,
+    ):
         super().__init__()
         self._hardware = hardware
         self._module_list = module_list
