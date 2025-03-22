@@ -91,7 +91,7 @@ class _ClassProperties:
     speed_level_3_right = autoproperty(1.0, subtable=Drop.__name__)
     speed_level_4_left = autoproperty(-1.0, subtable=Drop.__name__)
     speed_level_4_right = autoproperty(1.0, subtable=Drop.__name__)
-    delay = autoproperty(1.0, subtable=Drop.__name__)
+    delay = autoproperty(0.5, subtable=Drop.__name__)
 
 
 drop_properties = _ClassProperties()

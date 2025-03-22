@@ -1,4 +1,5 @@
 import commands2
+from wpilib import PowerDistribution
 
 from commands.drivetrain.drive import DriveField
 from commands.elevator.maintainelevator import MaintainElevator
@@ -38,6 +39,8 @@ class HardwareModule(Module):
         self.climber = Climber()
 
         self.led = LEDController(self)
+
+        self.pdp = PowerDistribution()
 
         self.subsystems: list[Subsystem] = [
             self.drivetrain,
