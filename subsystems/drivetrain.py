@@ -420,5 +420,17 @@ class Drivetrain(Subsystem):
             pass
 
         builder.addFloatProperty("angle", tt(self.getAngle), noop)
-        builder.addFloatProperty("SpeedGoal", tt(lambda: math.hypot(self.chassis_speed_goal.vx, self.chassis_speed_goal.vy)), noop)
-        builder.addFloatProperty("Speed", tt(lambda: math.hypot(self.chassis_speed.vx, self.chassis_speed.vy)), noop)
+        builder.addFloatProperty(
+            "SpeedGoal",
+            tt(
+                lambda: math.hypot(
+                    self.chassis_speed_goal.vx, self.chassis_speed_goal.vy
+                )
+            ),
+            noop,
+        )
+        builder.addFloatProperty(
+            "Speed",
+            tt(lambda: math.hypot(self.chassis_speed.vx, self.chassis_speed.vy)),
+            noop,
+        )
