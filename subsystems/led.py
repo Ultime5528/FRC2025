@@ -30,6 +30,8 @@ class LEDController(Subsystem):
     dark_green_rgb = np.array([3, 53, 0])
     red_rgb = np.array([255, 0, 0])
     blue_rgb = np.array([0, 0, 255])
+    yellow_rgb = np.array([253, 255, 0])
+    cyan_rgb = np.array([0, 222, 255])
     black = np.array([0, 0, 0])
     white = np.array([255, 255, 255])
     purple = np.array([128, 0, 128])
@@ -167,6 +169,23 @@ class LEDController(Subsystem):
             for i in range(int(self.led_number)):
                 self.buffer[i].setRGB(0, 0, pixel_value)
 
+    def modeConnectedLowBattery(self):
+        interval = 10
+        flash_time = 20
+        state = round(self.time / flash_time) % 2
+
+        yellow = (self.brightness * self.yellow_rgb).astype(int)
+        cyan = (self.brightness * self.cyan_rgb).astype(int)
+
+        def getColor(i: int):
+            is_color = state - round(i / interval) % 2
+            if is_color:
+                return yellow
+            else:
+                return cyan
+
+        self.setAll(getColor)
+
     def modeNotConnected(self):
         pixel_value = round(
             255 * self.brightness * math.cos(self.time / (18 * math.pi))
@@ -233,7 +252,11 @@ class LEDController(Subsystem):
                 self.modeClimberMoving()
 
         elif DriverStation.isDSAttached():
-            self.modeConnected()  # connected to driver station
+            if DriverStation.getBatteryVoltage() > 12:
+                self.modeConnected()  # connected to driver station
+            else:
+                self.modeConnectedLowBattery()  # has low voltage
+
         else:  # not connected to driver station
             self.modeNotConnected()
 

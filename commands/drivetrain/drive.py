@@ -42,9 +42,6 @@ class DriveField(Command):
         self.xbox_remote = xbox_remote
         self.drivetrain = drivetrain
 
-        self.m_xspeedLimiter = SlewRateLimiter(3)
-        self.m_yspeedLimiter = SlewRateLimiter(3)
-
     def initialize(self):
         self.rot = self.drivetrain.getPose().rotation()
 
@@ -54,8 +51,6 @@ class DriveField(Command):
             self.xbox_remote.getLeftX() * -1,
             properties.moving_deadzone,
         )
-        # x_speed = self.m_xspeedLimiter.calculate(x_speed)
-        # y_speed = self.m_yspeedLimiter.calculate(y_speed)
 
         rot_x, rot_y, rot_hyp = apply_center_distance_deadzone(
             self.xbox_remote.getRightX(),
