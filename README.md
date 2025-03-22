@@ -55,7 +55,7 @@
 | commands/elevator/\_\_init\_\_.py               |        0 |        0 |        0 |        0 |    100% |           |
 | commands/elevator/maintainelevator.py           |       18 |        0 |        2 |        0 |    100% |           |
 | commands/elevator/manualmoveelevator.py         |       31 |        0 |        0 |        0 |    100% |           |
-| commands/elevator/moveelevator.py               |      101 |       13 |       14 |        1 |     79% |20-34, 157 |
+| commands/elevator/moveelevator.py               |      105 |       13 |       14 |        1 |     80% |20-34, 163 |
 | commands/elevator/resetelevator.py              |       24 |        1 |        4 |        1 |     93% |        29 |
 | commands/intake/\_\_init\_\_.py                 |        0 |        0 |        0 |        0 |    100% |           |
 | commands/intake/dropalgae.py                    |       27 |        0 |        2 |        0 |    100% |           |
@@ -82,9 +82,9 @@
 | modules/blockelevatoruntilcoral.py              |       12 |        0 |        2 |        0 |    100% |           |
 | modules/control.py                              |       48 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
-| modules/dashboard.py                            |      127 |        1 |       12 |        2 |     98% |253, 257->260 |
+| modules/dashboard.py                            |      128 |        1 |       12 |        2 |     98% |254, 258->261 |
 | modules/diagnostics.py                          |       54 |        3 |        4 |        0 |     95% | 68-69, 73 |
-| modules/hardware.py                             |       30 |        0 |        0 |        0 |    100% |           |
+| modules/hardware.py                             |       32 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
 | modules/logging.py                              |       17 |        0 |        0 |        0 |    100% |           |
 | modules/propertysavechecker.py                  |       35 |       17 |       16 |        2 |     39% |22-26, 31-47 |
@@ -151,7 +151,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      104 |       25 |       42 |        5 |     68% |20, 22, 40-44, 59->exit, 73-91, 110-111 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **6105** |  **692** |  **746** |  **130** | **86%** |           |
+|                                       **TOTAL** | **6112** |  **692** |  **746** |  **130** | **86%** |           |
 
 
 ## Setup coverage badge
