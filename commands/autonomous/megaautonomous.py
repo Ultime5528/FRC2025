@@ -51,14 +51,6 @@ class MegaAutonomous(SequentialCommandGroup):
                 "none",
                 True,
             )
-        second_drop_autonomous = DropAutonomous.toRight(
-            hardware.printer,
-            hardware.arm,
-            hardware.elevator,
-            hardware.drivetrain,
-            hardware.claw,
-            True,
-        )
 
         self.addCommands(
             parallel(
@@ -70,8 +62,8 @@ class MegaAutonomous(SequentialCommandGroup):
                     ),
                 ),
                 either(
-                    Follow("Straight Align #22 Right"),
                     Follow("Straight Align #20 Left"),
+                    Follow("Straight Align #22 Right"),
                     lambda: is_left_side,
                 ),
             ),
@@ -109,7 +101,6 @@ class MegaAutonomous(SequentialCommandGroup):
             #Coral 3
             parallel(
                 either(
-                    # TODO new paths with left offset
                     Follow("Go to Coral Station after reef #20 Left"),
                     Follow("Go to Coral Station after reef #22 Right"),
                     lambda: is_left_side,
@@ -125,6 +116,7 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     parallel(
                         either(
+                            # TODO new paths with left offset
                             Follow("Go to tag #19 after loading Left"),
                             Follow("Go to tag #17 after loading Right"),
                             lambda: is_left_side,
