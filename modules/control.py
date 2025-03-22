@@ -8,6 +8,7 @@ from commands.climber.moveclimber import (
     ReadyClimberAndBalance,
 )
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.driverelative import DriveRelative
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
 from commands.intake.dropalgae import DropAlgae
@@ -39,6 +40,16 @@ class ControlModule(Module):
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
+        )
+        hardware.controller.povLeft().whileTrue(DriveRelative.left(hardware.drivetrain))
+        hardware.controller.povRight().whileTrue(
+            DriveRelative.right(hardware.drivetrain)
+        )
+        hardware.controller.povUp().whileTrue(
+            DriveRelative.forwards(hardware.drivetrain)
+        )
+        hardware.controller.povDown().whileTrue(
+            DriveRelative.backwards(hardware.drivetrain)
         )
 
         """
@@ -100,8 +111,8 @@ class ControlModule(Module):
         hardware.panel_2.button(4).onTrue(
             ReadyClimberAndBalance(hardware.printer, hardware.climber)
         )
-        hardware.panel_2.button(5).onTrue(Climb(hardware.climber))
-        hardware.panel_2.button(6).onTrue(ReleaseClimber(hardware.climber))
+        hardware.panel_2.button(5).whileTrue(Climb(hardware.climber))
+        hardware.panel_2.button(6).whileTrue(ReleaseClimber(hardware.climber))
 
         # Extra buttons
         hardware.panel_1.button(3).onTrue(

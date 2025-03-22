@@ -1,12 +1,11 @@
 from commands2 import SequentialCommandGroup
 from commands2.cmd import either, none
-from wpiutil import SendableBuilder
+from wpilib import DataLogManager
 
 from commands.printer.moveprinter import MovePrinter
 from subsystems.printer import Printer
 from ultime.autoproperty import FloatProperty, autoproperty, asCallable
 from ultime.command import Command
-from ultime.timethis import tt
 
 
 class ScanPrinter(Command):
@@ -68,8 +67,9 @@ class _ScanPrinter(Command):
 
             if self._list_point and (not self.printer.seesReef()):
                 self.object_width = abs(self._list_point[-1] - self._list_point[0])
+                DataLogManager.log(f"Scanned object width: {self.object_width:.3f}")
                 if self.object_width <= scan_printer_properties.coral_width:
-                    self.scanned = True
+                    self.printer.scanned = True
                     self.needed_position = (
                         self._list_point[0] + self._list_point[-1]
                     ) / 2
@@ -103,16 +103,10 @@ class _ScanPrinter(Command):
         self.printer.stop()
         self.printer.state = self.printer.State.Unknown
 
-    def initSendable(self, builder: SendableBuilder) -> None:
-        def noop(x):
-            pass
-
-        builder.addFloatProperty("ObjectWidth", tt(lambda: self.object_width), noop)
-
 
 class _ClassProperties:
-    speed = autoproperty(0.5, subtable=ScanPrinter.__name__)
-    coral_width = autoproperty(3.0, subtable=ScanPrinter.__name__)
+    speed = autoproperty(0.7, subtable=ScanPrinter.__name__)
+    coral_width = autoproperty(0.04, subtable=ScanPrinter.__name__)
 
 
 scan_printer_properties = _ClassProperties()

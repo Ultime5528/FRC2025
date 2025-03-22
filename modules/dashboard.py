@@ -2,6 +2,7 @@ import commands2
 import wpilib
 from commands2 import CommandScheduler
 
+from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.megaautonomous import MegaAutonomous
@@ -11,6 +12,7 @@ from commands.claw.loadcoral import LoadCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
 from commands.climber.resetclimber import ResetClimber
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
@@ -30,18 +32,26 @@ from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
+from commands.systemidentificationroutine import SystemIdentificationRoutine
 from modules.hardware import HardwareModule
+from modules.systemidentification import SystemIdentificationModule
 from ultime.module import Module, ModuleList
 
 
 class DashboardModule(Module):
-    def __init__(self, hardware: HardwareModule, module_list: ModuleList):
+    def __init__(
+        self,
+        hardware: HardwareModule,
+        module_list: ModuleList,
+        sys_id: SystemIdentificationModule,
+    ):
         super().__init__()
         self._hardware = hardware
+        self._sys_id = sys_id
         self._module_list = module_list
-        # self.setupCommands(hardware)
+        self.setupCommands(hardware, sys_id)
 
-    def setupCommands(self, hardware):
+    def setupCommands(self, hardware, sys_id):
         """
         Elevator
         """
@@ -116,6 +126,14 @@ class DashboardModule(Module):
         Groups
         """
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))
+        putCommandOnDashboard(
+            "Drivetrain", DriveRelative.backwards(hardware.drivetrain)
+        )
+        putCommandOnDashboard("Drivetrain", AlignWithReefSide(hardware.drivetrain))
+
         putCommandOnDashboard(
             "Group",
             ResetAll(
@@ -216,6 +234,9 @@ class DashboardModule(Module):
             "Group",
             ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
+        putCommandOnDashboard(
+            "Group", SystemIdentificationRoutine(hardware.drivetrain, sys_id)
+        )
         putCommandOnDashboard("Group", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Group", MegaAutonomous.right(hardware))
 
@@ -227,6 +248,7 @@ class DashboardModule(Module):
         wpilib.SmartDashboard.putData(
             "CommandScheduler", CommandScheduler.getInstance()
         )
+        wpilib.SmartDashboard.putData("PDP", self._hardware.pdp)
 
         for module in self._module_list.modules:
             if module.redefines_init_sendable:
