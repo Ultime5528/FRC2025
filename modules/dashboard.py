@@ -230,9 +230,6 @@ class DashboardModule(Module):
             "Group",
             ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
         )
-        putCommandOnDashboard(
-            "Group", SystemIdentificationRoutine(hardware.drivetrain, sys_id)
-        )
         putCommandOnDashboard("Group", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Group", MegaAutonomous.right(hardware))
 
