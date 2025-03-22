@@ -4,11 +4,12 @@ from typing import Optional
 import commands2
 import wpilib
 from commands2 import Command
-from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.auto import NamedCommands
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
@@ -23,7 +24,6 @@ from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
-from ultime.followpath import FollowPath
 from ultime.module import Module
 
 
@@ -36,41 +36,18 @@ class AutonomousModule(Module):
         super().__init__()
         self.hardware = proxy(hardware)
 
-        # AutoBuilder Configured with base PP functions. Only one that supports Pathfinding
-        # Must test which AutoBuilder works best
-        # AutoBuilder.configure(
-        #     self.hardware.drivetrain.getPose,
-        #     self.hardware.drivetrain.resetToPose,
-        #     self.hardware.drivetrain.getRobotRelativeChassisSpeeds,
-        #     self.hardware.drivetrain.driveFromChassisSpeeds,
-        #     PPHolonomicDriveController(
-        #         PIDConstants(5, 0, 0),
-        #         PIDConstants(5, 0, 0),
-        #     ),
-        #     RobotConfig.fromGUISettings(),
-        #     shouldFlipPath,
-        #     self.hardware.drivetrain,
-        # )
-
-        self.createFollowPathCommand = lambda path: FollowPath(
-            path, self.hardware.drivetrain
-        )
-
-        AutoBuilder.configureCustom(
-            proxy(self.createFollowPathCommand),
-            lambda _: None,  # Disable resetOdometry
-            True,
-            lambda: False,  # Disable flipping, will be done by the command
-        )
-
         self.reset_climber_command = ResetClimber(self.hardware.climber)
         self.reset_intake_command = ResetIntake(self.hardware.intake)
 
-        self.setupCommandsOnPathPlanner()
-
         self.auto_command: Optional[commands2.Command] = None
 
-        self.auto_chooser = AutoBuilder.buildAutoChooser()
+        self.auto_chooser = wpilib.SendableChooser()
+        self.auto_chooser.addOption(
+            "MegaAutonomous Left", MegaAutonomous.left(hardware)
+        )
+        self.auto_chooser.addOption(
+            "MegaAutonomous Right", MegaAutonomous.right(hardware)
+        )
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
         self.auto_chooser.setDefaultOption("Nothing", None)
@@ -175,18 +152,3 @@ class AutonomousModule(Module):
     def autonomousExit(self):
         if self.auto_command:
             self.auto_command.cancel()
-
-    def __del__(self):
-        AutoBuilder._configured = False
-
-        AutoBuilder._pathFollowingCommandBuilder = None
-        AutoBuilder._getPose = None
-        AutoBuilder._resetPose = None
-        AutoBuilder._shouldFlipPath = None
-        AutoBuilder._isHolonomic = False
-
-        AutoBuilder._pathfindingConfigured = False
-        AutoBuilder._pathfindToPoseCommandBuilder = None
-        AutoBuilder._pathfindThenFollowPathCommandBuilder = None
-
-        NamedCommands._namedCommands = {}
