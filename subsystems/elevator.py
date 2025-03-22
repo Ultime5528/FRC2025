@@ -38,7 +38,7 @@ class Elevator(Subsystem):
 
     speed_up = autoproperty(0.2)
     speed_down = autoproperty(-0.2)
-    speed_maintain = autoproperty(0.02)
+    speed_maintain = autoproperty(0.04)
     height_min = autoproperty(0.0)
     height_max = autoproperty(1.37)
     height_maintain = autoproperty(0.0)
