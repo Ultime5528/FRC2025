@@ -29,170 +29,109 @@ class MegaAutonomous(SequentialCommandGroup):
     def __init__(self, hardware: HardwareModule, is_left_side: bool):
         super().__init__()
 
-        reset_autonomous = ResetAutonomous(
-            hardware.elevator, hardware.printer, hardware.arm
-        )
+        el = hardware.elevator
+        pr = hardware.printer
+        arm = hardware.arm
+        claw = hardware.claw
+        driv = hardware.drivetrain
 
-        move_elevator_level4_1 = MoveElevator.toLevel3(hardware.elevator)
-        move_elevator_level4_2 = MoveElevator.toLevel4(hardware.elevator)
-        move_elevator_level4_3 = MoveElevator.toLevel4(hardware.elevator)
+        def Follow(path: str):
+            return FollowPath(
+                PathPlannerPath.fromPathFile(path),
+                driv,
+            )
 
-        retract_coral_1 = RetractCoral.retract(hardware.claw)
-        retract_coral_2 = RetractCoral.retract(hardware.claw)
-        retract_coral_3 = RetractCoral.retract(hardware.claw)
-
-        straight_align_22_right = FollowPath(
-            PathPlannerPath.fromPathFile("Straight Align #22 Right"),
-            hardware.drivetrain,
-        )
-        straight_align_20_left = FollowPath(
-            PathPlannerPath.fromPathFile("Straight Align #20 Left"), hardware.drivetrain
-        )
-
-
-        go_to_tag_17_after_coral_station_right_1 = FollowPath(
-            PathPlannerPath.fromPathFile("Go to tag #17 after loading Right"),
-            hardware.drivetrain,
-        )
-        go_to_tag_19_after_coral_station_left_1 = FollowPath(
-            PathPlannerPath.fromPathFile("Go to tag #19 after loading Left"),
-            hardware.drivetrain,
-        )
-        go_to_tag_17_after_coral_station_right_2 = FollowPath(
-            PathPlannerPath.fromPathFile("Go to tag #17 after loading Right"),
-            hardware.drivetrain,
-        )
-        go_to_tag_19_after_coral_station_left_2 = FollowPath(
-            PathPlannerPath.fromPathFile("Go to tag #19 after loading Left"),
-            hardware.drivetrain,
-        )
-
-
-        go_to_coral_station_after_tag_22_right = FollowPath(
-            PathPlannerPath.fromPathFile("Go to Coral Station after reef #22 Right"),
-            hardware.drivetrain,
-        )
-        go_to_coral_station_after_tag_20_left = FollowPath(
-            PathPlannerPath.fromPathFile("Go to Coral Station after reef #20 Left"),
-            hardware.drivetrain,
-        )
-        go_to_coral_station_after_tag_17_right = FollowPath(
-            PathPlannerPath.fromPathFile("Go to Coral Station after reef #17 Right"),
-            hardware.drivetrain,
-        )
-        go_to_coral_station_after_tag_19_left = FollowPath(
-            PathPlannerPath.fromPathFile("Go to Coral Station after reef #19 Left"),
-            hardware.drivetrain,
-        )
-
-        prepare_loading_1 = PrepareLoading(
-            hardware.elevator, hardware.arm, hardware.printer
-        )
-        load_coral_1 = LoadCoral(hardware.claw, hardware.printer)
-        wait_until_coral_1 = WaitUntilCoral(hardware.claw)
-
-        prepare_loading_2 = PrepareLoading(
-            hardware.elevator, hardware.arm, hardware.printer
-        )
-        load_coral_2 = LoadCoral(hardware.claw, hardware.printer)
-        wait_until_coral_2 = WaitUntilCoral(hardware.claw)
-
-        drop_auto_1 = DropAutonomous(
+        def Drop():
+            return DropAutonomous(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                driv,
+                hardware.claw,
+                "none",
+                True,
+            )
+        second_drop_autonomous = DropAutonomous.toRight(
             hardware.printer,
             hardware.arm,
             hardware.elevator,
             hardware.drivetrain,
             hardware.claw,
-            "none",
-            True,
-        )
-        drop_auto_2 = DropAutonomous(
-            hardware.printer,
-            hardware.arm,
-            hardware.elevator,
-            hardware.drivetrain,
-            hardware.claw,
-            "none",
-            True,
-        )
-        drop_auto_3 = DropAutonomous(
-            hardware.printer,
-            hardware.arm,
-            hardware.elevator,
-            hardware.drivetrain,
-            hardware.claw,
-            "none",
             True,
         )
 
         self.addCommands(
             parallel(
                 sequence(
-                    reset_autonomous,
-                    parallel(move_elevator_level4_1, retract_coral_1),
+                    ResetAutonomous(el, pr, arm),
+                    parallel(
+                        MoveElevator.toLevel4(el),
+                        RetractCoral.retract(claw),
+                    ),
                 ),
                 either(
-                    straight_align_20_left,
-                    straight_align_22_right,
+                    Follow("Straight Align #22 Right"),
+                    Follow("Straight Align #20 Left"),
                     lambda: is_left_side,
                 ),
             ),
-            drop_auto_1,
+            Drop(),
             #coral 2
             parallel(
                 either(
-                    go_to_coral_station_after_tag_20_left,
-                    go_to_coral_station_after_tag_22_right,
+                    Follow("Go to Coral Station after reef #20 Left"),
+                    Follow("Go to Coral Station after reef #22 Right"),
                     lambda: is_left_side,
                 ),
-                prepare_loading_1,
+                PrepareLoading(el, arm, pr),
             ),
-            wait_until_coral_1,
+            WaitUntilCoral(claw),
             parallel(
                 sequence(
-                    load_coral_1,
-                    retract_coral_2,
+                    LoadCoral(claw, pr),
+                    RetractCoral.retract(claw),
                 ),
                 sequence(
                     parallel(
                         either(
-                            go_to_tag_19_after_coral_station_left_1,
-                            go_to_tag_17_after_coral_station_right_1,
+                            Follow("Go to tag #19 after loading Left"),
+                            Follow("Go to tag #17 after loading Right"),
                             lambda: is_left_side,
                         ),
                         sequence(
                             waitSeconds(0.3),
-                            move_elevator_level4_2,
+                            MoveElevator.toLevel4(el),
                         )
                     ),
                 )
             ),
-            drop_auto_2,
+            Drop(),
             #Coral 3
             parallel(
                 either(
-                    go_to_coral_station_after_tag_19_left,
-                    go_to_coral_station_after_tag_17_right,
+                    # TODO new paths with left offset
+                    Follow("Go to Coral Station after reef #20 Left"),
+                    Follow("Go to Coral Station after reef #22 Right"),
                     lambda: is_left_side,
                 ),
-                prepare_loading_2,
+                PrepareLoading(el, arm, pr),
             ),
-            wait_until_coral_2,
+            WaitUntilCoral(claw),
             parallel(
                 sequence(
-                    load_coral_2,
-                    retract_coral_3,
+                    LoadCoral(claw, pr),
+                    RetractCoral.retract(claw),
                 ),
                 sequence(
                     parallel(
                         either(
-                            go_to_tag_19_after_coral_station_left_2,
-                            go_to_tag_17_after_coral_station_right_2,
+                            Follow("Go to tag #19 after loading Left"),
+                            Follow("Go to tag #17 after loading Right"),
                             lambda: is_left_side,
                         ),
                         sequence(
                             waitSeconds(0.3),
-                            move_elevator_level4_3,
+                            MoveElevator.toLevel4(el),
                         )
                     ),
                 )
