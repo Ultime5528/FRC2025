@@ -31,9 +31,7 @@ from commands.printer.scanprinter import ScanPrinter
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
-from commands.systemidentificationroutine import SystemIdentificationRoutine
 from modules.hardware import HardwareModule
-from modules.systemidentification import SystemIdentificationModule
 from ultime.module import Module, ModuleList
 
 
@@ -42,15 +40,13 @@ class DashboardModule(Module):
         self,
         hardware: HardwareModule,
         module_list: ModuleList,
-        sys_id: SystemIdentificationModule,
     ):
         super().__init__()
         self._hardware = hardware
-        self._sys_id = sys_id
         self._module_list = module_list
-        self.setupCommands(hardware, sys_id)
+        self.setupCommands(hardware)
 
-    def setupCommands(self, hardware, sys_id):
+    def setupCommands(self, hardware):
         """
         Elevator
         """
@@ -232,9 +228,6 @@ class DashboardModule(Module):
         putCommandOnDashboard(
             "Group",
             ResetAutonomous(hardware.elevator, hardware.printer, hardware.arm),
-        )
-        putCommandOnDashboard(
-            "Group", SystemIdentificationRoutine(hardware.drivetrain, sys_id)
         )
 
     def robotInit(self) -> None:

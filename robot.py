@@ -13,7 +13,6 @@ from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetectionModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
-from modules.systemidentification import SystemIdentificationModule
 from modules.tagvision import TagVisionModule
 from ultime.modulerobot import ModuleRobot
 
@@ -28,10 +27,6 @@ class Robot(ModuleRobot):
         self.enableLiveWindowInTest(False)
 
         self.hardware = HardwareModule()
-
-        self.system_identification = SystemIdentificationModule(
-            self.hardware.drivetrain
-        )
 
         self.tag_vision = TagVisionModule(self.hardware.drivetrain)
         self.algae_vision = AlgaeVisionModule()
@@ -49,9 +44,7 @@ class Robot(ModuleRobot):
 
         self.autonomous = AutonomousModule(self.hardware)
 
-        self.dashboard = DashboardModule(
-            self.hardware, self.modules, self.system_identification
-        )
+        self.dashboard = DashboardModule(self.hardware, self.modules)
         self.diagnostics = DiagnosticsModule(self.hardware, self.modules)
         self.logging = LoggingModule()
         self.property_save_checker = PropertySaveCheckerModule()
