@@ -146,12 +146,13 @@ class TrapezoidalMotion:
                 - self._real_config.start_speed
                 + self._real_config.decel * self._real_config.displacement
             ) / (self._real_config.accel + self._real_config.decel)
+            self._start_accel_window = max(self._start_accel_window, 0.0)
             self._end_accel_window = (
                 self._real_config.displacement - self._start_accel_window
             )
             self._real_config.max_speed = (
-                self._real_config.start_speed
-                + self._real_config.accel * self._start_accel_window
+                self._real_config.end_speed
+                + self._real_config.decel * self._end_accel_window
             )
 
     def setPosition(self, position: float):

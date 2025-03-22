@@ -32,13 +32,13 @@ class DriveToPoses(Command):
         return cmd
 
     xy_accel = autoproperty(10.0)
-    xy_decel = autoproperty(0.1)
-    xy_speed_end = autoproperty(0.2)
+    xy_decel = autoproperty(1.4)
+    xy_speed_end = autoproperty(0.5)
     xy_tol_pos = autoproperty(0.3)
     xy_tol_pos_last = autoproperty(0.03)
     xy_speed_max = autoproperty(3.0)
 
-    xy_dist_slow = autoproperty(1.0)
+    xy_dist_slow = autoproperty(0.25)
 
     rot_accel = autoproperty(180.0)
     rot_decel = autoproperty(90.0)
@@ -98,7 +98,7 @@ class DriveToPoses(Command):
             .translation()
             .distance(self.last_goal.translation()),
             end_position=self.xy_dist_slow,
-            min_speed=self.speed_constraint / 2,
+            start_speed=self.speed_constraint / 2,
             max_speed=self.speed_constraint,
             end_speed=self.end_speed_constraint,
             accel=self.xy_accel,

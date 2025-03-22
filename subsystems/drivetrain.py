@@ -29,7 +29,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
-    max_speed = autoproperty(5.0)
+    max_speed = autoproperty(4.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
@@ -84,12 +84,14 @@ class Drivetrain(Subsystem):
             .getStructTopic("Chassis Speed Goal", ChassisSpeeds)
             .publish()
         )
+        self.chassis_speed_goal = ChassisSpeeds()
 
         self.chassis_speed_pub = (
             NetworkTableInstance.getDefault()
             .getStructTopic("Chassis Speed", ChassisSpeeds)
             .publish()
         )
+        self.chassis_speed = ChassisSpeeds()
 
         # Gyro
         """
@@ -202,6 +204,7 @@ class Drivetrain(Subsystem):
 
     def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
         corrected_chassis_speed = self.correctForDynamics(speed)
+        self.chassis_speed_goal = corrected_chassis_speed
 
         self.chassis_speed_goal_pub.set(corrected_chassis_speed)
 
@@ -333,6 +336,7 @@ class Drivetrain(Subsystem):
             )
         )
         self.chassis_speed_pub.set(chassis_speed)
+        self.chassis_speed = chassis_speed
         self.swerve_estimator.update(rotation, swerve_positions)
         self.swerve_odometry.update(rotation, swerve_positions)
 
@@ -416,3 +420,5 @@ class Drivetrain(Subsystem):
             pass
 
         builder.addFloatProperty("angle", tt(self.getAngle), noop)
+        builder.addFloatProperty("SpeedGoal", tt(lambda: math.hypot(self.chassis_speed_goal.vx, self.chassis_speed_goal.vy)), noop)
+        builder.addFloatProperty("Speed", tt(lambda: math.hypot(self.chassis_speed.vx, self.chassis_speed.vy)), noop)
