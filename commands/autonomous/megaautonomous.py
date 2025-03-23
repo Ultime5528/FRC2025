@@ -5,7 +5,7 @@ from wpimath.geometry import Pose2d, Rotation2d, Transform2d
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
-from commands.drivetrain.drivetoposes import DriveToPoses
+from commands.drivetrain.drivetoposes import DriveToPoses, DriveToPosesAutoFlip
 from commands.dropautonomous import DropAutonomous
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
@@ -60,7 +60,7 @@ class MegaAutonomous(SequentialCommandGroup):
         pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
 
         def GoTo(pose: Pose2d):
-            return DriveToPoses(driv, [pose])
+            return DriveToPosesAutoFlip([pose], driv)
 
         def Drop():
             return DropAutonomous(
