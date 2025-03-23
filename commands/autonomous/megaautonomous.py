@@ -1,16 +1,17 @@
 from commands2 import SequentialCommandGroup
 from commands2.cmd import parallel, sequence, either, waitSeconds
-from pathplannerlib.path import PathPlannerPath
+from wpimath.geometry import Pose2d, Rotation2d, Transform2d
 
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
+from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.dropautonomous import DropAutonomous
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
-from ultime.followpath import FollowPath
+from ultime.vision import april_tag_field_layout
 
 
 class MegaAutonomous(SequentialCommandGroup):
@@ -29,17 +30,37 @@ class MegaAutonomous(SequentialCommandGroup):
     def __init__(self, hardware: HardwareModule, is_left_side: bool):
         super().__init__()
 
+        offset_drop_right = 0.11
+        offset_drop_left = 0.45
+        offset_backward = 0.48
+
         el = hardware.elevator
         pr = hardware.printer
         arm = hardware.arm
         claw = hardware.claw
         driv = hardware.drivetrain
 
-        def Follow(path: str):
-            return FollowPath(
-                PathPlannerPath.fromPathFile(path),
-                driv,
+        def GetTagWithOffset(tag: int, offset: float):
+            tag_pose = april_tag_field_layout.getTagPose(tag).toPose2d()
+            flipped_tag = Pose2d(
+                tag_pose.translation(),
+                tag_pose.rotation() + Rotation2d.fromDegrees(180),
             )
+            return flipped_tag.transformBy(
+                Transform2d(-offset_backward, offset, Rotation2d())
+            )
+
+        pose_tag_20 = GetTagWithOffset(20, offset_drop_right)
+        pose_tag_22 = GetTagWithOffset(22, offset_drop_right)
+        pose_tag_17_drop_right = GetTagWithOffset(17, offset_drop_right)
+        pose_tag_17_drop_left = GetTagWithOffset(17, offset_drop_left)
+        pose_tag_19_drop_right = GetTagWithOffset(19, offset_drop_right)
+        pose_tag_19_drop_left = GetTagWithOffset(19, offset_drop_left)
+        pose_right_coral_station = Pose2d(1.187, 1.187, Rotation2d.fromDegrees(-30.0))
+        pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
+
+        def GoTo(pose: Pose2d):
+            return DriveToPoses(driv, [pose])
 
         def Drop():
             return DropAutonomous(
@@ -62,17 +83,17 @@ class MegaAutonomous(SequentialCommandGroup):
                     ),
                 ),
                 either(
-                    Follow("Straight Align #20 Left"),
-                    Follow("Straight Align #22 Right"),
+                    GoTo(pose_tag_20),
+                    GoTo(pose_tag_22),
                     lambda: is_left_side,
                 ),
             ),
             Drop(),
-            #coral 2
+            # coral 2
             parallel(
                 either(
-                    Follow("Go to Coral Station after reef #20 Left"),
-                    Follow("Go to Coral Station after reef #22 Right"),
+                    GoTo(pose_left_coral_station),
+                    GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -86,23 +107,23 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     parallel(
                         either(
-                            Follow("Go to tag #19 after loading Left"),
-                            Follow("Go to tag #17 after loading Right"),
+                            GoTo(pose_tag_19_drop_right),
+                            GoTo(pose_tag_17_drop_right),
                             lambda: is_left_side,
                         ),
                         sequence(
                             waitSeconds(0.3),
                             MoveElevator.toLevel4(el),
-                        )
+                        ),
                     ),
-                )
+                ),
             ),
             Drop(),
-            #Coral 3
+            # Coral 3
             parallel(
                 either(
-                    Follow("Go to Coral Station after reef #20 Left"),
-                    Follow("Go to Coral Station after reef #22 Right"),
+                    GoTo(pose_left_coral_station),
+                    GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -117,15 +138,15 @@ class MegaAutonomous(SequentialCommandGroup):
                     parallel(
                         either(
                             # TODO new paths with left offset
-                            Follow("Go to tag #19 after loading Left"),
-                            Follow("Go to tag #17 after loading Right"),
+                            GoTo(pose_tag_19_drop_left),
+                            GoTo(pose_tag_17_drop_left),
                             lambda: is_left_side,
                         ),
                         sequence(
                             waitSeconds(0.3),
                             MoveElevator.toLevel4(el),
-                        )
+                        ),
                     ),
-                )
+                ),
             ),
         )

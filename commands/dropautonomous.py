@@ -76,7 +76,7 @@ class DropAutonomous(SequentialCommandGroup):
                             {
                                 "right": ScanPrinter.right(printer),
                                 "left": ScanPrinter.left(printer),
-                                "none": none()
+                                "none": none(),
                             }[side]
                         ),
                         MaintainElevator(elevator),
