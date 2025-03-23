@@ -59,8 +59,8 @@ class MegaAutonomous(SequentialCommandGroup):
         pose_right_coral_station = Pose2d(1.187, 1.187, Rotation2d.fromDegrees(-30.0))
         pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
 
-        def GoTo(pose: Pose2d):
-            return DriveToPosesAutoFlip([pose], driv)
+        def GoTo(pose: list[Pose2d]):
+            return DriveToPosesAutoFlip(pose, driv)
 
         def Drop():
             return DropAutonomous(
@@ -83,8 +83,8 @@ class MegaAutonomous(SequentialCommandGroup):
                     ),
                 ),
                 either(
-                    GoTo(pose_tag_20),
-                    GoTo(pose_tag_22),
+                    GoTo([pose_tag_20]),
+                    GoTo([pose_tag_22]),
                     lambda: is_left_side,
                 ),
             ),
@@ -92,8 +92,8 @@ class MegaAutonomous(SequentialCommandGroup):
             # coral 2
             parallel(
                 either(
-                    GoTo(pose_left_coral_station),
-                    GoTo(pose_right_coral_station),
+                    GoTo([pose_left_coral_station]),
+                    GoTo([pose_right_coral_station]),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -107,8 +107,8 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     parallel(
                         either(
-                            GoTo(pose_tag_19_drop_right),
-                            GoTo(pose_tag_17_drop_right),
+                            GoTo([pose_tag_19_drop_right]),
+                            GoTo([pose_tag_17_drop_right]),
                             lambda: is_left_side,
                         ),
                         sequence(
@@ -122,8 +122,8 @@ class MegaAutonomous(SequentialCommandGroup):
             # Coral 3
             parallel(
                 either(
-                    GoTo(pose_left_coral_station),
-                    GoTo(pose_right_coral_station),
+                    GoTo([pose_left_coral_station]),
+                    GoTo([pose_right_coral_station]),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -138,8 +138,8 @@ class MegaAutonomous(SequentialCommandGroup):
                     parallel(
                         either(
                             # TODO new paths with left offset
-                            GoTo(pose_tag_19_drop_left),
-                            GoTo(pose_tag_17_drop_left),
+                            GoTo([pose_tag_19_drop_left]),
+                            GoTo([pose_tag_17_drop_left]),
                             lambda: is_left_side,
                         ),
                         sequence(
