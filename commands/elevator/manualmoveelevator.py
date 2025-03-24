@@ -22,6 +22,9 @@ class ManualMoveElevator(Command):
         self.addRequirements(self.elevator)
         self.get_speed = asCallable(speed)
 
+    def initialize(self):
+        self.elevator.state = Elevator.State.Moving
+
     def execute(self):
         self.elevator.setSpeed(self.get_speed())
 
@@ -30,6 +33,7 @@ class ManualMoveElevator(Command):
 
     def end(self, interrupted: bool):
         self.elevator.stop()
+        self.elevator.state = Elevator.State.Unknown
 
 
 class _ClassProperties:

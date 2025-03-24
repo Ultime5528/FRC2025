@@ -6,7 +6,7 @@ from ultime.autoproperty import autoproperty
 
 
 class ExtendArm(Command):
-    delay = autoproperty(1.0)
+    delay = autoproperty(0.5)
 
     def __init__(self, arm: Arm):
         super().__init__()

@@ -8,12 +8,14 @@ class MaintainElevator(Command):
         self.elevator = elevator
         self.addRequirements(elevator)
         self.should_maintain = False
+        self._height = 0.0
 
     def initialize(self):
         self.should_maintain = self.elevator.shouldMaintain()
+        self._height = self.elevator.getHeight()
 
     def execute(self):
-        if self.should_maintain:
+        if self.should_maintain and self.elevator.getHeight() < self._height:
             self.elevator.maintain()
         else:
             self.elevator.stop()

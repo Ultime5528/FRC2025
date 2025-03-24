@@ -1,3 +1,4 @@
+import math
 from typing import List, Callable, Optional
 
 from commands2 import Command
@@ -6,6 +7,7 @@ from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
 from subsystems.drivetrain import Drivetrain
 from ultime.auto import eitherRedBlue
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
+from ultime.dynamicmotion import DynamicMotion
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
@@ -29,17 +31,20 @@ class DriveToPoses(Command):
         cmd.setName(cmd.getName() + ".back")
         return cmd
 
-    xy_accel = autoproperty(5.0)
-    xy_speed_end = autoproperty(5.0)
+    xy_accel = autoproperty(10.0)
+    xy_decel = autoproperty(1.4)
+    xy_speed_end = autoproperty(0.5)
     xy_tol_pos = autoproperty(0.3)
-    xy_tol_pos_last = autoproperty(0.1)
-    xy_speed_max = autoproperty(12.0)
+    xy_tol_pos_last = autoproperty(0.03)
+    xy_speed_max = autoproperty(3.0)
 
-    rot_accel = autoproperty(0.2)
-    rot_speed_end = autoproperty(8.0)
-    rot_tol_pos = autoproperty(50)
-    rot_tol_pos_last = autoproperty(10.0)
-    rot_speed_max = autoproperty(8.0)
+    xy_dist_slow = autoproperty(0.25)
+
+    rot_accel = autoproperty(180.0)
+    rot_decel = autoproperty(90.0)
+    rot_speed_end = autoproperty(0.5)
+    rot_tol_pos_last = autoproperty(3.0)
+    rot_speed_max = autoproperty(120.0)
 
     def __init__(
         self,
@@ -60,6 +65,7 @@ class DriveToPoses(Command):
         self.end_speed_constraint = end_speed_constraint
         self.rotation_speed_constraint = rotation_speed_constraint
         self.rotation_end_speed_constraint = rotation_end_speed_constraint
+        self.remaining_distance = float("inf")
 
     @staticmethod
     def fromRedBluePoints(
@@ -68,30 +74,6 @@ class DriveToPoses(Command):
         return eitherRedBlue(
             DriveToPoses(drivetrain, red_poses),
             DriveToPoses(drivetrain, blue_poses),
-        )
-
-    def updateMotions(self):
-        self.last_goal = self.goals[-1]
-        current_pose = self.drivetrain.getPose()
-        self.trap_motion_xy = TrapezoidalMotion(
-            start_speed=self.speed_constraint,
-            end_speed=self.end_speed_constraint,
-            max_speed=self.speed_constraint,
-            accel=self.xy_accel,
-            start_position=(
-                self.last_goal.translation().distance(current_pose.translation())
-            ),
-            end_position=0.0,
-        )
-        self.trap_motion_rot = TrapezoidalMotion(
-            start_speed=self.rotation_speed_constraint,
-            end_speed=self.rotation_end_speed_constraint,
-            max_speed=self.rotation_speed_constraint,
-            accel=self.rot_accel,
-            start_position=(
-                self.last_goal.rotation() - current_pose.rotation()
-            ).degrees(),
-            end_position=0.0,
         )
 
     def initialize(self):
@@ -108,20 +90,44 @@ class DriveToPoses(Command):
             self.rotation_end_speed_constraint = self.rot_speed_end
 
         self.goals = self.get_goals()
+        self.last_goal = self.goals[-1]
         self.currGoal = 0
-        self.updateMotions()
+
+        self.motion_xy = TrapezoidalMotion(
+            start_position=self.drivetrain.getPose()
+            .translation()
+            .distance(self.last_goal.translation()),
+            end_position=self.xy_dist_slow,
+            start_speed=self.speed_constraint / 2,
+            max_speed=self.speed_constraint,
+            end_speed=self.end_speed_constraint,
+            accel=self.xy_accel,
+            decel=self.xy_decel,
+        )
+        self.motion_rot = DynamicMotion(
+            goal=0.0,
+            max_speed=self.rotation_speed_constraint,
+            end_speed=self.rotation_end_speed_constraint,
+            accel=self.rot_accel,
+            decel=self.rot_decel,
+        )
 
     def execute(self):
         current_pose = self.drivetrain.getPose()
+
         translation_error = (
             self.goals[self.currGoal].translation() - current_pose.translation()
         )
 
-        xy_mag = abs(
-            self.trap_motion_xy.calculate(
-                self.last_goal.translation().distance(current_pose.translation())
-            )
+        self.remaining_distance = self.last_goal.translation().distance(
+            current_pose.translation()
         )
+        if self.remaining_distance <= self.xy_dist_slow:
+            xy_mag = self.end_speed_constraint
+        else:
+            self.motion_xy.setPosition(self.remaining_distance)
+
+            xy_mag = abs(self.motion_xy.getSpeed())
         translation_error_norm = translation_error.norm()
 
         # Prevent division by zero
@@ -130,14 +136,18 @@ class DriveToPoses(Command):
         else:
             vel_xy: Translation2d = translation_error * xy_mag / translation_error_norm
 
-        vel_rot = -self.trap_motion_rot.calculate(
-            (self.last_goal.rotation() - current_pose.rotation()).degrees()
+        vel_rot = -self.motion_rot.update(
+            (self.last_goal.rotation() - current_pose.rotation()).degrees(),
+            # current_chassis_speed.omega
         )
+
+        if self.motion_rot.reachedGoal(self.rot_tol_pos_last):
+            vel_rot = 0.0
 
         self.drivetrain.driveRaw(
             vel_xy.X(),
             vel_xy.Y(),
-            vel_rot,
+            math.radians(vel_rot),
             True,
         )
 
@@ -150,8 +160,6 @@ class DriveToPoses(Command):
             self.currGoal += 1
 
     def end(self, interrupted):
-        self.currGoal = 0
-        self.goals: List[Pose2d] = None
         self.drivetrain.stop()
 
     def isFinished(self):
@@ -159,8 +167,8 @@ class DriveToPoses(Command):
 
     def isWithinLastTolerances(self) -> bool:
         return (
-            self.trap_motion_xy.getRemainingDistance() <= self.xy_tol_pos_last
-            and self.trap_motion_rot.getRemainingDistance() <= self.rot_tol_pos_last
+            self.remaining_distance <= self.xy_tol_pos_last
+            and self.motion_rot.reachedGoal(self.rot_tol_pos_last)
         )
 
     def isWithinTolerances(self) -> bool:

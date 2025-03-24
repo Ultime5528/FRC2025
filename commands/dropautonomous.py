@@ -1,10 +1,11 @@
 from typing import Literal
 
 from commands2 import SequentialCommandGroup
-from commands2.cmd import sequence, either, none
+from commands2.cmd import sequence, either, none, deadline
 
 from commands.claw.autodrop import AutoDrop
 from commands.drivetrain.drivetoposes import DriveToPoses
+from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.scanprinter import ScanPrinter
@@ -61,20 +62,29 @@ class DropAutonomous(SequentialCommandGroup):
     ):
         super().__init__(
             either(
-                sequence(
-                    MovePrinter.toMiddle(printer),
-                    AutoDrop(claw, elevator),
+                deadline(
+                    sequence(
+                        MovePrinter.toMiddle(printer),
+                        AutoDrop(claw, elevator),
+                    ),
+                    MaintainElevator(elevator),
                 ),
                 sequence(
-                    # Check side
-                    (
-                        ScanPrinter.right(printer)
-                        if side == "right"
-                        else ScanPrinter.left(printer)
+                    deadline(
+                        # Check side
+                        (
+                            ScanPrinter.right(printer)
+                            if side == "right"
+                            else ScanPrinter.left(printer)
+                        ),
+                        MaintainElevator(elevator),
                     ),
                     either(
                         sequence(
-                            AutoDrop(claw, elevator),
+                            deadline(
+                                AutoDrop(claw, elevator),
+                                MaintainElevator(elevator),
+                            ),
                             either(
                                 sequence(
                                     MoveElevator.toAlgae(elevator, drivetrain),
