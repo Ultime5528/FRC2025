@@ -47,7 +47,9 @@ class DiagnoseMotor(SequentialCommandGroup):
             self.elevator.alert_motor_hi.set(True)
 
     def while_moving(self):
-        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.elevator_motor))
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.elevator_motor)
+        )
 
     def has_finished_moving(self):
         return self.elevator.state == Elevator.State.Level1

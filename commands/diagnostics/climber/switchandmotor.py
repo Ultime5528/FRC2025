@@ -39,7 +39,9 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
             self.climber.alert_switch.set(True)
 
     def during_climb(self):
-        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.climber_motor))
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.climber_motor)
+        )
 
     def after_climb(self):
         if self.pdp.getCurrent(ports.PDP.climber_motor) > 0.1:
@@ -56,4 +58,3 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
 
         if not self.climber.isClimbed():
             self.climber.alert_switch.set(True)
-
