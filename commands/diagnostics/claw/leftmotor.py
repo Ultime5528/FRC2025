@@ -9,8 +9,6 @@ from ultime.autoproperty import autoproperty
 
 
 class DiagnoseLeftMotor(Command):
-    voltage_change_threshold = autoproperty(0.5)
-
     def __init__(self, claw: Claw, pdp: PowerDistribution):
         super().__init__()
         self.addRequirements(claw)
