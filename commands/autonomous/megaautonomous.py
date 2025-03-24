@@ -32,7 +32,8 @@ class MegaAutonomous(SequentialCommandGroup):
 
         offset_drop_right = 0.11
         offset_drop_left = 0.45
-        offset_backward = 0.48
+        offset_backward_1 = 1.0
+        offset_backward_2 = 0.48
 
         el = hardware.elevator
         pr = hardware.printer
@@ -46,9 +47,13 @@ class MegaAutonomous(SequentialCommandGroup):
                 tag_pose.translation(),
                 tag_pose.rotation() + Rotation2d.fromDegrees(180),
             )
-            return flipped_tag.transformBy(
-                Transform2d(-offset_backward, offset, Rotation2d())
-            )
+            return [
+                flipped_tag.transformBy(
+                    Transform2d(-offset_backward_1, offset, Rotation2d())
+                ),
+                flipped_tag.transformBy(
+                Transform2d(-offset_backward_2, offset, Rotation2d())
+            )]
 
         pose_tag_20 = GetTagWithOffset(20, offset_drop_right)
         pose_tag_22 = GetTagWithOffset(22, offset_drop_right)
@@ -56,7 +61,7 @@ class MegaAutonomous(SequentialCommandGroup):
         pose_tag_17_drop_left = GetTagWithOffset(17, offset_drop_left)
         pose_tag_19_drop_right = GetTagWithOffset(19, offset_drop_right)
         pose_tag_19_drop_left = GetTagWithOffset(19, offset_drop_left)
-        pose_right_coral_station = Pose2d(1.187, 1.187, Rotation2d.fromDegrees(-30.0))
+        pose_right_coral_station = Pose2d(0.5786, 0.8989, Rotation2d.fromDegrees(-30.0))
         pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
 
         def GoTo(pose: list[Pose2d]):
@@ -78,13 +83,13 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     ResetAutonomous(el, pr, arm),
                     parallel(
-                        MoveElevator.toLevel4(el),
+                        MoveElevator.toLevel3(el),
                         RetractCoral.retract(claw),
                     ),
                 ),
                 either(
-                    GoTo([pose_tag_20]),
-                    GoTo([pose_tag_22]),
+                    GoTo(pose_tag_20),
+                    GoTo(pose_tag_22),
                     lambda: is_left_side,
                 ),
             ),
@@ -107,8 +112,8 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     parallel(
                         either(
-                            GoTo([pose_tag_19_drop_right]),
-                            GoTo([pose_tag_17_drop_right]),
+                            GoTo(pose_tag_19_drop_right),
+                            GoTo(pose_tag_17_drop_right),
                             lambda: is_left_side,
                         ),
                         sequence(
@@ -138,8 +143,8 @@ class MegaAutonomous(SequentialCommandGroup):
                     parallel(
                         either(
                             # TODO new paths with left offset
-                            GoTo([pose_tag_19_drop_left]),
-                            GoTo([pose_tag_17_drop_left]),
+                            GoTo(pose_tag_19_drop_left),
+                            GoTo(pose_tag_17_drop_left),
                             lambda: is_left_side,
                         ),
                         sequence(
