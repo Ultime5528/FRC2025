@@ -40,7 +40,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             RetractArm(arm),
             ResetElevator(elevator),
             runOnce(proxy(self.before_command)),
-            runOnce(proxy(self.after_command))
+            runOnce(proxy(self.after_command)),
         )
         self.arm = arm
         self.pdp = pdp
