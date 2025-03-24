@@ -31,7 +31,9 @@ class DiagnoseRightMotor(Command):
                 self.claw.alert_right_motor_hi.set(True)
         elif self.timer.get() < 1:
             self.claw.setRight(drop_properties.speed_level_4_right)
-            self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.claw_motor_right))
+            self.max_value = max(
+                self.max_value, self.pdp.getCurrent(ports.PDP.claw_motor_right)
+            )
 
     def isFinished(self) -> bool:
         return self.timer.get() > 2

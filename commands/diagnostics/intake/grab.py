@@ -25,7 +25,9 @@ class DiagnoseGrabMotor(Command):
 
     def execute(self):
         self.intake.grab()
-        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.intake_grab_motor))
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.intake_grab_motor)
+        )
 
     def end(self, interrupted: bool):
         self.intake.stopGrab()

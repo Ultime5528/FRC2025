@@ -39,7 +39,9 @@ class DiagnoseMotor(SequentialCommandGroup):
             self.printer.alert_motor_hi.set(True)
 
     def during_moving(self):
-        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.printer_motor))
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.printer_motor)
+        )
 
     def after_move(self):
         if self.pdp.getCurrent(ports.PDP.printer_motor) > 0.1:

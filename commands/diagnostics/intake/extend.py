@@ -51,4 +51,6 @@ class DiagnoseExtend(SequentialCommandGroup):
             self.intake.alert_pivot_motor_hi.set(True)
 
     def while_move(self):
-        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.intake_pivot_motor))
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.intake_pivot_motor)
+        )
