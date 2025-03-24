@@ -28,6 +28,8 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
         self.climber = climber
 
     def before_climb(self):
+        self.max_value = 0.0
+
         if self.pdp.getCurrent(ports.PDP.climber_motor) > 0.1:
             DataLogManager.log(
                 f"Climber diagnostics: Motor current measured too high. {self.pdp.getCurrent(ports.PDP.climber_motor)}"
@@ -37,11 +39,7 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
             self.climber.alert_switch.set(True)
 
     def during_climb(self):
-        if self.pdp.getCurrent(ports.PDP.climber_motor) < 0.1:
-            DataLogManager.log(
-                f"Climber diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.climber_motor)}"
-            )
-            self.climber.alert_motor_lo.set(True)
+        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.climber_motor))
 
     def after_climb(self):
         if self.pdp.getCurrent(ports.PDP.climber_motor) > 0.1:
@@ -50,5 +48,12 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
             )
             self.climber.alert_motor_hi.set(True)
 
+        if self.max_value < 0.1:
+            DataLogManager.log(
+                f"Climber diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.climber_motor)}"
+            )
+            self.climber.alert_motor_lo.set(True)
+
         if not self.climber.isClimbed():
             self.climber.alert_switch.set(True)
+
