@@ -40,9 +40,11 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             RetractArm(arm),
             ResetElevator(elevator),
             runOnce(proxy(self.before_command)),
+            runOnce(proxy(self.after_command))
         )
         self.arm = arm
         self.pdp = pdp
+        self.max_value = 0.0
 
     def before_command(self):
         self.arm.stop()
@@ -53,9 +55,12 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             self.arm.alert_motor_hi.set(True)
 
     def while_extending(self):
-        if self.pdp.getCurrent(ports.PDP.arm_motor) < 0.1:
+        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.arm_motor))
+
+    def after_command(self):
+        if self.max_value < 0.1:
             DataLogManager.log(
-                f"Arm diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.arm_motor)}"
+                f"Arm diagnostics: Motor current measured too low. {self.max_value}"
             )
             self.arm.alert_motor_lo.set(True)
 
