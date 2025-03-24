@@ -14,8 +14,6 @@ from ultime.proxy import proxy
 
 @ignore_requirements(["elevator"])
 class DiagnoseMotor(SequentialCommandGroup):
-    voltage_change_threshold = autoproperty(0.5)
-
     def __init__(self, elevator: Elevator, pdp: PowerDistribution):
         super().__init__(
             runOnce(proxy(self.before_command)),
@@ -64,6 +62,6 @@ class DiagnoseMotor(SequentialCommandGroup):
 
         if self.max_value < 0.1:
             DataLogManager.log(
-                f"Elevator diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.elevator_motor)}"
+                f"Elevator diagnostics: Motor current measured too low. {self.max_value}"
             )
             self.elevator.alert_motor_lo.set(True)

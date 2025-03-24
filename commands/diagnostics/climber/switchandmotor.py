@@ -52,7 +52,7 @@ class DiagnoseSwitchAndMotor(SequentialCommandGroup):
 
         if self.max_value < 0.1:
             DataLogManager.log(
-                f"Climber diagnostics: Motor current measured too low. {self.pdp.getCurrent(ports.PDP.climber_motor)}"
+                f"Climber diagnostics: Motor current measured too low. {self.max_value}"
             )
             self.climber.alert_motor_lo.set(True)
 

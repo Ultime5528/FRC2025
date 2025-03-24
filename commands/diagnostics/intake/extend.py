@@ -24,6 +24,7 @@ class DiagnoseExtend(SequentialCommandGroup):
         self.pdp = pdp
 
     def before_command(self):
+        self.max_value = 0.0
         if self.pdp.getCurrent(ports.PDP.intake_pivot_motor) > 0.1:
             DataLogManager.log(
                 f"Intake diagnostics: Pivot motor current measured too high. {self.pdp.getCurrent(ports.PDP.intake_pivot_motor)}"
@@ -37,15 +38,17 @@ class DiagnoseExtend(SequentialCommandGroup):
             if self.intake.isRetracted() and self.intake.state == Intake.State.Extended:
                 self.intake.alert_is_retracted_failed.set(True)
 
-        if self.pdp.getCurrent(ports.PDP.intake_pivot_motor) < 0.1:
+        if self.max_value < 0.1:
             DataLogManager.log(
-                f"Intake diagnostics: Pivot motor current measured too low. {self.pdp.getCurrent(ports.PDP.intake_pivot_motor)}"
+                f"Intake diagnostics: Pivot motor current measured too low. {self.max_value}"
             )
             self.intake.alert_pivot_motor_lo.set(True)
 
-    def while_move(self):
         if self.pdp.getCurrent(ports.PDP.intake_pivot_motor) > 0.1:
             DataLogManager.log(
-                f"Intake diagnostics: Pivot motor current measured too high. {self.pdp.getCurrent(ports.PDP.intake_pivot_motor)}"
+                f"Intake diagnostics: Pivot motor current measured too high. {self.max_value}"
             )
             self.intake.alert_pivot_motor_hi.set(True)
+
+    def while_move(self):
+        self.max_value = max(self.max_value, self.pdp.getCurrent(ports.PDP.intake_pivot_motor))

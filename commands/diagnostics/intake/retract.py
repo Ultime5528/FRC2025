@@ -10,7 +10,6 @@ from ultime.command import ignore_requirements
 class DiagnoseRetract(SequentialCommandGroup):
     def __init__(self, intake: Intake):
         super().__init__(ResetIntake(intake), MoveIntake.toRetracted(intake))
-
         self.intake = intake
 
     def end(self, interrupted: bool):
