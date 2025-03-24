@@ -17,12 +17,10 @@ alliance_to_sextant_to_tag_id = {
     DriverStation.Alliance.kRed: {0: 7, 1: 8, 2: 9, 3: 10, 4: 11, 5: 6},
 }
 
-
 alliance_to_reef_center = {
     DriverStation.Alliance.kBlue: Translation2d(4.56, 4.03),
     DriverStation.Alliance.kRed: Translation2d(13.04, 4.03),
 }
-
 
 tag_poses = {
     tag_id: april_tag_field_layout.getTagPose(tag_id).toPose2d()
@@ -63,10 +61,6 @@ def getClosestReefTagID(robot_position: Pose2d) -> int:
 
 
 class AlignWithReefSide(DeferredCommand):
-    backwards_1_offset = autoproperty(1.0)
-    backwards_2_offset = autoproperty(0.48)
-    left_offset = autoproperty(0.11)
-
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
         self.drivetrain = drivetrain
@@ -102,3 +96,12 @@ class AlignWithReefSide(DeferredCommand):
                 Transform2d(-backwards_2_offset, left_offset, Rotation2d())
             ),
         ]
+
+
+class _ClassProperties:
+    backwards_1_offset = autoproperty(1.0, subtable=AlignWithReefSide.__name__)
+    backwards_2_offset = autoproperty(0.48, subtable=AlignWithReefSide.__name__)
+    left_offset = autoproperty(0.11, subtable=AlignWithReefSide.__name__)
+
+
+align_with_reef_side_properties = _ClassProperties()
