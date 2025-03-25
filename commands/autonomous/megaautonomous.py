@@ -66,7 +66,9 @@ class MegaAutonomous(SequentialCommandGroup):
         pose_tag_19_drop_right = GetTagWithOffset(19, offset_drop_right)
         pose_tag_19_drop_left = GetTagWithOffset(19, offset_drop_left)
 
-        right_coral = Pose2d(1.1, 0.87, Rotation2d.fromDegrees(-35.0))
+        right_coral = Pose2d(1.1, 0.83, Rotation2d.fromDegrees(-35.0)).transformBy(
+            Transform2d(0.05, -0.03, 0.0)
+        )
         pose_right_coral_station = [
             right_coral.transformBy(Transform2d(0.0, 2.0, 0.0)),
             Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0))
@@ -76,7 +78,7 @@ class MegaAutonomous(SequentialCommandGroup):
         def GoTo(pose: list[Pose2d]):
             return DriveToPosesAutoFlip(pose, driv)
 
-        def Drop(side: Literal["right", "left"] = "right"):
+        def Drop(side: Literal["right", "left"]):
             return DropAutonomous(
                 hardware.printer,
                 hardware.arm,
@@ -102,14 +104,14 @@ class MegaAutonomous(SequentialCommandGroup):
                     lambda: is_left_side,
                 ),
             ),
-            Drop(),
+            Drop("right"),
             # coral 2
             parallel(
                 either(
                     GoTo([pose_left_coral_station]),
                     GoTo(pose_right_coral_station),
                     lambda: is_left_side,
-                ),
+                ).withTimeout(4.0),
                 PrepareLoading(el, arm, pr),
             ),
             WaitUntilCoral(claw),
@@ -132,7 +134,7 @@ class MegaAutonomous(SequentialCommandGroup):
                     ),
                 ),
             ),
-            Drop("left"),
+            Drop("right"),
             # Coral 3
             parallel(
                 either(
