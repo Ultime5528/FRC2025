@@ -71,7 +71,7 @@ class MegaAutonomous(SequentialCommandGroup):
         )
         pose_right_coral_station = [
             right_coral.transformBy(Transform2d(0.0, 2.0, 0.0)),
-            Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0))
+            Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0)),
         ]
         pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
 

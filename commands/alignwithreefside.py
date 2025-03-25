@@ -74,7 +74,10 @@ class AlignWithReefSide(DeferredCommand):
         pose = tag_poses[tag]
 
         return self.offsetTagPositions(
-            pose, align_with_reef_side_properties.backwards_1_offset, align_with_reef_side_properties.backwards_2_offset, align_with_reef_side_properties.left_offset
+            pose,
+            align_with_reef_side_properties.backwards_1_offset,
+            align_with_reef_side_properties.backwards_2_offset,
+            align_with_reef_side_properties.left_offset,
         )
 
     @staticmethod
