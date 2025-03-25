@@ -92,7 +92,7 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     ResetAutonomous(el, pr, arm),
                     parallel(
-                        MoveElevator.toLevel3(el),
+                        MoveElevator.toLevel4(el),
                         RetractCoral.retract(claw),
                     ),
                 ),
