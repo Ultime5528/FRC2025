@@ -57,7 +57,7 @@ class DropAutonomous(SequentialCommandGroup):
         elevator: Elevator,
         drivetrain: Drivetrain,
         claw: Claw,
-        side: Literal["right", "left"],
+        side: Literal["right", "left", "none"],
         always_drop: bool,
     ):
         super().__init__(
@@ -73,9 +73,11 @@ class DropAutonomous(SequentialCommandGroup):
                     deadline(
                         # Check side
                         (
-                            ScanPrinter.right(printer)
-                            if side == "right"
-                            else ScanPrinter.left(printer)
+                            {
+                                "right": ScanPrinter.right(printer),
+                                "left": ScanPrinter.left(printer),
+                                "none": none(),
+                            }[side]
                         ),
                         MaintainElevator(elevator),
                     ),

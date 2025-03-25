@@ -2,17 +2,40 @@ import math
 from typing import List, Callable, Optional
 
 from commands2 import Command
-from wpimath.geometry import Pose2d, Rotation2d, Translation2d, Transform2d
+from pathplannerlib.util import FlippingUtil
+from wpilib import DriverStation, DataLogManager
+from wpimath.geometry import Pose2d, Translation2d, Transform2d
 
 from subsystems.drivetrain import Drivetrain
 from ultime.auto import eitherRedBlue
 from ultime.autoproperty import autoproperty, FloatProperty, asCallable
+from ultime.command import DeferredCommand
 from ultime.dynamicmotion import DynamicMotion
 from ultime.trapezoidalmotion import TrapezoidalMotion
 
 
-def pose(x: float, y: float, deg: float) -> Pose2d:
-    return Pose2d(x, y, Rotation2d.fromDegrees(deg))
+class DriveToPosesAutoFlip(DeferredCommand):
+    def __init__(self, blue_poses: list[Pose2d], drivetrain: Drivetrain):
+        super().__init__()
+        self.drivetrain = drivetrain
+        self.blue_poses = blue_poses
+        self.red_poses = [FlippingUtil.flipFieldPose(p) for p in blue_poses]
+        self.addRequirements(drivetrain)
+
+    def createCommand(self) -> Command:
+        return DriveToPoses(self.drivetrain, self.getPoses())
+
+    def getPoses(self) -> list[Pose2d]:
+        alliance = DriverStation.getAlliance()
+
+        if alliance is None:
+            DataLogManager.log(
+                "DriveToPosesAutoFlip used blue_poses but was not connected to DS"
+            )
+
+        is_red = alliance == DriverStation.Alliance.kRed
+
+        return self.red_poses if is_red else self.blue_poses
 
 
 class DriveToPoses(Command):
