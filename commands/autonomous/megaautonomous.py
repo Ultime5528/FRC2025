@@ -61,7 +61,12 @@ class MegaAutonomous(SequentialCommandGroup):
         pose_tag_17_drop_left = GetTagWithOffset(17, offset_drop_left)
         pose_tag_19_drop_right = GetTagWithOffset(19, offset_drop_right)
         pose_tag_19_drop_left = GetTagWithOffset(19, offset_drop_left)
-        pose_right_coral_station = Pose2d(0.5786, 0.8989, Rotation2d.fromDegrees(-30.0))
+
+        right_coral = Pose2d(1.1, 0.87, Rotation2d.fromDegrees(-35.0))
+        pose_right_coral_station = [
+            right_coral.transformBy(Transform2d(0.0, 2.0, 0.0)),
+            Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0))
+        ]
         pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
 
         def GoTo(pose: list[Pose2d]):
@@ -83,7 +88,7 @@ class MegaAutonomous(SequentialCommandGroup):
                 sequence(
                     ResetAutonomous(el, pr, arm),
                     parallel(
-                        MoveElevator.toLevel4(el),
+                        MoveElevator.toLevel3(el),
                         RetractCoral.retract(claw),
                     ),
                 ),
@@ -98,7 +103,7 @@ class MegaAutonomous(SequentialCommandGroup):
             parallel(
                 either(
                     GoTo([pose_left_coral_station]),
-                    GoTo([pose_right_coral_station]),
+                    GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -117,7 +122,7 @@ class MegaAutonomous(SequentialCommandGroup):
                             lambda: is_left_side,
                         ),
                         sequence(
-                            waitSeconds(0.3),
+                            waitSeconds(0.7),
                             MoveElevator.toLevel4(el),
                         ),
                     ),
@@ -128,7 +133,7 @@ class MegaAutonomous(SequentialCommandGroup):
             parallel(
                 either(
                     GoTo([pose_left_coral_station]),
-                    GoTo([pose_right_coral_station]),
+                    GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ),
                 PrepareLoading(el, arm, pr),
@@ -148,7 +153,7 @@ class MegaAutonomous(SequentialCommandGroup):
                             lambda: is_left_side,
                         ),
                         sequence(
-                            waitSeconds(0.3),
+                            waitSeconds(0.7),
                             MoveElevator.toLevel4(el),
                         ),
                     ),
