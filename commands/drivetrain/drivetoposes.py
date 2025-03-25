@@ -29,7 +29,9 @@ class DriveToPosesAutoFlip(DeferredCommand):
         alliance = DriverStation.getAlliance()
 
         if alliance is None:
-            DataLogManager.log("DriveToPosesAutoFlip used blue_poses but was not connected to DS")
+            DataLogManager.log(
+                "DriveToPosesAutoFlip used blue_poses but was not connected to DS"
+            )
 
         is_red = alliance == DriverStation.Alliance.kRed
 

@@ -1,11 +1,14 @@
+from typing import Literal
+
 from commands2 import SequentialCommandGroup
 from commands2.cmd import parallel, sequence, either, waitSeconds
 from wpimath.geometry import Pose2d, Rotation2d, Transform2d
 
+from commands.alignwithreefside import align_with_reef_side_properties
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
-from commands.drivetrain.drivetoposes import DriveToPoses, DriveToPosesAutoFlip
+from commands.drivetrain.drivetoposes import DriveToPosesAutoFlip
 from commands.dropautonomous import DropAutonomous
 from commands.elevator.moveelevator import MoveElevator
 from commands.prepareloading import PrepareLoading
@@ -30,10 +33,10 @@ class MegaAutonomous(SequentialCommandGroup):
     def __init__(self, hardware: HardwareModule, is_left_side: bool):
         super().__init__()
 
-        offset_drop_right = 0.11
-        offset_drop_left = 0.45
-        offset_backward_1 = 1.0
-        offset_backward_2 = 0.48
+        offset_drop_right = align_with_reef_side_properties.left_offset
+        offset_drop_left = align_with_reef_side_properties.left_offset
+        offset_backward_1 = align_with_reef_side_properties.backwards_1_offset
+        offset_backward_2 = align_with_reef_side_properties.backwards_2_offset
 
         el = hardware.elevator
         pr = hardware.printer
@@ -52,8 +55,9 @@ class MegaAutonomous(SequentialCommandGroup):
                     Transform2d(-offset_backward_1, offset, Rotation2d())
                 ),
                 flipped_tag.transformBy(
-                Transform2d(-offset_backward_2, offset, Rotation2d())
-            )]
+                    Transform2d(-offset_backward_2, offset, Rotation2d())
+                ),
+            ]
 
         pose_tag_20 = GetTagWithOffset(20, offset_drop_right)
         pose_tag_22 = GetTagWithOffset(22, offset_drop_right)
@@ -72,14 +76,14 @@ class MegaAutonomous(SequentialCommandGroup):
         def GoTo(pose: list[Pose2d]):
             return DriveToPosesAutoFlip(pose, driv)
 
-        def Drop():
+        def Drop(side: Literal["right", "left"] = "right"):
             return DropAutonomous(
                 hardware.printer,
                 hardware.arm,
                 hardware.elevator,
                 driv,
                 hardware.claw,
-                "none",
+                side,
                 True,
             )
 
@@ -128,7 +132,7 @@ class MegaAutonomous(SequentialCommandGroup):
                     ),
                 ),
             ),
-            Drop(),
+            Drop("left"),
             # Coral 3
             parallel(
                 either(
