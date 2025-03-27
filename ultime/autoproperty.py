@@ -93,7 +93,7 @@ def autoproperty(
     with open(os.devnull, "w") as devnull:
         with contextlib.redirect_stdout(devnull):
             prop = _old_ntproperty(
-                full_key, default_value, writeDefault=True, persistent=False
+                full_key, default_value, writeDefault=False, persistent=False
             )
 
     def fget(_):
