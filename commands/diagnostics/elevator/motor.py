@@ -16,7 +16,7 @@ from ultime.proxy import proxy
 class DiagnoseMotor(SequentialCommandGroup):
     def __init__(self, elevator: Elevator, pdp: PowerDistribution):
         super().__init__(
-            WaitCommand(0.1),
+            WaitCommand(0.5),
             runOnce(proxy(self.before_command)),
             parallel(
                 MoveElevator.toLevel1(elevator),
@@ -30,7 +30,7 @@ class DiagnoseMotor(SequentialCommandGroup):
                     ),
                 ),
             ),
-            WaitCommand(0.1),
+            WaitCommand(0.5),
             runOnce(proxy(self.after_moving)),
             ResetElevator(elevator),
         )

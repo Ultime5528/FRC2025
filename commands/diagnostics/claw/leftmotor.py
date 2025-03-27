@@ -22,7 +22,7 @@ class DiagnoseLeftMotor(Command):
         self.max_value = 0.0
 
     def execute(self):
-        if self.timer.get() < 0.1 or 1.1 < self.timer.get() < 2:
+        if 0.1 < self.timer.get() < 0.5 or 1.1 < self.timer.get() < 2:
             self.claw.setLeft(0)
             if self.pdp.getCurrent(ports.PDP.claw_motor_left) > 0.1:
                 DataLogManager.log(

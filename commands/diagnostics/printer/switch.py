@@ -4,7 +4,7 @@ from commands2.cmd import runOnce
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
 from subsystems.printer import Printer
-from ultime.command import ignore_requirements
+from ultime.command import ignore_requirements, WaitCommand
 from ultime.proxy import proxy
 
 
@@ -13,8 +13,10 @@ class DiagnoseSwitch(SequentialCommandGroup):
     def __init__(self, printer: Printer):
         super().__init__(
             MovePrinter.toLeft(printer),
+            WaitCommand(0.1),
             runOnce(proxy(self.check_switches_left)),
             MovePrinter.toRight(printer),
+            WaitCommand(0.1),
             runOnce(proxy(self.check_switches_right)),
             ResetPrinterRight(printer),
         )

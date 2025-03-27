@@ -14,7 +14,7 @@ class DiagnoseIntake(SequentialCommandGroup):
     def __init__(self, intake: Intake, pdp: PowerDistribution):
         super().__init__(
             DiagnoseHasAlgae(intake),
-            DiagnoseExtend(intake, pdp),
-            DiagnoseRetract(intake),
+            #DiagnoseExtend(intake, pdp),
+            #DiagnoseRetract(intake),
             DiagnoseGrabMotor(intake, pdp),
         )
