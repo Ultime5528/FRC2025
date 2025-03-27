@@ -6,7 +6,7 @@ import ports
 from commands.intake.moveintake import MoveIntake
 from commands.intake.resetintake import ResetIntake
 from subsystems.intake import Intake
-from ultime.command import ignore_requirements
+from ultime.command import ignore_requirements, WaitCommand
 from ultime.proxy import proxy
 
 
@@ -14,9 +14,11 @@ from ultime.proxy import proxy
 class DiagnoseExtend(SequentialCommandGroup):
     def __init__(self, intake: Intake, pdp: PowerDistribution):
         super().__init__(
+            WaitCommand(0.1),
             runOnce(proxy(self.before_command)),
             ResetIntake(intake),
             deadline(MoveIntake.toExtended(intake), run(proxy(self.while_move))),
+            WaitCommand(0.1),
             runOnce(proxy(self.after_extend)),
         )
 

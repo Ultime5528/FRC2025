@@ -22,7 +22,7 @@ class DiagnoseRightMotor(Command):
         self.max_value = 0.0
 
     def execute(self):
-        if self.timer.get() < 0.1 or 1 < self.timer.get() < 2:
+        if self.timer.get() < 0.1 or 1.1 < self.timer.get() < 2:
             self.claw.setRight(0)
             if self.pdp.getCurrent(ports.PDP.claw_motor_right) > 0.1:
                 DataLogManager.log(
@@ -34,6 +34,8 @@ class DiagnoseRightMotor(Command):
             self.max_value = max(
                 self.max_value, self.pdp.getCurrent(ports.PDP.claw_motor_right)
             )
+        elif self.timer.get() < 1.1:
+            self.claw.setRight(0)
 
     def isFinished(self) -> bool:
         return self.timer.get() > 2

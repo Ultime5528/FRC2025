@@ -13,14 +13,12 @@ from ultime.proxy import proxy
 
 @ignore_requirements(["climber"])
 class DiagnoseSwitchAndMotor(SequentialCommandGroup):
-    voltage_change_threshold = autoproperty(0.5)
-
     def __init__(self, climber: Climber, pdp: PowerDistribution):
         super().__init__(
             runOnce(proxy(self.before_climb)),
             ReadyClimber(climber),
             deadline(Climb(climber), run(proxy(self.during_climb))),
-            WaitCommand(0.1),
+            WaitCommand(1),
             runOnce(proxy(self.after_climb)),
             ResetClimber(climber),
         )
