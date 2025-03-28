@@ -10,6 +10,7 @@ from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.megaautonomous import MegaAutonomous
+from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
@@ -45,6 +46,7 @@ class AutonomousModule(Module):
         self.auto_chooser.addOption(
             "MegaAutonomous Left", MegaAutonomous.left(hardware)
         )
+        self.auto_chooser.addOption("Simple Middle", SimpleAutonomous(hardware))
         self.auto_chooser.addOption(
             "MegaAutonomous Right", MegaAutonomous.right(hardware)
         )

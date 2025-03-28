@@ -73,7 +73,16 @@ class MegaAutonomous(SequentialCommandGroup):
             right_coral.transformBy(Transform2d(0.0, 2.0, 0.0)),
             Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0)),
         ]
-        pose_left_coral_station = Pose2d(1.187, 7.130, Rotation2d.fromDegrees(210))
+
+        pose_left_coral_station_tag = april_tag_field_layout.getTagPose(13).toPose2d()
+        pose_left_coral_station = [
+            pose_left_coral_station_tag.transformBy(
+                Transform2d(1.25, 0.0, Rotation2d.fromDegrees(-90))
+            ),
+            pose_left_coral_station_tag.transformBy(
+                Transform2d(0.25, 0.0, Rotation2d.fromDegrees(-90))
+            ),
+        ]
 
         def GoTo(pose: list[Pose2d]):
             return DriveToPosesAutoFlip(pose, driv)
@@ -108,7 +117,7 @@ class MegaAutonomous(SequentialCommandGroup):
             # coral 2
             parallel(
                 either(
-                    GoTo([pose_left_coral_station]),
+                    GoTo(pose_left_coral_station),
                     GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ).withTimeout(4.0),
@@ -138,7 +147,7 @@ class MegaAutonomous(SequentialCommandGroup):
             # Coral 3
             parallel(
                 either(
-                    GoTo([pose_left_coral_station]),
+                    GoTo(pose_left_coral_station),
                     GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ),
