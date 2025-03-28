@@ -77,8 +77,12 @@ class MegaAutonomous(SequentialCommandGroup):
 
         pose_left_coral_station_tag = april_tag_field_layout.getTagPose(13).toPose2d()
         pose_left_coral_station = [
-            pose_left_coral_station_tag.transformBy(Transform2d(1.25, 0.0, Rotation2d.fromDegrees(-90))),
-            pose_left_coral_station_tag.transformBy(Transform2d(0.25, 0.0, Rotation2d.fromDegrees(-90)))
+            pose_left_coral_station_tag.transformBy(
+                Transform2d(1.25, 0.0, Rotation2d.fromDegrees(-90))
+            ),
+            pose_left_coral_station_tag.transformBy(
+                Transform2d(0.25, 0.0, Rotation2d.fromDegrees(-90))
+            ),
         ]
 
         def GoTo(pose: list[Pose2d]):

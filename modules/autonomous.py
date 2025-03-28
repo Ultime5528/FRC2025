@@ -46,9 +46,7 @@ class AutonomousModule(Module):
         self.auto_chooser.addOption(
             "MegaAutonomous Left", MegaAutonomous.left(hardware)
         )
-        self.auto_chooser.addOption(
-            "Simple Middle", SimpleAutonomous(hardware)
-        )
+        self.auto_chooser.addOption("Simple Middle", SimpleAutonomous(hardware))
         self.auto_chooser.addOption(
             "MegaAutonomous Right", MegaAutonomous.right(hardware)
         )
