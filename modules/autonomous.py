@@ -54,7 +54,6 @@ class AutonomousModule(Module):
         self.auto_chooser.setDefaultOption("GoForward", GoForwardAuto(hardware))
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
-
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(
             ResetAutonomous(

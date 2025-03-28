@@ -2,8 +2,10 @@ from typing import Literal
 
 from commands2 import SequentialCommandGroup
 from commands2.cmd import sequence, either, none, deadline
+from wpimath.geometry import Translation2d
 
 from commands.claw.autodrop import AutoDrop
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.drivetoposes import DriveToPoses
 from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.moveelevator import MoveElevator
@@ -68,6 +70,7 @@ class DropAutonomous(SequentialCommandGroup):
                         AutoDrop(claw, elevator),
                     ),
                     MaintainElevator(elevator),
+                    DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
                 ),
                 sequence(
                     deadline(
@@ -80,12 +83,14 @@ class DropAutonomous(SequentialCommandGroup):
                             }[side]
                         ),
                         MaintainElevator(elevator),
+                        DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
                     ),
                     either(
                         sequence(
                             deadline(
                                 AutoDrop(claw, elevator),
                                 MaintainElevator(elevator),
+                                DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
                             ),
                             either(
                                 sequence(
