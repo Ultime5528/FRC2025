@@ -34,7 +34,9 @@ class TagVisionModule(AbsoluteVision):
             self.vision_sim.addAprilTags(april_tag_field_layout)
 
             self.camera_prop = SimCameraProperties()
-            self.camera_prop.setCalibrationFromFOV(1280, 720, Rotation2d.fromDegrees(70))
+            self.camera_prop.setCalibrationFromFOV(
+                1280, 720, Rotation2d.fromDegrees(70)
+            )
             self.camera_prop.setCalibError(0.25, 0.08)
             self.camera_prop.setFPS(120)
             self.camera_prop.setAvgLatency(15.0)
