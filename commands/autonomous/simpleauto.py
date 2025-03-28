@@ -1,20 +1,13 @@
-from typing import Literal
-
 from commands2 import SequentialCommandGroup
-from commands2.cmd import parallel, sequence, either, waitSeconds
-from pathplannerlib.util import poseLerp
+from commands2.cmd import parallel, sequence
 from wpimath.geometry import Pose2d, Rotation2d, Transform2d
 
 from commands.alignwithreefside import align_with_reef_side_properties
 from commands.arm.extendarm import ExtendArm
-from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
-from commands.claw.waituntilcoral import WaitUntilCoral
 from commands.drivetrain.drivetoposes import DriveToPosesAutoFlip
-from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
-from commands.prepareloading import PrepareLoading
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.vision import april_tag_field_layout

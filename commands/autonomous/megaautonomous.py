@@ -2,7 +2,6 @@ from typing import Literal
 
 from commands2 import SequentialCommandGroup
 from commands2.cmd import parallel, sequence, either, waitSeconds
-from pathplannerlib.util import poseLerp
 from wpimath.geometry import Pose2d, Rotation2d, Transform2d
 
 from commands.alignwithreefside import align_with_reef_side_properties
