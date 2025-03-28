@@ -1,12 +1,15 @@
 import wpimath
 from photonlibpy.simulation import VisionSystemSim, SimCameraProperties, PhotonCameraSim
-from robotpy_apriltag import AprilTagFieldLayout
 from wpimath.geometry import Transform3d, Rotation2d
 
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.timethis import tt
-from ultime.vision import AbsoluteVision, VisionMode, april_tag_field_layout, AprilTagField
+from ultime.vision import (
+    AbsoluteVision,
+    VisionMode,
+    april_tag_field_layout,
+)
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
 robot_to_camera_offset = wpimath.geometry.Transform3d(
