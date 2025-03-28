@@ -70,7 +70,7 @@ class DropAutonomous(SequentialCommandGroup):
                         AutoDrop(claw, elevator),
                     ),
                     MaintainElevator(elevator),
-                    DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
+                    DriveRelative(drivetrain, Translation2d(0.12, 0)),
                 ),
                 sequence(
                     deadline(
@@ -83,14 +83,14 @@ class DropAutonomous(SequentialCommandGroup):
                             }[side]
                         ),
                         MaintainElevator(elevator),
-                        DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
+                        DriveRelative(drivetrain, Translation2d(0.12, 0)),
                     ),
                     either(
                         sequence(
                             deadline(
                                 AutoDrop(claw, elevator),
                                 MaintainElevator(elevator),
-                                DriveRelative(drivetrain, Translation2d(1, 0), 0.05),
+                                DriveRelative(drivetrain, Translation2d(0.12, 0)),
                             ),
                             either(
                                 sequence(
