@@ -1,5 +1,6 @@
 from typing import Optional
 
+import wpilib.deployinfo
 from commands2 import CommandScheduler, Command
 from wpilib import DataLogManager, DriverStation
 
@@ -28,3 +29,13 @@ class LoggingModule(Module):
 
     def robotPeriodic(self) -> None:
         print_stats_every(5.0, "ns")
+
+    def initSendable(self, builder):
+        # Deploy data
+        data = wpilib.deployinfo.getDeployData()
+
+        if data:
+            for key, value in data.items():
+                builder.publishConstString(key, value)
+        else:
+            DataLogManager.log("Could not find deploy data (not running on robot?)")
