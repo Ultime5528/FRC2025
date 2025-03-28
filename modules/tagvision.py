@@ -1,5 +1,6 @@
 import wpimath
 from photonlibpy.simulation import VisionSystemSim, SimCameraProperties, PhotonCameraSim
+from wpilib import RobotBase
 from wpimath.geometry import Transform3d, Rotation2d
 
 from subsystems.drivetrain import Drivetrain
@@ -28,22 +29,20 @@ class TagVisionModule(AbsoluteVision):
         self.mode = VisionMode.Absolute
         self.drivetrain = drivetrain
 
-        ###SIM
-        self.vision_sim = VisionSystemSim("main")
-        self.vision_sim.addAprilTags(april_tag_field_layout)
+        if RobotBase.isSimulation():
+            self.vision_sim = VisionSystemSim("main")
+            self.vision_sim.addAprilTags(april_tag_field_layout)
 
-        self.camera_prop = SimCameraProperties()
-        self.camera_prop.setCalibrationFromFOV(1280, 720, Rotation2d.fromDegrees(70))
-        self.camera_prop.setCalibError(0.25, 0.08)
-        self.camera_prop.setFPS(120)
-        self.camera_prop.setAvgLatency(15.0)
+            self.camera_prop = SimCameraProperties()
+            self.camera_prop.setCalibrationFromFOV(1280, 720, Rotation2d.fromDegrees(70))
+            self.camera_prop.setCalibError(0.25, 0.08)
+            self.camera_prop.setFPS(120)
+            self.camera_prop.setAvgLatency(15.0)
 
-        self.camera_sim = PhotonCameraSim(self._cam, self.camera_prop)
-        self.camera_sim.setMaxSightRange(6.0)
+            self.camera_sim = PhotonCameraSim(self._cam, self.camera_prop)
+            self.camera_sim.setMaxSightRange(6.0)
 
-        self.vision_sim.addCamera(self.camera_sim, robot_to_camera_offset)
-
-        self.vision_sim.getDebugField()
+            self.vision_sim.addCamera(self.camera_sim, robot_to_camera_offset)
 
     def simulationPeriodic(self) -> None:
         self.vision_sim.update(self.drivetrain.getPose())
