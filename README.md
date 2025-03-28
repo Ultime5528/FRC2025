@@ -9,7 +9,8 @@
 | commands/arm/\_\_init\_\_.py                    |        0 |        0 |        0 |        0 |    100% |           |
 | commands/arm/extendarm.py                       |       31 |        3 |        6 |        3 |     84% |25-26, 38->exit, 40 |
 | commands/arm/retractarm.py                      |       31 |        1 |        6 |        2 |     92% |38->exit, 40 |
-| commands/autonomous/megaautonomous.py           |       55 |        0 |        0 |        0 |    100% |           |
+| commands/autonomous/megaautonomous.py           |       56 |        0 |        0 |        0 |    100% |           |
+| commands/autonomous/simpleauto.py               |       32 |        0 |        0 |        0 |    100% |           |
 | commands/claw/\_\_init\_\_.py                   |        0 |        0 |        0 |        0 |    100% |           |
 | commands/claw/autodrop.py                       |        9 |        0 |        0 |        0 |    100% |           |
 | commands/claw/drop.py                           |       56 |        0 |        0 |        0 |    100% |           |
@@ -78,12 +79,12 @@
 | modules/\_\_init\_\_.py                         |        0 |        0 |        0 |        0 |    100% |           |
 | modules/algaevision.py                          |       14 |        6 |        4 |        0 |     44% | 12, 15-21 |
 | modules/armcollision.py                         |       26 |        0 |       10 |        0 |    100% |           |
-| modules/autonomous.py                           |       72 |       25 |        4 |        2 |     64% |31, 56-134, 150, 154 |
+| modules/autonomous.py                           |       74 |       25 |        4 |        2 |     65% |32, 58-136, 152, 156 |
 | modules/batterysim.py                           |       11 |       11 |        0 |        0 |      0% |      1-15 |
 | modules/blockelevatoruntilcoral.py              |       12 |        0 |        2 |        0 |    100% |           |
 | modules/control.py                              |       48 |        0 |        0 |        0 |    100% |           |
 | modules/coralretraction.py                      |       16 |        2 |        4 |        2 |     80% |    21, 28 |
-| modules/dashboard.py                            |      131 |        1 |       12 |        2 |     98% |261, 265->268 |
+| modules/dashboard.py                            |      134 |        1 |       12 |        2 |     98% |265, 269->272 |
 | modules/diagnostics.py                          |       54 |        3 |        4 |        0 |     95% | 68-69, 73 |
 | modules/hardware.py                             |       32 |        0 |        0 |        0 |    100% |           |
 | modules/loadingdetection.py                     |       25 |        1 |        2 |        0 |     96% |        33 |
@@ -153,7 +154,7 @@
 | ultime/timethis.py                              |       63 |       40 |       16 |        2 |     34% |20-45, 53-57, 64-93 |
 | ultime/trapezoidalmotion.py                     |      106 |       28 |       42 |        5 |     67% |21, 23, 42-46, 62->exit, 76-94, 113-114, 206-207, 210 |
 | ultime/vision.py                                |       73 |       13 |       20 |        5 |     72% |49->exit, 56-59, 80->exit, 84-87, 91, 96-97, 101, 107, 115 |
-|                                       **TOTAL** | **6270** |  **784** |  **772** |  **132** | **85%** |           |
+|                                       **TOTAL** | **6308** |  **784** |  **772** |  **132** | **85%** |           |
 
 
 ## Setup coverage badge
