@@ -60,7 +60,11 @@ class MegaAutonomous(SequentialCommandGroup):
             ]
 
         pose_tag_20 = GetTagWithOffset(20, offset_drop_right)
-        pose_after_drop_tag_20 = april_tag_field_layout.getTagPose(20).toPose2d().transformBy(Transform2d(1.5, 0.0, Rotation2d()))
+        pose_after_drop_tag_20 = (
+            april_tag_field_layout.getTagPose(20)
+            .toPose2d()
+            .transformBy(Transform2d(1.5, 0.0, Rotation2d()))
+        )
         pose_tag_22 = GetTagWithOffset(22, offset_drop_right)
         pose_tag_17_drop_right = GetTagWithOffset(17, offset_drop_right)
         pose_tag_17_drop_left = GetTagWithOffset(17, offset_drop_left)
