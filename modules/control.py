@@ -91,7 +91,7 @@ class ControlModule(Module):
                 False,
             )
         )
-        hardware.panel_2.button(5).onTrue(
+        hardware.panel_1.button(5).onTrue(
             PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
         )
 
