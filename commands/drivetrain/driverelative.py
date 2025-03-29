@@ -1,7 +1,7 @@
 from wpimath.geometry import Translation2d
 
 from subsystems.drivetrain import Drivetrain
-from ultime.autoproperty import autoproperty, FloatProperty, asCallable
+from ultime.autoproperty import autoproperty
 from ultime.command import Command
 
 
@@ -31,18 +31,14 @@ class DriveRelative(Command):
         cmd.setName(DriveRelative.__name__ + ".backwards")
         return cmd
 
-    def __init__(
-        self, drivetrain: Drivetrain, speed: Translation2d
-    ):
+    def __init__(self, drivetrain: Drivetrain, speed: Translation2d):
         super().__init__()
         self.drivetrain = drivetrain
         self.addRequirements(drivetrain)
         self.speed = speed
 
     def execute(self):
-        self.drivetrain.drive(
-            self.speed.x, self.speed.y, 0, False
-        )
+        self.drivetrain.drive(self.speed.x, self.speed.y, 0, False)
 
     def end(self, interrupted: bool):
         self.drivetrain.stop()

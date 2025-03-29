@@ -130,8 +130,7 @@ class MegaAutonomous(SequentialCommandGroup):
                 PrepareLoading(el, arm, pr),
             ),
             deadline(
-                WaitUntilCoral(claw),
-                DriveRelative(driv, Translation2d(0, -0.12))
+                WaitUntilCoral(claw), DriveRelative(driv, Translation2d(0, -0.12))
             ),
             parallel(
                 sequence(
