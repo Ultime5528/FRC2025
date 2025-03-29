@@ -1,7 +1,8 @@
 from commands2 import SequentialCommandGroup, FunctionalCommand
-from commands2.cmd import parallel, runOnce
-from wpilib import RobotController, DataLogManager
+from commands2.cmd import parallel, runOnce, deadline, run
+from wpilib import RobotController, DataLogManager, PowerDistribution
 
+import ports
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
 from subsystems.printer import Printer
@@ -12,19 +13,14 @@ from ultime.proxy import proxy
 
 @ignore_requirements(["printer"])
 class DiagnoseMotor(SequentialCommandGroup):
-    voltage_change_threshold = autoproperty(0.5)
-
-    def __init__(self, printer: Printer):
+    def __init__(self, printer: Printer, pdp: PowerDistribution):
         super().__init__(
             WaitCommand(0.1),
             runOnce(proxy(self.before_moving)),
-            parallel(
+            deadline(
                 MovePrinter.toLeft(printer),
-                FunctionalCommand(
-                    lambda: None,
+                run(
                     proxy(self.during_moving),
-                    lambda _: None,
-                    lambda: printer.isLeft(),
                 ),
             ),
             WaitCommand(0.1),
@@ -32,31 +28,30 @@ class DiagnoseMotor(SequentialCommandGroup):
             ResetPrinterRight(printer),
         )
         self.printer = printer
-        self.voltage_before = None
-        self.voltage_during = None
-        self.voltage_after = None
+        self.pdp = pdp
 
     def before_moving(self):
-        self.voltage_before = RobotController.getBatteryVoltage()
+        self.max_value = 0.0
+        if self.pdp.getCurrent(ports.PDP.printer_motor) > 0.1:
+            DataLogManager.log(
+                f"Printer diagnostics: Motor current measured too high. {self.pdp.getCurrent(ports.PDP.printer_motor)}"
+            )
+            self.printer.alert_motor_hi.set(True)
 
     def during_moving(self):
-        self.voltage_during = RobotController.getBatteryVoltage()
+        self.max_value = max(
+            self.max_value, self.pdp.getCurrent(ports.PDP.printer_motor)
+        )
 
     def after_move(self):
-        self.voltage_after = RobotController.getBatteryVoltage()
+        if self.pdp.getCurrent(ports.PDP.printer_motor) > 0.1:
+            DataLogManager.log(
+                f"Printer diagnostics: Motor current measured too high. {self.pdp.getCurrent(ports.PDP.printer_motor)}"
+            )
+            self.printer.alert_motor_hi.set(True)
 
-        voltage_delta_before = self.voltage_before - self.voltage_during
-        voltage_delta_after = self.voltage_after - self.voltage_during
-        DataLogManager.log(
-            "Printer diagnostics: motor voltage delta before: "
-            + str(voltage_delta_before)
-        )
-        DataLogManager.log(
-            "Printer diagnostics: motor voltage delta after: "
-            + str(voltage_delta_after)
-        )
-        if (
-            voltage_delta_after < self.voltage_change_threshold
-            or voltage_delta_before < self.voltage_change_threshold
-        ):
-            self.printer.alert_motor.set(True)
+        if self.max_value < 0.1:
+            DataLogManager.log(
+                f"Printer diagnostics: Motor current measured too low. {self.max_value}"
+            )
+            self.printer.alert_motor_lo.set(True)

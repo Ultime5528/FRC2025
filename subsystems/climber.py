@@ -47,8 +47,12 @@ class Climber(Subsystem):
             AlertType.Error,
         )
 
-        self.alert_motor = self.createAlert(
-            f"Motor didn't affect battery voltage during test. Is it connected? CAN={ports.CAN.climber_motor} PDP={ports.PDP.climber_motor}",
+        self.alert_motor_lo = self.createAlert(
+            f"Motor current measured too low. Is it connected? CAN={ports.CAN.climber_motor} PDP={ports.PDP.climber_motor}",
+            AlertType.Error,
+        )
+        self.alert_motor_hi = self.createAlert(
+            f"Motor current measured too high. Is it connected? CAN={ports.CAN.climber_motor} PDP={ports.PDP.climber_motor}",
             AlertType.Error,
         )
 

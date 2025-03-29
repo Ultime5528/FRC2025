@@ -20,7 +20,7 @@ class DiagnoseSwitch(SequentialCommandGroup):
         self.elevator = elevator
 
     def before_test(self):
-        if not self.elevator.isDown():
+        if self.elevator.isDown():
             self.elevator.alert_is_down.set(True)
 
     def after_level1(self):
