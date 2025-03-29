@@ -1,12 +1,14 @@
 from commands2 import SequentialCommandGroup
-from commands2.cmd import parallel, sequence
-from wpimath.geometry import Pose2d, Rotation2d, Transform2d
+from commands2.cmd import parallel, sequence, deadline
+from wpimath.geometry import Pose2d, Rotation2d, Transform2d, Translation2d
 
 from commands.alignwithreefside import align_with_reef_side_properties
 from commands.arm.extendarm import ExtendArm
 from commands.claw.retractcoral import RetractCoral
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.drivetoposes import DriveToPosesAutoFlip
 from commands.dropprepareloading import DropPrepareLoading
+from commands.elevator.maintainelevator import MaintainElevator
 from commands.elevator.moveelevator import MoveElevator
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
@@ -17,7 +19,7 @@ class SimpleAutonomous(SequentialCommandGroup):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
 
-        offset_drop_right = align_with_reef_side_properties.left_offset
+        offset_drop_right = 0.0
         offset_backward_1 = align_with_reef_side_properties.backwards_1_offset
         offset_backward_2 = align_with_reef_side_properties.backwards_2_offset
 
@@ -49,14 +51,16 @@ class SimpleAutonomous(SequentialCommandGroup):
             return DriveToPosesAutoFlip(pose, driv)
 
         self.addCommands(
-            sequence(
-                ResetAutonomous(el, pr, arm),
-                parallel(
-                    MoveElevator.toLevel4(el),
-                    RetractCoral.retract(claw),
-                    ExtendArm(arm),
-                ),
+            ResetAutonomous(el, pr, arm),
+            parallel(
+                MoveElevator.toLevel4(el),
+                RetractCoral.retract(claw),
+                ExtendArm(arm),
             ),
-            GoTo(pose_tag_21),
+            deadline(
+                GoTo(pose_tag_21).withTimeout(3.0),
+                MaintainElevator(el),
+            ),
             DropPrepareLoading(pr, arm, el, driv, claw, control, "right", True),
+            DriveRelative(driv, Translation2d(0.2, 0)).withTimeout(3.0)
         )
