@@ -29,6 +29,7 @@ class LEDController(Subsystem):
     green_rgb = np.array([0, 255, 0])
     dark_green_rgb = np.array([3, 53, 0])
     red_rgb = np.array([255, 0, 0])
+    orange_rgb = np.array([255, 69, 0])
     blue_rgb = np.array([0, 0, 255])
     yellow_rgb = np.array([253, 255, 0])
     cyan_rgb = np.array([0, 222, 255])
@@ -123,7 +124,7 @@ class LEDController(Subsystem):
             self.buffer[i].setRGB(*y)
 
     def modeElevatorMove(self):
-        self.commonTeleop(self.getAllianceColor(), self.white, 3.5)
+        self.commonTeleop(self.orange_rgb, self.white, 3.5)
 
     def modeClimberMove(self):
         self.commonTeleop(self.purple, self.white, 3.0)

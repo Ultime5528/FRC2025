@@ -66,9 +66,7 @@ class ControlModule(Module):
         AxisTrigger(hardware.panel_1, 1, "down").onTrue(
             MoveElevator.toLevel3(hardware.elevator)
         )
-        AxisTrigger(hardware.panel_1, 0, "down").onTrue(
-            MoveElevator.toLevel4(hardware.elevator)
-        )
+        hardware.panel_1.button(4).onTrue(MoveElevator.toLevel4(hardware.elevator))
 
         # Coral Drop and Load
         hardware.panel_1.button(1).onTrue(
@@ -82,7 +80,7 @@ class ControlModule(Module):
                 False,
             )
         )
-        AxisTrigger(hardware.panel_2, 1, "down").onTrue(
+        hardware.panel_1.button(6).onTrue(
             DropPrepareLoading.toRight(
                 hardware.printer,
                 hardware.arm,
@@ -93,17 +91,17 @@ class ControlModule(Module):
                 False,
             )
         )
-        AxisTrigger(hardware.panel_2, 0, "up").onTrue(
+        hardware.panel_1.button(5).onTrue(
             PrepareLoading(hardware.elevator, hardware.arm, hardware.printer)
         )
 
         # Algae Manipulator
-        AxisTrigger(hardware.panel_2, 1, "up").onTrue(GrabAlgae(hardware.intake))
+        hardware.panel_1.button(8).onTrue(GrabAlgae(hardware.intake))
         hardware.panel_2.button(3).onTrue(DropAlgae(hardware.intake))
         hardware.panel_2.button(1).onTrue(MoveIntake.toRetracted(hardware.intake))
 
         # Arm
-        AxisTrigger(hardware.panel_2, 0, "down").onTrue(RetractArm(hardware.arm))
+        hardware.panel_1.button(7).onTrue(RetractArm(hardware.arm))
         hardware.panel_1.button(2).onTrue(ExtendArm(hardware.arm))
 
         # Climber

@@ -11,7 +11,12 @@ from commands.claw.autodrop import AutoDrop
 from commands.claw.drop import Drop
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
-from commands.climber.moveclimber import Climb, ReadyClimber, ReleaseClimber
+from commands.climber.moveclimber import (
+    Climb,
+    ReadyClimber,
+    ReleaseClimber,
+    ReadyClimberAndBalance,
+)
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.resetgyro import ResetGyro
@@ -49,7 +54,83 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", SimpleAutonomous(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
+        self.setupCopilotCommands(hardware)
         # self.setupCommands(hardware)
+
+    def setupCopilotCommands(self, hardware: HardwareModule):
+        putCommandOnDashboard(
+            "Copilot", MoveElevator.toLevel1(hardware.elevator), "Elevator level 1"
+        )
+        putCommandOnDashboard(
+            "Copilot", MoveElevator.toLevel2(hardware.elevator), "Elevator level 2"
+        )
+        putCommandOnDashboard(
+            "Copilot", MoveElevator.toLevel3(hardware.elevator), "Elevator level 3"
+        )
+        putCommandOnDashboard(
+            "Copilot", MoveElevator.toLevel4(hardware.elevator), "Elevator level 4"
+        )
+        putCommandOnDashboard("Copilot", Drop.atLevel2(hardware.claw), "Drop")
+        putCommandOnDashboard(
+            "Copilot",
+            DropPrepareLoading.toLeft(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                False,
+            ),
+            "Drop gauche",
+        )
+        putCommandOnDashboard(
+            "Copilot",
+            DropPrepareLoading.toRight(
+                hardware.printer,
+                hardware.arm,
+                hardware.elevator,
+                hardware.drivetrain,
+                hardware.claw,
+                hardware.controller,
+                False,
+            ),
+            "Drop droite",
+        )
+        putCommandOnDashboard(
+            "Copilot",
+            PrepareLoading(hardware.elevator, hardware.arm, hardware.printer),
+            "Load",
+        )
+        putCommandOnDashboard("Copilot", GrabAlgae(hardware.intake), "Algae grab")
+        putCommandOnDashboard("Copilot", DropAlgae(hardware.intake), "Algae drop")
+        putCommandOnDashboard(
+            "Copilot", MoveIntake.toRetracted(hardware.intake), "Intake retract"
+        )
+        putCommandOnDashboard("Copilot", RetractArm(hardware.arm), "Arm retract")
+        putCommandOnDashboard("Copilot", ExtendArm(hardware.arm), "Arm extend")
+        putCommandOnDashboard(
+            "Copilot", ResetClimber(hardware.climber), "Climber reset"
+        )
+        putCommandOnDashboard(
+            "Copilot",
+            ReadyClimberAndBalance(hardware.printer, hardware.climber),
+            "Climber ready",
+        )
+        putCommandOnDashboard("Copilot", Climb(hardware.climber), "Climber climb")
+        putCommandOnDashboard(
+            "Copilot", ReleaseClimber(hardware.climber), "Climber release"
+        )
+        putCommandOnDashboard(
+            "Copilot",
+            ResetAllButClimber(
+                hardware.elevator,
+                hardware.printer,
+                hardware.arm,
+                hardware.intake,
+            ),
+            "Reset all but climber",
+        )
 
     def setupCommands(self, hardware):
         """

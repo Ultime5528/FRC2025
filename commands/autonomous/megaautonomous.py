@@ -1,13 +1,14 @@
 from typing import Literal
 
 from commands2 import SequentialCommandGroup
-from commands2.cmd import parallel, sequence, either, waitSeconds
-from wpimath.geometry import Pose2d, Rotation2d, Transform2d
+from commands2.cmd import parallel, sequence, either, waitSeconds, deadline
+from wpimath.geometry import Pose2d, Rotation2d, Transform2d, Translation2d
 
 from commands.alignwithreefside import align_with_reef_side_properties
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
+from commands.drivetrain.driverelative import DriveRelative
 from commands.drivetrain.drivetoposes import DriveToPosesAutoFlip
 from commands.dropautonomous import DropAutonomous
 from commands.elevator.moveelevator import MoveElevator
@@ -60,6 +61,11 @@ class MegaAutonomous(SequentialCommandGroup):
             ]
 
         pose_tag_20 = GetTagWithOffset(20, offset_drop_right)
+        pose_after_drop_tag_20 = (
+            april_tag_field_layout.getTagPose(20)
+            .toPose2d()
+            .transformBy(Transform2d(1.5, 0.0, Rotation2d()))
+        )
         pose_tag_22 = GetTagWithOffset(22, offset_drop_right)
         pose_tag_17_drop_right = GetTagWithOffset(17, offset_drop_right)
         pose_tag_17_drop_left = GetTagWithOffset(17, offset_drop_left)
@@ -70,7 +76,7 @@ class MegaAutonomous(SequentialCommandGroup):
             Transform2d(0.05, -0.03, 0.0)
         )
         pose_right_coral_station = [
-            right_coral.transformBy(Transform2d(0.0, 2.0, 0.0)),
+            right_coral.transformBy(Transform2d(0.0, 2.5, 0.0)),
             Pose2d(1.1, 0.8, Rotation2d.fromDegrees(-35.0)),
         ]
 
@@ -117,13 +123,15 @@ class MegaAutonomous(SequentialCommandGroup):
             # coral 2
             parallel(
                 either(
-                    GoTo(pose_left_coral_station),
+                    GoTo([pose_after_drop_tag_20] + pose_left_coral_station),
                     GoTo(pose_right_coral_station),
                     lambda: is_left_side,
                 ).withTimeout(4.0),
                 PrepareLoading(el, arm, pr),
             ),
-            WaitUntilCoral(claw),
+            deadline(
+                WaitUntilCoral(claw), DriveRelative(driv, Translation2d(0, -0.12))
+            ),
             parallel(
                 sequence(
                     LoadCoral(claw, pr),

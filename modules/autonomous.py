@@ -9,6 +9,7 @@ from pathplannerlib.auto import NamedCommands
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
+from commands.autonomous.goforward import GoForwardAuto
 from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
@@ -50,9 +51,8 @@ class AutonomousModule(Module):
         self.auto_chooser.addOption(
             "MegaAutonomous Right", MegaAutonomous.right(hardware)
         )
+        self.auto_chooser.setDefaultOption("GoForward", GoForwardAuto(hardware))
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
-
-        self.auto_chooser.setDefaultOption("Nothing", None)
 
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(
