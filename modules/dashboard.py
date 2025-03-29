@@ -58,6 +58,8 @@ class DashboardModule(Module):
         # self.setupCommands(hardware)
 
     def setupCopilotCommands(self, hardware: HardwareModule):
+        putCommandOnDashboard("Copilot", ResetGyro(hardware.drivetrain))
+
         putCommandOnDashboard(
             "Copilot", MoveElevator.toLevel1(hardware.elevator), "Elevator level 1"
         )
