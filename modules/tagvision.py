@@ -61,3 +61,6 @@ class TagVisionModule(AbsoluteVision):
         builder.addDoubleProperty(
             "first_tag_ambiguity", tt(self.getFirstTagAmbiguity), noop
         )
+        builder.addBooleanProperty(
+            "isConnected", self.camera_pose_estimator._camera.isConnected, noop
+        )
