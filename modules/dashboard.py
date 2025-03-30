@@ -40,6 +40,7 @@ from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.module import Module, ModuleList
+from commands.drivetrain.testpathfinding import PathFinding
 
 
 class DashboardModule(Module):
@@ -54,6 +55,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", SimpleAutonomous(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
+        putCommandOnDashboard("Drivetrain", PathFinding(hardware.drivetrain))
         self.setupCopilotCommands(hardware)
         # self.setupCommands(hardware)
 
