@@ -1,7 +1,7 @@
 import math
 from typing import Callable
 
-from rev import SparkMax, SparkBase, SparkSim
+from rev import SparkMax, SparkBase, SparkSim, ClosedLoopSlot, SparkClosedLoopController
 from wpilib import RobotBase
 from wpilib.simulation import RoboRioSim
 from wpimath.geometry import Rotation2d
@@ -10,6 +10,7 @@ from wpimath.system.plant import DCMotor
 from wpiutil import Sendable, SendableBuilder
 
 from ultime import swerveconfig
+from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import tt
 
 
@@ -38,6 +39,8 @@ class SwerveModule:
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters,
         )
+        self._driving_encoder.setPosition(0.0)
+
         self._turning_motor.configure(
             swerveconfig.turning_config,
             SparkBase.ResetMode.kResetSafeParameters,
@@ -62,56 +65,43 @@ class SwerveModule:
             self.sim_turning_motor = SparkSim(self._turning_motor, DCMotor.NEO550())
             self.sim_encoder_turn = self.sim_turning_motor.getAbsoluteEncoderSim()
 
-    def getVelocity(self) -> float:
-        return self._driving_encoder.getVelocity()
+    def setDriveVoltage(self, voltage: float):
+        self._driving_motor.setVoltage(voltage)
 
-    def getTurningRadians(self) -> float:
-        """
-        Returns radians
-        """
-        return self._turning_encoder.getPosition()
+    def setTurnVoltage(self, voltage: float):
+        self._turning_motor.setVoltage(voltage)
 
-    def getState(self) -> SwerveModuleState:
-        return SwerveModuleState(
-            self.getVelocity(),
-            Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
+    def setDriveVelocity(self, velocity_deg_per_sec: float):
+        ff_volts = SwerveConstants.driveKs + (velocity_deg_per_sec / abs(velocity_deg_per_sec)) + SwerveConstants.driveKv * velocity_deg_per_sec
+        self._driving_closed_loop_controller.setReference(
+            velocity_deg_per_sec,
+            SparkBase.ControlType.kVelocity,
+            ClosedLoopSlot.kSlot0,
+            ff_volts,
+            SparkClosedLoopController.ArbFFUnits.kVoltage
         )
 
-    def getModuleEncoderPosition(self) -> float:
-        return self._driving_encoder.getPosition()
+    def setTurnPosition(self, rotation: Rotation2d):
+        modulus = SwerveConstants.turning_encoder_position_conversion_factor
+        rotation = rotation.radians()
+        setpoint = ((rotation - self._chassis_angular_offset) % modulus)
+        self._turning_closed_loop_controller.setReference(
+            setpoint,
+        SparkBase.ControlType.kPosition)
 
-    def getPosition(self) -> SwerveModulePosition:
-        return SwerveModulePosition(
-            self.getModuleEncoderPosition(),
-            Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
-        )
-
-    def setDesiredState(self, desired_state: SwerveModuleState):
-        corrected_desired_state = SwerveModuleState()
-        corrected_desired_state.speed = desired_state.speed
-        corrected_desired_state.angle = desired_state.angle.rotateBy(
-            Rotation2d(self._chassis_angular_offset)
-        )
-
+    def runSetpoint(self, state: SwerveModuleState):
         current_rotation = Rotation2d(self._turning_encoder.getPosition())
 
-        corrected_desired_state.optimize(current_rotation)
+        state.optimize(current_rotation)
+        state.cosineScale(state.angle)
 
-        corrected_desired_state.speed *= (
-            current_rotation - corrected_desired_state.angle
-        ).cos()
+        self.setDriveVelocity(state.speed / (SwerveConstants.wheel_diameter / 2))
+        self.setTurnPosition(state.angle)
 
-        self._driving_closed_loop_controller.setReference(
-            corrected_desired_state.speed, SparkBase.ControlType.kVelocity
-        )
-        self._turning_closed_loop_controller.setReference(
-            corrected_desired_state.angle.radians(), SparkBase.ControlType.kPosition
-        )
-        self.desired_state = desired_state
+    def runCharacterization(self, output: float):
+        self.setDriveVoltage(output)
+        self.setTurnPosition(Rotation2d())
 
-    def stop(self):
-        self._driving_motor.setVoltage(0.0)
-        self._turning_motor.setVoltage(0.0)
 
     def simulationUpdate(self, period: float):
         # Drive motor simulation

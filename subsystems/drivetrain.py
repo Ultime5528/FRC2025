@@ -12,7 +12,7 @@ from wpimath.kinematics import (
     ChassisSpeeds,
     SwerveDrive4Kinematics,
     SwerveModuleState,
-    SwerveDrive4Odometry,
+    SwerveDrive4Odometry, SwerveModulePosition,
 )
 from wpiutil import SendableBuilder
 
@@ -41,7 +41,6 @@ class Drivetrain(Subsystem):
     def __init__(self) -> None:
         super().__init__()
         self.period_seconds = 0.02
-
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
         self.motor_fr_loc = Translation2d(self.width / 2, -self.length / 2)
@@ -78,6 +77,13 @@ class Drivetrain(Subsystem):
             "BL": self.swerve_module_bl,
             "BR": self.swerve_module_br,
         }
+
+        self.last_module_position = [
+            SwerveModulePosition(),
+            SwerveModulePosition(),
+            SwerveModulePosition(),
+            SwerveModulePosition()
+        ]
 
         self.chassis_speed_goal_pub = (
             NetworkTableInstance.getDefault()
@@ -120,27 +126,18 @@ class Drivetrain(Subsystem):
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
         )
+
         self.swerve_odometry = SwerveDrive4Odometry(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+            self.last_module_position,
             Pose2d(0, 0, 0),
         )
 
         self.swerve_estimator = SwerveDrive4PoseEstimator(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+            self.last_module_position,
             Pose2d(0, 0, 0),
         )
 
