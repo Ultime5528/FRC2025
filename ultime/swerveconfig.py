@@ -31,7 +31,7 @@ class SwerveConstants:
 
     driveKp = 0.5 ###0.0
     driveKd = 0.0
-    driveKs = 0.0
+    driveKs = 0.1#0.0
     driveKv = 0.0789 ####0.1
 
     turnKp = 2.0

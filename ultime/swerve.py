@@ -72,11 +72,14 @@ class SwerveModule:
         self._turning_motor.setVoltage(voltage)
 
     def setDriveVelocity(self, velocity_deg_per_sec: float):
+        #print(velocity_deg_per_sec)
         ff_volts = (
             SwerveConstants.driveKs
             + math.copysign(1, velocity_deg_per_sec)
             + SwerveConstants.driveKv * velocity_deg_per_sec
         )
+        print("volt")
+        print(ff_volts)
         self._driving_closed_loop_controller.setReference(
             velocity_deg_per_sec,
             SparkBase.ControlType.kVelocity,
@@ -86,21 +89,35 @@ class SwerveModule:
         )
 
     def setTurnPosition(self, rotation: Rotation2d):
-        modulus = SwerveConstants.turning_encoder_position_conversion_factor
-        rotation = rotation.radians()
-        setpoint = (rotation - self._chassis_angular_offset) % modulus
+       # modulus = SwerveConstants.turning_encoder_position_conversion_factor
+        #rotation = rotation.radians()
+        #setpoint = (rotation - self._chassis_angular_offset) % modulus
         self._turning_closed_loop_controller.setReference(
-            setpoint, SparkBase.ControlType.kPosition
+            rotation.radians(), SparkBase.ControlType.kPosition
         )
 
     def runSetpoint(self, state: SwerveModuleState):
-        current_rotation = self.getAngleRandians()
+        #current_rotation = self.getAngleRandians()
 
-        state.optimize(current_rotation)
-        state.cosineScale(self.getAngleRandians())
+        #state.optimize(current_rotation)
+        #state.cosineScale(self.getAngleRandians())
 
-        self.setDriveVelocity(state.speed / (SwerveConstants.wheel_diameter / 2))
-        self.setTurnPosition(state.angle)
+        corrected_desired_state = SwerveModuleState()
+        corrected_desired_state.speed = state.speed
+        corrected_desired_state.angle = state.angle.rotateBy(
+            Rotation2d(self._chassis_angular_offset)
+        )
+
+        current_rotation = Rotation2d(self._turning_encoder.getPosition())
+
+        corrected_desired_state.optimize(current_rotation)
+
+        corrected_desired_state.speed *= (
+                current_rotation - corrected_desired_state.angle
+        ).cos()
+
+        self.setDriveVelocity(corrected_desired_state.speed / SwerveConstants.wheel_diameter)
+        self.setTurnPosition(corrected_desired_state.angle)
 
     def runCharacterization(self, output: float):
         self.setDriveVoltage(output)
