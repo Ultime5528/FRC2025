@@ -72,26 +72,22 @@ class SwerveModule:
         self._turning_motor.setVoltage(voltage)
 
     def setDriveVelocity(self, velocity_deg_per_sec: float):
-        ff_volts = (
-            SwerveConstants.driveKs
-            + (velocity_deg_per_sec / abs(velocity_deg_per_sec))
-            + SwerveConstants.driveKv * velocity_deg_per_sec
-        )
+        ff_volts = SwerveConstants.driveKs + (velocity_deg_per_sec / abs(velocity_deg_per_sec)) + SwerveConstants.driveKv * velocity_deg_per_sec
         self._driving_closed_loop_controller.setReference(
             velocity_deg_per_sec,
             SparkBase.ControlType.kVelocity,
             ClosedLoopSlot.kSlot0,
             ff_volts,
-            SparkClosedLoopController.ArbFFUnits.kVoltage,
+            SparkClosedLoopController.ArbFFUnits.kVoltage
         )
 
     def setTurnPosition(self, rotation: Rotation2d):
         modulus = SwerveConstants.turning_encoder_position_conversion_factor
         rotation = rotation.radians()
-        setpoint = (rotation - self._chassis_angular_offset) % modulus
+        setpoint = ((rotation - self._chassis_angular_offset) % modulus)
         self._turning_closed_loop_controller.setReference(
-            setpoint, SparkBase.ControlType.kPosition
-        )
+            setpoint,
+        SparkBase.ControlType.kPosition)
 
     def runSetpoint(self, state: SwerveModuleState):
         current_rotation = Rotation2d(self._turning_encoder.getPosition())
@@ -106,36 +102,6 @@ class SwerveModule:
         self.setDriveVoltage(output)
         self.setTurnPosition(Rotation2d())
 
-    def stop(self):
-        self.setDriveVoltage(0.0)
-        self.setTurnVoltage(0.0)
-
-    def getAngleRandians(self) -> Rotation2d:
-        return Rotation2d(self._turning_encoder.getPosition())
-
-    def getPositionMeters(self):
-        return self._driving_encoder.getPosition() * (
-            SwerveConstants.wheel_diameter / 2
-        )
-
-    def getVelocityMetersPerSec(self):
-        return self._driving_encoder.getVelocity() * (
-            SwerveConstants.wheel_diameter / 2
-        )
-
-    def getPosition(self) -> SwerveModulePosition:
-        return SwerveModulePosition(self.getPositionMeters(), self.getAngleRandians())
-
-    def getState(self) -> SwerveModuleState:
-        return SwerveModuleState(
-            self.getVelocityMetersPerSec(), self.getAngleRandians()
-        )
-
-    def getWheelRadiusCharacterizationPosition(self):
-        return self._driving_encoder.getPosition()
-
-    def getFFCharacterizationVelocity(self):
-        return self._driving_encoder.getVelocity()
 
     def simulationUpdate(self, period: float):
         # Drive motor simulation
@@ -192,7 +158,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Front Left Velocity", tt(self.module_fl.getFFCharacterizationVelocity), noop
+            "Front Left Velocity", tt(self.module_fl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -201,7 +167,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Front Right Velocity", tt(self.module_fr.getFFCharacterizationVelocity), noop
+            "Front Right Velocity", tt(self.module_fr.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -210,7 +176,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Back Left Velocity", tt(self.module_bl.getFFCharacterizationVelocity), noop
+            "Back Left Velocity", tt(self.module_bl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -219,7 +185,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Back Right Velocity", tt(self.module_br.getFFCharacterizationVelocity), noop
+            "Back Right Velocity", tt(self.module_br.getVelocity), noop
         )
 
         builder.addDoubleProperty("Robot Angle", tt(self.get_robot_angle_radians), noop)

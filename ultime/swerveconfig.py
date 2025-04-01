@@ -29,6 +29,7 @@ class SwerveConstants:
     turning_encoder_position_PID_min_input = 0
     turning_encoder_position_PID_max_input = turning_encoder_position_conversion_factor
 
+
     driveKp = 0.0
     driveKd = 0.0
     driveKs = 0.0
@@ -65,9 +66,10 @@ driving_config.encoder.uvwAverageDepth(2)
 driving_config.closedLoop.setFeedbackSensor(
     ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
 )
-driving_config.closedLoop.pidf(
-    SwerveConstants.driveKp, 0.0, SwerveConstants.driveKd, 0.0
-)
+driving_config.closedLoop.pidf(SwerveConstants.driveKp,
+                               0.0,
+                               SwerveConstants.driveKd,
+                               0.0)
 
 # Set up driving signals config
 driving_config.signals.primaryEncoderPositionAlwaysOn(True)
@@ -76,7 +78,7 @@ driving_config.signals.primaryEncoderVelocityAlwaysOn(True)
 driving_config.signals.primaryEncoderVelocityPeriodMs(20)
 driving_config.signals.appliedOutputPeriodMs(20)
 driving_config.signals.busVoltagePeriodMs(20)
-# driving_config.signals.outputCurrentPeriodMs(20)
+#driving_config.signals.outputCurrentPeriodMs(20)
 
 # Set up turning config
 turning_config.inverted(False)
@@ -96,7 +98,10 @@ turning_config.closedLoop.setFeedbackSensor(
 )
 turning_config.closedLoop.positionWrappingEnabled(True)
 turning_config.closedLoop.positionWrappingInputRange(0, turning_factor)
-turning_config.closedLoop.pidf(SwerveConstants.turnKp, 0.0, SwerveConstants.turnKd, 0.0)
+turning_config.closedLoop.pidf(SwerveConstants.turnKp,
+                               0.0,
+                               SwerveConstants.turnKd,
+                               0.0)
 
 # Set up driving signals config
 turning_config.signals.absoluteEncoderPositionAlwaysOn(True)
@@ -105,4 +110,4 @@ turning_config.signals.absoluteEncoderVelocityAlwaysOn(True)
 turning_config.signals.absoluteEncoderVelocityPeriodMs(20)
 turning_config.signals.appliedOutputPeriodMs(20)
 turning_config.signals.busVoltagePeriodMs(20)
-# turning_config.signals.outputCurrentPeriodMs(20)
+#turning_config.signals.outputCurrentPeriodMs(20)
