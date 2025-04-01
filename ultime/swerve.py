@@ -72,14 +72,13 @@ class SwerveModule:
         self._turning_motor.setVoltage(voltage)
 
     def setDriveVelocity(self, velocity_deg_per_sec: float):
-        #print(velocity_deg_per_sec)
         ff_volts = (
             SwerveConstants.driveKs
             + math.copysign(1, velocity_deg_per_sec)
             + SwerveConstants.driveKv * velocity_deg_per_sec
         )
-        print("volt")
-        print(ff_volts)
+       # print("volt")
+       # print(ff_volts)
         self._driving_closed_loop_controller.setReference(
             velocity_deg_per_sec,
             SparkBase.ControlType.kVelocity,
@@ -127,32 +126,22 @@ class SwerveModule:
         self.setDriveVoltage(0.0)
         self.setTurnVoltage(0.0)
 
-    def getAngleRandians(self) -> Rotation2d:
-        return Rotation2d(self._turning_encoder.getPosition())
+    def getAngleRandians(self):
+        return self._turning_encoder.getPosition()
 
-    def getPositionMeters(self):
-        return self._driving_encoder.getPosition() * (
-            SwerveConstants.wheel_diameter / 2
-        )
+    def getEncoderPosition(self):
+        return self._driving_encoder.getPosition()
 
-    def getVelocityMetersPerSec(self):
-        return self._driving_encoder.getVelocity() * (
-            SwerveConstants.wheel_diameter / 2
-        )
+    def getVelocity(self):
+        return self._driving_encoder.getVelocity()
 
     def getPosition(self) -> SwerveModulePosition:
-        return SwerveModulePosition(self.getPositionMeters(), self.getAngleRandians())
+        return SwerveModulePosition(self.getEncoderPosition(), Rotation2d(self.getAngleRandians() - self._chassis_angular_offset))
 
     def getState(self) -> SwerveModuleState:
         return SwerveModuleState(
-            self.getVelocityMetersPerSec(), self.getAngleRandians()
+            self.getVelocity(), Rotation2d(self.getAngleRandians() - self._chassis_angular_offset)
         )
-
-    def getWheelRadiusCharacterizationPosition(self):
-        return self._driving_encoder.getPosition()
-
-    def getFFCharacterizationVelocity(self):
-        return self._driving_encoder.getVelocity()
 
     def simulationUpdate(self, period: float):
         # Drive motor simulation
@@ -209,7 +198,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Front Left Velocity", tt(self.module_fl.getFFCharacterizationVelocity), noop
+            "Front Left Velocity", tt(self.module_fl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -218,7 +207,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Front Right Velocity", tt(self.module_fr.getFFCharacterizationVelocity), noop
+            "Front Right Velocity", tt(self.module_fr.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -227,7 +216,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Back Left Velocity", tt(self.module_bl.getFFCharacterizationVelocity), noop
+            "Back Left Velocity", tt(self.module_bl.getVelocity), noop
         )
 
         builder.addDoubleProperty(
@@ -236,7 +225,7 @@ class SwerveDriveElasticSendable(Sendable):
             noop,
         )
         builder.addDoubleProperty(
-            "Back Right Velocity", tt(self.module_br.getFFCharacterizationVelocity), noop
+            "Back Right Velocity", tt(self.module_br.getVelocity), noop
         )
 
         builder.addDoubleProperty("Robot Angle", tt(self.get_robot_angle_radians), noop)
