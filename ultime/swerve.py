@@ -74,7 +74,7 @@ class SwerveModule:
     def setDriveVelocity(self, velocity_deg_per_sec: float):
         ff_volts = (
             SwerveConstants.driveKs
-            + (velocity_deg_per_sec / abs(velocity_deg_per_sec))
+            + math.copysign(1, velocity_deg_per_sec)
             + SwerveConstants.driveKv * velocity_deg_per_sec
         )
         self._driving_closed_loop_controller.setReference(
@@ -94,10 +94,10 @@ class SwerveModule:
         )
 
     def runSetpoint(self, state: SwerveModuleState):
-        current_rotation = Rotation2d(self._turning_encoder.getPosition())
+        current_rotation = self.getAngleRandians()
 
         state.optimize(current_rotation)
-        state.cosineScale(state.angle)
+        state.cosineScale(self.getAngleRandians())
 
         self.setDriveVelocity(state.speed / (SwerveConstants.wheel_diameter / 2))
         self.setTurnPosition(state.angle)
