@@ -1,5 +1,5 @@
 from commands2 import SequentialCommandGroup
-from commands2.cmd import parallel, sequence, deadline
+from commands2.cmd import parallel, deadline
 from wpimath.geometry import Pose2d, Rotation2d, Transform2d, Translation2d
 
 from commands.alignwithreefside import align_with_reef_side_properties
@@ -62,5 +62,5 @@ class SimpleAutonomous(SequentialCommandGroup):
                 MaintainElevator(el),
             ),
             DropPrepareLoading(pr, arm, el, driv, claw, control, "right", True),
-            DriveRelative(driv, Translation2d(0.2, 0)).withTimeout(3.0)
+            DriveRelative(driv, Translation2d(0.2, 0)).withTimeout(3.0),
         )
