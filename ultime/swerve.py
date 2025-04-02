@@ -74,11 +74,10 @@ class SwerveModule:
     def setDriveVelocity(self, velocity_deg_per_sec: float):
         ff_volts = (
             SwerveConstants.driveKs
-            + math.copysign(1, velocity_deg_per_sec)
+            * math.copysign(1, velocity_deg_per_sec)
             + SwerveConstants.driveKv * velocity_deg_per_sec
         )
-       # print("volt")
-       # print(ff_volts)
+
         self._driving_closed_loop_controller.setReference(
             velocity_deg_per_sec,
             SparkBase.ControlType.kVelocity,
@@ -88,19 +87,11 @@ class SwerveModule:
         )
 
     def setTurnPosition(self, rotation: Rotation2d):
-       # modulus = SwerveConstants.turning_encoder_position_conversion_factor
-        #rotation = rotation.radians()
-        #setpoint = (rotation - self._chassis_angular_offset) % modulus
         self._turning_closed_loop_controller.setReference(
             rotation.radians(), SparkBase.ControlType.kPosition
         )
 
     def runSetpoint(self, state: SwerveModuleState):
-        #current_rotation = self.getAngleRandians()
-
-        #state.optimize(current_rotation)
-        #state.cosineScale(self.getAngleRandians())
-
         corrected_desired_state = SwerveModuleState()
         corrected_desired_state.speed = state.speed
         corrected_desired_state.angle = state.angle.rotateBy(
@@ -146,7 +137,7 @@ class SwerveModule:
     def simulationUpdate(self, period: float):
         # Drive motor simulation
         drive_voltage = (
-            self._driving_motor.getAppliedOutput() * RoboRioSim.getVInVoltage()
+            self._driving_motor.getAppliedOutput() * SwerveConstants.max_speed_per_second
         )
         self.sim_driving_motor.iterate(
             drive_voltage, RoboRioSim.getVInVoltage(), period
