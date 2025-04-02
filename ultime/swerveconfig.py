@@ -29,10 +29,10 @@ class SwerveConstants:
     turning_encoder_position_PID_min_input = 0
     turning_encoder_position_PID_max_input = turning_encoder_position_conversion_factor
 
-    driveKp = 0.5 ###0.0
+    driveKp = 0.05 ###0.0
     driveKd = 0.0
     driveKs = 0.0
-    driveKv = 0.0789 ####0.1
+    driveKv = 1.0789 ####0.1
 
     turnKp = 2.0
     turnKd = 0.0

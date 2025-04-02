@@ -106,7 +106,7 @@ class SwerveModule:
                 current_rotation - corrected_desired_state.angle
         ).cos()
 
-        self.setDriveVelocity(corrected_desired_state.speed / SwerveConstants.wheel_diameter)
+        self.setDriveVelocity(corrected_desired_state.speed)# / SwerveConstants.wheel_diameter)
         self.setTurnPosition(corrected_desired_state.angle)
 
     def runCharacterization(self, output: float):
@@ -137,7 +137,7 @@ class SwerveModule:
     def simulationUpdate(self, period: float):
         # Drive motor simulation
         drive_voltage = (
-            self._driving_motor.getAppliedOutput() * SwerveConstants.max_speed_per_second
+            self._driving_motor.getAppliedOutput() * RoboRioSim.getVInVoltage()
         )
         self.sim_driving_motor.iterate(
             drive_voltage, RoboRioSim.getVInVoltage(), period
