@@ -14,10 +14,6 @@ from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import tt
 
 
-def radians_per_second_to_rpm(rps: float):
-    return rps * 60 / 2 / math.pi
-
-
 class SwerveModule:
     def __init__(
         self,
@@ -56,7 +52,7 @@ class SwerveModule:
 
         self._chassis_angular_offset = chassis_angular_offset
         self.desired_state.angle = Rotation2d(self._turning_encoder.getPosition())
-        self._driving_encoder.setPosition(0)
+        self._driving_encoder.setPosition(0.0)
 
         if RobotBase.isSimulation():
             self.sim_driving_motor = SparkSim(self._driving_motor, DCMotor.NEO())
@@ -73,8 +69,7 @@ class SwerveModule:
 
     def setDriveVelocity(self, velocity_deg_per_sec: float):
         ff_volts = (
-            SwerveConstants.driveKs
-            * math.copysign(1, velocity_deg_per_sec)
+            SwerveConstants.driveKs * math.copysign(1, velocity_deg_per_sec)
             + SwerveConstants.driveKv * velocity_deg_per_sec
         )
 
@@ -103,10 +98,10 @@ class SwerveModule:
         corrected_desired_state.optimize(current_rotation)
 
         corrected_desired_state.speed *= (
-                current_rotation - corrected_desired_state.angle
+            current_rotation - corrected_desired_state.angle
         ).cos()
 
-        self.setDriveVelocity(corrected_desired_state.speed)# / SwerveConstants.wheel_diameter)
+        self.setDriveVelocity(corrected_desired_state.speed)
         self.setTurnPosition(corrected_desired_state.angle)
 
     def runCharacterization(self, output: float):
@@ -127,11 +122,15 @@ class SwerveModule:
         return self._driving_encoder.getVelocity()
 
     def getPosition(self) -> SwerveModulePosition:
-        return SwerveModulePosition(self.getEncoderPosition(), Rotation2d(self.getAngleRandians() - self._chassis_angular_offset))
+        return SwerveModulePosition(
+            self.getEncoderPosition(),
+            Rotation2d(self.getAngleRandians() - self._chassis_angular_offset),
+        )
 
     def getState(self) -> SwerveModuleState:
         return SwerveModuleState(
-            self.getVelocity(), Rotation2d(self.getAngleRandians() - self._chassis_angular_offset)
+            self.getVelocity(),
+            Rotation2d(self.getAngleRandians() - self._chassis_angular_offset),
         )
 
     def simulationUpdate(self, period: float):

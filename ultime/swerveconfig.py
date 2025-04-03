@@ -7,6 +7,8 @@ class SwerveConstants:
     max_speed_per_second = 4
     max_angular_speed = 2 * math.pi
 
+    odometry_frequency = 50.0  # Hz
+
     # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     drive_motor_pinion_teeth = 13
     drive_motor_gear_ratio = (45.0 * 22) / (drive_motor_pinion_teeth * 15)
@@ -32,9 +34,9 @@ class SwerveConstants:
     driveKp = 0.0
     driveKd = 0.0
     driveKs = 0.0
-    driveKv = 1.0 ####0.1
+    driveKv = 1.0
 
-    turnKp = 2.0 #2.0
+    turnKp = 2.0
     turnKd = 0.0
 
 
@@ -49,6 +51,13 @@ turning_factor = SwerveConstants.turning_encoder_position_conversion_factor
 turning_velocity_factor = SwerveConstants.turning_encoder_velocity_conversion_factor
 
 driving_velocity_feed_forward = 1 / SwerveConstants.drive_wheel_free_rps
+
+driveKp = SwerveConstants.driveKp
+driveKd = SwerveConstants.driveKd
+turnKp = SwerveConstants.turnKp
+turnKd = SwerveConstants.turnKd
+
+odometry_frequency = SwerveConstants.odometry_frequency
 
 # Set up driving config
 driving_config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)
@@ -65,13 +74,11 @@ driving_config.encoder.uvwAverageDepth(2)
 driving_config.closedLoop.setFeedbackSensor(
     ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
 )
-driving_config.closedLoop.pidf(
-    SwerveConstants.driveKp, 0.0, SwerveConstants.driveKd, 0.0
-)
+driving_config.closedLoop.pidf(driveKp, 0.0, driveKd, 0.0)
 
 # Set up driving signals config
 driving_config.signals.primaryEncoderPositionAlwaysOn(True)
-driving_config.signals.primaryEncoderPositionPeriodMs(10)
+driving_config.signals.primaryEncoderPositionPeriodMs(int(1000.0 / odometry_frequency))
 driving_config.signals.primaryEncoderVelocityAlwaysOn(True)
 driving_config.signals.primaryEncoderVelocityPeriodMs(20)
 driving_config.signals.appliedOutputPeriodMs(20)
@@ -96,11 +103,11 @@ turning_config.closedLoop.setFeedbackSensor(
 )
 turning_config.closedLoop.positionWrappingEnabled(True)
 turning_config.closedLoop.positionWrappingInputRange(0, turning_factor)
-turning_config.closedLoop.pidf(SwerveConstants.turnKp, 0.0, SwerveConstants.turnKd, 0.0)
+turning_config.closedLoop.pidf(turnKp, 0.0, turnKd, 0.0)
 
 # Set up driving signals config
 turning_config.signals.absoluteEncoderPositionAlwaysOn(True)
-turning_config.signals.absoluteEncoderPositionPeriodMs(10)
+turning_config.signals.absoluteEncoderPositionPeriodMs(int(1000.0 / odometry_frequency))
 turning_config.signals.absoluteEncoderVelocityAlwaysOn(True)
 turning_config.signals.absoluteEncoderVelocityPeriodMs(20)
 turning_config.signals.appliedOutputPeriodMs(20)

@@ -12,7 +12,8 @@ from wpimath.kinematics import (
     ChassisSpeeds,
     SwerveDrive4Kinematics,
     SwerveModuleState,
-    SwerveDrive4Odometry, SwerveModulePosition,
+    SwerveDrive4Odometry,
+    SwerveModulePosition,
 )
 from wpiutil import SendableBuilder
 
@@ -82,7 +83,7 @@ class Drivetrain(Subsystem):
             SwerveModulePosition(),
             SwerveModulePosition(),
             SwerveModulePosition(),
-            SwerveModulePosition()
+            SwerveModulePosition(),
         ]
 
         self.chassis_speed_goal_pub = (
@@ -238,11 +239,14 @@ class Drivetrain(Subsystem):
 
         self.driveFromChassisSpeeds(base_chassis_speed)
 
-    def getAngle(self):
+    def getGyroAngle(self):
         """
         Wrapped between -180 and 180
         """
         return self._gyro.getAngle()
+
+    def getEstimatedAngle(self):
+        return self.getPose().rotation()
 
     def resetGyro(self):
         self._gyro.reset()
@@ -416,7 +420,7 @@ class Drivetrain(Subsystem):
         def noop(_):
             pass
 
-        builder.addFloatProperty("angle", tt(self.getAngle), noop)
+        builder.addFloatProperty("GyroAngle", tt(self.getGyroAngle), noop)
         builder.addFloatProperty(
             "SpeedGoal",
             tt(
