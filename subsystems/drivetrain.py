@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 import wpilib
 import wpimath
@@ -407,8 +408,8 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float):
-        self.swerve_estimator.addVisionMeasurement(pose, timestamp)
+    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]):
+        self.swerve_estimator.addVisionMeasurement(pose, timestamp, std_devs)
         self.vision_pose.setPose(pose)
 
     def getCurrentDrawAmps(self):
