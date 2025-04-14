@@ -5,7 +5,7 @@ from typing import Optional
 
 from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from photonlibpy.photonCamera import PhotonCamera
-from photonlibpy.targeting import PhotonTrackedTarget
+from photonlibpy.targeting import PhotonTrackedTarget, PhotonPipelineResult
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d, Pose3d, Pose2d
 
@@ -76,11 +76,10 @@ class AbsoluteVision(Vision):
             PoseStrategy.LOWEST_AMBIGUITY
         )
 
-    def getEstimatedPose(self) -> EstimatedRobotPose:
+    def getEstimatedPose(self, frame: PhotonPipelineResult) -> EstimatedRobotPose:
         self.estimated_pose = None
-        for frame in self._cam.getAllUnreadResults():
-            self.estimated_pose = self.camera_pose_estimator.update(frame)
-            self.updateEstimationStdDevs(self.estimated_pose, frame.getTargets())
+        self.estimated_pose = self.camera_pose_estimator.update(frame)
+        self.updateEstimationStdDevs(self.estimated_pose, frame.getTargets())
         return self.estimated_pose
 
     def updateEstimationStdDevs(self, estimated_pose: EstimatedRobotPose, targets: List[PhotonTrackedTarget]):

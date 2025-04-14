@@ -25,11 +25,12 @@ class TagVisionModule(AbsoluteVision):
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        estimated_pose = self.getEstimatedPose()
-        if estimated_pose:
-            time_stamp = self.getEstimatedPoseTimeStamp()
-            std_devs = self.getEstimationStdDevs()
-            self.drivetrain.addVisionMeasurement(estimated_pose.estimatedPose.toPose2d(), time_stamp, std_devs)
+        for frame in self._cam.getAllUnreadResults():
+            estimated_pose = self.getEstimatedPose(frame)
+            if estimated_pose:
+                time_stamp = self.getEstimatedPoseTimeStamp()
+                std_devs = self.getEstimationStdDevs()
+                self.drivetrain.addVisionMeasurement(estimated_pose.estimatedPose.toPose2d(), time_stamp, std_devs)
 
 
     def getNumberTagsUsed(self) -> int:
