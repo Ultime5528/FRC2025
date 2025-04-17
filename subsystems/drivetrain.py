@@ -214,10 +214,10 @@ class Drivetrain(Subsystem):
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerve_module_states, self.max_speed
         )
-        self.swerve_module_fl.runSetpoint(swerve_module_states[0])
-        self.swerve_module_fr.runSetpoint(swerve_module_states[1])
-        self.swerve_module_bl.runSetpoint(swerve_module_states[2])
-        self.swerve_module_br.runSetpoint(swerve_module_states[3])
+        self.swerve_module_fl.setDesiredSetpoint(swerve_module_states[0])
+        self.swerve_module_fr.setDesiredSetpoint(swerve_module_states[1])
+        self.swerve_module_bl.setDesiredSetpoint(swerve_module_states[2])
+        self.swerve_module_br.setDesiredSetpoint(swerve_module_states[3])
 
     def driveFromChassisSpeedsFF(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
@@ -268,16 +268,16 @@ class Drivetrain(Subsystem):
         """
         Points all the wheels into the center to prevent movement
         """
-        self.swerve_module_fl.runSetpoint(
+        self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_fr.runSetpoint(
+        self.swerve_module_fr.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_bl.runSetpoint(
+        self.swerve_module_bl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_br.runSetpoint(
+        self.swerve_module_br.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
 
@@ -285,16 +285,16 @@ class Drivetrain(Subsystem):
         """
         Points all the wheels into the center to prevent movement
         """
-        self.swerve_module_fl.runSetpoint(
+        self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(45))
         )
-        self.swerve_module_fr.runSetpoint(
+        self.swerve_module_fr.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(-45))
         )
-        self.swerve_module_bl.runSetpoint(
+        self.swerve_module_bl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(-45))
         )
-        self.swerve_module_br.runSetpoint(
+        self.swerve_module_br.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(45))
         )
 

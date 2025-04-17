@@ -35,7 +35,6 @@ class SwerveModule:
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters,
         )
-        self._driving_encoder.setPosition(0.0)
 
         self._turning_motor.configure(
             swerveconfig.turning_config,
@@ -86,7 +85,7 @@ class SwerveModule:
             rotation.radians(), SparkBase.ControlType.kPosition
         )
 
-    def runSetpoint(self, state: SwerveModuleState):
+    def setDesiredSetpoint(self, state: SwerveModuleState):
         corrected_desired_state = SwerveModuleState()
         corrected_desired_state.speed = state.speed
         corrected_desired_state.angle = state.angle.rotateBy(
