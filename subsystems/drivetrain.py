@@ -3,10 +3,12 @@ from typing import List
 
 import wpilib
 import wpimath
+from choreo import SwerveSample
 from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
 from wpilib import RobotBase
+from wpimath._controls._controls.controller import PIDController
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -31,7 +33,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
-    max_speed = autoproperty(4.0)
+    max_speed = autoproperty(5.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
@@ -48,6 +50,11 @@ class Drivetrain(Subsystem):
         self.motor_fr_loc = Translation2d(self.width / 2, -self.length / 2)
         self.motor_bl_loc = Translation2d(-self.width / 2, self.length / 2)
         self.motor_br_loc = Translation2d(-self.width / 2, -self.length / 2)
+
+        self.x_controller = PIDController(0.1, 0, 0)
+        self.y_controller = PIDController(0.1, 0, 0)
+        self.heading_controller = PIDController(1.0, 0, 0)
+        self.heading_controller.enableContinuousInput(-math.pi, math.pi)
 
         self.swerve_module_fl = SwerveModule(
             ports.CAN.drivetrain_motor_driving_fl,
@@ -239,6 +246,17 @@ class Drivetrain(Subsystem):
             base_chassis_speed = ChassisSpeeds(x_speed, y_speed, rot_speed)
 
         self.driveFromChassisSpeeds(base_chassis_speed)
+
+    def followTrajecctory(self, sample: SwerveSample):
+        pose = self.getPose()
+
+        speed = ChassisSpeeds(
+            sample.vx + self.x_controller.calculate(pose.X(), sample.x),
+            sample.vy + self.y_controller.calculate(pose.Y(), sample.y),
+            sample.omega + self.heading_controller.calculate(pose.rotation().radians(), sample.heading)
+        )
+
+        self.driveFromChassisSpeeds(speed)
 
     def getGyroAngle(self):
         """

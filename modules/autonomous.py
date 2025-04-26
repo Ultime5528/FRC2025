@@ -1,6 +1,7 @@
 from _weakref import proxy
 from typing import Optional
 
+import choreo
 import commands2
 import wpilib
 from commands2 import Command
@@ -11,6 +12,7 @@ from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.goforward import GoForwardAuto
 from commands.autonomous.megaautonomous import MegaAutonomous
+from commands.autonomous.path import Path
 from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
@@ -51,6 +53,7 @@ class AutonomousModule(Module):
         self.auto_chooser.addOption(
             "MegaAutonomous Right", MegaAutonomous.right(hardware)
         )
+        self.auto_chooser.addOption("Test", Path(hardware))
         self.auto_chooser.setDefaultOption("GoForward", GoForwardAuto(hardware))
         wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
 
