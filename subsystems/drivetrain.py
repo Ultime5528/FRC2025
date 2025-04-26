@@ -51,9 +51,9 @@ class Drivetrain(Subsystem):
         self.motor_bl_loc = Translation2d(-self.width / 2, self.length / 2)
         self.motor_br_loc = Translation2d(-self.width / 2, -self.length / 2)
 
-        self.x_controller = PIDController(0.1, 0, 0)
-        self.y_controller = PIDController(0.1, 0, 0)
-        self.heading_controller = PIDController(1.0, 0, 0)
+        self.x_controller = PIDController(10, 0, 0)
+        self.y_controller = PIDController(10, 0, 0)
+        self.heading_controller = PIDController(10, 0, 0)
         self.heading_controller.enableContinuousInput(-math.pi, math.pi)
 
         self.swerve_module_fl = SwerveModule(
@@ -256,7 +256,7 @@ class Drivetrain(Subsystem):
             sample.omega + self.heading_controller.calculate(pose.rotation().radians(), sample.heading)
         )
 
-        self.driveFromChassisSpeeds(speed)
+        self.driveRaw(speed.vx, speed.vy, speed.omega, True)
 
     def getGyroAngle(self):
         """
