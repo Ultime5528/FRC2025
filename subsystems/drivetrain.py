@@ -253,7 +253,10 @@ class Drivetrain(Subsystem):
         speed = ChassisSpeeds(
             sample.vx + self.x_controller.calculate(pose.X(), sample.x),
             sample.vy + self.y_controller.calculate(pose.Y(), sample.y),
-            sample.omega + self.heading_controller.calculate(pose.rotation().radians(), sample.heading)
+            sample.omega
+            + self.heading_controller.calculate(
+                pose.rotation().radians(), sample.heading
+            ),
         )
 
         self.driveRaw(speed.vx, speed.vy, speed.omega, True)
@@ -426,7 +429,9 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]):
+    def addVisionMeasurement(
+        self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]
+    ):
         self.swerve_estimator.addVisionMeasurement(pose, timestamp, std_devs)
         self.vision_pose.setPose(pose)
 

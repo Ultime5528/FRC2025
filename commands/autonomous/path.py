@@ -5,6 +5,7 @@ from choreo import SwerveTrajectory
 from modules.hardware import HardwareModule
 from ultime.command import Command
 
+
 class Path(Command):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
@@ -25,7 +26,6 @@ class Path(Command):
             sample = self.trajectory.sample_at(self.timer.get(), self.is_red_alliance())
 
             if sample and sample.timestamp != self.last_choreo_timestamp:
-                print(sample.fx)
                 self.last_choreo_timestamp = sample.timestamp
                 self.drivetrain.followTrajecctory(sample)
 
