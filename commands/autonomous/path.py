@@ -9,7 +9,7 @@ class Path(Command):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         try:
-            self.trajectory = choreo.load_swerve_trajectory("path\Testfield")
+            self.trajectory = choreo.load_swerve_trajectory("Testfield")
         except ValueError:
             self.trajectory = None
 
