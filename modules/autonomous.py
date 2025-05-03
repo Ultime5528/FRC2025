@@ -1,3 +1,4 @@
+import math
 from _weakref import proxy
 from typing import Optional
 
@@ -5,14 +6,20 @@ import choreo
 import commands2
 import wpilib
 from commands2 import Command
-from pathplannerlib.auto import NamedCommands
+from pathplannerlib.auto import NamedCommands, AutoBuilder
+from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.path import PathPlannerPath, PathConstraints
+from pathplannerlib.pathfinders import Pathfinder, LocalADStar
+from pathplannerlib.pathfinding import Pathfinding
+from wpilib import DriverStation, SmartDashboard
+from wpimath.units import degrees, degreesToRadians
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.goforward import GoForwardAuto
 from commands.autonomous.megaautonomous import MegaAutonomous
-from commands.autonomous.path import Path
 from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
@@ -45,17 +52,41 @@ class AutonomousModule(Module):
 
         self.auto_command: Optional[commands2.Command] = None
 
-        self.auto_chooser = wpilib.SendableChooser()
-        self.auto_chooser.addOption(
-            "MegaAutonomous Left", MegaAutonomous.left(hardware)
+        Pathfinding.setPathfinder(LocalADStar())
+
+        config = RobotConfig.fromGUISettings()
+
+        AutoBuilder.configure(
+            hardware.drivetrain.getPose,
+            hardware.drivetrain.resetToPose,
+            hardware.drivetrain.getRobotRelativeChassisSpeeds,
+            lambda speeds, feedforwards: hardware.drivetrain.driveRaw(speeds.vx, speeds.vy, speeds.omega, False),
+            PPHolonomicDriveController(
+                PIDConstants(6.0, 0.0, 0.0),
+                PIDConstants(6.0, 0.0, 0.0)
+            ),
+            config,
+            self.shouldFlipPath,
+            hardware.drivetrain
         )
-        self.auto_chooser.addOption("Simple Middle", SimpleAutonomous(hardware))
-        self.auto_chooser.addOption(
-            "MegaAutonomous Right", MegaAutonomous.right(hardware)
+
+        path = PathPlannerPath.fromChoreoTrajectory("Test")
+
+        constraints = PathConstraints(
+            5.0, 4.0,
+            degreesToRadians(540), degreesToRadians(720)
         )
-        self.auto_chooser.addOption("Test", Path(hardware))
-        self.auto_chooser.setDefaultOption("GoForward", GoForwardAuto(hardware))
-        wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
+        path_finding_command = AutoBuilder.pathfindThenFollowPath(
+            path,
+            constraints
+        )
+
+        self.auto_chooser = AutoBuilder.buildAutoChooser()
+        self.auto_chooser.addOption("pathfinding", path_finding_command)
+        SmartDashboard.putData("AutoChooser", self.auto_chooser)
+
+    def shouldFlipPath(self):
+        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
 
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(
