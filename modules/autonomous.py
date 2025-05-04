@@ -1,26 +1,21 @@
-import math
+from _weakref import proxy
 from _weakref import proxy
 from typing import Optional
 
-import choreo
 import commands2
-import wpilib
 from commands2 import Command
 from pathplannerlib.auto import NamedCommands, AutoBuilder
 from pathplannerlib.config import RobotConfig, PIDConstants
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.path import PathPlannerPath, PathConstraints
-from pathplannerlib.pathfinders import Pathfinder, LocalADStar
+from pathplannerlib.pathfinders import LocalADStar
 from pathplannerlib.pathfinding import Pathfinding
 from wpilib import DriverStation, SmartDashboard
-from wpimath.units import degrees, degreesToRadians
+from wpimath.units import degreesToRadians
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.autonomous.goforward import GoForwardAuto
-from commands.autonomous.megaautonomous import MegaAutonomous
-from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
@@ -60,26 +55,23 @@ class AutonomousModule(Module):
             hardware.drivetrain.getPose,
             hardware.drivetrain.resetToPose,
             hardware.drivetrain.getRobotRelativeChassisSpeeds,
-            lambda speeds, feedforwards: hardware.drivetrain.driveRaw(speeds.vx, speeds.vy, speeds.omega, False),
+            lambda speeds, feedforwards: hardware.drivetrain.driveRaw(
+                speeds.vx, speeds.vy, speeds.omega, False
+            ),
             PPHolonomicDriveController(
-                PIDConstants(6.0, 0.0, 0.0),
-                PIDConstants(6.0, 0.0, 0.0)
+                PIDConstants(6.0, 0.0, 0.0), PIDConstants(6.0, 0.0, 0.0)
             ),
             config,
             self.shouldFlipPath,
-            hardware.drivetrain
+            hardware.drivetrain,
         )
 
         path = PathPlannerPath.fromChoreoTrajectory("Test")
 
         constraints = PathConstraints(
-            5.0, 4.0,
-            degreesToRadians(540), degreesToRadians(720)
+            5.0, 4.0, degreesToRadians(540), degreesToRadians(720)
         )
-        path_finding_command = AutoBuilder.pathfindThenFollowPath(
-            path,
-            constraints
-        )
+        path_finding_command = AutoBuilder.pathfindThenFollowPath(path, constraints)
 
         self.auto_chooser = AutoBuilder.buildAutoChooser()
         self.auto_chooser.addOption("pathfinding", path_finding_command)
