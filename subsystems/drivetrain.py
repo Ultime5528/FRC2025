@@ -408,7 +408,9 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]):
+    def addVisionMeasurement(
+        self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]
+    ):
         self.swerve_estimator.addVisionMeasurement(pose, timestamp, std_devs)
         self.vision_pose.setPose(pose)
 

@@ -66,14 +66,14 @@ class SwerveModule:
     def setTurnVoltage(self, voltage: float):
         self._turning_motor.setVoltage(voltage)
 
-    def setDriveVelocity(self, velocity_deg_per_sec: float):
+    def setDriveVelocity(self, velocity_meters_per_sec: float):
         ff_volts = (
-            SwerveConstants.driveKs * math.copysign(1, velocity_deg_per_sec)
-            + SwerveConstants.driveKv * velocity_deg_per_sec
+            SwerveConstants.driveKs * math.copysign(1, velocity_meters_per_sec)
+            + SwerveConstants.driveKv * velocity_meters_per_sec
         )
 
         self._driving_closed_loop_controller.setReference(
-            velocity_deg_per_sec,
+            velocity_meters_per_sec,
             SparkBase.ControlType.kVelocity,
             ClosedLoopSlot.kSlot0,
             ff_volts,

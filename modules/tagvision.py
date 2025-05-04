@@ -30,8 +30,9 @@ class TagVisionModule(AbsoluteVision):
             if estimated_pose:
                 time_stamp = self.getEstimatedPoseTimeStamp()
                 std_devs = self.getEstimationStdDevs()
-                self.drivetrain.addVisionMeasurement(estimated_pose.estimatedPose.toPose2d(), time_stamp, std_devs)
-
+                self.drivetrain.addVisionMeasurement(
+                    estimated_pose.estimatedPose.toPose2d(), time_stamp, std_devs
+                )
 
     def getNumberTagsUsed(self) -> int:
         return len(self.getUsedTags())

@@ -7,7 +7,7 @@ from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from photonlibpy.photonCamera import PhotonCamera
 from photonlibpy.targeting import PhotonTrackedTarget, PhotonPipelineResult
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
-from wpimath.geometry import Transform3d, Pose3d, Pose2d
+from wpimath.geometry import Transform3d
 
 from ultime.alert import AlertType
 from ultime.module import Module
@@ -82,7 +82,9 @@ class AbsoluteVision(Vision):
         self.updateEstimationStdDevs(self.estimated_pose, frame.getTargets())
         return self.estimated_pose
 
-    def updateEstimationStdDevs(self, estimated_pose: EstimatedRobotPose, targets: List[PhotonTrackedTarget]):
+    def updateEstimationStdDevs(
+        self, estimated_pose: EstimatedRobotPose, targets: List[PhotonTrackedTarget]
+    ):
         if estimated_pose is None:
             self.std_devs = [4, 4, 8]
         else:
@@ -91,12 +93,18 @@ class AbsoluteVision(Vision):
             av_dist = 0
 
             for target in targets:
-                tag_pose = self.camera_pose_estimator.fieldTags.getTagPose(target.getFiducialId())
+                tag_pose = self.camera_pose_estimator.fieldTags.getTagPose(
+                    target.getFiducialId()
+                )
                 if tag_pose is None:
                     continue
                 else:
                     num_tags += 1
-                    av_dist += tag_pose.toPose2d().translation().distance(estimated_pose.estimatedPose.toPose2d().translation())
+                    av_dist += (
+                        tag_pose.toPose2d()
+                        .translation()
+                        .distance(estimated_pose.estimatedPose.toPose2d().translation())
+                    )
 
             if num_tags == 0:
                 self.std_devs = [4, 4, 8]
@@ -106,10 +114,16 @@ class AbsoluteVision(Vision):
                 if num_tags > 1:
                     self.std_devs = [0.5, 0.5, 1]
 
-                if num_tags == 1 and  av_dist > 4:
-                    self.std_devs = [sys.float_info.max, sys.float_info.max, sys.float_info.max]
+                if num_tags == 1 and av_dist > 4:
+                    self.std_devs = [
+                        sys.float_info.max,
+                        sys.float_info.max,
+                        sys.float_info.max,
+                    ]
                 else:
-                    self.std_devs = [val * (1 + (av_dist * av_dist / 30)) for val in self.std_devs]
+                    self.std_devs = [
+                        val * (1 + (av_dist * av_dist / 30)) for val in self.std_devs
+                    ]
 
     def getEstimationStdDevs(self) -> List[float]:
         return self.std_devs
