@@ -38,7 +38,6 @@ driveKv = 1.0
 turnKp = 2.0
 turnKd = 0.0
 
-
 driving_config = SparkMaxConfig()
 turning_config = SparkMaxConfig()
 
@@ -50,11 +49,6 @@ turning_factor = turning_encoder_position_conversion_factor
 turning_velocity_factor = turning_encoder_velocity_conversion_factor
 
 driving_velocity_feed_forward = 1 / drive_wheel_free_rps
-
-driveKp = driveKp
-driveKd = driveKd
-turnKp = turnKp
-turnKd = turnKd
 
 odometry_frequency = odometry_frequency
 
