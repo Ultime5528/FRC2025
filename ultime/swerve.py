@@ -10,7 +10,6 @@ from wpimath.system.plant import DCMotor
 from wpiutil import Sendable, SendableBuilder
 
 from ultime import swerveconfig
-from ultime.swerveconfig import SwerveConstants
 from ultime.timethis import tt
 
 
@@ -68,8 +67,8 @@ class SwerveModule:
 
     def setDriveVelocity(self, velocity_meters_per_sec: float):
         ff_volts = (
-            SwerveConstants.driveKs * math.copysign(1, velocity_meters_per_sec)
-            + SwerveConstants.driveKv * velocity_meters_per_sec
+            swerveconfig.driveKs * math.copysign(1, velocity_meters_per_sec)
+            + swerveconfig.driveKv * velocity_meters_per_sec
         )
 
         self._driving_closed_loop_controller.setReference(
