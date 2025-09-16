@@ -35,7 +35,7 @@ driveKd = 0.0
 driveKs = 0.0
 driveKv = 1.0
 
-turnKp = 2.0
+turnKp = 0.4
 turnKd = 0.0
 
 driving_config = SparkMaxConfig()
@@ -49,8 +49,6 @@ turning_factor = turning_encoder_position_conversion_factor
 turning_velocity_factor = turning_encoder_velocity_conversion_factor
 
 driving_velocity_feed_forward = 1 / drive_wheel_free_rps
-
-odometry_frequency = odometry_frequency
 
 # Set up driving config
 driving_config.setIdleMode(SparkBaseConfig.IdleMode.kBrake)

@@ -55,7 +55,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
         self.setupCopilotCommands(hardware)
-        # self.setupCommands(hardware)
+        self.setupCommands(hardware)
 
     def setupCopilotCommands(self, hardware: HardwareModule):
         putCommandOnDashboard(

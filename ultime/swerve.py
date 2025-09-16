@@ -66,8 +66,13 @@ class SwerveModule:
         self._turning_motor.setVoltage(voltage)
 
     def setDriveVelocity(self, velocity_meters_per_sec: float):
+        direction = 0
+        if velocity_meters_per_sec > 0:
+            direction = 1
+        elif velocity_meters_per_sec < 0:
+            direction = -1
         ff_volts = (
-            swerveconfig.driveKs * math.copysign(1, velocity_meters_per_sec)
+            swerveconfig.driveKs * direction
             + swerveconfig.driveKv * velocity_meters_per_sec
         )
 
@@ -131,6 +136,11 @@ class SwerveModule:
             Rotation2d(self.getAngleRandians() - self._chassis_angular_offset),
         )
 
+    def getDrivingMotorAppliedVoltage(self):
+        return (
+            self._driving_motor.getBusVoltage() * self._driving_motor.getAppliedOutput()
+        )
+
     def simulationUpdate(self, period: float):
         # Drive motor simulation
         drive_voltage = (
@@ -179,6 +189,27 @@ class SwerveDriveElasticSendable(Sendable):
             pass
 
         builder.setSmartDashboardType("SwerveDrive")
+
+        builder.addDoubleProperty(
+            "Front Left Voltage",
+            tt(lambda: self.module_fl.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Right Voltage",
+            tt(lambda: self.module_fr.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Left Voltage",
+            tt(lambda: self.module_bl.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Right Voltage",
+            tt(lambda: self.module_br.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
 
         builder.addDoubleProperty(
             "Front Left Angle",
