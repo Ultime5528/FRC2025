@@ -1,6 +1,8 @@
 import math
+from enum import Enum
 from typing import List
 
+import commands2.sysid
 import wpilib
 import wpimath
 from ntcore import NetworkTableInstance
@@ -149,6 +151,33 @@ class Drivetrain(Subsystem):
         self.vision_pose = self._field.getObject("Vision Pose")
         self.odometry_pose = self._field.getObject("Odometry Pose")
 
+        self.sys_id_routine = commands2.sysid.SysIdRoutine(
+            commands2.sysid.SysIdRoutine.Config(),
+            commands2.sysid.SysIdRoutine.Mechanism(
+                lambda voltage:(
+                    self.swerve_module_fl.setDriveVoltage(voltage),
+                    self.swerve_module_fr.setDriveVoltage(voltage),
+                    self.swerve_module_bl.setDriveVoltage(voltage),
+                    self.swerve_module_br.setDriveVoltage(voltage),
+                ),
+                lambda log:(
+                    log.motor("Front Left Swerve").voltage(self.swerve_module_fl.getDrivingMotorAppliedVoltage()),
+                    log.motor("Front Left Swerve").angularPosition(self.swerve_module_fl.getEncoderPosition()),
+                    log.motor("Front Left Swerve").angularVelocity(self.swerve_module_fl.getVelocity()),
+                    log.motor("Front Right Swerve").voltage(self.swerve_module_fr.getDrivingMotorAppliedVoltage()),
+                    log.motor("Front Right Swerve").angularPosition(self.swerve_module_fr.getEncoderPosition()),
+                    log.motor("Front Right Swerve").angularVelocity(self.swerve_module_fr.getVelocity()),
+                    log.motor("Back Left Swerve").voltage(self.swerve_module_bl.getDrivingMotorAppliedVoltage()),
+                    log.motor("Back Left Swerve").angularPosition(self.swerve_module_bl.getEncoderPosition()),
+                    log.motor("Back Left Swerve").angularVelocity(self.swerve_module_bl.getVelocity()),
+                    log.motor("Back Right Swerve").voltage(self.swerve_module_br.getDrivingMotorAppliedVoltage()),
+                    log.motor("Back Right Swerve").angularPosition(self.swerve_module_br.getEncoderPosition()),
+                    log.motor("Back Right Swerve").angularVelocity(self.swerve_module_br.getVelocity()),
+
+                ),
+                self
+            )
+        )
         """
         Alerts
         """
@@ -191,6 +220,16 @@ class Drivetrain(Subsystem):
 
         if RobotBase.isSimulation():
             self.sim_yaw = 0
+
+    def sysIdQuasistaticForward(self):
+        return self.sys_id_routine.quasistatic(commands2.sysid.SysIdRoutine.Direction.kForward)
+    def sysIdQuasistaticReverse(self):
+        return self.sys_id_routine.quasistatic(commands2.sysid.SysIdRoutine.Direction.kReverse)
+
+    def sysIdDynamicForward(self):
+        return self.sys_id_routine.dynamic(commands2.sysid.SysIdRoutine.Direction.kForward)
+    def sysIdDynamicReverse(self):
+        return self.sys_id_routine.dynamic(commands2.sysid.SysIdRoutine.Direction.kReverse)
 
     def drive(
         self,

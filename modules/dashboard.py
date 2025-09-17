@@ -206,6 +206,10 @@ class DashboardModule(Module):
         """
         Groups
         """
+        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdQuasistaticForward(), "SysId Quasistatic Forward")
+        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdQuasistaticReverse(), "SysId Quasistatic Reverse")
+        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdDynamicForward(), "SysId Dynamic Forward")
+        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdDynamicReverse(), "SysId Dynamic Reverse")
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
