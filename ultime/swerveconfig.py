@@ -32,8 +32,8 @@ turning_encoder_position_PID_max_input = turning_encoder_position_conversion_fac
 
 driveKp = 0.0
 driveKd = 0.0
-driveKs = 0.0
-driveKv = 1.0
+driveKs = 0.0053914
+driveKv = 2.890874#2.7952
 
 turnKp = 0.4
 turnKd = 0.0
