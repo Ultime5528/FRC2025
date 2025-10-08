@@ -154,29 +154,52 @@ class Drivetrain(Subsystem):
         self.sys_id_routine = commands2.sysid.SysIdRoutine(
             commands2.sysid.SysIdRoutine.Config(),
             commands2.sysid.SysIdRoutine.Mechanism(
-                lambda voltage:(
+                lambda voltage: (
                     self.swerve_module_fl.setDriveVoltage(voltage),
                     self.swerve_module_fr.setDriveVoltage(voltage),
                     self.swerve_module_bl.setDriveVoltage(voltage),
                     self.swerve_module_br.setDriveVoltage(voltage),
                 ),
-                lambda log:(
-                    log.motor("Front Left Swerve").voltage(self.swerve_module_fl.getDrivingMotorAppliedVoltage()),
-                    log.motor("Front Left Swerve").angularPosition(self.swerve_module_fl.getEncoderPosition()),
-                    log.motor("Front Left Swerve").angularVelocity(self.swerve_module_fl.getVelocity()),
-                    log.motor("Front Right Swerve").voltage(self.swerve_module_fr.getDrivingMotorAppliedVoltage()),
-                    log.motor("Front Right Swerve").angularPosition(self.swerve_module_fr.getEncoderPosition()),
-                    log.motor("Front Right Swerve").angularVelocity(self.swerve_module_fr.getVelocity()),
-                    log.motor("Back Left Swerve").voltage(self.swerve_module_bl.getDrivingMotorAppliedVoltage()),
-                    log.motor("Back Left Swerve").angularPosition(self.swerve_module_bl.getEncoderPosition()),
-                    log.motor("Back Left Swerve").angularVelocity(self.swerve_module_bl.getVelocity()),
-                    log.motor("Back Right Swerve").voltage(self.swerve_module_br.getDrivingMotorAppliedVoltage()),
-                    log.motor("Back Right Swerve").angularPosition(self.swerve_module_br.getEncoderPosition()),
-                    log.motor("Back Right Swerve").angularVelocity(self.swerve_module_br.getVelocity()),
-
+                lambda log: (
+                    log.motor("Front Left Swerve").voltage(
+                        self.swerve_module_fl.getDrivingMotorAppliedVoltage()
+                    ),
+                    log.motor("Front Left Swerve").angularPosition(
+                        self.swerve_module_fl.getEncoderPosition()
+                    ),
+                    log.motor("Front Left Swerve").angularVelocity(
+                        self.swerve_module_fl.getVelocity()
+                    ),
+                    log.motor("Front Right Swerve").voltage(
+                        self.swerve_module_fr.getDrivingMotorAppliedVoltage()
+                    ),
+                    log.motor("Front Right Swerve").angularPosition(
+                        self.swerve_module_fr.getEncoderPosition()
+                    ),
+                    log.motor("Front Right Swerve").angularVelocity(
+                        self.swerve_module_fr.getVelocity()
+                    ),
+                    log.motor("Back Left Swerve").voltage(
+                        self.swerve_module_bl.getDrivingMotorAppliedVoltage()
+                    ),
+                    log.motor("Back Left Swerve").angularPosition(
+                        self.swerve_module_bl.getEncoderPosition()
+                    ),
+                    log.motor("Back Left Swerve").angularVelocity(
+                        self.swerve_module_bl.getVelocity()
+                    ),
+                    log.motor("Back Right Swerve").voltage(
+                        self.swerve_module_br.getDrivingMotorAppliedVoltage()
+                    ),
+                    log.motor("Back Right Swerve").angularPosition(
+                        self.swerve_module_br.getEncoderPosition()
+                    ),
+                    log.motor("Back Right Swerve").angularVelocity(
+                        self.swerve_module_br.getVelocity()
+                    ),
                 ),
-                self
-            )
+                self,
+            ),
         )
         """
         Alerts
@@ -222,14 +245,24 @@ class Drivetrain(Subsystem):
             self.sim_yaw = 0
 
     def sysIdQuasistaticForward(self):
-        return self.sys_id_routine.quasistatic(commands2.sysid.SysIdRoutine.Direction.kForward)
+        return self.sys_id_routine.quasistatic(
+            commands2.sysid.SysIdRoutine.Direction.kForward
+        )
+
     def sysIdQuasistaticReverse(self):
-        return self.sys_id_routine.quasistatic(commands2.sysid.SysIdRoutine.Direction.kReverse)
+        return self.sys_id_routine.quasistatic(
+            commands2.sysid.SysIdRoutine.Direction.kReverse
+        )
 
     def sysIdDynamicForward(self):
-        return self.sys_id_routine.dynamic(commands2.sysid.SysIdRoutine.Direction.kForward)
+        return self.sys_id_routine.dynamic(
+            commands2.sysid.SysIdRoutine.Direction.kForward
+        )
+
     def sysIdDynamicReverse(self):
-        return self.sys_id_routine.dynamic(commands2.sysid.SysIdRoutine.Direction.kReverse)
+        return self.sys_id_routine.dynamic(
+            commands2.sysid.SysIdRoutine.Direction.kReverse
+        )
 
     def drive(
         self,
@@ -306,21 +339,21 @@ class Drivetrain(Subsystem):
                 swerve._chassis_angular_offset, SparkBase.ControlType.kPosition
             )
 
-    def setSidewaysFormation(self):
+    def setForwardFormation(self):
         """
-        Points all the wheels to the side
+        Points all the wheels to the front
         """
         self.swerve_module_fl.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+            SwerveModuleState(0, Rotation2d.fromDegrees(0))
         )
         self.swerve_module_fr.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+            SwerveModuleState(0, Rotation2d.fromDegrees(0))
         )
         self.swerve_module_bl.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+            SwerveModuleState(0, Rotation2d.fromDegrees(0))
         )
         self.swerve_module_br.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(90))
+            SwerveModuleState(0, Rotation2d.fromDegrees(0))
         )
 
     def setXFormation(self):

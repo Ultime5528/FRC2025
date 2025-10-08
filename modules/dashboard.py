@@ -19,6 +19,7 @@ from commands.climber.moveclimber import (
 )
 from commands.climber.resetclimber import ResetClimber
 from commands.drivetrain.driverelative import DriveRelative
+from commands.drivetrain.forwardposition import ForwardPosition
 from commands.drivetrain.resetgyro import ResetGyro
 from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
@@ -206,14 +207,31 @@ class DashboardModule(Module):
         """
         Groups
         """
-        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdQuasistaticForward(), "SysId Quasistatic Forward")
-        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdQuasistaticReverse(), "SysId Quasistatic Reverse")
-        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdDynamicForward(), "SysId Dynamic Forward")
-        putCommandOnDashboard("Drivetrain", hardware.drivetrain.sysIdDynamicReverse(), "SysId Dynamic Reverse")
+        putCommandOnDashboard(
+            "Drivetrain",
+            hardware.drivetrain.sysIdQuasistaticForward(),
+            "SysId Quasistatic Forward",
+        )
+        putCommandOnDashboard(
+            "Drivetrain",
+            hardware.drivetrain.sysIdQuasistaticReverse(),
+            "SysId Quasistatic Reverse",
+        )
+        putCommandOnDashboard(
+            "Drivetrain",
+            hardware.drivetrain.sysIdDynamicForward(),
+            "SysId Dynamic Forward",
+        )
+        putCommandOnDashboard(
+            "Drivetrain",
+            hardware.drivetrain.sysIdDynamicReverse(),
+            "SysId Dynamic Reverse",
+        )
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", ForwardPosition(hardware.drivetrain))
         putCommandOnDashboard(
             "Drivetrain", DriveRelative.backwards(hardware.drivetrain)
         )

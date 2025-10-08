@@ -41,14 +41,13 @@ class ControlModule(Module):
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
         )
-        hardware.controller.povLeft().whileTrue(hardware.drivetrain.sysIdQuasistaticForward())
+        hardware.controller.povLeft().whileTrue(
+            hardware.drivetrain.sysIdQuasistaticForward()
+        )
         hardware.controller.povRight().whileTrue(
             hardware.drivetrain.sysIdQuasistaticReverse()
         )
-        hardware.controller.povUp().whileTrue(
-            hardware.drivetrain.sysIdDynamicForward()
-            
-        )
+        hardware.controller.povUp().whileTrue(hardware.drivetrain.sysIdDynamicForward())
         hardware.controller.povDown().whileTrue(
             hardware.drivetrain.sysIdDynamicReverse()
         )
