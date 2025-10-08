@@ -339,21 +339,21 @@ class Drivetrain(Subsystem):
                 swerve._chassis_angular_offset, SparkBase.ControlType.kPosition
             )
 
-    def setForwardFormation(self):
+    def setSidewayFormation(self):
         """
         Points all the wheels to the front
         """
         self.swerve_module_fl.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(0))
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
         self.swerve_module_fr.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(0))
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
         self.swerve_module_bl.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(0))
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
         self.swerve_module_br.setDesiredSetpoint(
-            SwerveModuleState(0, Rotation2d.fromDegrees(0))
+            SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
 
     def setXFormation(self):
