@@ -155,10 +155,10 @@ class Drivetrain(Subsystem):
             commands2.sysid.SysIdRoutine.Config(),
             commands2.sysid.SysIdRoutine.Mechanism(
                 lambda voltage: (
-                    self.swerve_module_fl.setDriveVoltage(voltage),
-                    self.swerve_module_fr.setDriveVoltage(voltage),
-                    self.swerve_module_bl.setDriveVoltage(voltage),
-                    self.swerve_module_br.setDriveVoltage(voltage),
+                    self.swerve_module_fl.runCharacterization(voltage),
+                    self.swerve_module_fr.runCharacterization(voltage),
+                    self.swerve_module_bl.runCharacterization(voltage),
+                    self.swerve_module_br.runCharacterization(voltage),
                 ),
                 lambda log: (
                     log.motor("Front Left Swerve").voltage(
