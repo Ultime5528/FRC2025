@@ -282,6 +282,8 @@ class Drivetrain(Subsystem):
 
         self.chassis_speed_goal_pub.set(corrected_chassis_speed)
 
+        print(f"SPEED IS {corrected_chassis_speed}")
+        print(self.swervedrive_kinematics.toWheelSpeeds(corrected_chassis_speed))
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
         )
@@ -335,9 +337,10 @@ class Drivetrain(Subsystem):
         Points all the wheels to the front
         """
         for swerve in self.swerve_modules.values():
-            swerve._turning_closed_loop_controller.setReference(
-                swerve._chassis_angular_offset, SparkBase.ControlType.kPosition
-            )
+            swerve.setTurnPosition(Rotation2d(swerve._chassis_angular_offset))
+        self.swervedrive_kinematics.resetHeadings(
+            [Rotation2d(0), Rotation2d(0), Rotation2d(0), Rotation2d(0)]
+        )
 
     def setSidewayFormation(self):
         """
