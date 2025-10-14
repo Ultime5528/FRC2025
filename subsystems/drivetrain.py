@@ -282,8 +282,6 @@ class Drivetrain(Subsystem):
 
         self.chassis_speed_goal_pub.set(corrected_chassis_speed)
 
-        print(f"SPEED IS {corrected_chassis_speed}")
-        print(self.swervedrive_kinematics.toWheelSpeeds(corrected_chassis_speed))
         swerve_module_states = self.swervedrive_kinematics.toSwerveModuleStates(
             corrected_chassis_speed
         )
@@ -344,7 +342,7 @@ class Drivetrain(Subsystem):
 
     def setSidewayFormation(self):
         """
-        Points all the wheels to the front
+        Points all the wheels to the side
         """
         self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))

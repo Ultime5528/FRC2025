@@ -85,7 +85,6 @@ class SwerveModule:
         )
 
     def setTurnPosition(self, rotation: Rotation2d):
-        # print(f"WANTED ANGLE IS {rotation.radians()}, FORWARD IS {self._chassis_angular_offset}")
         self._turning_closed_loop_controller.setReference(
             rotation.radians(), SparkBase.ControlType.kPosition
         )
