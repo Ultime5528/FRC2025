@@ -30,10 +30,10 @@ turning_encoder_velocity_conversion_factor = math.pi * 2 / 60  # radians per sec
 turning_encoder_position_PID_min_input = 0
 turning_encoder_position_PID_max_input = turning_encoder_position_conversion_factor
 
-driveKp = 0.0
+driveKp = 0.45
 driveKd = 0.0
-driveKs = 0.0053914
-driveKv = 2.890874#2.7952
+driveKs = 0.151515
+driveKv = 2.64445
 
 turnKp = 0.4
 turnKd = 0.0
