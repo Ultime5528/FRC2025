@@ -70,7 +70,7 @@ class DropAutonomous(SequentialCommandGroup):
                         AutoDrop(claw, elevator),
                     ),
                     MaintainElevator(elevator),
-                    DriveRelative(drivetrain, Translation2d(0.12, 0)),
+                    #DriveRelative(drivetrain, Translation2d(0.12, 0)),
                 ),
                 sequence(
                     deadline(
@@ -83,22 +83,22 @@ class DropAutonomous(SequentialCommandGroup):
                             }[side]
                         ),
                         MaintainElevator(elevator),
-                        DriveRelative(drivetrain, Translation2d(0.12, 0)),
+                        #DriveRelative(drivetrain, Translation2d(0.12, 0)),
                     ),
                     either(
                         sequence(
                             deadline(
                                 AutoDrop(claw, elevator),
                                 MaintainElevator(elevator),
-                                DriveRelative(drivetrain, Translation2d(0.12, 0)),
+                                #DriveRelative(drivetrain, Translation2d(0.12, 0)),
                             ),
                             either(
                                 sequence(
                                     MoveElevator.toAlgae(elevator, drivetrain),
-                                    DriveToPoses.back(
-                                        drivetrain,
-                                        lambda: _properties.distance_remove_algae,
-                                    ),
+                                    #DriveToPoses.back(
+                                     #   drivetrain,
+                                      #  lambda: _properties.distance_remove_algae,
+                                    #),
                                 ),
                                 none(),
                                 lambda: elevator.state == Elevator.State.Level4
