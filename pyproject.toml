@@ -20,7 +20,7 @@ robotpy_extras = [
 
 # Other pip packages to install
 requires = [
-     "robotpy-questnav==version=0.1.0",
+     "robotpy-questnav==0.1.0",
      "robotpy-commands-v2==2025.1.1",
      "robotpy-rev==2025.0.2",
      "numpy",
