@@ -12,6 +12,7 @@ from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
+from ultime import questnav
 from ultime.autoproperty import autoproperty
 from ultime.command import ignore_requirements
 from ultime.proxy import proxy
@@ -26,7 +27,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             runOnce(proxy(self.before_command)),
             MoveElevator.toLevel1(elevator),
             parallel(
-                ExtendArm(arm),
+                ExtendArm(arm, questnav),
                 sequence(
                     WaitCommand(0.1),
                     FunctionalCommand(

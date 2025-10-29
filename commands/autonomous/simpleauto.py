@@ -54,7 +54,7 @@ class SimpleAutonomous(SequentialCommandGroup):
                 parallel(
                     MoveElevator.toLevel4(el),
                     RetractCoral.retract(claw),
-                    ExtendArm(arm),
+                    ExtendArm(arm, hardware.questnav),
                 ),
             ),
             GoTo(pose_tag_21),
