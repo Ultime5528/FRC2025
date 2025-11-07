@@ -1,5 +1,13 @@
-from wpimath.geometry import Pose2d, Translation2d, Rotation2d
-from wpilib import Timer, SmartDashboard
+from wpimath.geometry import (
+    Pose2d,
+    Translation2d,
+    Rotation2d,
+    Pose3d,
+    Translation3d,
+    Rotation3d,
+    Quaternion,
+)
+from wpilib import Timer
 from ntcore import NetworkTableInstance
 from questnav import commands_pb2
 from questnav import geometry2d_pb2
@@ -9,19 +17,10 @@ from questnav import data_pb2
 
 # --- QuestNav Class Conversion ---
 class QuestNav:
-    """
-    The QuestNav class provides an interface to communicate with an Oculus/Meta Quest VR headset for
-    robot localization and tracking purposes. It uses NetworkTables to exchange data between the
-    robot and the Quest device.
-    """
-
     def __init__(self):
-        """Creates a new QuestNav implementation."""
-        # Initialize NetworkTables
         self.nt4_instance = NetworkTableInstance.getDefault()
         self.quest_nav_table = self.nt4_instance.getTable("QuestNav")
 
-        # Protobuf instances
         self.command_response_proto = commands_pb2.ProtobufQuestNavCommandResponse()
         self.command_proto = commands_pb2.ProtobufQuestNavCommand()
         self.pose2d_proto = geometry2d_pb2.ProtobufPose2d()
@@ -57,23 +56,7 @@ class QuestNav:
         self.last_sent_request_id = 0
         self.last_processed_response_id = 0
 
-    def set_pose(self, pose: Pose2d):
-        """
-        Sets the field-relative pose of the Quest. This is the position of the Quest, not the robot.
-        Make sure you correctly offset back from the center of your robot first.
-
-        Args:
-            pose: The field relative position of the Quest
-        """
-        # self.cached_proto_pose.Clear()
-        # self.pose2d_proto.Pack(self.cached_proto_pose, pose)
-        # pose_proto = gpb2.ProtobufPose2d()
-        # pose_proto.translation.x = pose.translation().x
-        # pose_proto.translation.y = pose.translation().y
-        # pose_proto.rotation.value = pose.rotation().radians()
-
-        # self.pose2d_proto.CopyFrom(pose_proto)
-
+    def set_pose2d(self, pose: Pose2d):
         self.cached_command_request.Clear()
         self.last_sent_request_id += 1
 
@@ -86,13 +69,51 @@ class QuestNav:
 
         self.request_publisher.set(self.cached_command_request.SerializeToString())
 
-    def get_battery_percent(self) -> int:
-        """
-        Returns the Quest's battery level (0-100%), or -1 if no data is available.
+    def set_pose3d(self, pose: Pose3d):
+        self.cached_command_request.Clear()
+        self.last_sent_request_id += 1
 
-        Returns:
-            The battery percentage as an int, or -1 if no data is available
-        """
+        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE3D_RESET
+        self.cached_command_request.command_id = self.last_sent_request_id
+        payload = self.cached_command_request.pose3d_reset_payload
+        payload.target_pose.translation.x = pose.translation().x
+        payload.target_pose.translation.y = pose.translation().y
+        payload.target_pose.translation.z = pose.translation().z
+        payload.target_pose.rotation.q.w = pose.rotation().getQuaternion().W()
+        payload.target_pose.rotation.q.x = pose.rotation().getQuaternion().X()
+        payload.target_pose.rotation.q.y = pose.rotation().getQuaternion().Y()
+        payload.target_pose.rotation.q.z = pose.rotation().getQuaternion().Z()
+
+        self.request_publisher.set(self.cached_command_request.SerializeToString())
+
+    def set_velocity2d(self, vx: float, vy: float):
+        self.cached_command_request.Clear()
+        self.last_sent_request_id += 1
+
+        self.cached_command_request.type = (
+            commands_pb2.QuestNavCommandType.VELOCITY2D_SET
+        )
+        self.cached_command_request.command_id = self.last_sent_request_id
+        self.cached_command_request.velocity2d_set_payload.target_velocity.translation.x = vx
+        self.cached_command_request.velocity2d_set_payload.target_velocity.translation.y = vy
+
+        self.request_publisher.set(self.cached_command_request.SerializeToString())
+
+    def set_velocity3d(self, vx: float, vy: float, vz: float):
+        self.cached_command_request.Clear()
+        self.last_sent_request_id += 1
+
+        self.cached_command_request.type = (
+            commands_pb2.QuestNavCommandType.VELOCITY3D_SET
+        )
+        self.cached_command_request.command_id = self.last_sent_request_id
+        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.x = vx
+        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.y = vy
+        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.z = vz
+
+        self.request_publisher.set(self.cached_command_request.SerializeToString())
+
+    def get_battery_percent(self) -> int:
         raw_data = self.device_data_subscriber.get()
         if not raw_data:
             return -1
@@ -101,38 +122,33 @@ class QuestNav:
                 raw_data
             )
             return latest_device_data.battery_percent
-        except Exception as e:
+        except Exception:
             return -1
 
     def is_tracking(self) -> bool:
-        """
-        Gets the current tracking state of the Quest headset.
-
-        Returns:
-            Boolean indicating if the Quest is currently tracking (true) or not (false)
-        """
         raw_data = self.device_data_subscriber.get()
         if not raw_data:
             return False
         try:
-            # Assuming raw_data is binary Protobuf, not JSON
             latest_device_data = data_pb2.ProtobufQuestNavDeviceData.FromString(
                 raw_data
             )
-            # Then check a specific field for tracking state
-            return bool(
-                latest_device_data.currently_tracking
-            )  # Or whatever field represents tracking
-        except Exception as e:
+            return bool(latest_device_data.currently_tracking)
+        except Exception:
             return False
 
-    def get_frame_count(self) -> int:
-        """
-        Gets the current frame count from the Quest headset.
+    def reset_tracking(self):
+        self.cached_command_request.Clear()
+        self.last_sent_request_id += 1
 
-        Returns:
-            The frame count value
-        """
+        self.cached_command_request.type = (
+            commands_pb2.QuestNavCommandType.TRACKING_RESET
+        )
+        self.cached_command_request.command_id = self.last_sent_request_id
+
+        self.request_publisher.set(self.cached_command_request.SerializeToString())
+
+    def get_frame_count(self) -> int:
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
             return -1
@@ -143,12 +159,6 @@ class QuestNav:
             return -1
 
     def get_tracking_lost_counter(self) -> int:
-        """
-        Gets the number of tracking lost events since the Quest connected to the robot.
-
-        Returns:
-            The tracking lost counter value
-        """
         raw_data = self.device_data_subscriber.get()
         if not raw_data:
             return -1
@@ -234,35 +244,94 @@ class QuestNav:
             return -1.0
         return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
-    def get_pose(self) -> Pose2d:
-        """
-        Returns the current pose of the Quest on the field. This will only return the field-relative
-        pose if `set_pose(pose)` has been called at least once.
-
-        Returns:
-            Pose2d representing the Quest's location on the field
-        """
+    def get_pose2d(self) -> Pose2d:
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
             return Pose2d(-100, -100, -100)
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            # return self.pose2d_proto.unpack(latest_frame_data.pose2d)
-            # print(str(latest_frame_data.pose2d.translation))
-            xval = float(
-                str(latest_frame_data.pose2d.translation)[
-                    3 : str(latest_frame_data.pose2d.translation).index("\n")
-                ]
-            )
-            yval = float(
-                str(latest_frame_data.pose2d.translation)[
-                    str(latest_frame_data.pose2d.translation).index("\n") + 3 : -1
-                ]
-            )
-            rot = float(str(latest_frame_data.pose2d.rotation)[7:-1])
-            return Pose2d(Translation2d(xval, yval), Rotation2d(rot))
-        except Exception as e:
-            return Pose2d(-100, -100, -100)  # Return kZero if no data available
+            x = latest_frame_data.pose2d.translation.x
+            y = latest_frame_data.pose2d.translation.y
+            translation = Translation2d(x, y)
+            rot = latest_frame_data.pose2d.rotation.value
+            rotation = Rotation2d(rot)
+
+            return Pose2d(translation, rotation)
+        except Exception:
+            return Pose2d(-100, -100, -100)
+
+    def get_pose3d(self) -> Pose3d:
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            translation = Translation3d(-100, -100, -100)
+            rotation = Rotation3d()
+        else:
+            try:
+                latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(
+                    raw_data
+                )
+                translation = Translation3d(
+                    latest_frame_data.pose3d.translation.x,
+                    latest_frame_data.pose3d.translation.y,
+                    latest_frame_data.pose3d.translation.z,
+                )
+                rotation = Rotation3d(
+                    Quaternion(
+                        latest_frame_data.pose3d.rotation.q.w,
+                        latest_frame_data.pose3d.rotation.q.x,
+                        latest_frame_data.pose3d.rotation.q.y,
+                        latest_frame_data.pose3d.rotation.q.z,
+                    )
+                )
+            except Exception as e:
+                translation = Translation3d(-100, -100, -100)
+                rotation = Rotation3d()
+
+        return Pose3d(translation, rotation)
+
+    def get_velocity2d(self) -> Translation2d:
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            return Translation2d(-100, -100)
+        try:
+            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
+            vel = latest_frame_data.velocity2d.translation
+            return Translation2d(float(vel.x), float(vel.y))
+        except Exception:
+            return Translation2d(-100, -100)
+
+    def get_velocity3d(self) -> Translation3d:
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            return Translation3d(-100, -100, -100)
+        try:
+            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
+            vel = latest_frame_data.velocity3d.translation
+            return Translation3d(float(vel.x), float(vel.y), float(vel.z))
+        except Exception:
+            return Translation3d(-100, -100, -100)
+
+    def get_angular_velocity(self) -> Rotation3d:
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            return Rotation3d(0.0, 0.0, 0.0)
+        try:
+            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
+            ang_vel = latest_frame_data.angular_velocity
+            return Rotation3d(float(ang_vel.x), float(ang_vel.y), float(ang_vel.z))
+        except Exception:
+            return Rotation3d(0.0, 0.0, 0.0)
+
+    def get_linear_acceleration(self) -> Translation3d:
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            return Translation3d(0.0, 0.0, 0.0)
+        try:
+            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
+            acc = latest_frame_data.linear_acceleration
+            return Translation3d(float(acc.x), float(acc.y), float(acc.z))
+        except Exception:
+            return Translation3d(0.0, 0.0, 0.0)
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
@@ -286,3 +355,5 @@ class QuestNav:
                 )
             # don't double process
             self.last_processed_response_id = latest_command_response.command_id
+
+

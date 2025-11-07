@@ -1,8 +1,11 @@
 import wpilib
 from commands2 import Command
+from wpimath.geometry import Pose3d
 
 from subsystems.arm import Arm
 from ultime.autoproperty import autoproperty
+import ultime.questnav
+from ultime.questnav import QuestNav
 
 
 class ExtendArm(Command):
@@ -19,6 +22,8 @@ class ExtendArm(Command):
         self.timer.stop()
         self.timer.reset()
         self.has_moved = False
+        print(QuestNav.get_pose3d(QuestNav()))
+        print(QuestNav.get_pose2d(QuestNav()))
 
     def execute(self):
         if self.arm.movement_state == Arm.MovementState.DoNotMove:
