@@ -263,75 +263,16 @@ class QuestNav:
     def get_pose3d(self) -> Pose3d:
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
-            translation = Translation3d(-100, -100, -100)
-            rotation = Rotation3d()
-        else:
-            try:
-                latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(
-                    raw_data
-                )
-                translation = Translation3d(
-                    latest_frame_data.pose3d.translation.x,
-                    latest_frame_data.pose3d.translation.y,
-                    latest_frame_data.pose3d.translation.z,
-                )
-                rotation = Rotation3d(
-                    Quaternion(
-                        latest_frame_data.pose3d.rotation.q.w,
-                        latest_frame_data.pose3d.rotation.q.x,
-                        latest_frame_data.pose3d.rotation.q.y,
-                        latest_frame_data.pose3d.rotation.q.z,
-                    )
-                )
-            except Exception as e:
-                translation = Translation3d(-100, -100, -100)
-                rotation = Rotation3d()
+            return Pose3d(-100, -100, -100, Rotation3d())  # fallback
 
-        return Pose3d(translation, rotation)
-
-    def get_velocity2d(self) -> Translation2d:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Translation2d(-100, -100)
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            vel = latest_frame_data.velocity2d.translation
-            return Translation2d(float(vel.x), float(vel.y))
+            t = latest_frame_data.pose3d.translation
+            q = latest_frame_data.pose3d.rotation.q
+            rot = Rotation3d.fromQuaternion(q.w, q.x, q.y, q.z)
+            return Pose3d(t.x, t.y, t.z, rot)
         except Exception:
-            return Translation2d(-100, -100)
-
-    def get_velocity3d(self) -> Translation3d:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Translation3d(-100, -100, -100)
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            vel = latest_frame_data.velocity3d.translation
-            return Translation3d(float(vel.x), float(vel.y), float(vel.z))
-        except Exception:
-            return Translation3d(-100, -100, -100)
-
-    def get_angular_velocity(self) -> Rotation3d:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Rotation3d(0.0, 0.0, 0.0)
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            ang_vel = latest_frame_data.angular_velocity
-            return Rotation3d(float(ang_vel.x), float(ang_vel.y), float(ang_vel.z))
-        except Exception:
-            return Rotation3d(0.0, 0.0, 0.0)
-
-    def get_linear_acceleration(self) -> Translation3d:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Translation3d(0.0, 0.0, 0.0)
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            acc = latest_frame_data.linear_acceleration
-            return Translation3d(float(acc.x), float(acc.y), float(acc.z))
-        except Exception:
-            return Translation3d(0.0, 0.0, 0.0)
+            return Pose3d(-100, -100, -100, Rotation3d())
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
