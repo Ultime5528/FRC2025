@@ -86,33 +86,6 @@ class QuestNav:
 
         self.request_publisher.set(self.cached_command_request.SerializeToString())
 
-    def set_velocity2d(self, vx: float, vy: float):
-        self.cached_command_request.Clear()
-        self.last_sent_request_id += 1
-
-        self.cached_command_request.type = (
-            commands_pb2.QuestNavCommandType.VELOCITY2D_SET
-        )
-        self.cached_command_request.command_id = self.last_sent_request_id
-        self.cached_command_request.velocity2d_set_payload.target_velocity.translation.x = vx
-        self.cached_command_request.velocity2d_set_payload.target_velocity.translation.y = vy
-
-        self.request_publisher.set(self.cached_command_request.SerializeToString())
-
-    def set_velocity3d(self, vx: float, vy: float, vz: float):
-        self.cached_command_request.Clear()
-        self.last_sent_request_id += 1
-
-        self.cached_command_request.type = (
-            commands_pb2.QuestNavCommandType.VELOCITY3D_SET
-        )
-        self.cached_command_request.command_id = self.last_sent_request_id
-        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.x = vx
-        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.y = vy
-        self.cached_command_request.velocity3d_set_payload.target_velocity.translation.z = vz
-
-        self.request_publisher.set(self.cached_command_request.SerializeToString())
-
     def get_battery_percent(self) -> int:
         raw_data = self.device_data_subscriber.get()
         if not raw_data:
@@ -142,7 +115,7 @@ class QuestNav:
         self.last_sent_request_id += 1
 
         self.cached_command_request.type = (
-            commands_pb2.QuestNavCommandType.TRACKING_RESET
+            commands_pb2.QuestNavCommandType.POSE_RESET
         )
         self.cached_command_request.command_id = self.last_sent_request_id
 
@@ -296,5 +269,3 @@ class QuestNav:
                 )
             # don't double process
             self.last_processed_response_id = latest_command_response.command_id
-
-
