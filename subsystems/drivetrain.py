@@ -87,13 +87,6 @@ class Drivetrain(Subsystem):
             "BR": self.swerve_module_br,
         }
 
-        self.last_module_position = [
-            SwerveModulePosition(),
-            SwerveModulePosition(),
-            SwerveModulePosition(),
-            SwerveModulePosition(),
-        ]
-
         self.chassis_speed_goal_pub = (
             NetworkTableInstance.getDefault()
             .getStructTopic("Chassis Speed Goal", ChassisSpeeds)
@@ -139,14 +132,24 @@ class Drivetrain(Subsystem):
         self.swerve_odometry = SwerveDrive4Odometry(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            self.last_module_position,
+            [
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+            ],
             Pose2d(0, 0, 0),
         )
 
         self.swerve_estimator = SwerveDrive4PoseEstimator(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            self.last_module_position,
+            [
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+            ],
             Pose2d(0, 0, 0),
         )
 
@@ -278,7 +281,7 @@ class Drivetrain(Subsystem):
 
     def setForwardFormation(self):
         """
-        Points all the wheels into the center to prevent movement
+        Points all the wheels to the front
         """
         for swerve in self.swerve_modules.values():
             swerve._turning_closed_loop_controller.setReference(
@@ -287,7 +290,7 @@ class Drivetrain(Subsystem):
 
     def setSidewaysFormation(self):
         """
-        Points all the wheels into the center to prevent movement
+        Points all the wheels to the side
         """
         self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
@@ -358,6 +361,8 @@ class Drivetrain(Subsystem):
                 self.swerve_module_br.getState(),
             )
         )
+        if math.fabs(chassis_speed.vx) < 0.001 and math.fabs(chassis_speed.vy) < 0.001:
+            chassis_speed = ChassisSpeeds(0, 0, chassis_speed.omega)
         self.chassis_speed_pub.set(chassis_speed)
         self.chassis_speed = chassis_speed
         self.swerve_estimator.update(rotation, swerve_positions)
