@@ -1,10 +1,9 @@
 import wpilib
 from commands2 import Command
-from wpimath.geometry import Pose3d
 
 from subsystems.arm import Arm
 from ultime.autoproperty import autoproperty
-from ultime.questnav import QuestNav
+from ultime.questnav.questnav import QuestNav
 
 
 class ExtendArm(Command):

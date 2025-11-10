@@ -5,14 +5,11 @@ from wpimath.geometry import (
     Pose3d,
     Translation3d,
     Rotation3d,
-    Quaternion,
 )
+
+from generated import data_pb2, commands_pb2, geometry2d_pb2, geometry3d_pb2
 from wpilib import Timer
 from ntcore import NetworkTableInstance
-from questnav import commands_pb2
-from questnav import geometry2d_pb2
-from questnav import geometry3d_pb2
-from questnav import data_pb2
 
 
 # --- QuestNav Class Conversion ---
@@ -32,17 +29,17 @@ class QuestNav:
         # Data is sent/received as JSON strings in this mock implementation
         self.response_topic = self.quest_nav_table.getRawTopic("response")
         self.response_subscriber = self.response_topic.subscribe(
-            "proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", b""
+            "proto:questnav.generated.commands.ProtobufQuestNavCommandResponse", b""
         )  # Subscribe to raw bytes (empty default)
 
         self.frame_data_topic = self.quest_nav_table.getRawTopic("frameData")
         self.frame_data_subscriber = self.frame_data_topic.subscribe(
-            "proto:questnav.protos.data.ProtobufQuestNavFrameData", b""
+            "proto:questnav.generated.data.ProtobufQuestNavFrameData", b""
         )
 
         self.device_data_topic = self.quest_nav_table.getRawTopic("deviceData")
         self.device_data_subscriber = self.device_data_topic.subscribe(
-            "proto:questnav.protos.data.ProtobufQuestNavDeviceData", b""
+            "proto:questnav.generated.data.ProtobufQuestNavDeviceData", b""
         )
 
         self.request_topic = self.quest_nav_table.getRawTopic("request")
