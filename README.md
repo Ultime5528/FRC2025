@@ -38,9 +38,10 @@
   python -m robotpy sync
 ```
 
-*Run the following command to convert the proto to python files
+* Run the following command to convert the proto to python files
 ```commandline
-  protoc -I=.ultime.questnav.protos --python_out=ultime.questnav.generated protos/*./ultime/questnav/.proto
+  python -m grpc_tools.protoc -I=ultime/questnav/protos --python_out=ultime/questnav/generated ultime/questnav/protos/*.proto
+
 ```
 
 (In a new project, execute `python -m robotpy init` instead.)

@@ -29,17 +29,17 @@ class QuestNav:
         # Data is sent/received as JSON strings in this mock implementation
         self.response_topic = self.quest_nav_table.getRawTopic("response")
         self.response_subscriber = self.response_topic.subscribe(
-            "proto:questnav.generated.commands.ProtobufQuestNavCommandResponse", b""
+            "protos:questnav.generated.commands.ProtobufQuestNavCommandResponse", b""
         )  # Subscribe to raw bytes (empty default)
 
         self.frame_data_topic = self.quest_nav_table.getRawTopic("frameData")
         self.frame_data_subscriber = self.frame_data_topic.subscribe(
-            "proto:questnav.generated.data.ProtobufQuestNavFrameData", b""
+            "protos:questnav.generated.data.ProtobufQuestNavFrameData", b""
         )
 
         self.device_data_topic = self.quest_nav_table.getRawTopic("deviceData")
         self.device_data_subscriber = self.device_data_topic.subscribe(
-            "proto:questnav.generated.data.ProtobufQuestNavDeviceData", b""
+            "protos:questnav.generated.data.ProtobufQuestNavDeviceData", b""
         )
 
         self.request_topic = self.quest_nav_table.getRawTopic("request")
