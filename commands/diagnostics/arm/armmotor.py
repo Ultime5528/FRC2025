@@ -27,7 +27,7 @@ class DiagnoseArmMotor(SequentialCommandGroup):
             runOnce(proxy(self.before_command)),
             MoveElevator.toLevel1(elevator),
             parallel(
-                ExtendArm(arm, questnav),
+                ExtendArm(arm),
                 sequence(
                     WaitCommand(0.1),
                     FunctionalCommand(

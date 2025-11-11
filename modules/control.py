@@ -102,7 +102,7 @@ class ControlModule(Module):
 
         # Arm
         hardware.panel_1.button(7).onTrue(RetractArm(hardware.arm))
-        hardware.panel_1.button(2).onTrue(ExtendArm(hardware.arm, hardware.questnav))
+        hardware.panel_1.button(2).onTrue(ExtendArm(hardware.arm))
 
         # Climber
         hardware.panel_2.button(7).onTrue(ResetClimber(hardware.climber))

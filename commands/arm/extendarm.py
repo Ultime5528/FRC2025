@@ -3,15 +3,13 @@ from commands2 import Command
 
 from subsystems.arm import Arm
 from ultime.autoproperty import autoproperty
-from ultime.questnav.questnav import QuestNav
 
 
 class ExtendArm(Command):
     delay = autoproperty(0.5)
 
-    def __init__(self, arm: Arm, questnav: QuestNav):
+    def __init__(self, arm: Arm):
         super().__init__()
-        self.questnav = questnav
         self.arm = arm
         self.timer = wpilib.Timer()
         self.addRequirements(arm)
@@ -21,8 +19,7 @@ class ExtendArm(Command):
         self.timer.stop()
         self.timer.reset()
         self.has_moved = False
-        print(QuestNav.get_pose3d(QuestNav()))
-        print(QuestNav.get_pose2d(QuestNav()))
+
 
     def execute(self):
         if self.arm.movement_state == Arm.MovementState.DoNotMove:

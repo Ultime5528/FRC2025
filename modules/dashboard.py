@@ -108,7 +108,7 @@ class DashboardModule(Module):
             "Copilot", MoveIntake.toRetracted(hardware.intake), "Intake retract"
         )
         putCommandOnDashboard("Copilot", RetractArm(hardware.arm), "Arm retract")
-        putCommandOnDashboard("Copilot", ExtendArm(hardware.arm, hardware.questnav), "Arm extend")
+        putCommandOnDashboard("Copilot", ExtendArm(hardware.arm), "Arm extend")
         putCommandOnDashboard(
             "Copilot", ResetClimber(hardware.climber), "Climber reset"
         )

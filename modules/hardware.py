@@ -12,7 +12,6 @@ from subsystems.intake import Intake
 from subsystems.led import LEDController
 from subsystems.printer import Printer
 from ultime.module import Module
-from ultime.questnav.questnav import QuestNav
 from ultime.subsystem import Subsystem
 
 
@@ -43,7 +42,6 @@ class HardwareModule(Module):
 
         self.pdp = PowerDistribution()
 
-        self.questnav = QuestNav()
 
         self.subsystems: list[Subsystem] = [
             self.drivetrain,

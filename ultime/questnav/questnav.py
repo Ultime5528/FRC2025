@@ -6,8 +6,8 @@ from wpimath.geometry import (
     Translation3d,
     Rotation3d,
 )
-
 from generated import data_pb2, commands_pb2, geometry2d_pb2, geometry3d_pb2
+
 from wpilib import Timer
 from ntcore import NetworkTableInstance
 
@@ -215,34 +215,42 @@ class QuestNav:
         return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
     def get_pose2d(self) -> Pose2d:
+        """
+        Returns the current pose of the Quest on the field. This will only return the field-relative
+        pose if `set_pose(pose)` has been called at least once.
+
+        Returns:
+            Pose2d representing the Quest's location on the field
+        """
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
             return Pose2d(-100, -100, -100)
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            x = latest_frame_data.pose2d.translation.x
-            y = latest_frame_data.pose2d.translation.y
-            translation = Translation2d(x, y)
-            rot = latest_frame_data.pose2d.rotation.value
-            rotation = Rotation2d(rot)
-
-            return Pose2d(translation, rotation)
-        except Exception:
-            return Pose2d(-100, -100, -100)
+            # return self.pose2d_proto.unpack(latest_frame_data.pose2d)
+            # print(str(latest_frame_data.pose2d.translation))
+            xval = float(str(latest_frame_data.pose2d.translation)[3:str(latest_frame_data.pose2d.translation).index("\n")])
+            yval = float(str(latest_frame_data.pose2d.translation)[str(latest_frame_data.pose2d.translation).index("\n") + 3:-1])
+            rot = float(str(latest_frame_data.pose2d.rotation)[7:-1])
+            return Pose2d(Translation2d(xval, yval), Rotation2d(rot))
+        except Exception as e:
+            return Pose2d(-100, -100, -100)  # Return kZero if no data available
 
     def get_pose3d(self) -> Pose3d:
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
-            return Pose3d(-100, -100, -100, Rotation3d())  # fallback
-
+            return Pose3d(-100, -100, -100, Rotation3d())
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            t = latest_frame_data.pose3d.translation
-            q = latest_frame_data.pose3d.rotation.q
-            rot = Rotation3d.fromQuaternion(q.w, q.x, q.y, q.z)
-            return Pose3d(t.x, t.y, t.z, rot)
+            translation = latest_frame_data.pose3d.translation
+            rot = latest_frame_data.pose3d.rotation
+            return Pose3d(
+                Translation3d(translation.x, translation.y, translation.z),
+                Rotation3d(rot.roll, rot.pitch, rot.yaw)
+            )
         except Exception:
             return Pose3d(-100, -100, -100, Rotation3d())
+
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
