@@ -20,7 +20,6 @@ class ExtendArm(Command):
         self.timer.reset()
         self.has_moved = False
 
-
     def execute(self):
         if self.arm.movement_state == Arm.MovementState.DoNotMove:
             self.arm.stop()

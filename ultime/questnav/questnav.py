@@ -91,9 +91,7 @@ class QuestNav:
         self.cached_command_request.Clear()
         self.last_sent_request_id += 1
 
-        self.cached_command_request.type = (
-            commands_pb2.QuestNavCommandType.POSE_RESET
-        )
+        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE_RESET
         self.cached_command_request.command_id = self.last_sent_request_id
 
         self.request_publisher.set(self.cached_command_request.SerializeToString())
@@ -207,10 +205,16 @@ class QuestNav:
             return Pose2d(-100, -100, -100)
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            # return self.pose2d_proto.unpack(latest_frame_data.pose2d)
-            # print(str(latest_frame_data.pose2d.translation))
-            xval = float(str(latest_frame_data.pose2d.translation)[3:str(latest_frame_data.pose2d.translation).index("\n")])
-            yval = float(str(latest_frame_data.pose2d.translation)[str(latest_frame_data.pose2d.translation).index("\n") + 3:-1])
+            xval = float(
+                str(latest_frame_data.pose2d.translation)[
+                    3 : str(latest_frame_data.pose2d.translation).index("\n")
+                ]
+            )
+            yval = float(
+                str(latest_frame_data.pose2d.translation)[
+                    str(latest_frame_data.pose2d.translation).index("\n") + 3 : -1
+                ]
+            )
             rot = float(str(latest_frame_data.pose2d.rotation)[7:-1])
             return Pose2d(Translation2d(xval, yval), Rotation2d(rot))
         except Exception as e:

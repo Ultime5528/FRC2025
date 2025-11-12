@@ -42,7 +42,6 @@ class HardwareModule(Module):
 
         self.pdp = PowerDistribution()
 
-
         self.subsystems: list[Subsystem] = [
             self.drivetrain,
             self.elevator,
