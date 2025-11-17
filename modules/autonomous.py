@@ -55,7 +55,9 @@ class AutonomousModule(Module):
             hardware.drivetrain.getPose,
             hardware.drivetrain.resetToPose,
             hardware.drivetrain.getRobotRelativeChassisSpeeds,
-            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeeds(speeds),
+            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeeds(
+                speeds
+            ),
             PPHolonomicDriveController(
                 PIDConstants(5.0, 0.0, 0.0), PIDConstants(5.0, 0.0, 0.0)
             ),
@@ -168,8 +170,8 @@ class AutonomousModule(Module):
             self.hardware.drivetrain.getPose()
         )
 
-        #self.reset_intake_command.schedule()
-        #self.reset_climber_command.schedule()
+        # self.reset_intake_command.schedule()
+        # self.reset_climber_command.schedule()
 
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:

@@ -1,12 +1,17 @@
+import wpimath
 from wpimath.geometry import (
-    Pose2d,
-    Translation2d,
-    Rotation2d,
+    Pose3d,
+    Translation3d,
+    Rotation3d,
 )
+
+
 from .generated import data_pb2, commands_pb2, geometry2d_pb2, geometry3d_pb2
 
 from wpilib import Timer
 from ntcore import NetworkTableInstance
+
+from .poseframe import PoseFrame
 
 
 # --- QuestNav Class Conversion ---
@@ -45,23 +50,28 @@ class QuestNav:
         # Cached requests to lessen object creation (as in Java)
         self.cached_command_request = commands_pb2.ProtobufQuestNavCommand()
         self.cached_pose_reset_payload = commands_pb2.ProtobufQuestNavPoseResetPayload()
-        self.cached_proto_pose = geometry2d_pb2.ProtobufPose2d()
+        self.cached_proto_pose = geometry3d_pb2.ProtobufPose3d()
 
         self.last_sent_request_id = 0
         self.last_processed_response_id = 0
 
-    def set_pose2d(self, pose: Pose2d):
+    def set_pose(self, pose):
+        self.cached_proto_pose.Clear()  # Clear instead of creating new
+        self.pose3d_proto.pack(self.cached_proto_pose, pose)
         self.cached_command_request.Clear()
+        request_to_send = (
+            self.cached_command_request.set_type(
+                commands_pb2.QuestNavCommandType.POSE_RESET
+            )
+            .set_command_id(self.last_sent_request_id + 1)
+            .set_pose_reset_payload(
+                self.cached_pose_reset_payload.Clear().set_target_pose(
+                    self.cached_proto_pose
+                )
+            )
+        )
         self.last_sent_request_id += 1
-
-        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE_RESET
-        self.cached_command_request.command_id = self.last_sent_request_id
-        payload = self.cached_command_request.pose_reset_payload
-        payload.target_pose.translation.x = pose.translation().x
-        payload.target_pose.translation.y = pose.translation().y
-        payload.target_pose.rotation.value = pose.rotation().radians()
-
-        self.request_publisher.set(self.cached_command_request.SerializeToString())
+        self.request_publisher.set(request_to_send)
 
     def get_battery_percent(self) -> int:
         raw_data = self.device_data_subscriber.get()
@@ -86,15 +96,6 @@ class QuestNav:
             return bool(latest_device_data.currently_tracking)
         except Exception:
             return False
-
-    def reset_tracking(self):
-        self.cached_command_request.Clear()
-        self.last_sent_request_id += 1
-
-        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE_RESET
-        self.cached_command_request.command_id = self.last_sent_request_id
-
-        self.request_publisher.set(self.cached_command_request.SerializeToString())
 
     def get_frame_count(self) -> int:
         raw_data = self.frame_data_subscriber.get()
@@ -192,33 +193,23 @@ class QuestNav:
             return -1.0
         return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
-    def get_pose2d(self) -> Pose2d:
-        """
-        Returns the current pose of the Quest on the field. This will only return the field-relative
-        pose if `set_pose(pose)` has been called at least once.
+    def get_pose3d(self):
+        frame_data_array = self.frameDataSubscriber.readQueue()
+        result = []
 
-        Returns:
-            Pose2d representing the Quest's location on the field
-        """
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Pose2d(-100, -100, -100)
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            xval = float(
-                str(latest_frame_data.pose2d.translation)[
-                    3 : str(latest_frame_data.pose2d.translation).index("\n")
-                ]
+        for frame_data in frame_data_array:
+            server_time_seconds = frame_data.serverTime / 1_000_000.0
+
+            pose_frame = PoseFrame(
+                self.pose3dProto.unpack(frame_data.value.getPose3D()),
+                server_time_seconds,
+                frame_data.value.getTimestamp(),
+                frame_data.value.getFrameCount(),
             )
-            yval = float(
-                str(latest_frame_data.pose2d.translation)[
-                    str(latest_frame_data.pose2d.translation).index("\n") + 3 : -1
-                ]
-            )
-            rot = float(str(latest_frame_data.pose2d.rotation)[7:-1])
-            return Pose2d(Translation2d(xval, yval), Rotation2d(rot))
-        except Exception as e:
-            return Pose2d(-100, -100, -100)  # Return kZero if no data available
+
+            result.append(pose_frame)
+
+        return result
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
