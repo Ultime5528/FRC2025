@@ -15,7 +15,7 @@
   "robotMass": 58.967,
   "robotMOI": 14.0,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.03775,
+  "driveWheelRadius": 0.036,
   "driveGearing": 5.077,
   "maxDriveSpeed": 4.671,
   "driveMotorType": "NEO",

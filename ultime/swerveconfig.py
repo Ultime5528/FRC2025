@@ -12,7 +12,7 @@ odometry_frequency = 50.0  # Hz
 drive_motor_pinion_teeth = 13
 drive_motor_gear_ratio = (45.0 * 22) / (drive_motor_pinion_teeth * 15)
 
-wheel_diameter = 0.0755  # meters
+wheel_diameter = 0.0725  # meters
 drive_encoder_position_conversion_factor = (
     math.pi * wheel_diameter / drive_motor_gear_ratio
 )  # meters

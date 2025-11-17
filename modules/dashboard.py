@@ -55,7 +55,8 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
         self.setupCopilotCommands(hardware)
-        self.setupCommands(hardware)
+        #self.setupCommands(hardware)
+        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
 
     def setupCopilotCommands(self, hardware: HardwareModule):
         putCommandOnDashboard(
