@@ -1,11 +1,14 @@
 import math
+from typing import List
 
 import wpilib
 import wpimath
+from choreo import SwerveSample
 from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
 from wpilib import RobotBase
+from wpimath._controls._controls.controller import PIDController
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Translation2d, Rotation2d, Twist2d
 from wpimath.kinematics import (
@@ -13,6 +16,7 @@ from wpimath.kinematics import (
     SwerveDrive4Kinematics,
     SwerveModuleState,
     SwerveDrive4Odometry,
+    SwerveModulePosition,
 )
 from wpiutil import SendableBuilder
 
@@ -29,7 +33,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
-    max_speed = autoproperty(4.0)
+    max_speed = autoproperty(5.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
@@ -41,12 +45,16 @@ class Drivetrain(Subsystem):
     def __init__(self) -> None:
         super().__init__()
         self.period_seconds = 0.02
-
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
         self.motor_fr_loc = Translation2d(self.width / 2, -self.length / 2)
         self.motor_bl_loc = Translation2d(-self.width / 2, self.length / 2)
         self.motor_br_loc = Translation2d(-self.width / 2, -self.length / 2)
+
+        self.x_controller = PIDController(10, 0, 0)
+        self.y_controller = PIDController(10, 0, 0)
+        self.heading_controller = PIDController(10, 0, 0)
+        self.heading_controller.enableContinuousInput(-math.pi, math.pi)
 
         self.swerve_module_fl = SwerveModule(
             ports.CAN.drivetrain_motor_driving_fl,
@@ -120,27 +128,28 @@ class Drivetrain(Subsystem):
         self.swervedrive_kinematics = SwerveDrive4Kinematics(
             self.motor_fl_loc, self.motor_fr_loc, self.motor_bl_loc, self.motor_br_loc
         )
+
         self.swerve_odometry = SwerveDrive4Odometry(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+            [
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+            ],
             Pose2d(0, 0, 0),
         )
 
         self.swerve_estimator = SwerveDrive4PoseEstimator(
             self.swervedrive_kinematics,
             self._gyro.getRotation2d(),
-            (
-                self.swerve_module_fl.getPosition(),
-                self.swerve_module_fr.getPosition(),
-                self.swerve_module_bl.getPosition(),
-                self.swerve_module_br.getPosition(),
-            ),
+            [
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+                SwerveModulePosition(),
+            ],
             Pose2d(0, 0, 0),
         )
 
@@ -215,10 +224,10 @@ class Drivetrain(Subsystem):
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerve_module_states, self.max_speed
         )
-        self.swerve_module_fl.setDesiredState(swerve_module_states[0])
-        self.swerve_module_fr.setDesiredState(swerve_module_states[1])
-        self.swerve_module_bl.setDesiredState(swerve_module_states[2])
-        self.swerve_module_br.setDesiredState(swerve_module_states[3])
+        self.swerve_module_fl.setDesiredSetpoint(swerve_module_states[0])
+        self.swerve_module_fr.setDesiredSetpoint(swerve_module_states[1])
+        self.swerve_module_bl.setDesiredSetpoint(swerve_module_states[2])
+        self.swerve_module_br.setDesiredSetpoint(swerve_module_states[3])
 
     def driveFromChassisSpeedsFF(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
@@ -241,11 +250,28 @@ class Drivetrain(Subsystem):
 
         self.driveFromChassisSpeeds(base_chassis_speed)
 
-    def getAngle(self):
+    def followTrajecctory(self, sample: SwerveSample):
+        pose = self.getPose()
+
+        speed = ChassisSpeeds(
+            sample.vx + self.x_controller.calculate(pose.X(), sample.x),
+            sample.vy + self.y_controller.calculate(pose.Y(), sample.y),
+            sample.omega
+            + self.heading_controller.calculate(
+                pose.rotation().radians(), sample.heading
+            ),
+        )
+
+        self.driveRaw(speed.vx, speed.vy, speed.omega, True)
+
+    def getGyroAngle(self):
         """
         Wrapped between -180 and 180
         """
         return self._gyro.getAngle()
+
+    def getEstimatedAngle(self):
+        return self.getPose().rotation()
 
     def resetGyro(self):
         self._gyro.reset()
@@ -255,7 +281,7 @@ class Drivetrain(Subsystem):
 
     def setForwardFormation(self):
         """
-        Points all the wheels into the center to prevent movement
+        Points all the wheels to the front
         """
         for swerve in self.swerve_modules.values():
             swerve._turning_closed_loop_controller.setReference(
@@ -264,18 +290,18 @@ class Drivetrain(Subsystem):
 
     def setSidewaysFormation(self):
         """
-        Points all the wheels into the center to prevent movement
+        Points all the wheels to the side
         """
-        self.swerve_module_fl.setDesiredState(
+        self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_fr.setDesiredState(
+        self.swerve_module_fr.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_bl.setDesiredState(
+        self.swerve_module_bl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
-        self.swerve_module_br.setDesiredState(
+        self.swerve_module_br.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(90))
         )
 
@@ -283,16 +309,16 @@ class Drivetrain(Subsystem):
         """
         Points all the wheels into the center to prevent movement
         """
-        self.swerve_module_fl.setDesiredState(
+        self.swerve_module_fl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(45))
         )
-        self.swerve_module_fr.setDesiredState(
+        self.swerve_module_fr.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(-45))
         )
-        self.swerve_module_bl.setDesiredState(
+        self.swerve_module_bl.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(-45))
         )
-        self.swerve_module_br.setDesiredState(
+        self.swerve_module_br.setDesiredSetpoint(
             SwerveModuleState(0, Rotation2d.fromDegrees(45))
         )
 
@@ -335,6 +361,8 @@ class Drivetrain(Subsystem):
                 self.swerve_module_br.getState(),
             )
         )
+        if math.fabs(chassis_speed.vx) < 0.001 and math.fabs(chassis_speed.vy) < 0.001:
+            chassis_speed = ChassisSpeeds(0, 0, chassis_speed.omega)
         self.chassis_speed_pub.set(chassis_speed)
         self.chassis_speed = chassis_speed
         self.swerve_estimator.update(rotation, swerve_positions)
@@ -406,8 +434,10 @@ class Drivetrain(Subsystem):
             pose,
         )
 
-    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float):
-        self.swerve_estimator.addVisionMeasurement(pose, timestamp)
+    def addVisionMeasurement(
+        self, pose: wpimath.geometry.Pose2d, timestamp: float, std_devs: List[float]
+    ):
+        self.swerve_estimator.addVisionMeasurement(pose, timestamp, std_devs)
         self.vision_pose.setPose(pose)
 
     def getCurrentDrawAmps(self):
@@ -419,7 +449,7 @@ class Drivetrain(Subsystem):
         def noop(_):
             pass
 
-        builder.addFloatProperty("angle", tt(self.getAngle), noop)
+        builder.addFloatProperty("GyroAngle", tt(self.getGyroAngle), noop)
         builder.addFloatProperty(
             "SpeedGoal",
             tt(

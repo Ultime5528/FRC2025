@@ -22,11 +22,10 @@ robotpy_extras = [
 requires = [
      "robotpy-commands-v2==2025.3.2",
      "robotpy-rev==2025.0.3.1",
-     "robotpy-urcl==2025.0.1",
      "numpy",
      "photonlibpy==2025.3.2",
+     "robotpy-urcl==2025.0.1.1",
      "pyfrc==2025.1.0",
-     "protobuf==6.33.0",
      "black==24.1.1; platform_machine != 'roborio'",
      "coverage==7.4.1; platform_machine != 'roborio'",
      "ast-selector==0.2.0; platform_machine != 'roborio'",
@@ -34,6 +33,7 @@ requires = [
      "pytest-timeout==2.3.1; platform_machine != 'roborio'",
      "pynetconsole==2.0.4; platform_machine != 'roborio'",
      "grpcio-tools==1.76.0; platform_machine != 'roborio'",
+    "sleipnirgroup-choreolib==2025.0.3",
 ]
 
 [tool.coverage.html]

@@ -1,7 +1,7 @@
 import math
 from typing import Callable
 
-from rev import SparkMax, SparkBase, SparkSim
+from rev import SparkMax, SparkBase, SparkSim, ClosedLoopSlot, SparkClosedLoopController
 from wpilib import RobotBase
 from wpilib.simulation import RoboRioSim
 from wpimath.geometry import Rotation2d
@@ -11,10 +11,6 @@ from wpiutil import Sendable, SendableBuilder
 
 from ultime import swerveconfig
 from ultime.timethis import tt
-
-
-def radians_per_second_to_rpm(rps: float):
-    return rps * 60 / 2 / math.pi
 
 
 class SwerveModule:
@@ -38,6 +34,7 @@ class SwerveModule:
             SparkBase.ResetMode.kResetSafeParameters,
             SparkBase.PersistMode.kPersistParameters,
         )
+
         self._turning_motor.configure(
             swerveconfig.turning_config,
             SparkBase.ResetMode.kResetSafeParameters,
@@ -53,7 +50,7 @@ class SwerveModule:
 
         self._chassis_angular_offset = chassis_angular_offset
         self.desired_state.angle = Rotation2d(self._turning_encoder.getPosition())
-        self._driving_encoder.setPosition(0)
+        self._driving_encoder.setPosition(0.0)
 
         if RobotBase.isSimulation():
             self.sim_driving_motor = SparkSim(self._driving_motor, DCMotor.NEO())
@@ -62,34 +59,40 @@ class SwerveModule:
             self.sim_turning_motor = SparkSim(self._turning_motor, DCMotor.NEO550())
             self.sim_encoder_turn = self.sim_turning_motor.getAbsoluteEncoderSim()
 
-    def getVelocity(self) -> float:
-        return self._driving_encoder.getVelocity()
+    def setDriveVoltage(self, voltage: float):
+        self._driving_motor.setVoltage(voltage)
 
-    def getTurningRadians(self) -> float:
-        """
-        Returns radians
-        """
-        return self._turning_encoder.getPosition()
+    def setTurnVoltage(self, voltage: float):
+        self._turning_motor.setVoltage(voltage)
 
-    def getState(self) -> SwerveModuleState:
-        return SwerveModuleState(
-            self.getVelocity(),
-            Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
+    def setDriveVelocity(self, velocity_meters_per_sec: float):
+        direction = 0
+        if velocity_meters_per_sec > 0:
+            direction = 1
+        elif velocity_meters_per_sec < 0:
+            direction = -1
+        ff_volts = (
+            swerveconfig.driveKs * direction
+            + swerveconfig.driveKv * velocity_meters_per_sec
         )
 
-    def getModuleEncoderPosition(self) -> float:
-        return self._driving_encoder.getPosition()
-
-    def getPosition(self) -> SwerveModulePosition:
-        return SwerveModulePosition(
-            self.getModuleEncoderPosition(),
-            Rotation2d(self.getTurningRadians() - self._chassis_angular_offset),
+        self._driving_closed_loop_controller.setReference(
+            velocity_meters_per_sec,
+            SparkBase.ControlType.kVelocity,
+            ClosedLoopSlot.kSlot0,
+            ff_volts,
+            SparkClosedLoopController.ArbFFUnits.kVoltage,
         )
 
-    def setDesiredState(self, desired_state: SwerveModuleState):
+    def setTurnPosition(self, rotation: Rotation2d):
+        self._turning_closed_loop_controller.setReference(
+            rotation.radians(), SparkBase.ControlType.kPosition
+        )
+
+    def setDesiredSetpoint(self, state: SwerveModuleState):
         corrected_desired_state = SwerveModuleState()
-        corrected_desired_state.speed = desired_state.speed
-        corrected_desired_state.angle = desired_state.angle.rotateBy(
+        corrected_desired_state.speed = state.speed
+        corrected_desired_state.angle = state.angle.rotateBy(
             Rotation2d(self._chassis_angular_offset)
         )
 
@@ -101,17 +104,42 @@ class SwerveModule:
             current_rotation - corrected_desired_state.angle
         ).cos()
 
-        self._driving_closed_loop_controller.setReference(
-            corrected_desired_state.speed, SparkBase.ControlType.kVelocity
-        )
-        self._turning_closed_loop_controller.setReference(
-            corrected_desired_state.angle.radians(), SparkBase.ControlType.kPosition
-        )
-        self.desired_state = desired_state
+        self.setDriveVelocity(corrected_desired_state.speed)
+        self.setTurnPosition(corrected_desired_state.angle)
+
+    def runCharacterization(self, output: float):
+        self.setDriveVoltage(output)
+        self.setTurnPosition(Rotation2d())
 
     def stop(self):
-        self._driving_motor.setVoltage(0.0)
-        self._turning_motor.setVoltage(0.0)
+        self.setDriveVoltage(0.0)
+        self.setTurnVoltage(0.0)
+
+    def getAngleRandians(self):
+        return self._turning_encoder.getPosition()
+
+    def getEncoderPosition(self):
+        return self._driving_encoder.getPosition()
+
+    def getVelocity(self):
+        return self._driving_encoder.getVelocity()
+
+    def getPosition(self) -> SwerveModulePosition:
+        return SwerveModulePosition(
+            self.getEncoderPosition(),
+            Rotation2d(self.getAngleRandians() - self._chassis_angular_offset),
+        )
+
+    def getState(self) -> SwerveModuleState:
+        return SwerveModuleState(
+            self.getVelocity(),
+            Rotation2d(self.getAngleRandians() - self._chassis_angular_offset),
+        )
+
+    def getDrivingMotorAppliedVoltage(self):
+        return (
+            self._driving_motor.getBusVoltage() * self._driving_motor.getAppliedOutput()
+        )
 
     def simulationUpdate(self, period: float):
         # Drive motor simulation
@@ -161,6 +189,27 @@ class SwerveDriveElasticSendable(Sendable):
             pass
 
         builder.setSmartDashboardType("SwerveDrive")
+
+        builder.addDoubleProperty(
+            "Front Left Voltage",
+            tt(lambda: self.module_fl.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Right Voltage",
+            tt(lambda: self.module_fr.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Left Voltage",
+            tt(lambda: self.module_bl.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Right Voltage",
+            tt(lambda: self.module_br.getDrivingMotorAppliedVoltage()),
+            noop,
+        )
 
         builder.addDoubleProperty(
             "Front Left Angle",

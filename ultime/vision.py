@@ -1,10 +1,11 @@
+import sys
 from enum import Enum, auto
 from typing import List
 from typing import Optional
 
 from photonlibpy import PhotonPoseEstimator, PoseStrategy, EstimatedRobotPose
 from photonlibpy.photonCamera import PhotonCamera
-from photonlibpy.targeting import PhotonTrackedTarget
+from photonlibpy.targeting import PhotonTrackedTarget, PhotonPipelineResult
 from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 from wpimath.geometry import Transform3d
 
@@ -71,27 +72,62 @@ class AbsoluteVision(Vision):
             camera_offset,
         )
         self.estimated_pose: EstimatedRobotPose = None
+        self.std_devs = [4, 4, 8]
         self.camera_pose_estimator.multiTagFallbackStrategy = (
             PoseStrategy.LOWEST_AMBIGUITY
         )
 
-    def robotPeriodic(self) -> None:
-        super().robotPeriodic()
+    def getEstimatedPose(self, frame: PhotonPipelineResult) -> EstimatedRobotPose:
+        self.estimated_pose = None
+        self.estimated_pose = self.camera_pose_estimator.update(frame)
+        self.updateEstimationStdDevs(self.estimated_pose, frame.getTargets())
+        return self.estimated_pose
 
-        if self.mode == VisionMode.Absolute:
-            self.estimated_pose = self.camera_pose_estimator.update()
-
-    def getEstimatedPose3D(self):
-        if self.estimated_pose:
-            return self.estimated_pose.estimatedPose
+    def updateEstimationStdDevs(
+        self, estimated_pose: EstimatedRobotPose, targets: List[PhotonTrackedTarget]
+    ):
+        if estimated_pose is None:
+            self.std_devs = [4, 4, 8]
         else:
-            return None
+            self.std_devs = [4, 4, 8]
+            num_tags = 0
+            av_dist = 0
 
-    def getEstimatedPose2D(self):
-        if self.estimated_pose:
-            return self.estimated_pose.estimatedPose.toPose2d()
-        else:
-            return None
+            for target in targets:
+                tag_pose = self.camera_pose_estimator.fieldTags.getTagPose(
+                    target.getFiducialId()
+                )
+                if tag_pose is None:
+                    continue
+                else:
+                    num_tags += 1
+                    av_dist += (
+                        tag_pose.toPose2d()
+                        .translation()
+                        .distance(estimated_pose.estimatedPose.toPose2d().translation())
+                    )
+
+            if num_tags == 0:
+                self.std_devs = [4, 4, 8]
+            else:
+                av_dist /= num_tags
+
+                if num_tags > 1:
+                    self.std_devs = [0.5, 0.5, 1]
+
+                if num_tags == 1 and av_dist > 4:
+                    self.std_devs = [
+                        sys.float_info.max,
+                        sys.float_info.max,
+                        sys.float_info.max,
+                    ]
+                else:
+                    self.std_devs = [
+                        val * (1 + (av_dist * av_dist / 30)) for val in self.std_devs
+                    ]
+
+    def getEstimationStdDevs(self) -> List[float]:
+        return self.std_devs
 
     def getEstimatedPoseTimeStamp(self):
         if self.estimated_pose:
