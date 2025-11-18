@@ -10,11 +10,11 @@ odometry_frequency = 50.0  # Hz
 
 # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
 drive_motor_pinion_teeth = 13
-drive_motor_gear_ratio = (45.0 * 22) / (drive_motor_pinion_teeth * 15)
+drive_motor_gear_ratio = (45.0 * 22) / (drive_motor_pinion_teeth * 15) #5.058586913
 
-wheel_diameter = 0.0725  # meters
+wheel_diameter = 0.0710  # meters
 drive_encoder_position_conversion_factor = (
-    math.pi * wheel_diameter / drive_motor_gear_ratio
+    0.04409395#math.pi * wheel_diameter / drive_motor_gear_ratio
 )  # meters
 drive_encoder_velocity_conversion_factor = (
     drive_encoder_position_conversion_factor / 60
