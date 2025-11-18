@@ -14,7 +14,7 @@ drive_motor_gear_ratio = (45.0 * 22) / (drive_motor_pinion_teeth * 15)
 
 wheel_diameter = 0.0755  # meters
 drive_encoder_position_conversion_factor = (
-    math.pi * wheel_diameter / drive_motor_gear_ratio
+    0.04409395#math.pi * wheel_diameter / drive_motor_gear_ratio
 )  # meters
 drive_encoder_velocity_conversion_factor = (
     drive_encoder_position_conversion_factor / 60

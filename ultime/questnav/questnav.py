@@ -193,23 +193,25 @@ class QuestNav:
             return -1.0
         return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
-    def get_pose3d(self):
-        frame_data_array = self.frameDataSubscriber.readQueue()
-        result = []
+    def get_pose3d(self) -> Pose3d:
 
-        for frame_data in frame_data_array:
-            server_time_seconds = frame_data.serverTime / 1_000_000.0
+        raw_data = self.frame_data_subscriber.get()
+        if not raw_data:
+            return Pose3d(-100, -100, -100,Rotation3d())
+        try:
+            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
 
-            pose_frame = PoseFrame(
-                self.pose3dProto.unpack(frame_data.value.getPose3D()),
-                server_time_seconds,
-                frame_data.value.getTimestamp(),
-                frame_data.value.getFrameCount(),
-            )
+            x = latest_frame_data.pose3d.translation.x
+            y = latest_frame_data.pose3d.translation.y
+            z = latest_frame_data.pose3d.translation.z
 
-            result.append(pose_frame)
+            roll = latest_frame_data.pose3d.rotation.roll
+            pitch = latest_frame_data.pose3d.rotation.pitch
+            yaw = latest_frame_data.pose3d.rotation.yaw
 
-        return result
+            return Pose3d(Translation3d(x, y, z), Rotation3d(roll,pitch, yaw))
+        except Exception as e:
+            return Pose3d(-100, -100, -100, Rotation3d())  # Return kZero if no data available
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
