@@ -1,8 +1,8 @@
-import wpimath
 from wpimath.geometry import (
     Pose3d,
     Translation3d,
     Rotation3d,
+    Quaternion,
 )
 
 
@@ -10,8 +10,6 @@ from .generated import data_pb2, commands_pb2, geometry2d_pb2, geometry3d_pb2
 
 from wpilib import Timer
 from ntcore import NetworkTableInstance
-
-from .poseframe import PoseFrame
 
 
 # --- QuestNav Class Conversion ---
@@ -55,23 +53,24 @@ class QuestNav:
         self.last_sent_request_id = 0
         self.last_processed_response_id = 0
 
-    def set_pose(self, pose):
-        self.cached_proto_pose.Clear()  # Clear instead of creating new
-        self.pose3d_proto.pack(self.cached_proto_pose, pose)
+    def set_3dpose(self, pose: Pose3d):
+
         self.cached_command_request.Clear()
-        request_to_send = (
-            self.cached_command_request.set_type(
-                commands_pb2.QuestNavCommandType.POSE_RESET
-            )
-            .set_command_id(self.last_sent_request_id + 1)
-            .set_pose_reset_payload(
-                self.cached_pose_reset_payload.Clear().set_target_pose(
-                    self.cached_proto_pose
-                )
-            )
-        )
         self.last_sent_request_id += 1
-        self.request_publisher.set(request_to_send)
+
+        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE_RESET
+        self.cached_command_request.command_id = self.last_sent_request_id
+        payload = self.cached_command_request.pose_reset_payload
+        payload.target_pose.translation.x = pose.translation().x
+        payload.target_pose.translation.y = pose.translation().y
+        payload.target_pose.translation.z = pose.translation().z
+
+        payload.target_pose.rotation.q.w = pose.rotation().getQuaternion().W()
+        payload.target_pose.rotation.q.x = pose.rotation().getQuaternion().X()
+        payload.target_pose.rotation.q.y = pose.rotation().getQuaternion().Y()
+        payload.target_pose.rotation.q.z = pose.rotation().getQuaternion().Z()
+
+        self.request_publisher.set(self.cached_command_request.SerializeToString())
 
     def get_battery_percent(self) -> int:
         raw_data = self.device_data_subscriber.get()
@@ -197,7 +196,7 @@ class QuestNav:
 
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
-            return Pose3d(-100, -100, -100,Rotation3d())
+            return Pose3d(-100, -100, -100, Rotation3d())
         try:
             latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
 
@@ -205,13 +204,19 @@ class QuestNav:
             y = latest_frame_data.pose3d.translation.y
             z = latest_frame_data.pose3d.translation.z
 
-            roll = latest_frame_data.pose3d.rotation.roll
-            pitch = latest_frame_data.pose3d.rotation.pitch
-            yaw = latest_frame_data.pose3d.rotation.yaw
+            quat = Quaternion(
+                latest_frame_data.pose3d.rotation.q.w,
+                latest_frame_data.pose3d.rotation.q.x,
+                latest_frame_data.pose3d.rotation.q.y,
+                latest_frame_data.pose3d.rotation.q.z,
+            )
+            rot = Rotation3d(quat)
 
-            return Pose3d(Translation3d(x, y, z), Rotation3d(roll,pitch, yaw))
+            return Pose3d(Translation3d(x, y, z), rot)
         except Exception as e:
-            return Pose3d(-100, -100, -100, Rotation3d())  # Return kZero if no data available
+            return Pose3d(
+                -100, -100, -100, Rotation3d()
+            )  # Return kZero if no data available
 
     def command_periodic(self):
         """Cleans up QuestNav responses after processing on the headset."""
