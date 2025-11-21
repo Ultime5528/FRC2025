@@ -27,3 +27,4 @@ class QuestTest(Command):
 
     def end(self, interrupted: bool):
         print(self.questnav.get_pose3d())
+        self.questnav.reset_pose()
