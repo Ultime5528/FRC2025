@@ -71,6 +71,9 @@ class QuestNav:
 
         self.request_publisher.set(self.cached_command_request.SerializeToString())
 
+    def reset_pose(self):
+        self.set_3dpose(Pose3d())
+
     def get_battery_percent(self) -> int:
         raw_data = self.device_data_subscriber.get()
         if not raw_data:
@@ -202,13 +205,14 @@ class QuestNav:
             y = latest_frame_data.pose3d.translation.y
             z = latest_frame_data.pose3d.translation.z
 
-            quat = Quaternion(
-                latest_frame_data.pose3d.rotation.q.w,
-                latest_frame_data.pose3d.rotation.q.x,
-                latest_frame_data.pose3d.rotation.q.y,
-                latest_frame_data.pose3d.rotation.q.z,
+            rot = Rotation3d(
+                Quaternion(
+                    latest_frame_data.pose3d.rotation.q.w,
+                    latest_frame_data.pose3d.rotation.q.x,
+                    latest_frame_data.pose3d.rotation.q.y,
+                    latest_frame_data.pose3d.rotation.q.z,
+                )
             )
-            rot = Rotation3d(quat)
 
             return Pose3d(Translation3d(x, y, z), rot)
         except Exception as e:
