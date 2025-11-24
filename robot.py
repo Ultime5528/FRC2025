@@ -13,7 +13,7 @@ from modules.hardware import HardwareModule
 from modules.loadingdetection import LoadingDetectionModule
 from modules.logging import LoggingModule
 from modules.propertysavechecker import PropertySaveCheckerModule
-from modules.tagvision import TagVisionModule
+from modules.questtagvision import QuestTagVisionModule
 from ultime.modulerobot import ModuleRobot
 
 
@@ -28,7 +28,7 @@ class Robot(ModuleRobot):
 
         self.hardware = HardwareModule()
 
-        self.tag_vision = TagVisionModule(self.hardware.drivetrain)
+        self.tag_vision = QuestTagVisionModule(self.hardware.drivetrain)
         self.algae_vision = AlgaeVisionModule()
 
         self.control = ControlModule(self.hardware, self.algae_vision)

@@ -54,7 +54,6 @@ class QuestNav:
         self.last_processed_response_id = 0
 
     def set_3dpose(self, pose: Pose3d):
-
         self.cached_command_request.Clear()
         self.last_sent_request_id += 1
 
@@ -193,7 +192,6 @@ class QuestNav:
         return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
     def get_pose3d(self) -> Pose3d:
-
         raw_data = self.frame_data_subscriber.get()
         if not raw_data:
             return Pose3d(-100, -100, -100, Rotation3d())
