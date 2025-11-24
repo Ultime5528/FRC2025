@@ -6,7 +6,7 @@ from rev import SparkMaxConfig, ClosedLoopConfig, SparkBaseConfig
 max_speed_per_second = 4
 max_angular_speed = 2 * math.pi
 
-odometry_frequency = 50.0  # Hz
+odometry_frequency = 100.0  # Hz
 
 # 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
 drive_motor_pinion_teeth = 13
@@ -39,6 +39,7 @@ driveKp = 0.45
 driveKd = 0.0
 driveKs = 0.151515
 driveKv = 2.64445
+driveKa = 0.5
 
 turnKp = 0.4
 turnKd = 0.0

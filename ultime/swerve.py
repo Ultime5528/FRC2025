@@ -52,6 +52,8 @@ class SwerveModule:
         self.desired_state.angle = Rotation2d(self._turning_encoder.getPosition())
         self._driving_encoder.setPosition(0.0)
 
+        self.desired_velocity = 0.0
+
         if RobotBase.isSimulation():
             self.sim_driving_motor = SparkSim(self._driving_motor, DCMotor.NEO())
             self.sim_encoder_drive = self.sim_driving_motor.getRelativeEncoderSim()
@@ -65,7 +67,7 @@ class SwerveModule:
     def setTurnVoltage(self, voltage: float):
         self._turning_motor.setVoltage(voltage)
 
-    def setDriveVelocity(self, velocity_meters_per_sec: float):
+    def setDriveVelocity(self, velocity_meters_per_sec: float, accel_meters_per_sec: float):
         direction = 0
         if velocity_meters_per_sec > 0:
             direction = 1
@@ -74,6 +76,7 @@ class SwerveModule:
         ff_volts = (
             swerveconfig.driveKs * direction
             + swerveconfig.driveKv * velocity_meters_per_sec
+            + swerveconfig.driveKa * accel_meters_per_sec
         )
 
         self._driving_closed_loop_controller.setReference(
@@ -84,12 +87,14 @@ class SwerveModule:
             SparkClosedLoopController.ArbFFUnits.kVoltage,
         )
 
+        self.desired_velocity = velocity_meters_per_sec
+
     def setTurnPosition(self, rotation: Rotation2d):
         self._turning_closed_loop_controller.setReference(
             rotation.radians(), SparkBase.ControlType.kPosition
         )
 
-    def setDesiredSetpoint(self, state: SwerveModuleState):
+    def setDesiredSetpoint(self, state: SwerveModuleState, accel_meters_per_sec: float = 0.0):
         corrected_desired_state = SwerveModuleState()
         corrected_desired_state.speed = state.speed
         corrected_desired_state.angle = state.angle.rotateBy(
@@ -104,7 +109,7 @@ class SwerveModule:
             current_rotation - corrected_desired_state.angle
         ).cos()
 
-        self.setDriveVelocity(corrected_desired_state.speed)
+        self.setDriveVelocity(corrected_desired_state.speed, accel_meters_per_sec)
         self.setTurnPosition(corrected_desired_state.angle)
 
     def runCharacterization(self, output: float):
@@ -212,36 +217,55 @@ class SwerveDriveElasticSendable(Sendable):
         )
 
         builder.addDoubleProperty(
+            "Back Left Desired Velocity",
+            tt(lambda: self.module_bl.desired_velocity),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Left Desired Velocity",
+            tt(lambda: self.module_bl.desired_velocity),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Front Right Desired Velocity",
+            tt(lambda: self.module_bl.desired_velocity),
+            noop,
+        )
+        builder.addDoubleProperty(
+            "Back Right Desired Velocity",
+            tt(lambda: self.module_bl.desired_velocity),
+            noop,
+        )
+
+        builder.addDoubleProperty(
             "Front Left Angle",
             tt(lambda: self.module_fl.getPosition().angle.radians()),
             noop,
         )
-        builder.addDoubleProperty(
-            "Front Left Velocity", tt(self.module_fl.getVelocity), noop
-        )
-
         builder.addDoubleProperty(
             "Front Right Angle",
             tt(lambda: self.module_fr.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Front Right Velocity", tt(self.module_fr.getVelocity), noop
-        )
-
-        builder.addDoubleProperty(
             "Back Left Angle",
             tt(lambda: self.module_bl.getPosition().angle.radians()),
             noop,
         )
         builder.addDoubleProperty(
-            "Back Left Velocity", tt(self.module_bl.getVelocity), noop
-        )
-
-        builder.addDoubleProperty(
             "Back Right Angle",
             tt(lambda: self.module_br.getPosition().angle.radians()),
             noop,
+        )
+
+        builder.addDoubleProperty(
+            "Back Left Velocity", tt(self.module_bl.getVelocity), noop
+        )
+        builder.addDoubleProperty(
+            "Front Left Velocity", tt(self.module_fl.getVelocity), noop
+        )
+        builder.addDoubleProperty(
+            "Front Right Velocity", tt(self.module_fr.getVelocity), noop
         )
         builder.addDoubleProperty(
             "Back Right Velocity", tt(self.module_br.getVelocity), noop

@@ -211,7 +211,7 @@ class Drivetrain(Subsystem):
         rot_speed = rot_speed * self.max_angular_speed
         self.driveRaw(x_speed, y_speed, rot_speed, is_field_relative)
 
-    def driveFromChassisSpeeds(self, speed: ChassisSpeeds):
+    def driveFromChassisSpeeds(self, speed: ChassisSpeeds, _ff: DriveFeedforwards = None):
         corrected_chassis_speed = self.correctForDynamics(speed)
         self.chassis_speed_goal = corrected_chassis_speed
 
@@ -224,10 +224,16 @@ class Drivetrain(Subsystem):
         SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerve_module_states, self.max_speed
         )
-        self.swerve_module_fl.setDesiredSetpoint(swerve_module_states[0])
-        self.swerve_module_fr.setDesiredSetpoint(swerve_module_states[1])
-        self.swerve_module_bl.setDesiredSetpoint(swerve_module_states[2])
-        self.swerve_module_br.setDesiredSetpoint(swerve_module_states[3])
+        if _ff is not None:
+            self.swerve_module_fl.setDesiredSetpoint(swerve_module_states[0], _ff.accelerationsMPS[0])
+            self.swerve_module_fr.setDesiredSetpoint(swerve_module_states[1], _ff.accelerationsMPS[1])
+            self.swerve_module_bl.setDesiredSetpoint(swerve_module_states[2], _ff.accelerationsMPS[2])
+            self.swerve_module_br.setDesiredSetpoint(swerve_module_states[3], _ff.accelerationsMPS[3])
+        else:
+            self.swerve_module_fl.setDesiredSetpoint(swerve_module_states[0])
+            self.swerve_module_fr.setDesiredSetpoint(swerve_module_states[1])
+            self.swerve_module_bl.setDesiredSetpoint(swerve_module_states[2])
+            self.swerve_module_br.setDesiredSetpoint(swerve_module_states[3])
 
     def driveFromChassisSpeedsFF(
         self, speeds: ChassisSpeeds, _ff: DriveFeedforwards
