@@ -21,13 +21,12 @@ class QuestTagVisionModule(Module):
         super().__init__()
         self.drivetrain = drivetrain
         self.questnav = QuestNav()
-        self.estimated_pose = Pose3d(1,2,3,Rotation3d(4,5,6))
+        self.estimated_pose = Pose3d()
 
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        #self.estimated_pose = self.questnav.get_pose3d()
-        self.estimated_pose = Pose3d(Translation3d(), Rotation3d())
+        self.estimated_pose = self.questnav.get_pose3d()
 
 
         time_stamp = self.questnav.get_data_timestamp()

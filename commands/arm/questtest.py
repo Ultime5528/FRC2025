@@ -11,20 +11,13 @@ class QuestTest(Command):
         self.questnav = QuestNav()
 
     def initialize(self):
-        pass
+        self.questnav.set_3dpose(Pose3d(100,100,100,Rotation3d(100,100,100)))
 
     def execute(self):
-        print(
-            self.questnav.is_connected(),
-            self.questnav.get_battery_percent(),
-            self.questnav.is_tracking(),
-            self.questnav.get_pose3d(),
-        )
-        self.questnav.set_3dpose(Pose3d(Translation3d(1, 1, 1), Rotation3d(1, 1, 1)))
-
-    def isFinished(self) -> bool:
         pass
 
+    def isFinished(self) -> bool:
+        return True
+
     def end(self, interrupted: bool):
-        print(self.questnav.get_pose3d())
-        self.questnav.reset_pose()
+        pass
