@@ -52,8 +52,8 @@ class Robot(ModuleRobot):
 
         self.addModules(
             self.hardware,
-            self.tag_vision,
-            self.algae_vision,
+            #self.tag_vision,
+            #self.algae_vision,
             self.control,
             self.arm_collision,
             self.loading_detection,
@@ -61,7 +61,7 @@ class Robot(ModuleRobot):
             self.coral_retraction,
             self.autonomous,
             # self.dashboard,
-            self.diagnostics,
+            #self.diagnostics,
             self.logging,
             self.property_save_checker,
             # self.battery_sim,  # Current becomes so low, robot stops working

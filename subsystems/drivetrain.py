@@ -367,8 +367,7 @@ class Drivetrain(Subsystem):
                 self.swerve_module_br.getState(),
             )
         )
-        if math.fabs(chassis_speed.vx) < 0.001 and math.fabs(chassis_speed.vy) < 0.001:
-            chassis_speed = ChassisSpeeds(0, 0, chassis_speed.omega)
+
         self.chassis_speed_pub.set(chassis_speed)
         self.chassis_speed = chassis_speed
         self.swerve_estimator.update(rotation, swerve_positions)

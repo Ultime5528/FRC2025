@@ -68,6 +68,14 @@ class SwerveModule:
         self._turning_motor.setVoltage(voltage)
 
     def setDriveVelocity(self, velocity_meters_per_sec: float, accel_meters_per_sec: float):
+        if abs(velocity_meters_per_sec) < 0.001:
+            self._driving_closed_loop_controller.setReference(
+                0.0,
+                SparkBase.ControlType.kVoltage
+            )
+            self.desired_velocity = 0.0
+            return
+
         direction = 0
         if velocity_meters_per_sec > 0:
             direction = 1
