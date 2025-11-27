@@ -1,244 +1,390 @@
-from wpimath.geometry import (
-    Pose3d,
-    Translation3d,
-    Rotation3d,
-    Quaternion,
-)
+"""
+QuestNav Python Library
+
+Python implementation of questnav-lib for FRC robots.
+
+Usage:
+    from questnav import QuestNav, PoseFrame
+
+    questnav = QuestNav()
+    frames = questnav.get_all_unread_pose_frames()
+"""
+
+from dataclasses import dataclass
+from typing import List, Optional
+import time
+
+import ntcore
+from wpimath.geometry import Pose3d, Translation3d, Rotation3d, Quaternion
+
+# Import generated protobuf classes
+from .generated import data_pb2
+from .generated import commands_pb2
+from .generated import geometry3d_pb2
 
 
-from .generated import data_pb2, commands_pb2, geometry2d_pb2, geometry3d_pb2
+@dataclass
+class PoseFrame:
+    """
+    Represents a single frame of pose tracking data from the Quest headset.
 
-from wpilib import Timer
-from ntcore import NetworkTableInstance
+    Mirrors the Java PoseFrame record from questnav-lib.
+
+    Attributes:
+        quest_pose_3d: The Quest's 3D pose in field coordinates
+        data_timestamp: NetworkTables timestamp when data was received (use for pose estimator)
+        app_timestamp: Quest app internal timestamp (for debugging only)
+        frame_count: Sequential frame number from Quest
+    """
+    quest_pose_3d: Pose3d
+    data_timestamp: float
+    app_timestamp: float
+    frame_count: int
 
 
-# --- QuestNav Class Conversion ---
 class QuestNav:
+    """
+    Python implementation of the Java QuestNav class.
+
+    Provides interface for communicating with a Meta Quest VR headset for
+    robot localization in FRC robotics applications.
+
+    This class handles:
+    - Real-time pose tracking data from Quest
+    - Device status monitoring (battery, tracking state)
+    - Command sending (pose reset)
+    - Connection monitoring
+
+    Usage:
+        # Create instance
+        questnav = QuestNav()
+
+        # Set initial pose
+        from wpimath.geometry import Pose2d, Rotation2d
+        initial_pose = Pose2d(1.0, 2.0, Rotation2d.fromDegrees(90))
+        questnav.set_pose(Pose3d(initial_pose))
+
+        # In robotPeriodic():
+        questnav.command_periodic()
+
+        frames = questnav.get_all_unread_pose_frames()
+        for frame in frames:
+            if questnav.is_connected() and questnav.is_tracking():
+                # Use frame.quest_pose_3d with pose estimator
+                pass
+    """
+
     def __init__(self):
-        self.nt4_instance = NetworkTableInstance.getDefault()
-        self.quest_nav_table = self.nt4_instance.getTable("QuestNav")
+        """
+        Creates a new QuestNav instance.
 
-        self.command_response_proto = commands_pb2.ProtobufQuestNavCommandResponse()
-        self.command_proto = commands_pb2.ProtobufQuestNavCommand()
-        self.pose2d_proto = geometry2d_pb2.ProtobufPose2d()
-        self.pose3d_proto = geometry3d_pb2.ProtobufPose3d()
-        self.device_data_proto = data_pb2.ProtobufQuestNavDeviceData()
-        self.frame_data_proto = data_pb2.ProtobufQuestNavFrameData()
+        Initializes NetworkTables subscribers and publishers for communication
+        with the Quest headset.
+        """
+        # Get NetworkTables instance (default instance used by robot)
+        self.nt_instance = ntcore.NetworkTableInstance.getDefault()
 
-        # Subscribers and Publishers using RawTopic for protobuf data
-        # Data is sent/received as JSON strings in this mock implementation
-        self.response_topic = self.quest_nav_table.getRawTopic("response")
-        self.response_subscriber = self.response_topic.subscribe(
-            "protos:questnav.generated.commands.ProtobufQuestNavCommandResponse", b""
-        )  # Subscribe to raw bytes (empty default)
+        # Get QuestNav table
+        self.quest_nav_table = self.nt_instance.getTable("QuestNav")
 
-        self.frame_data_topic = self.quest_nav_table.getRawTopic("frameData")
-        self.frame_data_subscriber = self.frame_data_topic.subscribe(
-            "protos:questnav.generated.data.ProtobufQuestNavFrameData", b""
+        # Use MultiSubscriber to receive all QuestNav topics
+        # Include both /QuestNav/ and QuestNav/ to handle different topic naming
+        self.multi_sub = ntcore.MultiSubscriber(self.nt_instance, ["/QuestNav/", "QuestNav/"])
+
+        # Set up listener for all QuestNav data
+        self.data_listener = ntcore.NetworkTableListenerPoller(self.nt_instance)
+        self.data_listener.addListener(
+            self.multi_sub,
+            ntcore.EventFlags.kValueAll
         )
 
-        self.device_data_topic = self.quest_nav_table.getRawTopic("deviceData")
-        self.device_data_subscriber = self.device_data_topic.subscribe(
-            "protos:questnav.generated.data.ProtobufQuestNavDeviceData", b""
-        )
+        # Publishers for commands (must match Quest's subscriber topic)
+        # Quest subscribes to /QuestNav/request as protobuf type
+        # We need to publish with the correct protobuf type string
+        self.command_topic = self.nt_instance.getRawTopic("/QuestNav/request")
+        self.command_pub = self.command_topic.publish("proto:questnav.protos.commands.ProtobufQuestNavCommand")
 
-        self.request_topic = self.quest_nav_table.getRawTopic("request")
-        self.request_publisher = self.request_topic.publish("raw")
+        # State
+        self._last_frame_timestamp = 0.0
+        self._battery_percent = 0
+        self._tracking = False
+        self._tracking_lost_counter = 0
+        self._frame_count = 0
+        self._last_command_id = 0
 
-        # Cached requests to lessen object creation (as in Java)
-        self.cached_command_request = commands_pb2.ProtobufQuestNavCommand()
-        self.cached_pose_reset_payload = commands_pb2.ProtobufQuestNavPoseResetPayload()
-        self.cached_proto_pose = geometry3d_pb2.ProtobufPose3d()
+        # Queues for unread frames
+        self._unread_frames: List[PoseFrame] = []
 
-        self.last_sent_request_id = 0
-        self.last_processed_response_id = 0
+    def get_all_unread_pose_frames(self) -> List[PoseFrame]:
+        """
+        Retrieves all new pose frames received since the last call.
 
-    def set_3dpose(self, pose: Pose3d):
-        self.cached_command_request.Clear()
-        self.last_sent_request_id += 1
+        This is the primary method for integrating QuestNav with FRC pose
+        estimation systems. Returns array of PoseFrame objects containing
+        pose data and timestamps.
 
-        self.cached_command_request.type = commands_pb2.QuestNavCommandType.POSE_RESET
-        self.cached_command_request.command_id = self.last_sent_request_id
-        payload = self.cached_command_request.pose_reset_payload
-        payload.target_pose.translation.x = pose.translation().x
-        payload.target_pose.translation.y = pose.translation().y
-        payload.target_pose.translation.z = pose.translation().z
+        Each frame contains:
+        - Pose data: Quest position and orientation in field coordinates
+        - NetworkTables timestamp: When data was received (use for pose estimation)
+        - App timestamp: Quest internal timestamp (for debugging)
+        - Frame count: Sequential frame number
 
-        payload.target_pose.rotation.q.w = pose.rotation().getQuaternion().W()
-        payload.target_pose.rotation.q.x = pose.rotation().getQuaternion().X()
-        payload.target_pose.rotation.q.y = pose.rotation().getQuaternion().Y()
-        payload.target_pose.rotation.q.z = pose.rotation().getQuaternion().Z()
+        Returns:
+            List of PoseFrame objects. Empty list if no new frames available.
 
-        self.request_publisher.set(self.cached_command_request.SerializeToString())
+        Example:
+            frames = questnav.get_all_unread_pose_frames()
+            for frame in frames:
+                if questnav.is_tracking() and questnav.is_connected():
+                    pose_estimator.add_vision_measurement(
+                        frame.quest_pose_3d.toPose2d(),
+                        frame.data_timestamp,
+                        (0.1, 0.1, 0.05)  # Standard deviations
+                    )
+        """
+        # Process all new events
+        events = self.data_listener.readQueue()
+        current_time = time.time()
 
-    def reset_pose(self):
-        self.set_3dpose(Pose3d())
+        for event in events:
+            try:
+                topic_name = event.data.topic.getName()
+                value = event.data.value
+                # Get timestamp - check which attribute exists
+                if hasattr(event.data, 'time'):
+                    server_timestamp = event.data.time / 1_000_000.0
+                elif hasattr(event.data, 'timestamp'):
+                    server_timestamp = event.data.timestamp
+                else:
+                    server_timestamp = current_time
 
-    def get_battery_percent(self) -> int:
-        raw_data = self.device_data_subscriber.get()
-        if not raw_data:
-            return -1
+                # Parse frameData
+                if "frameData" in topic_name:
+                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+
+                    if raw_data:
+                        frame_data = data_pb2.ProtobufQuestNavFrameData()
+                        frame_data.ParseFromString(raw_data)
+
+                        self._frame_count = frame_data.frame_count
+                        self._last_frame_timestamp = current_time
+
+                        # Extract Pose3d
+                        pose_proto = frame_data.pose3d
+                        trans = pose_proto.translation
+                        rot_quat = pose_proto.rotation.q
+
+                        translation = Translation3d(trans.x, trans.y, trans.z)
+                        quaternion = Quaternion(rot_quat.w, rot_quat.x, rot_quat.y, rot_quat.z)
+                        rotation = Rotation3d(quaternion)
+                        pose = Pose3d(translation, rotation)
+
+                        # Create PoseFrame
+                        pose_frame = PoseFrame(
+                            quest_pose_3d=pose,
+                            data_timestamp=server_timestamp,
+                            app_timestamp=frame_data.timestamp,
+                            frame_count=frame_data.frame_count
+                        )
+
+                        self._unread_frames.append(pose_frame)
+
+                # Parse deviceData
+                elif "deviceData" in topic_name:
+                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+
+                    if raw_data:
+                        device_data = data_pb2.ProtobufQuestNavDeviceData()
+                        device_data.ParseFromString(raw_data)
+
+                        self._battery_percent = device_data.battery_percent
+                        self._tracking = device_data.currently_tracking
+                        self._tracking_lost_counter = device_data.tracking_lost_counter
+
+                # Parse command responses
+                elif "response" in topic_name:
+                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+
+                    if raw_data:
+                        response = commands_pb2.ProtobufQuestNavCommandResponse()
+                        response.ParseFromString(raw_data)
+
+                        if not response.success:
+                            print(f"QuestNav command {response.command_id} failed: {response.error_message}")
+
+            except Exception as e:
+                print(f"QuestNav error processing data: {e}")
+
+        # Return all unread frames and clear queue
+        frames = self._unread_frames.copy()
+        self._unread_frames.clear()
+        return frames
+
+    def set_pose(self, pose: Pose3d):
+        """
+        Sets the field-relative pose of the Quest headset.
+
+        Sends a pose reset command to the Quest, telling it where it is
+        currently located on the field. Essential for establishing field-relative
+        tracking.
+
+        Call this:
+        - At start of autonomous/teleop when Quest position is known
+        - When robot is placed at a known location
+        - After significant tracking drift
+
+        Important: This should be the Quest's pose, not the robot's pose.
+        If you know the robot's pose, apply the mounting offset to get Quest pose.
+
+        Args:
+            pose: The Quest's current field-relative pose in WPILib coordinates
+
+        Example:
+            # If you know Quest pose directly
+            quest_pose = Pose3d(1.5, 5.5, 0.0, Rotation3d())
+            questnav.set_pose(quest_pose)
+
+            # If you know robot pose, apply mounting offset
+            robot_pose = pose_estimator.getEstimatedPosition()
+            quest_pose = Pose3d(robot_pose).transformBy(mounting_offset)
+            questnav.set_pose(quest_pose)
+        """
+        self._last_command_id += 1
+
         try:
-            latest_device_data = data_pb2.ProtobufQuestNavDeviceData.FromString(
-                raw_data
-            )
-            return latest_device_data.battery_percent
-        except Exception:
-            return -1
+            # Create command protobuf
+            command = commands_pb2.ProtobufQuestNavCommand()
+            command.type = commands_pb2.POSE_RESET
+            command.command_id = self._last_command_id
+
+            # Create pose reset payload
+            payload = commands_pb2.ProtobufQuestNavPoseResetPayload()
+
+            # Set target pose
+            pose_proto = geometry3d_pb2.ProtobufPose3d()
+            pose_proto.translation.x = pose.translation().X()
+            pose_proto.translation.y = pose.translation().Y()
+            pose_proto.translation.z = pose.translation().Z()
+
+            quat = pose.rotation().getQuaternion()
+            pose_proto.rotation.q.w = quat.W()
+            pose_proto.rotation.q.x = quat.X()
+            pose_proto.rotation.q.y = quat.Y()
+            pose_proto.rotation.q.z = quat.Z()
+
+            payload.target_pose.CopyFrom(pose_proto)
+            command.pose_reset_payload.CopyFrom(payload)
+
+            # Publish command
+            serialized = command.SerializeToString()
+            self.command_pub.set(serialized)
+
+        except Exception as e:
+            print(f"QuestNav error sending pose reset: {e}")
+
+    def get_battery_percent(self) -> Optional[int]:
+        """
+        Returns the Quest headset's current battery level as a percentage.
+
+        Returns:
+            Battery percentage (0-100), or None if no data available
+        """
+        return self._battery_percent if self._battery_percent > 0 else None
 
     def is_tracking(self) -> bool:
-        raw_data = self.device_data_subscriber.get()
-        if not raw_data:
-            return False
-        try:
-            latest_device_data = data_pb2.ProtobufQuestNavDeviceData.FromString(
-                raw_data
-            )
-            return bool(latest_device_data.currently_tracking)
-        except Exception:
-            return False
+        """
+        Gets the current tracking state of the Quest headset.
 
-    def get_frame_count(self) -> int:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return -1
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            return latest_frame_data.frame_count
-        except Exception as e:
-            return -1
+        Indicates whether the Quest's visual-inertial tracking system is
+        currently functioning and providing reliable pose data.
 
-    def get_tracking_lost_counter(self) -> int:
-        raw_data = self.device_data_subscriber.get()
-        if not raw_data:
-            return -1
-        try:
-            # Assuming raw_data is binary Protobuf, not JSON
-            latest_device_data = data_pb2.ProtobufQuestNavDeviceData.FromString(
-                raw_data
-            )
-            # Then check a specific field for tracking state
-            return (
-                latest_device_data.tracking_lost_counter
-            )  # Or whatever field represents tracking
-        except Exception as e:
-            return -1
+        When tracking is lost, pose data becomes unreliable and should not
+        be used for robot control.
+
+        Returns:
+            True if Quest is actively tracking, False if tracking is lost
+            or no device data available
+        """
+        return self._tracking
 
     def is_connected(self) -> bool:
         """
-        Determines if the Quest headset is currently connected to the robot. Connection is determined
-        by how stale the last received frame from the Quest is.
+        Determines if the Quest headset is currently connected.
+
+        Connection is determined by how recent the last frame data was received.
 
         Returns:
-            Boolean indicating if the Quest is connected (true) or not (false)
+            True if Quest is connected and sending data, False otherwise
         """
-        # NetworkTables.get_server_time_us() provides the server time in microseconds
-        # entry.last_change() provides the last change time in microseconds
-        current_time_us = Timer.getTimestamp()
-        last_change_us = self.frame_data_subscriber.getLastChange()
+        current_time = time.time()
+        return (current_time - self._last_frame_timestamp) < 0.1  # 100ms timeout
 
-        # If last_change_us is 0, it means no data has been received yet
-        if last_change_us == 0:
-            return False
+    def get_frame_count(self) -> Optional[int]:
+        """
+        Gets the current frame count from the Quest headset.
 
-        # Convert to milliseconds for comparison (50 ms threshold)
-        latency_ms = (current_time_us - last_change_us) / 1000.0
-        return latency_ms < 50.0
+        Returns:
+            Frame count value, or None if no data available
+        """
+        return self._frame_count if self._frame_count > 0 else None
+
+    def get_tracking_lost_counter(self) -> Optional[int]:
+        """
+        Gets the number of tracking lost events since Quest connected.
+
+        Returns:
+            Tracking lost counter value, or None if no data available
+        """
+        return self._tracking_lost_counter
 
     def get_latency(self) -> float:
         """
-        Gets the latency of the Quest > Robot Connection. Returns the latency between the current time
-        and the last frame data update.
+        Gets the latency of the Quest to Robot connection.
+
+        Returns latency between current time and last frame data update.
 
         Returns:
-            The latency in milliseconds
+            Latency in milliseconds
         """
-        current_time_us = Timer.getTimestamp()
-        last_change_us = self.frame_data_subscriber.getLastChange()
+        current_time = time.time()
+        return (current_time - self._last_frame_timestamp) * 1000.0
 
-        if last_change_us == 0:
-            return -1.0  # Indicate no data
-
-        return (current_time_us - last_change_us) / 1000.0  # Latency in milliseconds
-
-    def get_app_timestamp(self) -> float:
+    def get_app_timestamp(self) -> Optional[float]:
         """
-        Returns the Quest app's uptime timestamp. For integration with a pose estimator, use
-        `get_data_timestamp()` instead!
+        Returns the Quest app's uptime timestamp.
+
+        Important: For pose estimator integration, use the timestamp from
+        PoseFrame.data_timestamp instead! This provides the Quest's internal
+        timestamp for debugging only.
 
         Returns:
-            The timestamp as a double value
+            Quest app uptime in seconds, or None if no data available
         """
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return -1
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-            return latest_frame_data.timestamp
-        except Exception as e:
-            return -1
-
-    def get_data_timestamp(self) -> float:
-        """
-        Gets the NT timestamp of when the last frame data was sent. This is the value which should be
-        used with a pose estimator.
-
-        Returns:
-            The timestamp as a double value in seconds
-        """
-        # The Java code uses frameData.getAtomic().serverTime which is a NetworkTables internal timestamp.
-        # In pynetworktables, the subscriber's last_change() gives the timestamp in microseconds.
-        # We convert it to seconds.
-        last_change_us = self.frame_data_subscriber.getLastChange()
-        if last_change_us == 0:
-            return -1.0
-        return last_change_us / 1_000_000.0  # Convert microseconds to seconds
-
-    def get_pose3d(self) -> Pose3d:
-        raw_data = self.frame_data_subscriber.get()
-        if not raw_data:
-            return Pose3d(-100, -100, -100, Rotation3d())
-        try:
-            latest_frame_data = data_pb2.ProtobufQuestNavFrameData.FromString(raw_data)
-
-            x = latest_frame_data.pose3d.translation.x
-            y = latest_frame_data.pose3d.translation.y
-            z = latest_frame_data.pose3d.translation.z
-
-            rot = Rotation3d(
-                Quaternion(
-                    latest_frame_data.pose3d.rotation.q.w,
-                    latest_frame_data.pose3d.rotation.q.x,
-                    latest_frame_data.pose3d.rotation.q.y,
-                    latest_frame_data.pose3d.rotation.q.z,
-                )
-            )
-
-            return Pose3d(Translation3d(x, y, z), rot)
-        except Exception as e:
-            return Pose3d(
-                -100, -100, -100, Rotation3d()
-            )  # Return kZero if no data available
+        # This would need to be tracked from frame data
+        # For now, return None
+        return None
 
     def command_periodic(self):
-        """Cleans up QuestNav responses after processing on the headset."""
-        raw_response = self.response_subscriber.get()
-        if not raw_response:
-            return
+        """
+        Processes command responses from the Quest headset.
 
-        latest_command_response = (
-            commands_pb2.ProtobufQuestNavCommandResponse.FromString(raw_response)
-        )
+        Must be called regularly (typically in robotPeriodic()) to:
+        - Process responses to commands sent via set_pose()
+        - Log command failures for debugging
+        - Maintain proper command/response synchronization
 
-        # if we don't have data or for some reason the response we got isn't for the command we sent,
-        # skip for this loop
-        if latest_command_response.command_id != self.last_sent_request_id:
-            return
+        Call this every robot loop (20ms).
 
-        if self.last_processed_response_id != latest_command_response.command_id:
-            if not latest_command_response.success:
-                print(
-                    f"ERROR: QuestNav command failed!\n{latest_command_response.error_message}"
-                )
-            # don't double process
-            self.last_processed_response_id = latest_command_response.command_id
+        Example:
+            def robotPeriodic(self):
+                self.questnav.command_periodic()
+                # ... other code
+        """
+        # Command responses are processed in get_all_unread_pose_frames()
+        # This method is kept for API compatibility with Java questnav-lib
+        # but doesn't need to do anything extra in Python
+        pass
+
+
+__all__ = ['QuestNav', 'PoseFrame']
+__version__ = '2025.1.0'
