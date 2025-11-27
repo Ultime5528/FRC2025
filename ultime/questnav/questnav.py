@@ -91,6 +91,7 @@ class QuestNav:
         # Include both /QuestNav/ and QuestNav/ to handle different topic naming
         self.multi_sub = ntcore.MultiSubscriber(self.nt_instance, ["/QuestNav/", "QuestNav/"])
 
+
         # Set up listener for all QuestNav data
         self.data_listener = ntcore.NetworkTableListenerPoller(self.nt_instance)
         self.data_listener.addListener(
@@ -103,6 +104,9 @@ class QuestNav:
         # We need to publish with the correct protobuf type string
         self.command_topic = self.nt_instance.getRawTopic("/QuestNav/request")
         self.command_pub = self.command_topic.publish("proto:questnav.protos.commands.ProtobufQuestNavCommand")
+
+        # Something I personally added (not Juan Chong) to make "get_data_timestamp" work
+        self.frame_data_subscriber = self.command_topic.subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", b"")
 
         # State
         self._last_frame_timestamp = 0.0
@@ -363,6 +367,22 @@ class QuestNav:
         # This would need to be tracked from frame data
         # For now, return None
         return None
+
+    def get_data_timestamp(self) -> float:
+        """
+        Gets the NT timestamp of when the last frame data was sent. This is the value which should be
+        used with a pose estimator.
+
+        Returns:
+            The timestamp as a double value in seconds
+        """
+        # The Java code uses frameData.getAtomic().serverTime which is a NetworkTables internal timestamp.
+        # In pynetworktables, the subscriber's last_change() gives the timestamp in microseconds.
+        # We convert it to seconds.
+        last_change_us = self.frame_data_subscriber.getLastChange()
+        if last_change_us == 0:
+            return -1.0
+        return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
     def command_periodic(self):
         """
