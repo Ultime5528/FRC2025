@@ -26,7 +26,7 @@ class QuestTagVisionModule(Module):
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        self.estimated_pose = self.questnav.get_all_unread_pose_frames()
+        self.estimated_pose = self.questnav.get_pose3d()
 
 
         time_stamp = self.questnav.get_data_timestamp()
