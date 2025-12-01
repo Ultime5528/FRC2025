@@ -52,7 +52,7 @@ class Robot(ModuleRobot):
 
         self.addModules(
             self.hardware,
-            #self.tag_vision,
+            self.tag_vision,
             #self.algae_vision,
             self.control,
             self.arm_collision,
