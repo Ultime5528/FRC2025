@@ -34,25 +34,25 @@ class QuestTagVisionModule(Module):
             self.estimated_pose = poseFrame.quest_pose_3d
             self.estimated_pose = self.estimated_pose.transformBy(robot_to_quest_offset.inverse())
             time_stamp = poseFrame.data_timestamp
-            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [1, 1, 1])
+            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [0.01, 0.01, 1])
 
     def X(self):
-        return self.estimated_pose.X()
+        return self.estimated_pose.x
 
     def Y(self):
-        return self.estimated_pose.Y()
+        return self.estimated_pose.y
 
     def Z(self):
-        return self.estimated_pose.Z()
+        return self.estimated_pose.z
 
     def Roll(self):
-        return self.estimated_pose.rotation().X()
+        return self.estimated_pose.rotation().x
 
     def Pitch(self):
-        return self.estimated_pose.rotation().Y()
+        return self.estimated_pose.rotation().y
 
     def Yaw(self):
-        return self.estimated_pose.rotation().Z()
+        return self.estimated_pose.rotation().z
 
     def reset(self, pose: Pose3d):
         self.questnav.set_pose(pose)
