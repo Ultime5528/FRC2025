@@ -19,7 +19,9 @@ class ResetGyro(Command):
         else:
             new_rot = Rotation2d.fromDegrees(180)
 
-        self.drivetrain.resetToPose(Pose2d(2.0, 2.0, new_rot))#current.translation(), new_rot))
+        self.drivetrain.resetToPose(
+            Pose2d(2.0, 2.0, new_rot)
+        )  # current.translation(), new_rot))
 
     def isFinished(self) -> bool:
         return True

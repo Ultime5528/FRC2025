@@ -445,6 +445,10 @@ class Drivetrain(Subsystem):
         self.swerve_estimator.addVisionMeasurement(pose, timestamp, std_devs)
         self.vision_pose.setPose(pose)
 
+    def addVisionMeasurement(self, pose: wpimath.geometry.Pose2d, timestamp: float):
+        self.swerve_estimator.addVisionMeasurement(pose, timestamp)
+        self.vision_pose.setPose(pose)
+
     def getCurrentDrawAmps(self):
         return 0.0
 
