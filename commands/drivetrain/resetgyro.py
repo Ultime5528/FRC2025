@@ -1,14 +1,16 @@
 from wpilib import DriverStation
-from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.geometry import Pose2d, Rotation2d, Pose3d, Translation3d, Rotation3d
 
+from modules.questtagvision import QuestTagVisionModule
 from subsystems.drivetrain import Drivetrain
 from ultime.command import Command
 
 
 class ResetGyro(Command):
-    def __init__(self, drivetrain: Drivetrain):
+    def __init__(self, drivetrain: Drivetrain, quest: QuestTagVisionModule):
         super().__init__()
         self.drivetrain = drivetrain
+        self.quest = quest
         self.addRequirements(drivetrain)
 
     def initialize(self):
@@ -19,9 +21,8 @@ class ResetGyro(Command):
         else:
             new_rot = Rotation2d.fromDegrees(180)
 
-        self.drivetrain.resetToPose(
-            Pose2d(2.0, 2.0, new_rot)
-        )  # current.translation(), new_rot))
+        self.drivetrain.resetToPose(Pose2d(2.0, 2.0, new_rot))
+        self.quest.reset(Pose3d(Translation3d(2.2, 2.0, 0.0), Rotation3d(0, 0, 0)))
 
     def isFinished(self) -> bool:
         return True

@@ -40,6 +40,7 @@ from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
+from modules.questtagvision import QuestTagVisionModule
 from ultime.module import Module, ModuleList
 from ultime.questnav.questnav import QuestNav
 
@@ -49,6 +50,7 @@ class DashboardModule(Module):
         self,
         hardware: HardwareModule,
         module_list: ModuleList,
+        quest: QuestTagVisionModule
     ):
         super().__init__()
         self._hardware = hardware
@@ -58,7 +60,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
         self.setupCopilotCommands(hardware)
         #self.setupCommands(hardware)
-        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, quest))
 
     def setupCopilotCommands(self, hardware: HardwareModule):
         putCommandOnDashboard(
@@ -210,7 +212,7 @@ class DashboardModule(Module):
         """
         Groups
         """
-        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
+        #putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, ))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))

@@ -27,16 +27,16 @@ class ControlModule(Module):
     def __init__(
         self,
         hardware: HardwareModule,
-        algae_vision: AlgaeVisionModule,
+        #algae_vision: AlgaeVisionModule,
     ):
         super().__init__()
 
         """
         Pilot's buttons
         """
-        hardware.controller.rightTrigger().whileTrue(
-            AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
-        )
+        #hardware.controller.rightTrigger().whileTrue(
+        #    AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
+        #)
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)

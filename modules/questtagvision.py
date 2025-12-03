@@ -9,7 +9,7 @@ from ultime.timethis import tt
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
 robot_to_quest_offset = wpimath.geometry.Transform3d(
-    wpimath.geometry.Translation3d(0.20, 0.001, 1.03),
+    wpimath.geometry.Translation3d(0.20, 0.01, 1.03),
     wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
 )
 
@@ -34,7 +34,7 @@ class QuestTagVisionModule(Module):
             self.estimated_pose = poseFrame.quest_pose_3d
             self.estimated_pose = self.estimated_pose.transformBy(robot_to_quest_offset.inverse())
             time_stamp = poseFrame.data_timestamp
-            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp)
+            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [1, 1, 1])
 
     def X(self):
         return self.estimated_pose.X()
@@ -53,6 +53,9 @@ class QuestTagVisionModule(Module):
 
     def Yaw(self):
         return self.estimated_pose.rotation().Z()
+
+    def reset(self, pose: Pose3d):
+        self.questnav.set_pose(pose)
 
     def initSendable(self, builder):
         super().initSendable(builder)
