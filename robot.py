@@ -28,8 +28,8 @@ class Robot(ModuleRobot):
 
         self.hardware = HardwareModule()
 
-        self.tag_vision = QuestTagVisionModule(self.hardware.drivetrain)
-        self.algae_vision = AlgaeVisionModule()
+        self.quest_vision = QuestTagVisionModule(self.hardware.drivetrain)
+        #self.algae_vision = AlgaeVisionModule()
 
         self.control = ControlModule(self.hardware, self.algae_vision)
 
@@ -52,8 +52,9 @@ class Robot(ModuleRobot):
 
         self.addModules(
             self.hardware,
-            self.tag_vision,
-            self.algae_vision,
+            #self.tag_vision,
+            #self.algae_vision,
+            self.quest_vision,
             self.control,
             self.arm_collision,
             self.loading_detection,

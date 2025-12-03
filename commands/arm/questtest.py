@@ -11,7 +11,7 @@ class QuestTest(Command):
         self.questnav = QuestNav()
 
     def initialize(self):
-        self.questnav.set_3dpose(Pose3d(100,100,100,Rotation3d(100,100,100)))
+        self.questnav.set_pose(Pose3d(0,0,0,Rotation3d(0,0,0)))
 
     def execute(self):
         pass

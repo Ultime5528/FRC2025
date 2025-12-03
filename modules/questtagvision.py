@@ -4,33 +4,37 @@ from wpimath.geometry import Transform3d, Rotation3d, Pose3d, Translation3d
 from subsystems.drivetrain import Drivetrain
 from ultime.autoproperty import autoproperty
 from ultime.module import Module
+from ultime.questnav import questnav
 from ultime.timethis import tt
-from ultime.questnav.questnav import QuestNav
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
-robot_to_camera_offset = wpimath.geometry.Transform3d(
-    wpimath.geometry.Translation3d(0.35, -0.098, 0.236),
-    wpimath.geometry.Rotation3d.fromDegrees(0.0, -15.0, 0.0),
+robot_to_quest_offset = wpimath.geometry.Transform3d(
+    wpimath.geometry.Translation3d(0.20, 0.001, 1.03),
+    wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
 )
 
 
 class QuestTagVisionModule(Module):
-    ambiguity_threshold = autoproperty(0.05)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
         self.drivetrain = drivetrain
-        self.questnav = QuestNav()
+        self.questnav = questnav.QuestNav()
         self.estimated_pose = Pose3d()
 
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        self.estimated_pose = self.questnav.get_pose3d()
+        poseFrames = self.questnav.get_all_unread_pose_frames()
 
-
-        time_stamp = self.questnav.get_data_timestamp()
-        self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp)
+        # Documentation of get_all_unread_pose_frames uses all poseFrames
+        # Here we choose to use only the last one.... should we???
+        if len(poseFrames) > 0:
+            poseFrame = poseFrames[-1]
+            self.estimated_pose = poseFrame.quest_pose_3d
+            self.estimated_pose = self.estimated_pose.transformBy(robot_to_quest_offset.inverse())
+            time_stamp = poseFrame.data_timestamp
+            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp)
 
     def X(self):
         return self.estimated_pose.X()
