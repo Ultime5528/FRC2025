@@ -29,7 +29,7 @@ class Drivetrain(Subsystem):
     width = 0.597
     length = 0.673
     max_angular_speed = autoproperty(25.0)
-    max_speed = autoproperty(4.0)
+    max_speed = autoproperty(1.0)
 
     angular_offset_fl = autoproperty(-1.57)
     angular_offset_fr = autoproperty(0.0)
