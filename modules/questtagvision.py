@@ -29,12 +29,11 @@ class QuestTagVisionModule(Module):
 
         # Documentation of get_all_unread_pose_frames uses all poseFrames
         # Here we choose to use only the last one.... should we???
-        if len(poseFrames) > 0:
-            poseFrame = poseFrames[-1]
+        for poseFrame in poseFrames:
             self.estimated_pose = poseFrame.quest_pose_3d
             self.estimated_pose = self.estimated_pose.transformBy(robot_to_quest_offset.inverse())
             time_stamp = poseFrame.data_timestamp
-            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [0.01, 0.01, 1])
+            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [0.05, 0.05, 0.2])
 
     def X(self):
         return self.estimated_pose.x
