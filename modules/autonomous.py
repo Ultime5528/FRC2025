@@ -55,7 +55,9 @@ class AutonomousModule(Module):
             hardware.drivetrain.getPose,
             hardware.drivetrain.resetToPose,
             hardware.drivetrain.getRobotRelativeChassisSpeeds,
-            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeeds(speeds, feedforwards),
+            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeeds(
+                speeds, feedforwards
+            ),
             PPHolonomicDriveController(
                 PIDConstants(5.0, 0.0, 0.0), PIDConstants(5.0, 0.0, 0.0)
             ),

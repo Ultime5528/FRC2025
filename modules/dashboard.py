@@ -50,7 +50,7 @@ class DashboardModule(Module):
         self,
         hardware: HardwareModule,
         module_list: ModuleList,
-        quest: QuestTagVisionModule
+        quest: QuestTagVisionModule,
     ):
         super().__init__()
         self._hardware = hardware
@@ -59,7 +59,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", MegaAutonomous.left(hardware))
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
         self.setupCopilotCommands(hardware)
-        #self.setupCommands(hardware)
+        # self.setupCommands(hardware)
         putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, quest))
 
     def setupCopilotCommands(self, hardware: HardwareModule):
@@ -212,7 +212,7 @@ class DashboardModule(Module):
         """
         Groups
         """
-        #putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, ))
+        # putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, ))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))

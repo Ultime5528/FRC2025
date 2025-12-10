@@ -67,11 +67,12 @@ class SwerveModule:
     def setTurnVoltage(self, voltage: float):
         self._turning_motor.setVoltage(voltage)
 
-    def setDriveVelocity(self, velocity_meters_per_sec: float, accel_meters_per_sec: float):
+    def setDriveVelocity(
+        self, velocity_meters_per_sec: float, accel_meters_per_sec: float
+    ):
         if abs(velocity_meters_per_sec) < 0.001:
             self._driving_closed_loop_controller.setReference(
-                0.0,
-                SparkBase.ControlType.kVoltage
+                0.0, SparkBase.ControlType.kVoltage
             )
             self.desired_velocity = 0.0
             return
@@ -102,7 +103,9 @@ class SwerveModule:
             rotation.radians(), SparkBase.ControlType.kPosition
         )
 
-    def setDesiredSetpoint(self, state: SwerveModuleState, accel_meters_per_sec: float = 0.0):
+    def setDesiredSetpoint(
+        self, state: SwerveModuleState, accel_meters_per_sec: float = 0.0
+    ):
         corrected_desired_state = SwerveModuleState()
         corrected_desired_state.speed = state.speed
         corrected_desired_state.angle = state.angle.rotateBy(

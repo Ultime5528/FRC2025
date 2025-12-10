@@ -36,6 +36,7 @@ class PoseFrame:
         app_timestamp: Quest app internal timestamp (for debugging only)
         frame_count: Sequential frame number from Quest
     """
+
     quest_pose_3d: Pose3d
     data_timestamp: float
     app_timestamp: float
@@ -89,21 +90,21 @@ class QuestNav:
 
         # Use MultiSubscriber to receive all QuestNav topics
         # Include both /QuestNav/ and QuestNav/ to handle different topic naming
-        self.multi_sub = ntcore.MultiSubscriber(self.nt_instance, ["/QuestNav/", "QuestNav/"])
-
+        self.multi_sub = ntcore.MultiSubscriber(
+            self.nt_instance, ["/QuestNav/", "QuestNav/"]
+        )
 
         # Set up listener for all QuestNav data
         self.data_listener = ntcore.NetworkTableListenerPoller(self.nt_instance)
-        self.data_listener.addListener(
-            self.multi_sub,
-            ntcore.EventFlags.kValueAll
-        )
+        self.data_listener.addListener(self.multi_sub, ntcore.EventFlags.kValueAll)
 
         # Publishers for commands (must match Quest's subscriber topic)
         # Quest subscribes to /QuestNav/request as protobuf type
         # We need to publish with the correct protobuf type string
         self.command_topic = self.nt_instance.getRawTopic("/QuestNav/request")
-        self.command_pub = self.command_topic.publish("proto:questnav.protos.commands.ProtobufQuestNavCommand")
+        self.command_pub = self.command_topic.publish(
+            "proto:questnav.protos.commands.ProtobufQuestNavCommand"
+        )
 
         # State
         self._last_frame_timestamp = 0.0
@@ -152,16 +153,16 @@ class QuestNav:
                 topic_name = event.data.topic.getName()
                 value = event.data.value
                 # Get timestamp - check which attribute exists
-                if hasattr(event.data, 'time'):
+                if hasattr(event.data, "time"):
                     server_timestamp = event.data.time / 1_000_000.0
-                elif hasattr(event.data, 'timestamp'):
+                elif hasattr(event.data, "timestamp"):
                     server_timestamp = event.data.timestamp
                 else:
                     server_timestamp = current_time
 
                 # Parse frameData
                 if "frameData" in topic_name:
-                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+                    raw_data = value.getRaw() if hasattr(value, "getRaw") else bytes()
 
                     if raw_data:
                         frame_data = data_pb2.ProtobufQuestNavFrameData()
@@ -176,7 +177,9 @@ class QuestNav:
                         rot_quat = pose_proto.rotation.q
 
                         translation = Translation3d(trans.x, trans.y, trans.z)
-                        quaternion = Quaternion(rot_quat.w, rot_quat.x, rot_quat.y, rot_quat.z)
+                        quaternion = Quaternion(
+                            rot_quat.w, rot_quat.x, rot_quat.y, rot_quat.z
+                        )
                         rotation = Rotation3d(quaternion)
                         pose = Pose3d(translation, rotation)
 
@@ -185,14 +188,14 @@ class QuestNav:
                             quest_pose_3d=pose,
                             data_timestamp=server_timestamp,
                             app_timestamp=frame_data.timestamp,
-                            frame_count=frame_data.frame_count
+                            frame_count=frame_data.frame_count,
                         )
 
                         self._unread_frames.append(pose_frame)
 
                 # Parse deviceData
                 elif "deviceData" in topic_name:
-                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+                    raw_data = value.getRaw() if hasattr(value, "getRaw") else bytes()
 
                     if raw_data:
                         device_data = data_pb2.ProtobufQuestNavDeviceData()
@@ -204,14 +207,16 @@ class QuestNav:
 
                 # Parse command responses
                 elif "response" in topic_name:
-                    raw_data = value.getRaw() if hasattr(value, 'getRaw') else bytes()
+                    raw_data = value.getRaw() if hasattr(value, "getRaw") else bytes()
 
                     if raw_data:
                         response = commands_pb2.ProtobufQuestNavCommandResponse()
                         response.ParseFromString(raw_data)
 
                         if not response.success:
-                            print(f"QuestNav command {response.command_id} failed: {response.error_message}")
+                            print(
+                                f"QuestNav command {response.command_id} failed: {response.error_message}"
+                            )
 
             except Exception as e:
                 print(f"QuestNav error processing data: {e}")
@@ -365,7 +370,6 @@ class QuestNav:
         # For now, return None
         return None
 
-
     def command_periodic(self):
         """
         Processes command responses from the Quest headset.
@@ -388,5 +392,5 @@ class QuestNav:
         pass
 
 
-__all__ = ['QuestNav', 'PoseFrame']
-__version__ = '2025.1.0'
+__all__ = ["QuestNav", "PoseFrame"]
+__version__ = "2025.1.0"

@@ -22,7 +22,6 @@ class QuestTagVisionModule(Module):
         self.questnav = questnav.QuestNav()
         self.estimated_pose = Pose3d()
 
-
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
         poseFrames = self.questnav.get_all_unread_pose_frames()
@@ -31,9 +30,13 @@ class QuestTagVisionModule(Module):
         # Here we choose to use only the last one.... should we???
         for poseFrame in poseFrames:
             self.estimated_pose = poseFrame.quest_pose_3d
-            self.estimated_pose = self.estimated_pose.transformBy(robot_to_quest_offset.inverse())
+            self.estimated_pose = self.estimated_pose.transformBy(
+                robot_to_quest_offset.inverse()
+            )
             time_stamp = poseFrame.data_timestamp
-            self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp, [0.05, 0.05, 0.2])
+            self.drivetrain.addVisionMeasurement(
+                self.estimated_pose.toPose2d(), time_stamp, [0.05, 0.05, 0.2]
+            )
 
     def X(self):
         return self.estimated_pose.x
