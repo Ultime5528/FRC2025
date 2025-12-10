@@ -42,12 +42,7 @@ class AutonomousModule(Module):
         super().__init__()
         self.hardware = proxy(hardware)
 
-        self.reset_climber_command = ResetClimber(self.hardware.climber)
-        self.reset_intake_command = ResetIntake(self.hardware.intake)
-
         self.auto_command: Optional[commands2.Command] = None
-
-        Pathfinding.setPathfinder(LocalADStar())
 
         config = RobotConfig.fromGUISettings()
 
@@ -55,7 +50,7 @@ class AutonomousModule(Module):
             hardware.drivetrain.getPose,
             hardware.drivetrain.resetToPose,
             hardware.drivetrain.getRobotRelativeChassisSpeeds,
-            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeeds(
+            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeedsFF(
                 speeds, feedforwards
             ),
             PPHolonomicDriveController(
@@ -66,15 +61,7 @@ class AutonomousModule(Module):
             hardware.drivetrain,
         )
 
-        path = PathPlannerPath.fromChoreoTrajectory("Test")
-
-        constraints = PathConstraints(
-            5.0, 4.0, degreesToRadians(540), degreesToRadians(720)
-        )
-        path_finding_command = AutoBuilder.pathfindThenFollowPath(path, constraints)
-
         self.auto_chooser = AutoBuilder.buildAutoChooser()
-        self.auto_chooser.addOption("pathfinding", path_finding_command)
         SmartDashboard.putData("AutoChooser", self.auto_chooser)
 
     def shouldFlipPath(self):
@@ -169,9 +156,6 @@ class AutonomousModule(Module):
         self.hardware.drivetrain.swerve_odometry.resetPose(
             self.hardware.drivetrain.getPose()
         )
-
-        # self.reset_intake_command.schedule()
-        # self.reset_climber_command.schedule()
 
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:

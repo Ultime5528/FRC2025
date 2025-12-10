@@ -17,9 +17,9 @@ wd_fl = 0.074802823253191
 wd_br = 0.075439443025558
 wd_fr = 0.074802823253191
 
-wheel_diameter = 0.0745  # 0.0780  # meters
+wheel_diameter = 0.0745  # meters
 drive_encoder_position_conversion_factor = (
-    math.pi * wheel_diameter / drive_motor_gear_ratio  # 0.04409395
+    math.pi * wheel_diameter / drive_motor_gear_ratio
 )  # meters
 drive_encoder_velocity_conversion_factor = (
     drive_encoder_position_conversion_factor / 60
