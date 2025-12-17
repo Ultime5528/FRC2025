@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import wpilib
 
-from modules.algaevision import AlgaeVisionModule
 from modules.armcollision import ArmCollisionModule
 from modules.autonomous import AutonomousModule
 from modules.blockelevatoruntilcoral import BlockElevatorUntilCoralModule

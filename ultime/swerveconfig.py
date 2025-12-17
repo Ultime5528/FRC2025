@@ -2,7 +2,6 @@ import math
 
 from rev import SparkMaxConfig, ClosedLoopConfig, SparkBaseConfig
 
-
 max_speed_per_second = 4
 max_angular_speed = 2 * math.pi
 
@@ -17,7 +16,7 @@ wd_fl = 0.074802823253191
 wd_br = 0.075439443025558
 wd_fr = 0.074802823253191
 
-wheel_diameter = 0.0747#0.0745  # meters
+wheel_diameter = 0.0747  # 0.0745  # meters
 drive_encoder_position_conversion_factor = (
     math.pi * wheel_diameter / drive_motor_gear_ratio
 )  # meters

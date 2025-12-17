@@ -12,7 +12,6 @@ from commands.elevator.moveelevator import MoveElevator
 from commands.elevator.resetelevator import ResetElevator
 from subsystems.arm import Arm
 from subsystems.elevator import Elevator
-from ultime import questnav
 from ultime.autoproperty import autoproperty
 from ultime.command import ignore_requirements
 from ultime.proxy import proxy

@@ -4,7 +4,6 @@ from commands2 import CommandScheduler
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
-from commands.arm.questtest import QuestTest
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.autonomous.simpleauto import SimpleAutonomous
@@ -42,7 +41,6 @@ from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from modules.questtagvision import QuestTagVisionModule
 from ultime.module import Module, ModuleList
-from ultime.questnav.questnav import QuestNav
 
 
 class DashboardModule(Module):
@@ -114,7 +112,6 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard("Copilot", RetractArm(hardware.arm), "Arm retract")
         putCommandOnDashboard("Copilot", ExtendArm(hardware.arm), "Arm extend")
-        putCommandOnDashboard("Copilot", QuestTest(), "QuestNav")
         putCommandOnDashboard(
             "Copilot", ResetClimber(hardware.climber), "Climber reset"
         )
@@ -212,7 +209,6 @@ class DashboardModule(Module):
         """
         Groups
         """
-        # putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, ))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))

@@ -1,8 +1,7 @@
 import wpimath
-from wpimath.geometry import Transform3d, Rotation3d, Pose3d, Translation3d
+from wpimath.geometry import Transform3d, Pose3d
 
 from subsystems.drivetrain import Drivetrain
-from ultime.autoproperty import autoproperty
 from ultime.module import Module
 from ultime.questnav import questnav
 from ultime.timethis import tt
@@ -26,8 +25,6 @@ class QuestTagVisionModule(Module):
         super().robotPeriodic()
         poseFrames = self.questnav.get_all_unread_pose_frames()
 
-        # Documentation of get_all_unread_pose_frames uses all poseFrames
-        # Here we choose to use only the last one.... should we???
         for poseFrame in poseFrames:
             self.estimated_pose = poseFrame.quest_pose_3d
             self.estimated_pose = self.estimated_pose.transformBy(
@@ -35,25 +32,27 @@ class QuestTagVisionModule(Module):
             )
             time_stamp = poseFrame.data_timestamp
             self.drivetrain.addVisionMeasurement(
-                self.estimated_pose.toPose2d(), time_stamp, [0.03, 0.03, 0.1]#[0.03, 0.03, 0.01]
+                self.estimated_pose.toPose2d(),
+                time_stamp,
+                [0.03, 0.03, 0.1],
             )
 
-    def X(self):
+    def getX(self):
         return self.estimated_pose.x
 
-    def Y(self):
+    def getY(self):
         return self.estimated_pose.y
 
-    def Z(self):
+    def getZ(self):
         return self.estimated_pose.z
 
-    def Roll(self):
+    def getRoll(self):
         return self.estimated_pose.rotation().x
 
-    def Pitch(self):
+    def getPitch(self):
         return self.estimated_pose.rotation().y
 
-    def Yaw(self):
+    def getYaw(self):
         return self.estimated_pose.rotation().z
 
     def reset(self, pose: Pose3d):
@@ -65,9 +64,9 @@ class QuestTagVisionModule(Module):
         def noop(x):
             pass
 
-        builder.addFloatProperty("X", tt(self.X), noop)
-        builder.addFloatProperty("Y", tt(self.Y), noop)
-        builder.addFloatProperty("Z", tt(self.Z), noop)
-        builder.addFloatProperty("roll", tt(self.Roll), noop)
-        builder.addFloatProperty("pitch", tt(self.Pitch), noop)
-        builder.addFloatProperty("yaw", tt(self.Yaw), noop)
+        builder.addFloatProperty("X", tt(self.getX), noop)
+        builder.addFloatProperty("Y", tt(self.getY), noop)
+        builder.addFloatProperty("Z", tt(self.getZ), noop)
+        builder.addFloatProperty("roll", tt(self.getRoll), noop)
+        builder.addFloatProperty("pitch", tt(self.getPitch), noop)
+        builder.addFloatProperty("yaw", tt(self.getYaw), noop)

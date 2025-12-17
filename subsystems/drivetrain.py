@@ -3,7 +3,6 @@ from typing import List
 
 import wpilib
 import wpimath
-from choreo import SwerveSample
 from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
@@ -144,14 +143,14 @@ class Drivetrain(Subsystem):
         self.swerve_estimator = SwerveDrive4PoseEstimator(
             kinematics=self.swervedrive_kinematics,
             gyroAngle=self._gyro.getRotation2d(),
-            modulePositions= [
+            modulePositions=[
                 SwerveModulePosition(),
                 SwerveModulePosition(),
                 SwerveModulePosition(),
                 SwerveModulePosition(),
             ],
             initialPose=Pose2d(0, 0, 0),
-            stateStdDevs=[1, 1, 0.1]
+            stateStdDevs=[1, 1, 0.1],
         )
 
         self.vision_pose = self._field.getObject("Vision Pose")

@@ -16,8 +16,6 @@ from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import MoveIntake
 from commands.prepareloading import PrepareLoading
 from commands.resetallbutclimber import ResetAllButClimber
-from commands.vision.alignwithalgae import AlignWithAlgae
-from modules.algaevision import AlgaeVisionModule
 from modules.hardware import HardwareModule
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module
@@ -27,16 +25,12 @@ class ControlModule(Module):
     def __init__(
         self,
         hardware: HardwareModule,
-        # algae_vision: AlgaeVisionModule,
     ):
         super().__init__()
 
         """
         Pilot's buttons
         """
-        # hardware.controller.rightTrigger().whileTrue(
-        #    AlignWithAlgae(hardware.drivetrain, algae_vision, hardware.controller)
-        # )
 
         hardware.controller.leftTrigger().whileTrue(
             AlignWithReefSide(hardware.drivetrain)
