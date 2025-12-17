@@ -35,7 +35,7 @@ class QuestTagVisionModule(Module):
             )
             time_stamp = poseFrame.data_timestamp
             self.drivetrain.addVisionMeasurement(
-                self.estimated_pose.toPose2d(), time_stamp, [0.03, 0.03, 0.1]#[0.03, 0.03, 0.01]
+                self.estimated_pose.toPose2d(), time_stamp, [0.03, 0.03, 0.1]
             )
 
     def X(self):

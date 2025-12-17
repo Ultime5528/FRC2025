@@ -142,16 +142,15 @@ class Drivetrain(Subsystem):
         )
 
         self.swerve_estimator = SwerveDrive4PoseEstimator(
-            kinematics=self.swervedrive_kinematics,
-            gyroAngle=self._gyro.getRotation2d(),
-            modulePositions= [
+            self.swervedrive_kinematics,
+            self._gyro.getRotation2d(),
+            [
                 SwerveModulePosition(),
                 SwerveModulePosition(),
                 SwerveModulePosition(),
                 SwerveModulePosition(),
             ],
-            initialPose=Pose2d(0, 0, 0),
-            stateStdDevs=[1, 1, 0.1]
+            Pose2d(0, 0, 0),
         )
 
         self.vision_pose = self._field.getObject("Vision Pose")
