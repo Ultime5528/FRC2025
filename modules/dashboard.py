@@ -42,7 +42,6 @@ from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from modules.questtagvision import QuestTagVisionModule
 from ultime.module import Module, ModuleList
-from ultime.questnav.questnav import QuestNav
 
 
 class DashboardModule(Module):

@@ -1,5 +1,4 @@
 from _weakref import proxy
-from _weakref import proxy
 from typing import Optional
 
 import commands2
@@ -7,11 +6,7 @@ from commands2 import Command
 from pathplannerlib.auto import NamedCommands, AutoBuilder
 from pathplannerlib.config import RobotConfig, PIDConstants
 from pathplannerlib.controller import PPHolonomicDriveController
-from pathplannerlib.path import PathPlannerPath, PathConstraints
-from pathplannerlib.pathfinders import LocalADStar
-from pathplannerlib.pathfinding import Pathfinding
 from wpilib import DriverStation, SmartDashboard
-from wpimath.units import degreesToRadians
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
@@ -23,7 +18,6 @@ from commands.climber.resetclimber import ResetClimber
 from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
-from commands.intake.resetintake import ResetIntake
 from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll

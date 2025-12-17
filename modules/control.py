@@ -16,8 +16,6 @@ from commands.intake.grabalgae import GrabAlgae
 from commands.intake.moveintake import MoveIntake
 from commands.prepareloading import PrepareLoading
 from commands.resetallbutclimber import ResetAllButClimber
-from commands.vision.alignwithalgae import AlignWithAlgae
-from modules.algaevision import AlgaeVisionModule
 from modules.hardware import HardwareModule
 from ultime.axistrigger import AxisTrigger
 from ultime.module import Module

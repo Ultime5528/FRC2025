@@ -1,8 +1,7 @@
 import wpimath
-from wpimath.geometry import Transform3d, Rotation3d, Pose3d, Translation3d
+from wpimath.geometry import Transform3d, Pose3d
 
 from subsystems.drivetrain import Drivetrain
-from ultime.autoproperty import autoproperty
 from ultime.module import Module
 from ultime.questnav import questnav
 from ultime.timethis import tt

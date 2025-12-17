@@ -10,16 +10,16 @@ Usage:
     frames = questnav.get_all_unread_pose_frames()
 """
 
+import time
 from dataclasses import dataclass
 from typing import List, Optional
-import time
 
 import ntcore
 from wpimath.geometry import Pose3d, Translation3d, Rotation3d, Quaternion
 
+from .generated import commands_pb2
 # Import generated protobuf classes
 from .generated import data_pb2
-from .generated import commands_pb2
 from .generated import geometry3d_pb2
 
 

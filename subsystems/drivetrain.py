@@ -3,7 +3,6 @@ from typing import List
 
 import wpilib
 import wpimath
-from choreo import SwerveSample
 from ntcore import NetworkTableInstance
 from pathplannerlib.util import DriveFeedforwards
 from rev import SparkBase
