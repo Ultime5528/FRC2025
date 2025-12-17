@@ -139,7 +139,7 @@ class DriveToPoses(Command):
         current_pose = self.drivetrain.getPose()
 
         translation_error = (
-                self.goals[self.curr_goal].translation() - current_pose.translation()
+            self.goals[self.curr_goal].translation() - current_pose.translation()
         )
 
         self.remaining_distance = self.last_goal.translation().distance(
@@ -161,7 +161,6 @@ class DriveToPoses(Command):
 
         vel_rot = -self.motion_rot.update(
             (self.last_goal.rotation() - current_pose.rotation()).degrees(),
-
         )
 
         if self.motion_rot.reachedGoal(self.rot_tol_pos_last):

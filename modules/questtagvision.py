@@ -23,7 +23,7 @@ class QuestTagVisionModule(Module):
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        poseFrames = self.questnav.get_all_unread_pose_frames()
+        poseFrames = self.questnav.getAllUnreadPoseFrames()
 
         for poseFrame in poseFrames:
             self.estimated_pose = poseFrame.quest_pose_3d
@@ -56,7 +56,7 @@ class QuestTagVisionModule(Module):
         return self.estimated_pose.rotation().z
 
     def reset(self, pose: Pose3d):
-        self.questnav.set_pose(pose)
+        self.questnav.setPose(pose)
 
     def initSendable(self, builder):
         super().initSendable(builder)

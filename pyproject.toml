@@ -26,7 +26,7 @@ requires = [
      "photonlibpy==2026.0.1",
      "robotpy-urcl==2025.0.1.1",
      "pyfrc==2025.1.0",
-     "protobuf==6.33.1",
+     "protobuf==6.33.2",
      "black==25.12.0; platform_machine != 'roborio'",
      "coverage==7.4.1; platform_machine != 'roborio'",
      "ast-selector==0.2.0; platform_machine != 'roborio'",

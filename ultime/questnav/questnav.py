@@ -18,6 +18,7 @@ import ntcore
 from wpimath.geometry import Pose3d, Translation3d, Rotation3d, Quaternion
 
 from .generated import commands_pb2
+
 # Import generated protobuf classes
 from .generated import data_pb2
 from .generated import geometry3d_pb2
@@ -117,7 +118,7 @@ class QuestNav:
         # Queues for unread frames
         self._unread_frames: List[PoseFrame] = []
 
-    def get_all_unread_pose_frames(self) -> List[PoseFrame]:
+    def getAllUnreadPoseFrames(self) -> List[PoseFrame]:
         """
         Retrieves all new pose frames received since the last call.
 
@@ -226,7 +227,7 @@ class QuestNav:
         self._unread_frames.clear()
         return frames
 
-    def set_pose(self, pose: Pose3d):
+    def setPose(self, pose: Pose3d):
         """
         Sets the field-relative pose of the Quest headset.
 
@@ -288,7 +289,7 @@ class QuestNav:
         except Exception as e:
             print(f"QuestNav error sending pose reset: {e}")
 
-    def get_battery_percent(self) -> Optional[int]:
+    def getBatteryPercent(self) -> Optional[int]:
         """
         Returns the Quest headset's current battery level as a percentage.
 
@@ -297,7 +298,7 @@ class QuestNav:
         """
         return self._battery_percent if self._battery_percent > 0 else None
 
-    def is_tracking(self) -> bool:
+    def isTracking(self) -> bool:
         """
         Gets the current tracking state of the Quest headset.
 
@@ -313,7 +314,7 @@ class QuestNav:
         """
         return self._tracking
 
-    def is_connected(self) -> bool:
+    def isConnected(self) -> bool:
         """
         Determines if the Quest headset is currently connected.
 
@@ -325,7 +326,7 @@ class QuestNav:
         current_time = time.time()
         return (current_time - self._last_frame_timestamp) < 0.1  # 100ms timeout
 
-    def get_frame_count(self) -> Optional[int]:
+    def getFrameCount(self) -> Optional[int]:
         """
         Gets the current frame count from the Quest headset.
 
@@ -334,7 +335,7 @@ class QuestNav:
         """
         return self._frame_count if self._frame_count > 0 else None
 
-    def get_tracking_lost_counter(self) -> Optional[int]:
+    def getTrackingLostCounter(self) -> Optional[int]:
         """
         Gets the number of tracking lost events since Quest connected.
 
@@ -343,7 +344,7 @@ class QuestNav:
         """
         return self._tracking_lost_counter
 
-    def get_latency(self) -> float:
+    def getLatency(self) -> float:
         """
         Gets the latency of the Quest to Robot connection.
 
@@ -355,7 +356,7 @@ class QuestNav:
         current_time = time.time()
         return (current_time - self._last_frame_timestamp) * 1000.0
 
-    def get_app_timestamp(self) -> Optional[float]:
+    def getAppTimestamp(self) -> Optional[float]:
         """
         Returns the Quest app's uptime timestamp.
 
