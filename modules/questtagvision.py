@@ -37,22 +37,22 @@ class QuestTagVisionModule(Module):
                 [0.03, 0.03, 0.1],
             )
 
-    def getX(self):
+    def get_X(self):
         return self.estimated_pose.x
 
-    def getY(self):
+    def get_Y(self):
         return self.estimated_pose.y
 
-    def getZ(self):
+    def get_Z(self):
         return self.estimated_pose.z
 
-    def getRoll(self):
+    def get_Roll(self):
         return self.estimated_pose.rotation().x
 
-    def getPitch(self):
+    def get_Pitch(self):
         return self.estimated_pose.rotation().y
 
-    def getYaw(self):
+    def get_Yaw(self):
         return self.estimated_pose.rotation().z
 
     def reset(self, pose: Pose3d):
@@ -64,9 +64,9 @@ class QuestTagVisionModule(Module):
         def noop(x):
             pass
 
-        builder.addFloatProperty("X", tt(self.getX), noop)
-        builder.addFloatProperty("Y", tt(self.getY), noop)
-        builder.addFloatProperty("Z", tt(self.getZ), noop)
-        builder.addFloatProperty("roll", tt(self.getRoll), noop)
-        builder.addFloatProperty("pitch", tt(self.getPitch), noop)
-        builder.addFloatProperty("yaw", tt(self.getYaw), noop)
+        builder.addFloatProperty("X", tt(self.get_X), noop)
+        builder.addFloatProperty("Y", tt(self.get_Y), noop)
+        builder.addFloatProperty("Z", tt(self.get_Z), noop)
+        builder.addFloatProperty("roll", tt(self.get_Roll), noop)
+        builder.addFloatProperty("pitch", tt(self.get_Pitch), noop)
+        builder.addFloatProperty("yaw", tt(self.get_Yaw), noop)
