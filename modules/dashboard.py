@@ -4,7 +4,6 @@ from commands2 import CommandScheduler
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
-from commands.arm.questtest import QuestTest
 from commands.arm.retractarm import RetractArm
 from commands.autonomous.megaautonomous import MegaAutonomous
 from commands.autonomous.simpleauto import SimpleAutonomous
@@ -111,7 +110,6 @@ class DashboardModule(Module):
         )
         putCommandOnDashboard("Copilot", RetractArm(hardware.arm), "Arm retract")
         putCommandOnDashboard("Copilot", ExtendArm(hardware.arm), "Arm extend")
-        putCommandOnDashboard("Copilot", QuestTest(), "QuestNav")
         putCommandOnDashboard(
             "Copilot", ResetClimber(hardware.climber), "Climber reset"
         )

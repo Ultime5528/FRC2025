@@ -1,54 +1,62 @@
 import wpimath
-from wpimath.geometry import Transform3d, Rotation3d, Pose3d, Translation3d
+from wpimath.geometry import Transform3d, Pose3d
 
 from subsystems.drivetrain import Drivetrain
-from ultime.autoproperty import autoproperty
 from ultime.module import Module
+from ultime.questnav import questnav
 from ultime.timethis import tt
-from ultime.questnav.questnav import QuestNav
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
-robot_to_camera_offset = wpimath.geometry.Transform3d(
-    wpimath.geometry.Translation3d(0.35, -0.098, 0.236),
-    wpimath.geometry.Rotation3d.fromDegrees(0.0, -15.0, 0.0),
+robot_to_quest_offset = wpimath.geometry.Transform3d(
+    wpimath.geometry.Translation3d(0.20, 0.01, 1.03),
+    wpimath.geometry.Rotation3d.fromDegrees(0.0, 0.0, 0.0),
 )
 
 
 class QuestTagVisionModule(Module):
-    ambiguity_threshold = autoproperty(0.05)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
         self.drivetrain = drivetrain
-        self.questnav = QuestNav()
+        self.questnav = questnav.QuestNav()
         self.estimated_pose = Pose3d()
-
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()
-        self.estimated_pose = self.questnav.get_all_unread_pose_frames()
+        poseFrames = self.questnav.get_all_unread_pose_frames()
 
+        for poseFrame in poseFrames:
+            self.estimated_pose = poseFrame.quest_pose_3d
+            self.estimated_pose = self.estimated_pose.transformBy(
+                robot_to_quest_offset.inverse()
+            )
+            time_stamp = poseFrame.data_timestamp
+            self.drivetrain.addVisionMeasurement(
+                self.estimated_pose.toPose2d(),
+                time_stamp,
+                [0.03, 0.03, 0.1],
+            )
 
-        time_stamp = self.questnav.get_data_timestamp()
-        self.drivetrain.addVisionMeasurement(self.estimated_pose.toPose2d(), time_stamp)
+    def get_X(self):
+        return self.estimated_pose.x
 
-    def X(self):
-        return self.estimated_pose.X()
+    def get_Y(self):
+        return self.estimated_pose.y
 
-    def Y(self):
-        return self.estimated_pose.Y()
+    def get_Z(self):
+        return self.estimated_pose.z
 
-    def Z(self):
-        return self.estimated_pose.Z()
+    def get_Roll(self):
+        return self.estimated_pose.rotation().x
 
-    def Roll(self):
-        return self.estimated_pose.rotation().X()
+    def get_Pitch(self):
+        return self.estimated_pose.rotation().y
 
-    def Pitch(self):
-        return self.estimated_pose.rotation().Y()
+    def get_Yaw(self):
+        return self.estimated_pose.rotation().z
 
-    def Yaw(self):
-        return self.estimated_pose.rotation().Z()
+    def reset(self, pose: Pose3d):
+        self.questnav.set_pose(pose)
 
     def initSendable(self, builder):
         super().initSendable(builder)
@@ -56,9 +64,9 @@ class QuestTagVisionModule(Module):
         def noop(x):
             pass
 
-        builder.addFloatProperty("X", tt(self.X), noop)
-        builder.addFloatProperty("Y", tt(self.Y), noop)
-        builder.addFloatProperty("Z", tt(self.Z), noop)
-        builder.addFloatProperty("roll", tt(self.Roll), noop)
-        builder.addFloatProperty("pitch", tt(self.Pitch), noop)
-        builder.addFloatProperty("yaw", tt(self.Yaw), noop)
+        builder.addFloatProperty("X", tt(self.get_X), noop)
+        builder.addFloatProperty("Y", tt(self.get_Y), noop)
+        builder.addFloatProperty("Z", tt(self.get_Z), noop)
+        builder.addFloatProperty("roll", tt(self.get_Roll), noop)
+        builder.addFloatProperty("pitch", tt(self.get_Pitch), noop)
+        builder.addFloatProperty("yaw", tt(self.get_Yaw), noop)
