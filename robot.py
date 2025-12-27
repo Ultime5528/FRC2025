@@ -31,7 +31,7 @@ class Robot(ModuleRobot):
         self.quest_vision = QuestTagVisionModule(self.hardware.drivetrain)
         #self.algae_vision = AlgaeVisionModule()
 
-        self.control = ControlModule(self.hardware, self.algae_vision)
+        #self.control = ControlModule(self.hardware, self.algae_vision)
 
         self.arm_collision = ArmCollisionModule(self.hardware)
         self.loading_detection = LoadingDetectionModule(self.hardware)
@@ -55,7 +55,7 @@ class Robot(ModuleRobot):
             #self.tag_vision,
             #self.algae_vision,
             self.quest_vision,
-            self.control,
+            #self.control,
             self.arm_collision,
             self.loading_detection,
             self.block_elevator_until_coral,
