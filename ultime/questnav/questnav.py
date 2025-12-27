@@ -105,9 +105,6 @@ class QuestNav:
         self.command_topic = self.nt_instance.getRawTopic("/QuestNav/request")
         self.command_pub = self.command_topic.publish("proto:questnav.protos.commands.ProtobufQuestNavCommand")
 
-        # Something I personally added (not Juan Chong) to make "get_data_timestamp" work
-        self.frame_data_subscriber = self.command_topic.subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", b"")
-
         # State
         self._last_frame_timestamp = 0.0
         self._battery_percent = 0
@@ -368,21 +365,6 @@ class QuestNav:
         # For now, return None
         return None
 
-    def get_data_timestamp(self) -> float:
-        """
-        Gets the NT timestamp of when the last frame data was sent. This is the value which should be
-        used with a pose estimator.
-
-        Returns:
-            The timestamp as a double value in seconds
-        """
-        # The Java code uses frameData.getAtomic().serverTime which is a NetworkTables internal timestamp.
-        # In pynetworktables, the subscriber's last_change() gives the timestamp in microseconds.
-        # We convert it to seconds.
-        last_change_us = self.frame_data_subscriber.getLastChange()
-        if last_change_us == 0:
-            return -1.0
-        return last_change_us / 1_000_000.0  # Convert microseconds to seconds
 
     def command_periodic(self):
         """
