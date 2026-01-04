@@ -87,11 +87,11 @@ class Drivetrain(Subsystem):
         }
 
         self.last_module_position = [
-                SwerveModulePosition(),
-                SwerveModulePosition(),
-                SwerveModulePosition(),
-                SwerveModulePosition(),
-            ]
+            SwerveModulePosition(),
+            SwerveModulePosition(),
+            SwerveModulePosition(),
+            SwerveModulePosition(),
+        ]
 
         self.chassis_speed_goal_pub = (
             NetworkTableInstance.getDefault()
