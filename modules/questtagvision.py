@@ -5,6 +5,7 @@ from subsystems.drivetrain import Drivetrain
 from ultime.module import Module
 from ultime.questnav import questnav
 from ultime.timethis import tt
+from ultime.autoproperty import autoproperty
 
 ### Offset of the camera relative to the middle of the robot. In robot Coordinate system
 robot_to_quest_offset = wpimath.geometry.Transform3d(
@@ -14,6 +15,8 @@ robot_to_quest_offset = wpimath.geometry.Transform3d(
 
 
 class QuestTagVisionModule(Module):
+
+    quest_std = autoproperty([0.03, 0.03, 0.1])
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
@@ -34,26 +37,11 @@ class QuestTagVisionModule(Module):
             self.drivetrain.addVisionMeasurement(
                 self.estimated_pose.toPose2d(),
                 time_stamp,
-                [0.03, 0.03, 0.1],
+                self.quest_std,
             )
 
-    def get_X(self):
-        return self.estimated_pose.x
-
-    def get_Y(self):
-        return self.estimated_pose.y
-
-    def get_Z(self):
-        return self.estimated_pose.z
-
-    def get_Roll(self):
-        return self.estimated_pose.rotation().x
-
-    def get_Pitch(self):
-        return self.estimated_pose.rotation().y
-
-    def get_Yaw(self):
-        return self.estimated_pose.rotation().z
+    def getEstimatedPose(self):
+        return self.estimated_pose
 
     def reset(self, pose: Pose3d):
         self.questnav.setPose(pose)
@@ -64,9 +52,15 @@ class QuestTagVisionModule(Module):
         def noop(x):
             pass
 
-        builder.addFloatProperty("X", tt(self.get_X), noop)
-        builder.addFloatProperty("Y", tt(self.get_Y), noop)
-        builder.addFloatProperty("Z", tt(self.get_Z), noop)
-        builder.addFloatProperty("roll", tt(self.get_Roll), noop)
-        builder.addFloatProperty("pitch", tt(self.get_Pitch), noop)
-        builder.addFloatProperty("yaw", tt(self.get_Yaw), noop)
+        builder.addFloatProperty("X", tt(lambda: self.getEstimatedPose().x), noop)
+        builder.addFloatProperty("Y", tt(lambda: self.getEstimatedPose().y), noop)
+        builder.addFloatProperty("Z", tt(lambda: self.getEstimatedPose().z), noop)
+        builder.addFloatProperty(
+            "roll", tt(lambda: self.getEstimatedPose().rotation().x), noop
+        )
+        builder.addFloatProperty(
+            "pitch", tt(lambda: self.getEstimatedPose().rotation().y), noop
+        )
+        builder.addFloatProperty(
+            "yaw", tt(lambda: self.getEstimatedPose().rotation().z), noop
+        )

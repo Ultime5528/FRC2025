@@ -25,6 +25,7 @@ from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.module import Module
+from ultime.autoproperty import autoproperty
 
 
 def registerNamedCommand(command: Command):
@@ -32,6 +33,11 @@ def registerNamedCommand(command: Command):
 
 
 class AutonomousModule(Module):
+
+    kp = autoproperty(5)
+    ki = autoproperty(0)
+    kd = autoproperty(0)
+
     def __init__(self, hardware: HardwareModule):
         super().__init__()
         self.hardware = proxy(hardware)
@@ -48,7 +54,8 @@ class AutonomousModule(Module):
                 speeds, feedforwards
             ),
             PPHolonomicDriveController(
-                PIDConstants(5.0, 0.0, 0.0), PIDConstants(5.0, 0.0, 0.0)
+                PIDConstants(self.kp, self.ki, self.kd),
+                PIDConstants(self.kp, self.ki, self.kd),
             ),
             config,
             self.shouldFlipPath,
