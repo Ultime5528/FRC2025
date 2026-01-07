@@ -33,13 +33,11 @@ def registerNamedCommand(command: Command):
 
 
 class AutonomousModule(Module):
-
-    kp = autoproperty(5)
-    ki = autoproperty(0)
-    kd = autoproperty(0)
-
     def __init__(self, hardware: HardwareModule):
         super().__init__()
+        self.translation_p_gain = 5
+        self.rotation_p_gain = 5
+
         self.hardware = proxy(hardware)
 
         self.auto_command: Optional[commands2.Command] = None
@@ -54,8 +52,8 @@ class AutonomousModule(Module):
                 speeds, feedforwards
             ),
             PPHolonomicDriveController(
-                PIDConstants(self.kp, self.ki, self.kd),
-                PIDConstants(self.kp, self.ki, self.kd),
+                PIDConstants(self.translation_p_gain, 0, 0),
+                PIDConstants(self.rotation_p_gain, 0, 0),
             ),
             config,
             self.shouldFlipPath,

@@ -41,22 +41,20 @@ class Drivetrain(Subsystem):
 
     swerve_temperature_threshold = autoproperty(55.0)
 
-    kp = autoproperty(10)
-    ki = autoproperty(0)
-    kd = autoproperty(0)
-
     def __init__(self) -> None:
         super().__init__()
         self.period_seconds = 0.02
+        self.translation_p_gain = 10
+        self.rotation_p_gain = 10
         # Swerve Module motor positions
         self.motor_fl_loc = Translation2d(self.width / 2, self.length / 2)
         self.motor_fr_loc = Translation2d(self.width / 2, -self.length / 2)
         self.motor_bl_loc = Translation2d(-self.width / 2, self.length / 2)
         self.motor_br_loc = Translation2d(-self.width / 2, -self.length / 2)
 
-        self.x_controller = PIDController(self.kp, self.ki, self.kd)
-        self.y_controller = PIDController(self.kp, self.ki, self.kd)
-        self.heading_controller = PIDController(self.kp, self.ki, self.kd)
+        self.x_controller = PIDController(self.translation_p_gain, 0, 0)
+        self.y_controller = PIDController(self.translation_p_gain, 0, 0)
+        self.heading_controller = PIDController(self.rotation_p_gain, 0, 0)
         self.heading_controller.enableContinuousInput(-math.pi, math.pi)
 
         self.swerve_module_fl = SwerveModule(

@@ -16,7 +16,8 @@ robot_to_quest_offset = wpimath.geometry.Transform3d(
 
 class QuestTagVisionModule(Module):
 
-    quest_std = autoproperty([0.03, 0.03, 0.1])
+    std_translation = autoproperty(0.03)
+    std_rotation = autoproperty(0.1)
 
     def __init__(self, drivetrain: Drivetrain):
         super().__init__()
@@ -37,7 +38,7 @@ class QuestTagVisionModule(Module):
             self.drivetrain.addVisionMeasurement(
                 self.estimated_pose.toPose2d(),
                 time_stamp,
-                self.quest_std,
+                [self.std_translation, self.std_translation, self.std_rotation],
             )
 
     def getEstimatedPose(self):
