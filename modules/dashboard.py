@@ -35,6 +35,7 @@ from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
 from commands.printer.scanprinter import ScanPrinter
+from commands.drivetrain.facinghub import AlignWithHub
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
@@ -115,6 +116,8 @@ class DashboardModule(Module):
         putCommandOnDashboard(
             "Copilot", ResetClimber(hardware.climber), "Climber reset"
         )
+        putCommandOnDashboard("Copilot", AlignWithHub(hardware.drivetrain), "Align with Hub")
+
         putCommandOnDashboard(
             "Copilot",
             ReadyClimberAndBalance(hardware.printer, hardware.climber),
