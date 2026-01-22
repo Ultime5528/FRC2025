@@ -2,16 +2,15 @@ from _weakref import proxy
 from typing import Optional
 
 import commands2
-import wpilib
 from commands2 import Command
-from pathplannerlib.auto import NamedCommands
+from pathplannerlib.auto import NamedCommands, AutoBuilder
+from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
+from wpilib import DriverStation, SmartDashboard
 
 from commands.alignwithreefside import AlignWithReefSide
 from commands.arm.extendarm import ExtendArm
 from commands.arm.retractarm import RetractArm
-from commands.autonomous.goforward import GoForwardAuto
-from commands.autonomous.megaautonomous import MegaAutonomous
-from commands.autonomous.simpleauto import SimpleAutonomous
 from commands.claw.loadcoral import LoadCoral
 from commands.claw.retractcoral import RetractCoral
 from commands.claw.waituntilcoral import WaitUntilCoral
@@ -19,7 +18,6 @@ from commands.climber.resetclimber import ResetClimber
 from commands.dropautonomous import DropAutonomous
 from commands.dropprepareloading import DropPrepareLoading
 from commands.elevator.moveelevator import MoveElevator
-from commands.intake.resetintake import ResetIntake
 from commands.prepareloading import PrepareLoading
 from commands.printer.moveprinter import MovePrinter
 from commands.resetall import ResetAll
@@ -27,6 +25,7 @@ from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
 from ultime.module import Module
+from ultime.autoproperty import autoproperty
 
 
 def registerNamedCommand(command: Command):
@@ -36,23 +35,36 @@ def registerNamedCommand(command: Command):
 class AutonomousModule(Module):
     def __init__(self, hardware: HardwareModule):
         super().__init__()
-        self.hardware = proxy(hardware)
+        self.translation_p_gain = 5
+        self.rotation_p_gain = 5
 
-        self.reset_climber_command = ResetClimber(self.hardware.climber)
-        self.reset_intake_command = ResetIntake(self.hardware.intake)
+        self.hardware = proxy(hardware)
 
         self.auto_command: Optional[commands2.Command] = None
 
-        self.auto_chooser = wpilib.SendableChooser()
-        self.auto_chooser.addOption(
-            "MegaAutonomous Left", MegaAutonomous.left(hardware)
+        config = RobotConfig.fromGUISettings()
+
+        AutoBuilder.configure(
+            hardware.drivetrain.getPose,
+            hardware.drivetrain.resetToPose,
+            hardware.drivetrain.getRobotRelativeChassisSpeeds,
+            lambda speeds, feedforwards: hardware.drivetrain.driveFromChassisSpeedsFF(
+                speeds, feedforwards
+            ),
+            PPHolonomicDriveController(
+                PIDConstants(self.translation_p_gain, 0, 0),
+                PIDConstants(self.rotation_p_gain, 0, 0),
+            ),
+            config,
+            self.shouldFlipPath,
+            hardware.drivetrain,
         )
-        self.auto_chooser.addOption("Simple Middle", SimpleAutonomous(hardware))
-        self.auto_chooser.addOption(
-            "MegaAutonomous Right", MegaAutonomous.right(hardware)
-        )
-        self.auto_chooser.setDefaultOption("GoForward", GoForwardAuto(hardware))
-        wpilib.SmartDashboard.putData("Autonomous mode", self.auto_chooser)
+
+        self.auto_chooser = AutoBuilder.buildAutoChooser()
+        SmartDashboard.putData("AutoChooser", self.auto_chooser)
+
+    def shouldFlipPath(self):
+        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
 
     def setupCommandsOnPathPlanner(self):
         registerNamedCommand(
@@ -143,9 +155,6 @@ class AutonomousModule(Module):
         self.hardware.drivetrain.swerve_odometry.resetPose(
             self.hardware.drivetrain.getPose()
         )
-
-        self.reset_intake_command.schedule()
-        self.reset_climber_command.schedule()
 
         self.auto_command: commands2.Command = self.auto_chooser.getSelected()
         if self.auto_command:

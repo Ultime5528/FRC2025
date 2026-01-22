@@ -155,8 +155,6 @@ class DynamicMotion:
 
         self._speed = target_speed
 
-        print(f"{position:.2f}\t{current_speed:.2f}\t{self._speed:.2f}")
-
         return self._speed
 
     def getSpeed(self) -> float:

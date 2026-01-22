@@ -1,0 +1,121 @@
+{
+ "name":"ChoreoParth",
+ "version":1,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{
+   "BeforeCoral":{
+    "x":{
+     "exp":"3.3424813747406006 m",
+     "val":3.3424813747406006
+    },
+    "y":{
+     "exp":"2.528852939605713 m",
+     "val":2.528852939605713
+    },
+    "heading":{
+     "exp":"Reef.heading",
+     "val":1.0471975511965976
+    }
+   },
+   "Coral":{
+    "x":{
+     "exp":"1.0662758350372314 m",
+     "val":1.0662758350372314
+    },
+    "y":{
+     "exp":"0.8934491276741028 m",
+     "val":0.8934491276741028
+    },
+    "heading":{
+     "exp":"-35 deg",
+     "val":-0.6108652381980153
+    }
+   },
+   "Reef":{
+    "x":{
+     "exp":"3.8 m",
+     "val":3.8
+    },
+    "y":{
+     "exp":"2.9 m",
+     "val":2.9
+    },
+    "heading":{
+     "exp":"60 deg",
+     "val":1.0471975511965976
+    }
+   }
+  }
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"0.298 m",
+    "val":0.298
+   },
+   "y":{
+    "exp":"0.337 m",
+    "val":0.337
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-0.298 m",
+    "val":-0.298
+   },
+   "y":{
+    "exp":"0.337 m",
+    "val":0.337
+   }
+  },
+  "mass":{
+   "exp":"130 lbs",
+   "val":58.9670081
+  },
+  "inertia":{
+   "exp":"6 kg m ^ 2",
+   "val":6.0
+  },
+  "gearing":{
+   "exp":"5.077",
+   "val":5.077
+  },
+  "radius":{
+   "exp":"0.038 m",
+   "val":0.038
+  },
+  "vmax":{
+   "exp":"5676 RPM",
+   "val":594.3893300591889
+  },
+  "tmax":{
+   "exp":"1.246 N * m",
+   "val":1.246
+  },
+  "cof":{
+   "exp":"1.5",
+   "val":1.5
+  },
+  "bumper":{
+   "front":{
+    "exp":"40 cm",
+    "val":0.4
+   },
+   "side":{
+    "exp":"40 cm",
+    "val":0.4
+   },
+   "back":{
+    "exp":"40 cm",
+    "val":0.4
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[]
+}

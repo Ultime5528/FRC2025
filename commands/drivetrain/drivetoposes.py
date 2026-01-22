@@ -114,7 +114,7 @@ class DriveToPoses(Command):
 
         self.goals = self.get_goals()
         self.last_goal = self.goals[-1]
-        self.currGoal = 0
+        self.curr_goal = 0
 
         self.motion_xy = TrapezoidalMotion(
             start_position=self.drivetrain.getPose()
@@ -139,7 +139,7 @@ class DriveToPoses(Command):
         current_pose = self.drivetrain.getPose()
 
         translation_error = (
-            self.goals[self.currGoal].translation() - current_pose.translation()
+            self.goals[self.curr_goal].translation() - current_pose.translation()
         )
 
         self.remaining_distance = self.last_goal.translation().distance(
@@ -161,7 +161,6 @@ class DriveToPoses(Command):
 
         vel_rot = -self.motion_rot.update(
             (self.last_goal.rotation() - current_pose.rotation()).degrees(),
-            # current_chassis_speed.omega
         )
 
         if self.motion_rot.reachedGoal(self.rot_tol_pos_last):
@@ -175,18 +174,18 @@ class DriveToPoses(Command):
         )
 
         if (
-            self.currGoal < len(self.goals) - 1
+            self.curr_goal < len(self.goals) - 1
             and self.isWithinTolerances()
-            or self.currGoal == len(self.goals) - 1
+            or self.curr_goal == len(self.goals) - 1
             and self.isWithinLastTolerances()
         ):
-            self.currGoal += 1
+            self.curr_goal += 1
 
     def end(self, interrupted):
         self.drivetrain.stop()
 
     def isFinished(self):
-        return self.currGoal == len(self.goals)
+        return self.curr_goal == len(self.goals)
 
     def isWithinLastTolerances(self) -> bool:
         return (
@@ -196,7 +195,7 @@ class DriveToPoses(Command):
 
     def isWithinTolerances(self) -> bool:
         return (
-            self.goals[self.currGoal]
+            self.goals[self.curr_goal]
             .translation()
             .distance(self.drivetrain.getPose().translation())
             <= self.xy_tol_pos

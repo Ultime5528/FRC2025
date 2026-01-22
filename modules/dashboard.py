@@ -35,10 +35,12 @@ from commands.printer.manualmoveprinter import ManualMovePrinter
 from commands.printer.moveprinter import MovePrinter
 from commands.printer.resetprinter import ResetPrinterRight
 from commands.printer.scanprinter import ScanPrinter
+from commands.drivetrain.facinghub import AlignWithHub
 from commands.resetall import ResetAll
 from commands.resetallbutclimber import ResetAllButClimber
 from commands.resetautonomous import ResetAutonomous
 from modules.hardware import HardwareModule
+from modules.questtagvision import QuestTagVisionModule
 from ultime.module import Module, ModuleList
 
 
@@ -47,6 +49,7 @@ class DashboardModule(Module):
         self,
         hardware: HardwareModule,
         module_list: ModuleList,
+        quest: QuestTagVisionModule,
     ):
         super().__init__()
         self._hardware = hardware
@@ -56,6 +59,7 @@ class DashboardModule(Module):
         putCommandOnDashboard("Auto", MegaAutonomous.right(hardware))
         self.setupCopilotCommands(hardware)
         # self.setupCommands(hardware)
+        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain, quest))
 
     def setupCopilotCommands(self, hardware: HardwareModule):
         putCommandOnDashboard(
@@ -112,6 +116,8 @@ class DashboardModule(Module):
         putCommandOnDashboard(
             "Copilot", ResetClimber(hardware.climber), "Climber reset"
         )
+        putCommandOnDashboard("Copilot", AlignWithHub(hardware.drivetrain), "Align with Hub")
+
         putCommandOnDashboard(
             "Copilot",
             ReadyClimberAndBalance(hardware.printer, hardware.climber),
@@ -206,7 +212,6 @@ class DashboardModule(Module):
         """
         Groups
         """
-        putCommandOnDashboard("Drivetrain", ResetGyro(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.left(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.right(hardware.drivetrain))
         putCommandOnDashboard("Drivetrain", DriveRelative.forwards(hardware.drivetrain))
